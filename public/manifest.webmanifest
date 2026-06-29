@@ -1,0 +1,20 @@
+{
+  "name": "Lost Phone",
+  "short_name": "Lost Phone",
+  "description": "Le téléphone de Mathieu — enquête J-3 Louvre",
+  "start_url": "./phone/j3-louvre",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "./ios/icons/settings.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "generatedAt": "2026-06-29T16:08:09.700Z",
+  "logicalBase": {
+    "width": 393,
+    "height": 852
+  },
+  "screens": {
+    "system.lock-vide": {
+      "pixelSize": {
+        "width": 1206,
+        "height": 2622
+      },
+      "scale": {
+        "x": 3.069,
+        "y": 3.077
+      },
+      "logicalBase": {
+        "width": 393,
+        "height": 852
+      },
+      "regions": {
+        "statusBar": {
+          "topPx": 0,
+          "heightLogical": 55.2
+        },
+        "lockClock": {
+          "topLogical": 67.9,
+          "heightLogical": 170.6,
+          "avgLuma": 51.8
+        },
+        "dock": {
+          "topLogical": 732.4,
+          "avgLuma": 84.4
+        }
+      }
+    },
+    "system.lock-notifs": {
+      "pixelSize": {
+        "width": 1206,
+        "height": 2622
+      },
+      "scale": {
+        "x": 3.069,
+        "y": 3.077
+      },
+      "logicalBase": {
+        "width": 393,
+        "height": 852
+      },
+      "regions": {
+        "statusBar": {
+          "topPx": 0,
+          "heightLogical": 55.2
+        },
+        "lockClock": {
+          "topLogical": 67.9,
+          "heightLogical": 170.6,
+          "avgLuma": 52.1
+        },
+        "dock": {
+          "topLogical": 732.4,
+          "avgLuma": 65
+        }
+      }
+    },
+    "system.pin": {
+      "pixelSize": {
+        "width": 1206,
+        "height": 2622
+      },
+      "scale": {
+        "x": 3.069,
+        "y": 3.077
+      },
+      "logicalBase": {
+        "width": 393,
+        "height": 852
+      },
+      "regions": {
+        "statusBar": {
+          "topPx": 0,
+          "heightLogical": 55.2
+        },
+        "lockClock": {
+          "topLogical": 67.9,
+          "heightLogical": 170.6,
+          "avgLuma": 35.9
+        },
+        "dock": {
+          "topLogical": 732.4,
+          "avgLuma": 55.4
+        }
+      }
+    },
+    "system.home-p1": {
+      "pixelSize": {
+        "width": 1206,
+        "height": 2622
+      },
+      "scale": {
+        "x": 3.069,
+        "y": 3.077
+      },
+      "logicalBase": {
+        "width": 393,
+        "height": 852
+      },
+      "regions": {
+        "statusBar": {
+          "topPx": 0,
+          "heightLogical": 55.2
+        },
+        "lockClock": {
+          "topLogical": 67.9,
+          "heightLogical": 170.6,
+          "avgLuma": 104.5
+        },
+        "dock": {
+          "topLogical": 732.4,
+          "avgLuma": 118.3
+        }
+      }
+    },
+    "system.home-p2": {
+      "pixelSize": {
+        "width": 1206,
+        "height": 2622
+      },
+      "scale": {
+        "x": 3.069,
+        "y": 3.077
+      },
+      "logicalBase": {
+        "width": 393,
+        "height": 852
+      },
+      "regions": {
+        "statusBar": {
+          "topPx": 0,
+          "heightLogical": 55.2
+        },
+        "lockClock": {
+          "topLogical": 67.9,
+          "heightLogical": 170.6,
+          "avgLuma": 91.8
+        },
+        "dock": {
+          "topLogical": 732.4,
+          "avgLuma": 117.9
+        }
+      }
+    },
+    "system.control-center": {
+      "pixelSize": {
+        "width": 1206,
+        "height": 2622
+      },
+      "scale": {
+        "x": 3.069,
+        "y": 3.077
+      },
+      "logicalBase": {
+        "width": 393,
+        "height": 852
+      },
+      "regions": {
+        "statusBar": {
+          "topPx": 0,
+          "heightLogical": 55.2
+        },
+        "lockClock": {
+          "topLogical": 67.9,
+          "heightLogical": 170.6,
+          "avgLuma": 66.2
+        },
+        "dock": {
+          "topLogical": 732.4,
+          "avgLuma": 30.3
+        }
+      }
+    },
+    "system.notification-center": {
+      "pixelSize": {
+        "width": 1206,
+        "height": 2622
+      },
+      "scale": {
+        "x": 3.069,
+        "y": 3.077
+      },
+      "logicalBase": {
+        "width": 393,
+        "height": 852
+      },
+      "regions": {
+        "statusBar": {
+          "topPx": 0,
+          "heightLogical": 55.2
+        },
+        "lockClock": {
+          "topLogical": 67.9,
+          "heightLogical": 170.6,
+          "avgLuma": 32.1
+        },
+        "dock": {
+          "topLogical": 732.4,
+          "avgLuma": 52.4
+        }
+      }
+    },
+    "app.messages.liste": {
+      "missing": true,
+      "path": "apps/messages/liste/screen.png"
+    }
+  }
+}

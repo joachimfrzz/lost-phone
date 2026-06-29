@@ -1,0 +1,235 @@
+/**
+ * Mode iPhone réel — plein viewport, safe areas, pas de coque simulée
+ * S'applique en jeu (phone-immersive) et sur device natif (ios-native)
+ */
+
+html.phone-game,
+html.phone-game body {
+  --ios-font: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --ios-font-rounded: "SF Pro Rounded", "SF Pro Display", -apple-system, system-ui, sans-serif;
+  --ios-screen-w: 393px;
+  --ios-screen-h: 852px;
+  --ios-status-h: calc(env(safe-area-inset-top, 47px) + 22px);
+  --ios-island-top: env(safe-area-inset-top, 11px);
+  --ios-home-indicator-bottom: env(safe-area-inset-bottom, 8px);
+}
+
+html.phone-game .phone-page__frame {
+  --ios-screen-w: 100%;
+  --ios-screen-h: 100%;
+}
+
+html.ios-native,
+html.ios-native body,
+html.ios-native #root,
+body.phone-immersive,
+body.phone-immersive #root {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  background: #000;
+}
+
+html.ios-native body,
+body.phone-immersive {
+  font-family: var(--ios-font);
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+body.phone-immersive .iphone,
+html.ios-native .iphone {
+  width: 100%;
+  height: 100dvh;
+}
+
+body.phone-immersive .iphone__screen,
+html.ios-native .iphone__screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+body.phone-immersive .iphone-immersive,
+html.ios-native .iphone-immersive {
+  position: fixed;
+  inset: 0;
+  transform: none;
+}
+
+body.phone-immersive .iphone-immersive .iphone,
+html.ios-native .iphone-immersive .iphone {
+  transform: none !important;
+}
+
+body.phone-immersive .ios-status,
+html.ios-native .ios-status {
+  padding-top: env(safe-area-inset-top, 47px);
+  padding-left: max(28px, env(safe-area-inset-left));
+  padding-right: max(28px, env(safe-area-inset-right));
+  height: var(--ios-status-h);
+}
+
+body.phone-immersive .iphone__home-indicator,
+html.ios-native .iphone__home-indicator {
+  margin-bottom: env(safe-area-inset-bottom, 8px);
+}
+
+body.phone-immersive .ios-lock__bottom,
+html.ios-native .ios-lock__bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom, 8px) + 12px);
+}
+
+body.phone-immersive .ios-pin__content,
+html.ios-native .ios-pin__content {
+  padding-bottom: calc(env(safe-area-inset-bottom, 8px) + 16px);
+}
+
+body.phone-immersive .ios-dock,
+html.ios-native .ios-dock {
+  padding-bottom: calc(env(safe-area-inset-bottom, 8px) + 20px);
+}
+
+body.phone-immersive .ui-composer,
+html.ios-native .ui-composer {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+}
+
+body.phone-immersive .ui-tab-bar,
+html.ios-native .ui-tab-bar {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body.phone-immersive .ios-dock__glass,
+body.phone-immersive .ios-notif,
+body.phone-immersive .ios-pin__material,
+body.phone-immersive .ios-nc__panel,
+body.phone-immersive .ios-cc__panel,
+body.phone-immersive .ios-home__search,
+html.ios-native .ios-dock__glass,
+html.ios-native .ios-notif,
+html.ios-native .ios-pin__material,
+html.ios-native .ios-nc__panel,
+html.ios-native .ios-cc__panel,
+html.ios-native .ios-home__search {
+  -webkit-backdrop-filter: var(--ios-blur-material);
+  backdrop-filter: var(--ios-blur-material);
+  transform: translateZ(0);
+}
+
+body.phone-immersive .ios-lock__time,
+html.ios-native .ios-lock__time {
+  font-family: var(--ios-font-rounded);
+}
+
+body.phone-immersive .iphone__wallpaper,
+html.ios-native .iphone__wallpaper {
+  transform: scale(1.02);
+}
+
+html.phone-game .phone-page__frame .ios-status {
+  padding-top: 12px;
+  height: 54px;
+}
+
+html.phone-game .phone-page__frame .iphone__home-indicator,
+html.phone-game .phone-page__frame .ios-app__home-zone {
+  margin-bottom: 8px;
+}
+
+html.phone-game,
+html.phone-game body,
+html.phone-game #root {
+  font-family: var(--ios-font) !important;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html.phone-game img,
+html.phone-game a {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* Écran noir — allumage iPhone */
+.iphone-wake {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 2000;
+}
+
+.iphone-wake--inline {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.iphone-wake--error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: var(--ios-font);
+  font-size: 15px;
+}
+
+.iphone-immersive--awake {
+  animation: iphone-wake-in 0.55s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+@keyframes iphone-wake-in {
+  from {
+    opacity: 0;
+    filter: brightness(0.4);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+.ios-lock__hint {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.ios-lock--unlocking {
+  transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.38s ease;
+}
+
+.ios-lock__unlock-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  touch-action: none;
+  cursor: grab;
+}
+
+.ios-app__home-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: var(--ios-home-indicator-bottom);
+  touch-action: none;
+  z-index: 20;
+}
+
+.iphone__app-layer--closing {
+  pointer-events: none;
+}

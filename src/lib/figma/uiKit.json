@@ -1,0 +1,15 @@
+{
+  "fileKey": "JhyGhOxtWAdEAivM0XriuC",
+  "libraryKey": "lk-a5b98decf0fb24381005421a2986b813149fcf20f37a1169316d44e2802c483494c6fc98ab8e083540a73bd5e45cf892a38123ee61981aee097d5f4eb8487a17",
+  "libraryName": "iOS and iPadOS 26",
+  "libraryFileKeys": {
+    "ios26": "pDmGXdYu2k8xlf1SQoU9PW",
+    "ios26CommunityId": "1527721578857867021",
+    "ios27CommunityId": "1651309003795292092"
+  },
+  "components": {
+    "lockScreenIphone": "c16ce8eb3b085843cc4a71b515ab8f5ff4965930",
+    "homeScreenIphone": "778e865df72f5e9496a3cbe3870493c785d731ae"
+  },
+  "workflow": "npm run figma:export -- lock-screen && npm run figma:apply -- lock-screen"
+}

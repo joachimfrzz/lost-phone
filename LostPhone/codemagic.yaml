@@ -1,0 +1,64 @@
+# Codemagic — build SwiftUI natif sans Mac local
+# https://docs.codemagic.io
+
+workflows:
+  lost-phone-swiftui:
+    name: Lost Phone SwiftUI
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    environment:
+      ios_signing:
+        provisioning_profiles:
+          - codemagic_profile
+        certificates:
+          - codemagic_certificate
+      vars:
+        BUNDLE_ID: "com.lostphone.game"
+      xcode: latest
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+        - pattern: swiftui
+          include: true
+
+    scripts:
+      - name: Install XcodeGen
+        script: brew install xcodegen
+
+      - name: Sync LPSP stories into bundle
+        script: |
+          cd LostPhone
+          mkdir -p LostPhone/Resources/stories
+          cp -R ../public/stories/* LostPhone/Resources/stories/
+
+      - name: Generate Xcode project
+        script: |
+          cd LostPhone
+          xcodegen generate
+
+      - name: Set up code signing
+        script: xcode-project use-profiles
+
+      - name: Build IPA
+        script: |
+          cd LostPhone
+          xcode-project build-ipa \
+            --project "LostPhone.xcodeproj" \
+            --scheme "LostPhone"
+
+    artifacts:
+      - LostPhone/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      email:
+        recipients:
+          - user@example.com
+        notify:
+          success: true
+          failure: true

@@ -1,0 +1,26 @@
+node_modules
+dist
+.DS_Store
+*.local
+.env
+.env.*
+
+# Logs / cache
+*.log
+tsconfig.tsbuildinfo
+figma-export-*.log
+
+# Capacitor iOS (Xcode user data)
+ios/App/App/public
+ios/App/Pods
+ios/DerivedData
+*.xcuserstate
+xcuserdata
+
+# SwiftUI build
+LostPhone/build
+LostPhone/*.xcodeproj
+LostPhone/*.xcworkspace
+
+# Clones de référence (optionnel)
+_refs

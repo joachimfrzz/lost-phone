@@ -1,0 +1,125 @@
+.capture-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.capture-screen--loading {
+  background: #000;
+}
+
+.capture-screen__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  display: block;
+}
+
+.capture-screen__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* ——— Page tri captures (outil dev) ——— */
+
+.capture-review {
+  min-height: 100dvh;
+  background: #111;
+  color: #eee;
+  padding: 24px 16px 48px;
+  font-family: var(--ios-font, system-ui, sans-serif);
+}
+
+.capture-review--empty,
+.capture-review h1 {
+  max-width: 520px;
+  margin: 0 auto 16px;
+}
+
+.capture-review__head {
+  max-width: 900px;
+  margin: 0 auto 24px;
+}
+
+.capture-review__head p {
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+.capture-review__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.capture-review__card {
+  background: #1c1c1e;
+  border-radius: 12px;
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+
+.capture-review__img {
+  width: 100%;
+  aspect-ratio: 9/19.5;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  background: #000;
+}
+
+.capture-review__name {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 6px 8px 4px;
+  margin: 0;
+  word-break: break-all;
+}
+
+.capture-review__select {
+  width: calc(100% - 16px);
+  margin: 0 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: #2c2c2e;
+  color: #fff;
+  font-size: 13px;
+}
+
+.capture-review__foot {
+  max-width: 900px;
+  margin: 32px auto 0;
+  text-align: center;
+}
+
+.capture-review__btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: #007aff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.capture-review__msg,
+.capture-review__help {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 12px;
+}
+
+.capture-review code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}

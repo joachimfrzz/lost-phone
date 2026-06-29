@@ -1,0 +1,279 @@
+{
+  "lpsp_version": "1.0",
+  "manifest": {
+    "project_id": "f645190a-a53e-45de-b595-016f5f15aa43",
+    "title": "Demo J-3",
+    "exported_at": "2026-06-26T23:13:19.306227+00:00",
+    "profil_temporel": "semi-vivant simple",
+    "apps_presentes": [
+      "Messages",
+      "Contacts",
+      "Telephone",
+      "Photos",
+      "Safari",
+      "WhatsApp"
+    ],
+    "coeur_narratif": null
+  },
+  "player_config": {
+    "verrouillage": "déverrouillé",
+    "spectre_actions": "explorer, lire",
+    "apps_accessibles": [
+      "Messages",
+      "Contacts",
+      "Telephone",
+      "Photos",
+      "Safari",
+      "WhatsApp"
+    ]
+  },
+  "content": {
+    "envelope": {
+      "heure_verrou": "14:32",
+      "date_verrou": "Jour J",
+      "notifications_initiales": [
+        {
+          "app": "WhatsApp",
+          "titre": "Contact A",
+          "texte": "T'es où ??",
+          "heure": "14:28",
+          "lu": false
+        },
+        {
+          "app": "Messages",
+          "titre": "Banque",
+          "texte": "Virement reçu",
+          "heure": "11:02",
+          "lu": true
+        }
+      ],
+      "fond_ecran": {
+        "description": "Photo floue, deux personnes, été passé",
+        "source": "Photos"
+      },
+      "verrouillage": "déverrouillé"
+    },
+    "system": {
+      "dock": [
+        "WhatsApp",
+        "Messages",
+        "Photos",
+        "Safari",
+        "Instagram"
+      ],
+      "wifi_enregistres": [
+        {
+          "nom": "Freebox-XXXX",
+          "lieu": "domicile"
+        },
+        {
+          "nom": "Office-Guest",
+          "lieu": "travail"
+        }
+      ],
+      "focus_actif": "Aucun",
+      "batterie": "34%"
+    },
+    "apps": {
+      "Messages": {
+        "threads": [
+          {
+            "contact": "Maman",
+            "messages": [
+              {
+                "de": "moi",
+                "texte": "Oui je mange ce soir",
+                "date": "J-1 19:40",
+                "lu": true
+              },
+              {
+                "de": "Maman",
+                "texte": "Tu viens dimanche ?",
+                "date": "J-1 19:42",
+                "lu": false
+              }
+            ]
+          }
+        ]
+      },
+      "Contacts": {
+        "fiches": [
+          {
+            "nom": "Contact A",
+            "surnom": "Contact",
+            "relation": "proche"
+          },
+          {
+            "nom": "Maman",
+            "relation": "famille"
+          },
+          {
+            "nom": "Uber",
+            "relation": "service"
+          }
+        ]
+      },
+      "Telephone": {
+        "recents": [
+          {
+            "contact": "Contact A",
+            "type": "manque",
+            "date": "J 14:25",
+            "duree_sec": 0
+          },
+          {
+            "contact": "Maman",
+            "type": "entrant",
+            "date": "J-1 18:02",
+            "duree_sec": 124
+          }
+        ],
+        "messagerie_vocale": []
+      },
+      "Photos": {
+        "albums": [
+          "Récents",
+          "Favoris",
+          "Vacances 2024"
+        ],
+        "recents": [
+          {
+            "description": "Selfie backseat taxi, nuit",
+            "date": "J-1 23:40",
+            "lieu": "Paris 11e"
+          },
+          {
+            "description": "Capture écran conversation",
+            "date": "J-2",
+            "lieu": null
+          }
+        ]
+      },
+      "Safari": {
+        "onglets_ouverts": [
+          {
+            "titre": "SNCF Connect — billets",
+            "url": "https://www.sncf-connect.com/..."
+          },
+          {
+            "titre": "Recherche : parking gare de l'Est",
+            "url": "https://google.com/search?q=..."
+          }
+        ],
+        "historique_recent": [
+          {
+            "recherche": "horaires train dimanche",
+            "date": "J-2"
+          }
+        ]
+      },
+      "WhatsApp": {
+        "threads": [
+          {
+            "contact": "Contact A",
+            "type": "1-to-1",
+            "messages": [
+              {
+                "de": "Contact A",
+                "texte": "T'as vu le message de hier ?",
+                "date": "J-1 22:15",
+                "lu": true
+              },
+              {
+                "de": "moi",
+                "texte": "Oui, j'y réponds demain",
+                "date": "J-1 22:18",
+                "lu": true
+              },
+              {
+                "de": "Contact A",
+                "texte": "T'es où ??",
+                "date": "J 14:28",
+                "lu": false
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "scenario": {
+    "profil": "semi-vivant_simple",
+    "evenements": [
+      {
+        "id": "relance_1",
+        "type": "message_entrant",
+        "app": "WhatsApp",
+        "condition": "joueur_idle_3min",
+        "contenu": {
+          "contact": "Contact A",
+          "texte": "Réponds stp, j'inquiète"
+        }
+      },
+      {
+        "id": "relance_2",
+        "type": "appel_manque",
+        "app": "Telephone",
+        "condition": "apres_lecture_fil_whatsapp",
+        "contenu": {
+          "contact": "Contact A"
+        }
+      },
+      {
+        "id": "relance_3",
+        "type": "notification",
+        "app": "Calendrier",
+        "condition": "palier_2",
+        "contenu": {
+          "titre": "Rappel",
+          "texte": "RDV — note contradictoire"
+        }
+      }
+    ],
+    "relances_ossature": []
+  },
+  "progression_engine": {
+    "objectif_initial": null,
+    "evolution_objectif": [],
+    "relances": [],
+    "evenements_scenario": [
+      {
+        "id": "relance_1",
+        "type": "message_entrant",
+        "app": "WhatsApp",
+        "condition": "joueur_idle_3min",
+        "contenu": {
+          "contact": "Contact A",
+          "texte": "Réponds stp, j'inquiète"
+        }
+      },
+      {
+        "id": "relance_2",
+        "type": "appel_manque",
+        "app": "Telephone",
+        "condition": "apres_lecture_fil_whatsapp",
+        "contenu": {
+          "contact": "Contact A"
+        }
+      },
+      {
+        "id": "relance_3",
+        "type": "notification",
+        "app": "Calendrier",
+        "condition": "palier_2",
+        "contenu": {
+          "titre": "Rappel",
+          "texte": "RDV — note contradictoire"
+        }
+      }
+    ]
+  },
+  "canon_engine": {
+    "chronologie": [],
+    "mensonges": []
+  },
+  "qa_metadata": {
+    "pret": false,
+    "synthese": "Corrections requises avant validation"
+  }
+}

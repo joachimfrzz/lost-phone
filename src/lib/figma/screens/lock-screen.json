@@ -1,0 +1,1740 @@
+{
+  "screen": "lock-screen",
+  "source": {
+    "fileKey": "pDmGXdYu2k8xlf1SQoU9PW",
+    "nodeId": "557:20840",
+    "componentKey": null,
+    "name": "Lock Screen - iPhone",
+    "exportedAt": "2026-06-29T19:46:01.455Z"
+  },
+  "frame": {
+    "width": 402,
+    "height": 874
+  },
+  "referenceImage": "/figma/reference/lock-screen.png",
+  "tokens": {
+    "--ios-lock-date-size": "22px",
+    "--ios-lock-date-weight": "590",
+    "--ios-lock-date-tracking": "-0.2px",
+    "--ios-lock-clock-top": "19.6px",
+    "--ios-lock-time-size": "85.4px",
+    "--ios-lock-time-weight": "200",
+    "--ios-lock-time-lh": "0.9",
+    "--ios-lock-time-tracking": "-0.04em",
+    "--ios-lock-clock-gap": "6.8px",
+    "--ios-lock-shortcut-size": "56.7px",
+    "--ios-lock-shortcut-inset": "45px",
+    "--ios-glass-shadow": "0px 8px 40px rgba(0, 0, 0, 0.2)",
+    "--ios-glass-blur": "saturate(180%) blur(24px)",
+    "--ios-glass-fill": "rgba(255, 255, 255, 0.12)",
+    "--ios-glass-border": "rgba(255, 255, 255, 0.28)",
+    "--ios-home-indicator-w": "140.8px",
+    "--ios-home-indicator-h": "4.9px",
+    "--ios-home-indicator-bottom": "7.8px",
+    "--ios-status-h": "60.6px",
+    "--ios-screen-w": "393px",
+    "--ios-screen-h": "854px",
+    "--ios-frame-width": "402px",
+    "--ios-frame-height": "874px",
+    "--ios-figma-scale": "0.978"
+  },
+  "roles": {
+    "wallpaper": [
+      {
+        "name": "Wallpaper",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 402,
+          "height": 874
+        },
+        "typography": null,
+        "fill": null,
+        "cornerRadius": null,
+        "effects": []
+      }
+    ],
+    "homeIndicator": [
+      {
+        "name": "Home Indicator",
+        "box": {
+          "x": 0,
+          "y": 840,
+          "width": 402,
+          "height": 34
+        },
+        "typography": null,
+        "fill": null,
+        "cornerRadius": null,
+        "effects": []
+      },
+      {
+        "name": "Home Indicator",
+        "box": {
+          "x": 129,
+          "y": 861,
+          "width": 144,
+          "height": 5
+        },
+        "typography": null,
+        "fill": {
+          "type": "solid",
+          "color": "rgba(255, 255, 255, 1)"
+        },
+        "cornerRadius": "100px",
+        "effects": []
+      }
+    ],
+    "notification": [
+      {
+        "name": "Lock Screen Widget / Circular / Stack 3 Rows",
+        "box": {
+          "x": 298,
+          "y": 214,
+          "width": 72,
+          "height": 72
+        },
+        "typography": null,
+        "fill": null,
+        "cornerRadius": null,
+        "effects": [
+          {
+            "type": "BACKGROUND_BLUR",
+            "radius": "40px",
+            "color": null,
+            "offset": null
+          }
+        ]
+      }
+    ],
+    "statusBar": [
+      {
+        "name": "Status Bar",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 402,
+          "height": 62
+        },
+        "typography": null,
+        "fill": null,
+        "cornerRadius": null,
+        "effects": []
+      }
+    ]
+  },
+  "tree": {
+    "id": "557:20840",
+    "name": "Lock Screen - iPhone",
+    "type": "COMPONENT",
+    "role": "unknown",
+    "box": {
+      "x": 0,
+      "y": 0,
+      "width": 402,
+      "height": 874
+    },
+    "cornerRadius": null,
+    "layout": null,
+    "fill": null,
+    "typography": null,
+    "effects": [],
+    "children": [
+      {
+        "id": "557:20472",
+        "name": "Wallpaper",
+        "type": "INSTANCE",
+        "role": "wallpaper",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 402,
+          "height": 874
+        },
+        "cornerRadius": null,
+        "layout": null,
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": []
+      },
+      {
+        "id": "598:4299",
+        "name": "Home Indicator",
+        "type": "INSTANCE",
+        "role": "homeIndicator",
+        "box": {
+          "x": 0,
+          "y": 840,
+          "width": 402,
+          "height": 34
+        },
+        "cornerRadius": null,
+        "layout": null,
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": [
+          {
+            "id": "I598:4299;106:60028",
+            "name": "Home Indicator",
+            "type": "RECTANGLE",
+            "role": "homeIndicator",
+            "box": {
+              "x": 129,
+              "y": 861,
+              "width": 144,
+              "height": 5
+            },
+            "cornerRadius": "100px",
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(255, 255, 255, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "5592:29063",
+        "name": "Controls",
+        "type": "FRAME",
+        "role": "unknown",
+        "box": {
+          "x": 46,
+          "y": 766,
+          "width": 310,
+          "height": 58
+        },
+        "cornerRadius": null,
+        "layout": {
+          "mode": "HORIZONTAL",
+          "gap": "194px",
+          "padding": {
+            "top": "0px",
+            "right": "0px",
+            "bottom": "0px",
+            "left": "0px"
+          }
+        },
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": [
+          {
+            "id": "5592:28471",
+            "name": "Leading",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 46,
+              "y": 766,
+              "width": 58,
+              "height": 58
+            },
+            "cornerRadius": "100px",
+            "layout": null,
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5592:28471;5914:25021",
+                "name": "Clear Glass",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 46,
+                  "y": 766,
+                  "width": 58,
+                  "height": 58
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I5592:28471;5914:25021;5914:23552",
+                    "name": "Glass Effect",
+                    "type": "FRAME",
+                    "role": "unknown",
+                    "box": {
+                      "x": 46,
+                      "y": 766,
+                      "width": 58,
+                      "height": 58
+                    },
+                    "cornerRadius": "100px",
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(255, 255, 255, 1)"
+                    },
+                    "typography": null,
+                    "effects": [
+                      {
+                        "type": "GLASS",
+                        "radius": null,
+                        "color": null,
+                        "offset": null
+                      },
+                      {
+                        "type": "DROP_SHADOW",
+                        "radius": "40px",
+                        "color": "rgba(0, 0, 0, 0.2)",
+                        "offset": {
+                          "x": "0px",
+                          "y": "8px"
+                        }
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I5592:28471;5592:28124",
+                "name": "Symbol",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 46,
+                  "y": 766,
+                  "width": 58,
+                  "height": 58
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(217, 217, 217, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "21px",
+                  "fontWeight": 700,
+                  "letterSpacing": "-0.2px",
+                  "lineHeight": "25.1px",
+                  "textAlign": "center"
+                },
+                "characters": "􀝌",
+                "effects": [],
+                "opacity": 0.8999999761581421,
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "5592:28470",
+            "name": "Trailing",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 298,
+              "y": 766,
+              "width": 58,
+              "height": 58
+            },
+            "cornerRadius": "100px",
+            "layout": null,
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5592:28470;5914:25021",
+                "name": "Clear Glass",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 298,
+                  "y": 766,
+                  "width": 58,
+                  "height": 58
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I5592:28470;5914:25021;5914:23552",
+                    "name": "Glass Effect",
+                    "type": "FRAME",
+                    "role": "unknown",
+                    "box": {
+                      "x": 298,
+                      "y": 766,
+                      "width": 58,
+                      "height": 58
+                    },
+                    "cornerRadius": "100px",
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(255, 255, 255, 1)"
+                    },
+                    "typography": null,
+                    "effects": [
+                      {
+                        "type": "GLASS",
+                        "radius": null,
+                        "color": null,
+                        "offset": null
+                      },
+                      {
+                        "type": "DROP_SHADOW",
+                        "radius": "40px",
+                        "color": "rgba(0, 0, 0, 0.2)",
+                        "offset": {
+                          "x": "0px",
+                          "y": "8px"
+                        }
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I5592:28470;5592:28124",
+                "name": "Symbol",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 298,
+                  "y": 766,
+                  "width": 58,
+                  "height": 58
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(217, 217, 217, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "21px",
+                  "fontWeight": 700,
+                  "letterSpacing": "-0.2px",
+                  "lineHeight": "25.1px",
+                  "textAlign": "center"
+                },
+                "characters": "􀌟",
+                "effects": [],
+                "opacity": 0.8999999761581421,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "598:4321",
+        "name": "Lock Screen Widgets",
+        "type": "FRAME",
+        "role": "unknown",
+        "box": {
+          "x": 0,
+          "y": 214,
+          "width": 402,
+          "height": 72
+        },
+        "cornerRadius": null,
+        "layout": {
+          "mode": "HORIZONTAL",
+          "gap": null,
+          "padding": {
+            "top": "0px",
+            "right": "32px",
+            "bottom": "0px",
+            "left": "32px"
+          }
+        },
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": [
+          {
+            "id": "598:4322",
+            "name": "Lock Screen Widget - Modular Table",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 32,
+              "y": 214,
+              "width": 169,
+              "height": 72
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": null,
+              "padding": {
+                "top": "0px",
+                "right": "6px",
+                "bottom": "0px",
+                "left": "6px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I598:4322;525:43145",
+                "name": "Header",
+                "type": "FRAME",
+                "role": "unknown",
+                "box": {
+                  "x": 38,
+                  "y": 221,
+                  "width": 157,
+                  "height": 22
+                },
+                "cornerRadius": null,
+                "layout": {
+                  "mode": "HORIZONTAL",
+                  "gap": "3px",
+                  "padding": {
+                    "top": "0px",
+                    "right": "0px",
+                    "bottom": "0px",
+                    "left": "0px"
+                  }
+                },
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I598:4322;525:43147",
+                    "name": "Symbol",
+                    "type": "TEXT",
+                    "role": "unknown",
+                    "box": {
+                      "x": 38,
+                      "y": 221,
+                      "width": 25,
+                      "height": 22
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(153, 153, 153, 1)"
+                    },
+                    "typography": {
+                      "fontFamily": "SF Pro",
+                      "fontSize": "17px",
+                      "fontWeight": 510,
+                      "letterSpacing": "0px",
+                      "lineHeight": "22px",
+                      "textAlign": "left"
+                    },
+                    "characters": "􀇕",
+                    "effects": [
+                      {
+                        "type": "BACKGROUND_BLUR",
+                        "radius": "135.9px",
+                        "color": null,
+                        "offset": null
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "id": "I598:4322;525:43146",
+                    "name": "Title",
+                    "type": "TEXT",
+                    "role": "unknown",
+                    "box": {
+                      "x": 66,
+                      "y": 222,
+                      "width": 129,
+                      "height": 20
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(153, 153, 153, 1)"
+                    },
+                    "typography": {
+                      "fontFamily": "SF Pro",
+                      "fontSize": "15px",
+                      "fontWeight": 510,
+                      "letterSpacing": "0px",
+                      "lineHeight": "20px",
+                      "textAlign": "left"
+                    },
+                    "characters": "72º",
+                    "effects": [
+                      {
+                        "type": "BACKGROUND_BLUR",
+                        "radius": "135.9px",
+                        "color": null,
+                        "offset": null
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I598:4322;525:43144",
+                "name": "Title",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 38,
+                  "y": 243,
+                  "width": 157,
+                  "height": 18
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "15px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "18px",
+                  "textAlign": "left"
+                },
+                "characters": "Partly Cloudy",
+                "effects": [
+                  {
+                    "type": "BACKGROUND_BLUR",
+                    "radius": "135.9px",
+                    "color": null,
+                    "offset": null
+                  }
+                ],
+                "children": []
+              },
+              {
+                "id": "I598:4322;525:43143",
+                "name": "Body",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 38,
+                  "y": 261,
+                  "width": 157,
+                  "height": 18
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "15px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "18px",
+                  "textAlign": "left"
+                },
+                "characters": "H:88º L:64º",
+                "effects": [
+                  {
+                    "type": "BACKGROUND_BLUR",
+                    "radius": "135.9px",
+                    "color": null,
+                    "offset": null
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "598:4323",
+            "name": "Frame",
+            "type": "FRAME",
+            "role": "unknown",
+            "box": {
+              "x": 201,
+              "y": 214,
+              "width": 169,
+              "height": 72
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "HORIZONTAL",
+              "gap": "16px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "598:4324",
+                "name": "Lock Screen Widget / Circular / Open Gauge 2",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 210,
+                  "y": 214,
+                  "width": 72,
+                  "height": 72
+                },
+                "cornerRadius": null,
+                "layout": {
+                  "mode": "VERTICAL",
+                  "gap": null,
+                  "padding": {
+                    "top": "7px",
+                    "right": "7px",
+                    "bottom": "7px",
+                    "left": "7px"
+                  }
+                },
+                "fill": null,
+                "typography": null,
+                "effects": [
+                  {
+                    "type": "BACKGROUND_BLUR",
+                    "radius": "40px",
+                    "color": null,
+                    "offset": null
+                  }
+                ],
+                "children": [
+                  {
+                    "id": "I598:4324;525:43563",
+                    "name": "Frame",
+                    "type": "FRAME",
+                    "role": "unknown",
+                    "box": {
+                      "x": 217,
+                      "y": 223.6,
+                      "width": 58,
+                      "height": 55.4
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": null,
+                    "typography": null,
+                    "effects": [],
+                    "children": [
+                      {
+                        "id": "I598:4324;145:62651",
+                        "name": "Gauge",
+                        "type": "BOOLEAN_OPERATION",
+                        "role": "unknown",
+                        "box": {
+                          "x": 217,
+                          "y": 223.6,
+                          "width": 58,
+                          "height": 45.5
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(51, 51, 51, 1)"
+                        },
+                        "typography": null,
+                        "effects": [],
+                        "children": [
+                          {
+                            "id": "I598:4324;145:62638",
+                            "name": "Outer Ellipse",
+                            "type": "ELLIPSE",
+                            "role": "unknown",
+                            "box": {
+                              "x": 217,
+                              "y": 223.6,
+                              "width": 58,
+                              "height": 58
+                            },
+                            "cornerRadius": null,
+                            "layout": null,
+                            "fill": null,
+                            "typography": null,
+                            "effects": [],
+                            "children": []
+                          },
+                          {
+                            "id": "I598:4324;145:62661",
+                            "name": "Current Value Indicator",
+                            "type": "ELLIPSE",
+                            "role": "unknown",
+                            "box": {
+                              "x": 252.4,
+                              "y": 223.3,
+                              "width": 13.3,
+                              "height": 13.3
+                            },
+                            "cornerRadius": null,
+                            "layout": null,
+                            "fill": {
+                              "type": "solid",
+                              "color": "rgba(255, 255, 255, 1)"
+                            },
+                            "typography": null,
+                            "effects": [],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "I598:4324;145:62665",
+                        "name": "Current Value Indicator",
+                        "type": "ELLIPSE",
+                        "role": "unknown",
+                        "box": {
+                          "x": 255.2,
+                          "y": 226.1,
+                          "width": 7.7,
+                          "height": 7.7
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(255, 255, 255, 1)"
+                        },
+                        "typography": null,
+                        "effects": [],
+                        "children": []
+                      },
+                      {
+                        "id": "I598:4324;145:62630",
+                        "name": "Max Value",
+                        "type": "TEXT",
+                        "role": "unknown",
+                        "box": {
+                          "x": 249.5,
+                          "y": 268,
+                          "width": 14,
+                          "height": 13
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(255, 255, 255, 1)"
+                        },
+                        "typography": {
+                          "fontFamily": "SF Pro",
+                          "fontSize": "11px",
+                          "fontWeight": 510,
+                          "letterSpacing": "0px",
+                          "lineHeight": "13.1px",
+                          "textAlign": "left"
+                        },
+                        "characters": "78",
+                        "effects": [],
+                        "children": []
+                      },
+                      {
+                        "id": "I598:4324;145:62631",
+                        "name": "Min Value",
+                        "type": "TEXT",
+                        "role": "unknown",
+                        "box": {
+                          "x": 227.5,
+                          "y": 268,
+                          "width": 15,
+                          "height": 13
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(255, 255, 255, 1)"
+                        },
+                        "typography": {
+                          "fontFamily": "SF Pro",
+                          "fontSize": "11px",
+                          "fontWeight": 510,
+                          "letterSpacing": "0px",
+                          "lineHeight": "13.1px",
+                          "textAlign": "left"
+                        },
+                        "characters": "50",
+                        "effects": [],
+                        "children": []
+                      },
+                      {
+                        "id": "I598:4324;145:62628",
+                        "name": "Value",
+                        "type": "TEXT",
+                        "role": "unknown",
+                        "box": {
+                          "x": 231,
+                          "y": 236.3,
+                          "width": 29,
+                          "height": 29
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(255, 255, 255, 1)"
+                        },
+                        "typography": {
+                          "fontFamily": "SF Pro",
+                          "fontSize": "24px",
+                          "fontWeight": 510,
+                          "letterSpacing": "0px",
+                          "lineHeight": "28.6px",
+                          "textAlign": "left"
+                        },
+                        "characters": "67",
+                        "effects": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "598:4325",
+                "name": "Lock Screen Widget / Circular / Stack 3 Rows",
+                "type": "INSTANCE",
+                "role": "notification",
+                "box": {
+                  "x": 298,
+                  "y": 214,
+                  "width": 72,
+                  "height": 72
+                },
+                "cornerRadius": null,
+                "layout": {
+                  "mode": "HORIZONTAL",
+                  "gap": null,
+                  "padding": {
+                    "top": "7px",
+                    "right": "7px",
+                    "bottom": "7px",
+                    "left": "7px"
+                  }
+                },
+                "fill": null,
+                "typography": null,
+                "effects": [
+                  {
+                    "type": "BACKGROUND_BLUR",
+                    "radius": "40px",
+                    "color": null,
+                    "offset": null
+                  }
+                ],
+                "children": [
+                  {
+                    "id": "I598:4325;525:43557",
+                    "name": "Circle",
+                    "type": "FRAME",
+                    "role": "unknown",
+                    "box": {
+                      "x": 305,
+                      "y": 221,
+                      "width": 58,
+                      "height": 58
+                    },
+                    "cornerRadius": "100px",
+                    "layout": {
+                      "mode": "VERTICAL",
+                      "gap": null,
+                      "padding": {
+                        "top": "7px",
+                        "right": "0px",
+                        "bottom": "7px",
+                        "left": "0px"
+                      }
+                    },
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(51, 51, 51, 1)"
+                    },
+                    "typography": null,
+                    "effects": [],
+                    "children": [
+                      {
+                        "id": "I598:4325;145:62731",
+                        "name": "Symbol",
+                        "type": "TEXT",
+                        "role": "unknown",
+                        "box": {
+                          "x": 305,
+                          "y": 229,
+                          "width": 58,
+                          "height": 13
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(255, 255, 255, 1)"
+                        },
+                        "typography": {
+                          "fontFamily": "SF Pro",
+                          "fontSize": "11px",
+                          "fontWeight": 510,
+                          "letterSpacing": "0px",
+                          "lineHeight": "13.1px",
+                          "textAlign": "center"
+                        },
+                        "characters": "􀆴",
+                        "effects": [],
+                        "children": []
+                      },
+                      {
+                        "id": "I598:4325;145:62732",
+                        "name": "Value",
+                        "type": "TEXT",
+                        "role": "unknown",
+                        "box": {
+                          "x": 305,
+                          "y": 242,
+                          "width": 58,
+                          "height": 18
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(255, 255, 255, 1)"
+                        },
+                        "typography": {
+                          "fontFamily": "SF Pro",
+                          "fontSize": "15px",
+                          "fontWeight": 510,
+                          "letterSpacing": "0px",
+                          "lineHeight": "17.9px",
+                          "textAlign": "center"
+                        },
+                        "characters": "8:29",
+                        "effects": [],
+                        "children": []
+                      },
+                      {
+                        "id": "I598:4325;145:62734",
+                        "name": "Value",
+                        "type": "TEXT",
+                        "role": "unknown",
+                        "box": {
+                          "x": 305,
+                          "y": 260,
+                          "width": 58,
+                          "height": 11
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(255, 255, 255, 1)"
+                        },
+                        "typography": {
+                          "fontFamily": "SF Pro",
+                          "fontSize": "9px",
+                          "fontWeight": 510,
+                          "letterSpacing": "0px",
+                          "lineHeight": "13px",
+                          "textAlign": "center"
+                        },
+                        "characters": "PM",
+                        "effects": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "6092:2540",
+        "name": "9:41 - Fill",
+        "type": "BOOLEAN_OPERATION",
+        "role": "unknown",
+        "box": {
+          "x": 98,
+          "y": 115,
+          "width": 205.1,
+          "height": 87.4
+        },
+        "cornerRadius": null,
+        "layout": null,
+        "fill": {
+          "type": "solid",
+          "color": "rgba(148, 148, 148, 1)"
+        },
+        "typography": null,
+        "effects": [
+          {
+            "type": "BACKGROUND_BLUR",
+            "radius": "30px",
+            "color": null,
+            "offset": null
+          }
+        ],
+        "children": [
+          {
+            "id": "6092:2541",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 98,
+              "y": 115,
+              "width": 65.6,
+              "height": 87.4
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "6092:2542",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 171.3,
+              "y": 171,
+              "width": 17.9,
+              "height": 17.8
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "6092:2543",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 265,
+              "y": 116.5,
+              "width": 38.1,
+              "height": 84.6
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "6092:2544",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 171.3,
+              "y": 128.5,
+              "width": 17.9,
+              "height": 17.8
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "6092:2545",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 195.6,
+              "y": 116.5,
+              "width": 68.8,
+              "height": 84.6
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "6491:17567",
+        "name": "9:41 - Glass Effect",
+        "type": "BOOLEAN_OPERATION",
+        "role": "unknown",
+        "box": {
+          "x": 98,
+          "y": 115,
+          "width": 205.1,
+          "height": 87.4
+        },
+        "cornerRadius": null,
+        "layout": null,
+        "fill": {
+          "type": "solid",
+          "color": "rgba(0, 0, 0, 1)"
+        },
+        "typography": null,
+        "effects": [
+          {
+            "type": "GLASS",
+            "radius": null,
+            "color": null,
+            "offset": null
+          }
+        ],
+        "children": [
+          {
+            "id": "6491:17568",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 98,
+              "y": 115,
+              "width": 65.6,
+              "height": 87.4
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "6491:17569",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 171.3,
+              "y": 171,
+              "width": 17.9,
+              "height": 17.8
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "6491:17570",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 265,
+              "y": 116.5,
+              "width": 38.1,
+              "height": 84.6
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "6491:17571",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 171.3,
+              "y": 128.5,
+              "width": 17.9,
+              "height": 17.8
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "6491:17572",
+            "name": "Vector",
+            "type": "VECTOR",
+            "role": "unknown",
+            "box": {
+              "x": 195.6,
+              "y": 116.5,
+              "width": 68.8,
+              "height": 84.6
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(186, 84, 160, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "598:4326",
+        "name": "Lock Screen Widget - Inline",
+        "type": "INSTANCE",
+        "role": "unknown",
+        "box": {
+          "x": 0,
+          "y": 82,
+          "width": 402,
+          "height": 26
+        },
+        "cornerRadius": null,
+        "layout": {
+          "mode": "VERTICAL",
+          "gap": null,
+          "padding": {
+            "top": "0px",
+            "right": "0px",
+            "bottom": "0px",
+            "left": "0px"
+          }
+        },
+        "fill": null,
+        "typography": null,
+        "effects": [
+          {
+            "type": "BACKGROUND_BLUR",
+            "radius": "20px",
+            "color": null,
+            "offset": null
+          }
+        ],
+        "children": [
+          {
+            "id": "I598:4326;145:62737",
+            "name": "Tue 1 􀆪 SFO 9:41 AM",
+            "type": "TEXT",
+            "role": "unknown",
+            "box": {
+              "x": 0,
+              "y": 82,
+              "width": 402,
+              "height": 26
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(255, 255, 255, 1)"
+            },
+            "typography": {
+              "fontFamily": "SF Pro",
+              "fontSize": "22px",
+              "fontWeight": 590,
+              "letterSpacing": "-0.2px",
+              "lineHeight": "26.3px",
+              "textAlign": "center"
+            },
+            "characters": "Apr 1 􀆪 SFO 9:41 AM",
+            "effects": [
+              {
+                "type": "BACKGROUND_BLUR",
+                "radius": "40px",
+                "color": null,
+                "offset": null
+              }
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "598:4306",
+        "name": "Swipe down indicator",
+        "type": "RECTANGLE",
+        "role": "unknown",
+        "box": {
+          "x": 306.2,
+          "y": 46.8,
+          "width": 48,
+          "height": 2.3
+        },
+        "cornerRadius": "1.2px",
+        "layout": null,
+        "fill": {
+          "type": "solid",
+          "color": "rgba(255, 255, 255, 1)"
+        },
+        "typography": null,
+        "effects": [
+          {
+            "type": "BACKGROUND_BLUR",
+            "radius": "29.9px",
+            "color": null,
+            "offset": null
+          }
+        ],
+        "opacity": 0.3499999940395355,
+        "children": []
+      },
+      {
+        "id": "598:4307",
+        "name": "Status Bar",
+        "type": "FRAME",
+        "role": "statusBar",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 402,
+          "height": 62
+        },
+        "cornerRadius": null,
+        "layout": null,
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": [
+          {
+            "id": "598:4308",
+            "name": "Battery",
+            "type": "GROUP",
+            "role": "unknown",
+            "box": {
+              "x": 342.2,
+              "y": 26.6,
+              "width": 27.2,
+              "height": 13
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "598:4309",
+                "name": "Border",
+                "type": "RECTANGLE",
+                "role": "unknown",
+                "box": {
+                  "x": 342.2,
+                  "y": 26.6,
+                  "width": 25,
+                  "height": 13
+                },
+                "cornerRadius": "4.3px",
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "opacity": 0.3499999940395355,
+                "children": []
+              },
+              {
+                "id": "598:4310",
+                "name": "Cap",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 368.1,
+                  "y": 31.3,
+                  "width": 1.3,
+                  "height": 4
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "opacity": 0.4000000059604645,
+                "children": []
+              },
+              {
+                "id": "598:4311",
+                "name": "Capacity",
+                "type": "RECTANGLE",
+                "role": "unknown",
+                "box": {
+                  "x": 344,
+                  "y": 28.6,
+                  "width": 21,
+                  "height": 9
+                },
+                "cornerRadius": "2.5px",
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "598:4312",
+            "name": "Wifi",
+            "type": "BOOLEAN_OPERATION",
+            "role": "unknown",
+            "box": {
+              "x": 317.7,
+              "y": 27.2,
+              "width": 17.1,
+              "height": 12.1
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(255, 255, 255, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "598:4313",
+                "name": "Wifi-path",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 317.7,
+                  "y": 27.2,
+                  "width": 17.1,
+                  "height": 5
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(0, 0, 0, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "598:4314",
+                "name": "Wifi-path",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 320.7,
+                  "y": 31.2,
+                  "width": 11.1,
+                  "height": 4
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(0, 0, 0, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "598:4315",
+                "name": "Wifi-path",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 323.8,
+                  "y": 35.3,
+                  "width": 5,
+                  "height": 4
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(0, 0, 0, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "598:4316",
+            "name": "Cellular Connection",
+            "type": "BOOLEAN_OPERATION",
+            "role": "unknown",
+            "box": {
+              "x": 291,
+              "y": 27.1,
+              "width": 19.2,
+              "height": 12
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(255, 255, 255, 1)"
+            },
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "598:4317",
+                "name": "Cellular-Connection-path",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 291,
+                  "y": 34.5,
+                  "width": 3.2,
+                  "height": 4.6
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(0, 0, 0, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "598:4318",
+                "name": "Cellular-Connection-path",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 296.3,
+                  "y": 32.1,
+                  "width": 3.2,
+                  "height": 7
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(0, 0, 0, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "598:4319",
+                "name": "Cellular-Connection-path",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 301.7,
+                  "y": 29.5,
+                  "width": 3.2,
+                  "height": 9.6
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(0, 0, 0, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "598:4320",
+                "name": "Cellular-Connection-path",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 307,
+                  "y": 27.1,
+                  "width": 3.2,
+                  "height": 12
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(0, 0, 0, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "symbols": {
+    "flashlight": "􀝌",
+    "camera": "􀌟"
+  },
+  "assets": {
+    "wallpaper": "/figma/assets/wallpaper-lock.png",
+    "wallpaperNodeId": "557:20472"
+  }
+}

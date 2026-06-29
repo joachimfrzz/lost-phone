@@ -1,0 +1,103 @@
+/* iOS 17 — design tokens (points → px @1x logical) */
+
+:root {
+/* figma-home-screen — auto Figma */
+  --ios-glass-blur: saturate(180%) blur(24px);
+  --ios-glass-fill: rgba(255, 255, 255, 0.12);
+  --ios-glass-border: rgba(255, 255, 255, 0.28);
+  --ios-status-h: 60.6px;
+  --ios-screen-w: 393px;
+  --ios-screen-h: 854px;
+  --ios-frame-width: 402px;
+  --ios-frame-height: 874px;
+  --ios-figma-scale: 0.978;
+  --ios-icon-size: 62.6px;
+  --ios-grid-pad-x: 26px;
+  --ios-grid-gap-x: 12px;
+  --ios-home-grid-top: 1.4px;
+  --ios-dock-height: 136.9px;
+  --ios-dock-radius: 38px;
+  --ios-dock-gap: 29px;
+  --ios-dock-glass-h: 97.8px;
+  --ios-grid-gap-y: 16.6px;
+  --ios-home-search-h: 29.3px;
+  --ios-home-search-radius: 38px;
+  --ios-home-search-min-w: 75.3px;
+  --ios-home-search-font-size: 11.5px;
+/* /figma-home-screen */
+
+/* figma-lock-screen — auto Figma */
+  --ios-lock-date-size: 22px;
+  --ios-lock-date-weight: 590;
+  --ios-lock-date-tracking: -0.2px;
+  --ios-lock-clock-top: 19.6px;
+  --ios-lock-time-size: 85.4px;
+  --ios-lock-time-weight: 200;
+  --ios-lock-time-lh: 0.9;
+  --ios-lock-time-tracking: -0.04em;
+  --ios-lock-clock-gap: 6.8px;
+  --ios-lock-shortcut-size: 56.7px;
+  --ios-lock-shortcut-inset: 45px;
+  --ios-glass-shadow: 0px 8px 40px rgba(0, 0, 0, 0.2);
+  --ios-glass-blur: saturate(180%) blur(24px);
+  --ios-glass-fill: rgba(255, 255, 255, 0.12);
+  --ios-glass-border: rgba(255, 255, 255, 0.28);
+  --ios-home-indicator-w: 140.8px;
+  --ios-home-indicator-h: 4.9px;
+  --ios-home-indicator-bottom: 7.8px;
+  --ios-status-h: 60.6px;
+  --ios-screen-w: 393px;
+  --ios-screen-h: 854px;
+  --ios-frame-width: 402px;
+  --ios-frame-height: 874px;
+  --ios-figma-scale: 0.978;
+/* /figma-lock-screen */
+
+  --ios-font: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", system-ui, sans-serif;
+  --ios-font-rounded: "SF Pro Rounded", "SF Pro Display", -apple-system, system-ui, sans-serif;
+  font-family: var(--ios-font);
+
+  --ios-screen-w: 393px;
+  --ios-screen-h: 852px;
+  --ios-radius-screen: 55px;
+  --ios-radius-icon: 13.65px; /* ~22.37% of 61px icon */
+  --ios-radius-notif: 20px;
+  --ios-radius-dock: 32px;
+
+  --ios-island-w: 126px;
+  --ios-island-h: 37px;
+  --ios-island-top: 11px;
+
+  --ios-status-h: 55px;
+  --ios-lock-clock-gap: 13px;
+  --ios-dock-zone-h: 120px;
+  --ios-home-indicator-w: 134px;
+  --ios-home-indicator-h: 5px;
+  --ios-home-indicator-bottom: 8px;
+
+  --ios-icon-size: 60px;
+  --ios-icon-label: 11px;
+  --ios-grid-cols: 4;
+  --ios-grid-pad-x: 26px;
+  --ios-grid-gap-y: 28px;
+
+  --ios-lock-time-size: 98px;
+  --ios-lock-date-size: 22px;
+  --ios-lock-time-weight: 200;
+
+  --ios-blur-material: saturate(180%) blur(40px);
+  --ios-blur-dock: saturate(180%) blur(50px);
+  --ios-blur-passcode: saturate(200%) blur(60px);
+
+  --ios-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --ios-spring-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --ios-text-primary: #ffffff;
+  --ios-text-secondary: rgba(255, 255, 255, 0.72);
+  --ios-fill-notif: rgba(255, 255, 255, 0.28);
+  --ios-fill-dock: rgba(255, 255, 255, 0.24);
+  --ios-separator: rgba(255, 255, 255, 0.14);
+
+  --ios-app-bg: #000000;
+  --ios-app-surface: #f2f2f7;
+}

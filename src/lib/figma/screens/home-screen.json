@@ -1,0 +1,2590 @@
+{
+  "screen": "home-screen",
+  "source": {
+    "fileKey": "pDmGXdYu2k8xlf1SQoU9PW",
+    "nodeId": "5593:41732",
+    "componentKey": null,
+    "name": "Home Screen - iPhone",
+    "exportedAt": "2026-06-29T19:55:19.919Z",
+    "searchPath": "System > System > System > Home Screen Quick Actions - iPhone > Home Screen - iPhone"
+  },
+  "frame": {
+    "width": 402,
+    "height": 874
+  },
+  "referenceImage": "/figma/reference/home-screen.png",
+  "tokens": {
+    "--ios-glass-blur": "saturate(180%) blur(24px)",
+    "--ios-glass-fill": "rgba(255, 255, 255, 0.12)",
+    "--ios-glass-border": "rgba(255, 255, 255, 0.28)",
+    "--ios-status-h": "60.6px",
+    "--ios-screen-w": "393px",
+    "--ios-screen-h": "854px",
+    "--ios-frame-width": "402px",
+    "--ios-frame-height": "874px",
+    "--ios-figma-scale": "0.978",
+    "--ios-icon-size": "62.6px",
+    "--ios-grid-pad-x": "26px",
+    "--ios-grid-gap-x": "12px",
+    "--ios-home-grid-top": "1.4px",
+    "--ios-dock-height": "136.9px",
+    "--ios-dock-radius": "38px",
+    "--ios-dock-gap": "29px",
+    "--ios-dock-glass-h": "97.8px",
+    "--ios-grid-gap-y": "16.6px",
+    "--ios-home-search-h": "29.3px",
+    "--ios-home-search-radius": "38px",
+    "--ios-home-search-min-w": "75.3px",
+    "--ios-home-search-font-size": "11.5px"
+  },
+  "roles": {
+    "wallpaper": [
+      {
+        "name": "Wallpaper",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 402,
+          "height": 874
+        },
+        "typography": null,
+        "fill": null,
+        "cornerRadius": null,
+        "effects": []
+      }
+    ],
+    "statusBar": [
+      {
+        "name": "Status Bar",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 402,
+          "height": 62
+        },
+        "typography": null,
+        "fill": null,
+        "cornerRadius": null,
+        "effects": []
+      }
+    ],
+    "glass": [
+      {
+        "name": "Glass Effect",
+        "box": {
+          "x": 162.5,
+          "y": 704,
+          "width": 77,
+          "height": 30
+        },
+        "typography": null,
+        "fill": {
+          "type": "solid",
+          "color": "rgba(0, 0, 0, 1)"
+        },
+        "cornerRadius": "38px",
+        "effects": [
+          {
+            "type": "GLASS",
+            "radius": null,
+            "color": null,
+            "offset": null
+          }
+        ]
+      },
+      {
+        "name": "Glass Effect",
+        "box": {
+          "x": 17,
+          "y": 754,
+          "width": 368,
+          "height": 103
+        },
+        "typography": null,
+        "fill": {
+          "type": "solid",
+          "color": "rgba(0, 0, 0, 1)"
+        },
+        "cornerRadius": "38px",
+        "effects": [
+          {
+            "type": "GLASS",
+            "radius": null,
+            "color": null,
+            "offset": null
+          }
+        ]
+      }
+    ]
+  },
+  "tree": {
+    "id": "5593:41732",
+    "name": "Home Screen - iPhone",
+    "type": "INSTANCE",
+    "role": "unknown",
+    "box": {
+      "x": 0,
+      "y": 0,
+      "width": 402,
+      "height": 874
+    },
+    "cornerRadius": null,
+    "layout": {
+      "mode": "VERTICAL",
+      "gap": null,
+      "padding": {
+        "top": "0px",
+        "right": "0px",
+        "bottom": "0px",
+        "left": "0px"
+      }
+    },
+    "fill": null,
+    "typography": null,
+    "effects": [],
+    "children": [
+      {
+        "id": "I5593:41732;533:20551",
+        "name": "Wallpaper",
+        "type": "INSTANCE",
+        "role": "wallpaper",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 402,
+          "height": 874
+        },
+        "cornerRadius": null,
+        "layout": null,
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": []
+      },
+      {
+        "id": "I5593:41732;2971:29538",
+        "name": "Status Bar",
+        "type": "INSTANCE",
+        "role": "statusBar",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 402,
+          "height": 62
+        },
+        "cornerRadius": null,
+        "layout": {
+          "mode": "HORIZONTAL",
+          "gap": "154px",
+          "padding": {
+            "top": "21px",
+            "right": "24px",
+            "bottom": "19px",
+            "left": "24px"
+          }
+        },
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": [
+          {
+            "id": "I5593:41732;2971:29538;5465:16808",
+            "name": "Time",
+            "type": "FRAME",
+            "role": "unknown",
+            "box": {
+              "x": 24,
+              "y": 21,
+              "width": 100,
+              "height": 22
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "HORIZONTAL",
+              "gap": "10px",
+              "padding": {
+                "top": "1.5px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2971:29538;5465:16809",
+                "name": "Time",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 55.5,
+                  "y": 21.8,
+                  "width": 37,
+                  "height": 22
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "17px",
+                  "fontWeight": 590,
+                  "letterSpacing": "0px",
+                  "lineHeight": "22px",
+                  "textAlign": "center"
+                },
+                "characters": "9:41",
+                "effects": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2971:29538;5465:16811",
+            "name": "Levels",
+            "type": "FRAME",
+            "role": "unknown",
+            "box": {
+              "x": 278,
+              "y": 21,
+              "width": 100,
+              "height": 22
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "HORIZONTAL",
+              "gap": "7px",
+              "padding": {
+                "top": "1px",
+                "right": "1px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2971:29538;5465:16812",
+                "name": "Cellular Connection",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 288.7,
+                  "y": 26.4,
+                  "width": 19.2,
+                  "height": 12.2
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2971:29538;5465:16813",
+                "name": "Wifi",
+                "type": "VECTOR",
+                "role": "unknown",
+                "box": {
+                  "x": 314.9,
+                  "y": 26.3,
+                  "width": 17.1,
+                  "height": 12.3
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2971:29538;6325:1760",
+                "name": "Frame",
+                "type": "FRAME",
+                "role": "unknown",
+                "box": {
+                  "x": 339,
+                  "y": 26,
+                  "width": 27.3,
+                  "height": 13
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I5593:41732;2971:29538;5465:16815",
+                    "name": "Border",
+                    "type": "RECTANGLE",
+                    "role": "unknown",
+                    "box": {
+                      "x": 339,
+                      "y": 26,
+                      "width": 25,
+                      "height": 13
+                    },
+                    "cornerRadius": "4.3px",
+                    "layout": null,
+                    "fill": null,
+                    "typography": null,
+                    "effects": [],
+                    "opacity": 0.3499999940395355,
+                    "children": []
+                  },
+                  {
+                    "id": "I5593:41732;2971:29538;5465:16816",
+                    "name": "Cap",
+                    "type": "VECTOR",
+                    "role": "unknown",
+                    "box": {
+                      "x": 365,
+                      "y": 30.5,
+                      "width": 1.3,
+                      "height": 4.1
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(255, 255, 255, 1)"
+                    },
+                    "typography": null,
+                    "effects": [],
+                    "opacity": 0.4000000059604645,
+                    "children": []
+                  },
+                  {
+                    "id": "I5593:41732;2971:29538;5465:16817",
+                    "name": "Capacity",
+                    "type": "RECTANGLE",
+                    "role": "unknown",
+                    "box": {
+                      "x": 341,
+                      "y": 28,
+                      "width": 21,
+                      "height": 9
+                    },
+                    "cornerRadius": "2.5px",
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(255, 255, 255, 1)"
+                    },
+                    "typography": null,
+                    "effects": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "I5593:41732;2969:26120",
+        "name": "App Icons",
+        "type": "FRAME",
+        "role": "unknown",
+        "box": {
+          "x": 0,
+          "y": 62,
+          "width": 402,
+          "height": 642
+        },
+        "cornerRadius": null,
+        "layout": {
+          "mode": "HORIZONTAL",
+          "gap": "12px",
+          "padding": {
+            "top": "28.7px",
+            "right": "26px",
+            "bottom": "0px",
+            "left": "26px"
+          }
+        },
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": [
+          {
+            "id": "I5593:41732;2969:26121",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 26,
+              "y": 90.7,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26121;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 30,
+                  "y": 90.7,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26121;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 34.5,
+                  "y": 159.7,
+                  "width": 55,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "FaceTime",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26122",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 118.7,
+              "y": 90.7,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26122;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 122.7,
+                  "y": 90.7,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26122;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 128.2,
+                  "y": 159.7,
+                  "width": 53,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Calendar",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26123",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 211.3,
+              "y": 90.7,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26123;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 215.3,
+                  "y": 90.7,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26123;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 226.8,
+                  "y": 159.7,
+                  "width": 41,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Photos",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26124",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 304,
+              "y": 90.7,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26124;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 308,
+                  "y": 90.7,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26124;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 317.5,
+                  "y": 159.7,
+                  "width": 45,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Camera",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26125",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 26,
+              "y": 191,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26125;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 30,
+                  "y": 191,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26125;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 50,
+                  "y": 260,
+                  "width": 24,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Mail",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26126",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 118.7,
+              "y": 191,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26126;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 122.7,
+                  "y": 191,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26126;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 137.2,
+                  "y": 260,
+                  "width": 35,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Notes",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26127",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 211.3,
+              "y": 191,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26127;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 215.3,
+                  "y": 191,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26127;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 216.3,
+                  "y": 260,
+                  "width": 62,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Reminders",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26128",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 304,
+              "y": 191,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26128;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 308,
+                  "y": 191,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26128;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 323.5,
+                  "y": 260,
+                  "width": 33,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Clock",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26129",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 26,
+              "y": 291.3,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26129;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 30,
+                  "y": 291.3,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26129;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 46,
+                  "y": 360.3,
+                  "width": 32,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "News",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26130",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 118.7,
+              "y": 291.3,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26130;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 122.7,
+                  "y": 291.3,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26130;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 146.2,
+                  "y": 360.3,
+                  "width": 17,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "TV",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26131",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 211.3,
+              "y": 291.3,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26131;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 215.3,
+                  "y": 291.3,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26131;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 227.3,
+                  "y": 360.3,
+                  "width": 40,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Games",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26132",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 304,
+              "y": 291.3,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26132;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 308,
+                  "y": 291.3,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26132;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 311,
+                  "y": 360.3,
+                  "width": 58,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "App Store",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26133",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 26,
+              "y": 391.7,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26133;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 30,
+                  "y": 391.7,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26133;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 46,
+                  "y": 460.7,
+                  "width": 32,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Maps",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26134",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 118.7,
+              "y": 391.7,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26134;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 122.7,
+                  "y": 391.7,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26134;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 135.7,
+                  "y": 460.7,
+                  "width": 38,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Health",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26135",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 211.3,
+              "y": 391.7,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26135;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 215.3,
+                  "y": 391.7,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26135;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 229.3,
+                  "y": 460.7,
+                  "width": 36,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Wallet",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26136",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 304,
+              "y": 391.7,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26136;5592:30156",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 308,
+                  "y": 391.7,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": []
+              },
+              {
+                "id": "I5593:41732;2969:26136;2402:975",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 315.5,
+                  "y": 460.7,
+                  "width": 49,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "Settings",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26137",
+            "name": "App Icon",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 26,
+              "y": 492,
+              "width": 72,
+              "height": 83
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": "5px",
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;2969:26137;5592:37810",
+                "name": "Icon",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 30,
+                  "y": 492,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "opacity": 0,
+                "children": [
+                  {
+                    "id": "I5593:41732;2969:26137;5592:37810;5413:5936",
+                    "name": "Custom-Icon-Default",
+                    "type": "RECTANGLE",
+                    "role": "unknown",
+                    "box": {
+                      "x": 30,
+                      "y": 492,
+                      "width": 64,
+                      "height": 64
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": null,
+                    "typography": null,
+                    "effects": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I5593:41732;2969:26137;2402:17546",
+                "name": "App Name",
+                "type": "TEXT",
+                "role": "unknown",
+                "box": {
+                  "x": 40,
+                  "y": 561,
+                  "width": 44,
+                  "height": 14
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(255, 255, 255, 1)"
+                },
+                "typography": {
+                  "fontFamily": "SF Pro",
+                  "fontSize": "12px",
+                  "fontWeight": 510,
+                  "letterSpacing": "0px",
+                  "lineHeight": "14.3px",
+                  "textAlign": "center"
+                },
+                "characters": "My App",
+                "effects": [
+                  {
+                    "type": "DROP_SHADOW",
+                    "radius": "25px",
+                    "color": "rgba(0, 0, 0, 1)",
+                    "offset": {
+                      "x": "0px",
+                      "y": "2px"
+                    }
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;2969:26142",
+            "name": "Empty",
+            "type": "FRAME",
+            "role": "unknown",
+            "box": {
+              "x": 118.7,
+              "y": 492,
+              "width": 72,
+              "height": 79
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": null,
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "I5593:41732;2969:26143",
+            "name": "Empty",
+            "type": "FRAME",
+            "role": "unknown",
+            "box": {
+              "x": 211.3,
+              "y": 492,
+              "width": 72,
+              "height": 79
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": null,
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "I5593:41732;2969:26144",
+            "name": "Empty",
+            "type": "FRAME",
+            "role": "unknown",
+            "box": {
+              "x": 304,
+              "y": 492,
+              "width": 72,
+              "height": 79
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "VERTICAL",
+              "gap": null,
+              "padding": {
+                "top": "0px",
+                "right": "0px",
+                "bottom": "0px",
+                "left": "0px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "I5593:41732;512:41975",
+        "name": "Search Field",
+        "type": "FRAME",
+        "role": "unknown",
+        "box": {
+          "x": 162.5,
+          "y": 704,
+          "width": 77,
+          "height": 30
+        },
+        "cornerRadius": "100px",
+        "layout": {
+          "mode": "HORIZONTAL",
+          "gap": "2px",
+          "padding": {
+            "top": "7px",
+            "right": "12px",
+            "bottom": "7px",
+            "left": "12px"
+          }
+        },
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": [
+          {
+            "id": "I5593:41732;533:32954",
+            "name": "Materials",
+            "type": "INSTANCE",
+            "role": "unknown",
+            "box": {
+              "x": 162.5,
+              "y": 704,
+              "width": 77,
+              "height": 30
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;533:32954;5592:52690",
+                "name": "Blur",
+                "type": "FRAME",
+                "role": "unknown",
+                "box": {
+                  "x": 162.5,
+                  "y": 669,
+                  "width": 77,
+                  "height": 100
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "opacity": 0.6700000166893005,
+                "children": [
+                  {
+                    "id": "I5593:41732;533:32954;5592:52691",
+                    "name": "Mask",
+                    "type": "INSTANCE",
+                    "role": "unknown",
+                    "box": {
+                      "x": 86.5,
+                      "y": 593,
+                      "width": 229,
+                      "height": 252
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(255, 255, 255, 1)"
+                    },
+                    "typography": null,
+                    "effects": [],
+                    "children": [
+                      {
+                        "id": "I5593:41732;533:32954;5592:52691;5575:32354",
+                        "name": "Shape",
+                        "type": "RECTANGLE",
+                        "role": "unknown",
+                        "box": {
+                          "x": 162.5,
+                          "y": 669,
+                          "width": 77,
+                          "height": 100
+                        },
+                        "cornerRadius": "38px",
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(0, 0, 0, 1)"
+                        },
+                        "typography": null,
+                        "effects": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "id": "I5593:41732;533:32954;5607:81966",
+                    "name": "Blur",
+                    "type": "FRAME",
+                    "role": "unknown",
+                    "box": {
+                      "x": 162.5,
+                      "y": 671,
+                      "width": 77,
+                      "height": 100
+                    },
+                    "cornerRadius": "38px",
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(0, 0, 0, 1)"
+                    },
+                    "typography": null,
+                    "effects": [
+                      {
+                        "type": "BACKGROUND_BLUR",
+                        "radius": "60px",
+                        "color": null,
+                        "offset": null
+                      },
+                      {
+                        "type": "LAYER_BLUR",
+                        "radius": "60px",
+                        "color": null,
+                        "offset": null
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I5593:41732;533:32954;5607:81713",
+                "name": "Glass Effect",
+                "type": "FRAME",
+                "role": "glass",
+                "box": {
+                  "x": 162.5,
+                  "y": 704,
+                  "width": 77,
+                  "height": 30
+                },
+                "cornerRadius": "38px",
+                "layout": null,
+                "fill": {
+                  "type": "solid",
+                  "color": "rgba(0, 0, 0, 1)"
+                },
+                "typography": null,
+                "effects": [
+                  {
+                    "type": "GLASS",
+                    "radius": null,
+                    "color": null,
+                    "offset": null
+                  }
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "I5593:41732;512:41976",
+            "name": "Search",
+            "type": "TEXT",
+            "role": "unknown",
+            "box": {
+              "x": 174.5,
+              "y": 711,
+              "width": 11,
+              "height": 16
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(255, 255, 255, 1)"
+            },
+            "typography": {
+              "fontFamily": "SF Pro",
+              "fontSize": "11.5px",
+              "fontWeight": 590,
+              "letterSpacing": "0px",
+              "lineHeight": "16px",
+              "textAlign": "center"
+            },
+            "characters": "􀊫",
+            "effects": [],
+            "children": []
+          },
+          {
+            "id": "I5593:41732;5593:10113",
+            "name": "Search",
+            "type": "TEXT",
+            "role": "unknown",
+            "box": {
+              "x": 187.5,
+              "y": 711,
+              "width": 40,
+              "height": 16
+            },
+            "cornerRadius": null,
+            "layout": null,
+            "fill": {
+              "type": "solid",
+              "color": "rgba(255, 255, 255, 1)"
+            },
+            "typography": {
+              "fontFamily": "SF Pro",
+              "fontSize": "11.5px",
+              "fontWeight": 590,
+              "letterSpacing": "0px",
+              "lineHeight": "16px",
+              "textAlign": "center"
+            },
+            "characters": "Search",
+            "effects": [],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "I5593:41732;559:4206",
+        "name": "Dock",
+        "type": "INSTANCE",
+        "role": "unknown",
+        "box": {
+          "x": 0,
+          "y": 734,
+          "width": 402,
+          "height": 140
+        },
+        "cornerRadius": null,
+        "layout": {
+          "mode": "HORIZONTAL",
+          "gap": null,
+          "padding": {
+            "top": "20px",
+            "right": "17px",
+            "bottom": "17px",
+            "left": "17px"
+          }
+        },
+        "fill": null,
+        "typography": null,
+        "effects": [],
+        "children": [
+          {
+            "id": "I5593:41732;559:4206;559:4168",
+            "name": "Dock",
+            "type": "FRAME",
+            "role": "unknown",
+            "box": {
+              "x": 17,
+              "y": 754,
+              "width": 368,
+              "height": 103
+            },
+            "cornerRadius": null,
+            "layout": {
+              "mode": "HORIZONTAL",
+              "gap": "29px",
+              "padding": {
+                "top": "20px",
+                "right": "19px",
+                "bottom": "19px",
+                "left": "19px"
+              }
+            },
+            "fill": null,
+            "typography": null,
+            "effects": [],
+            "children": [
+              {
+                "id": "I5593:41732;559:4206;5592:57196",
+                "name": "Materials",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 17,
+                  "y": 754,
+                  "width": 368,
+                  "height": 103
+                },
+                "cornerRadius": null,
+                "layout": null,
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I5593:41732;559:4206;5592:57196;5592:52690",
+                    "name": "Blur",
+                    "type": "FRAME",
+                    "role": "unknown",
+                    "box": {
+                      "x": 17,
+                      "y": 756,
+                      "width": 368,
+                      "height": 100
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": null,
+                    "typography": null,
+                    "effects": [],
+                    "opacity": 0.6700000166893005,
+                    "children": [
+                      {
+                        "id": "I5593:41732;559:4206;5592:57196;5592:52691",
+                        "name": "Mask",
+                        "type": "INSTANCE",
+                        "role": "unknown",
+                        "box": {
+                          "x": -59,
+                          "y": 680,
+                          "width": 520,
+                          "height": 252
+                        },
+                        "cornerRadius": null,
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(255, 255, 255, 1)"
+                        },
+                        "typography": null,
+                        "effects": [],
+                        "children": [
+                          {
+                            "id": "I5593:41732;559:4206;5592:57196;5592:52691;5575:32354",
+                            "name": "Shape",
+                            "type": "RECTANGLE",
+                            "role": "unknown",
+                            "box": {
+                              "x": 17,
+                              "y": 756,
+                              "width": 368,
+                              "height": 100
+                            },
+                            "cornerRadius": "38px",
+                            "layout": null,
+                            "fill": {
+                              "type": "solid",
+                              "color": "rgba(0, 0, 0, 1)"
+                            },
+                            "typography": null,
+                            "effects": [],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "I5593:41732;559:4206;5592:57196;5607:81966",
+                        "name": "Blur",
+                        "type": "FRAME",
+                        "role": "unknown",
+                        "box": {
+                          "x": 17,
+                          "y": 758,
+                          "width": 368,
+                          "height": 100
+                        },
+                        "cornerRadius": "38px",
+                        "layout": null,
+                        "fill": {
+                          "type": "solid",
+                          "color": "rgba(0, 0, 0, 1)"
+                        },
+                        "typography": null,
+                        "effects": [
+                          {
+                            "type": "BACKGROUND_BLUR",
+                            "radius": "60px",
+                            "color": null,
+                            "offset": null
+                          },
+                          {
+                            "type": "LAYER_BLUR",
+                            "radius": "60px",
+                            "color": null,
+                            "offset": null
+                          }
+                        ],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "id": "I5593:41732;559:4206;5592:57196;5607:81713",
+                    "name": "Glass Effect",
+                    "type": "FRAME",
+                    "role": "glass",
+                    "box": {
+                      "x": 17,
+                      "y": 754,
+                      "width": 368,
+                      "height": 103
+                    },
+                    "cornerRadius": "38px",
+                    "layout": null,
+                    "fill": {
+                      "type": "solid",
+                      "color": "rgba(0, 0, 0, 1)"
+                    },
+                    "typography": null,
+                    "effects": [
+                      {
+                        "type": "GLASS",
+                        "radius": null,
+                        "color": null,
+                        "offset": null
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I5593:41732;559:4206;2402:19689",
+                "name": "App Icons",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 36,
+                  "y": 774,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": {
+                  "mode": "VERTICAL",
+                  "gap": "5px",
+                  "padding": {
+                    "top": "0px",
+                    "right": "0px",
+                    "bottom": "0px",
+                    "left": "0px"
+                  }
+                },
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I5593:41732;559:4206;2402:19689;5592:30156",
+                    "name": "Icon",
+                    "type": "INSTANCE",
+                    "role": "unknown",
+                    "box": {
+                      "x": 36,
+                      "y": 774,
+                      "width": 64,
+                      "height": 64
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": null,
+                    "typography": null,
+                    "effects": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I5593:41732;559:4206;2402:20273",
+                "name": "App Icons",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 124.7,
+                  "y": 774,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": {
+                  "mode": "VERTICAL",
+                  "gap": "5px",
+                  "padding": {
+                    "top": "0px",
+                    "right": "0px",
+                    "bottom": "0px",
+                    "left": "0px"
+                  }
+                },
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I5593:41732;559:4206;2402:20273;5592:30156",
+                    "name": "Icon",
+                    "type": "INSTANCE",
+                    "role": "unknown",
+                    "box": {
+                      "x": 124.7,
+                      "y": 774,
+                      "width": 64,
+                      "height": 64
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": null,
+                    "typography": null,
+                    "effects": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I5593:41732;559:4206;2402:20570",
+                "name": "App Icons",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 213.3,
+                  "y": 774,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": {
+                  "mode": "VERTICAL",
+                  "gap": "5px",
+                  "padding": {
+                    "top": "0px",
+                    "right": "0px",
+                    "bottom": "0px",
+                    "left": "0px"
+                  }
+                },
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I5593:41732;559:4206;2402:20570;5592:30156",
+                    "name": "Icon",
+                    "type": "INSTANCE",
+                    "role": "unknown",
+                    "box": {
+                      "x": 213.3,
+                      "y": 774,
+                      "width": 64,
+                      "height": 64
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": null,
+                    "typography": null,
+                    "effects": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "I5593:41732;559:4206;2402:20916",
+                "name": "App Icons",
+                "type": "INSTANCE",
+                "role": "unknown",
+                "box": {
+                  "x": 302,
+                  "y": 774,
+                  "width": 64,
+                  "height": 64
+                },
+                "cornerRadius": null,
+                "layout": {
+                  "mode": "VERTICAL",
+                  "gap": "5px",
+                  "padding": {
+                    "top": "0px",
+                    "right": "0px",
+                    "bottom": "0px",
+                    "left": "0px"
+                  }
+                },
+                "fill": null,
+                "typography": null,
+                "effects": [],
+                "children": [
+                  {
+                    "id": "I5593:41732;559:4206;2402:20916;5592:30156",
+                    "name": "Icon",
+                    "type": "INSTANCE",
+                    "role": "unknown",
+                    "box": {
+                      "x": 302,
+                      "y": 774,
+                      "width": 64,
+                      "height": 64
+                    },
+                    "cornerRadius": null,
+                    "layout": null,
+                    "fill": null,
+                    "typography": null,
+                    "effects": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

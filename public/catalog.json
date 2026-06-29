@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "stories": [
+    {
+      "id": "j3-louvre",
+      "title": "J-3 — Le téléphone de Mathieu",
+      "tagline": "Un téléphone abandonné au Louvre. Dans trois jours, quelque chose se prépare.",
+      "synopsis": "Mathieu Garnier, graphiste freelance, a laissé son iPhone sur un banc de la salle 710. Messages inquiets, notes cryptiques, Signal avec une inconnue… Le braquage est dans trois jours.",
+      "genre_tag": "ENQUÊTE",
+      "profil_temporel_label": "J-3",
+      "duree_estimee_min": 45,
+      "statut_sortie": "available",
+      "lpsp_path": "/stories/j3-louvre/lpsp.json",
+      "cover_image": "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=900&q=80&auto=format&fit=crop",
+      "cover_mood": "museum",
+      "ordre_affichage": 1,
+      "featured": true
+    },
+    {
+      "id": "demo-j3",
+      "title": "Où es-tu ? (démo)",
+      "tagline": "Version courte — 6 apps mock.",
+      "synopsis": "Ancienne démo — préférez J-3 Louvre pour l'expérience complète.",
+      "genre_tag": "DÉMO",
+      "profil_temporel_label": "Calme",
+      "duree_estimee_min": 10,
+      "statut_sortie": "available",
+      "lpsp_path": "/stories/demo-j3/lpsp.json",
+      "cover_image": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=900&q=80&auto=format&fit=crop",
+      "cover_mood": "corridor",
+      "ordre_affichage": 2,
+      "featured": false
+    },
+    {
+      "id": "la-nuit-du-train",
+      "title": "La nuit du train",
+      "tagline": "Paris–Strasbourg. Elle devait rentrer chez sa mère. Elle n'est jamais arrivée.",
+      "synopsis": "Le TGV est arrivé à l'heure. Lui, non. Tout ce qu'il reste d'elle tient dans le téléphone qu'on vient de trouver dans le couloir 7.",
+      "genre_tag": "THRILLER",
+      "profil_temporel_label": "Urgent",
+      "duree_estimee_min": 45,
+      "statut_sortie": "coming_soon",
+      "date_sortie": "2026-07-06T20:00:00+02:00",
+      "lpsp_path": null,
+      "cover_image": "https://images.unsplash.com/photo-1474486328345-b41622478134?w=900&q=80&auto=format&fit=crop",
+      "cover_mood": "train",
+      "ordre_affichage": 3,
+      "featured": false
+    }
+  ]
+}

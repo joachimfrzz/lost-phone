@@ -1,0 +1,1042 @@
+/* iOS 17 — interface système (shell, lock, PIN, home, notifications) */
+
+@import "./tokens.css";
+@import "./hig.css";
+
+/* ——— Base couche iOS ——— */
+
+.iphone,
+.iphone * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.iphone {
+  font-family: var(--ios-font);
+  font-feature-settings: "tnum" 1;
+  color: var(--ios-text-primary);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ——— Écran iPhone (plein viewport) ——— */
+
+.iphone__screen {
+  position: relative;
+  width: var(--ios-screen-w);
+  height: var(--ios-screen-h);
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+
+.iphone__wallpaper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.06);
+}
+
+.iphone__wallpaper--photo {
+  transform: none;
+}
+
+.iphone--phase-lock .iphone__wallpaper-dim,
+.iphone--phase-pin .iphone__wallpaper-dim {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.04) 0%,
+    rgba(0, 0, 0, 0) 18%,
+    rgba(0, 0, 0, 0) 78%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+}
+
+.iphone__wallpaper-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.08) 0%,
+    rgba(0, 0, 0, 0) 22%,
+    rgba(0, 0, 0, 0) 78%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+  pointer-events: none;
+}
+
+.iphone__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* ——— Status bar ——— */
+.iphone__home-indicator {
+  display: block;
+  width: var(--ios-home-indicator-w);
+  height: var(--ios-home-indicator-h);
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.iphone__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.iphone__app-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  background: var(--ios-app-surface);
+  color: #000;
+  overflow: hidden;
+}
+
+.iphone__app-layer--open {
+  animation: ios-app-open 0.48s var(--ios-spring) both;
+  transform-origin: var(--launch-x, 50%) var(--launch-y, 80%);
+}
+
+.iphone__app-layer--enter {
+  animation: ios-app-enter 0.42s var(--ios-spring) both;
+}
+
+.iphone__app-layer .iphone__home-indicator {
+  position: absolute;
+  bottom: var(--ios-home-indicator-bottom);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: none;
+}
+
+/* Phase transitions */
+.iphone--phase-pin .iphone__wallpaper {
+  filter: blur(12px) brightness(0.72);
+  transform: scale(1.1);
+  transition: filter 0.45s var(--ios-spring), transform 0.45s var(--ios-spring);
+}
+
+.iphone--phase-home .iphone__wallpaper,
+.iphone--phase-app .iphone__wallpaper {
+  filter: none;
+  transform: scale(1.06);
+}
+
+/* ——— Status bar ——— */
+
+.ios-status {
+  position: relative;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 1fr 126px 1fr;
+  align-items: center;
+  height: var(--ios-status-h);
+  padding: 10px 28px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  flex-shrink: 0;
+}
+
+.ios-status--light {
+  color: #fff;
+}
+
+.ios-status--dark {
+  color: #000;
+}
+
+.ios-status__left {
+  justify-self: start;
+}
+
+.ios-status__center {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 126px;
+  padding-top: 2px;
+}
+
+.ios-dynamic-island {
+  width: var(--ios-island-w);
+  height: var(--ios-island-h);
+  border-radius: 20px;
+  background: #000;
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+}
+
+.ios-status__right {
+  justify-self: end;
+}
+
+.ios-status__carrier-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ios-status__carrier {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.ios-status__silent {
+  flex-shrink: 0;
+  opacity: 0.92;
+}
+
+.ios-status__time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.ios-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ios-battery {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+}
+
+.ios-battery__pct {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #fff;
+  mix-blend-mode: difference;
+}
+
+.ios-battery__pct--low {
+  color: #fff;
+  mix-blend-mode: normal;
+}
+
+/* ——— Lock screen ——— */
+
+.ios-lock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  transition: transform 0.12s var(--ios-spring-out);
+  will-change: transform;
+  touch-action: none;
+  cursor: grab;
+}
+
+.ios-lock:active {
+  cursor: grabbing;
+}
+
+.ios-lock__clock-block {
+  flex-shrink: 0;
+  text-align: center;
+  padding-top: calc(var(--ios-lock-clock-top, 68px) - var(--ios-status-h, 55px));
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.28);
+}
+
+.ios-lock__date {
+  margin: 0 0 var(--ios-lock-clock-gap, 7px);
+  font-size: var(--ios-lock-date-size);
+  font-weight: var(--ios-lock-date-weight, 590);
+  letter-spacing: var(--ios-lock-date-tracking, -0.2px);
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.ios-lock__time {
+  display: block;
+  margin: 0;
+  font-family: var(--ios-font-rounded, var(--ios-font));
+  font-size: var(--ios-lock-time-size);
+  font-weight: var(--ios-lock-time-weight, 200);
+  letter-spacing: var(--ios-lock-time-tracking, -0.04em);
+  line-height: var(--ios-lock-time-lh, 0.9);
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.82);
+  filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.18));
+}
+
+.ios-lock--figma .ios-lock__clock-block {
+  text-shadow: none;
+}
+
+.ios-lock__notifs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 16px 4px;
+  min-height: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 14%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%);
+}
+
+.ios-lock__unlock-zone {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px 0 calc(var(--ios-home-indicator-bottom) + 12px);
+}
+
+/* ——— Notifications iOS 17 ——— */
+
+.ios-notif {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px 13px;
+  border-radius: var(--ios-radius-notif);
+  background: var(--ios-fill-notif);
+  backdrop-filter: var(--ios-blur-material);
+  -webkit-backdrop-filter: var(--ios-blur-material);
+  border: 0.5px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 0.5px 0 rgba(255, 255, 255, 0.12) inset,
+    0 8px 24px rgba(0, 0, 0, 0.18);
+  color: #fff;
+  text-align: left;
+  animation: ios-notif-in 0.38s var(--ios-spring) both;
+}
+
+.ios-notif--read {
+  opacity: 0.78;
+}
+
+.ios-notif__icon {
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+}
+
+.ios-notif__content {
+  min-width: 0;
+  flex: 1;
+}
+
+.ios-notif__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 1px;
+}
+
+.ios-notif__app {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.82;
+}
+
+.ios-notif__time {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.72;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-notif__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.ios-notif__body {
+  margin: 1px 0 0;
+  font-size: 15px;
+  line-height: 1.3;
+  opacity: 0.92;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ——— PIN / code d'accès ——— */
+
+.ios-pin {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+
+.ios-pin--enter {
+  animation: ios-pin-enter 0.48s var(--ios-spring) both;
+}
+
+.ios-pin__material {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 28, 30, 0.42);
+  backdrop-filter: var(--ios-glass-blur, var(--ios-blur-passcode));
+  -webkit-backdrop-filter: var(--ios-glass-blur, var(--ios-blur-passcode));
+}
+
+.ios-pin__content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 72px 24px calc(var(--ios-home-indicator-bottom) + 16px);
+}
+
+.ios-pin__title {
+  margin: 0 0 28px;
+  font-size: var(--ios-pin-title-size, 22px);
+  font-weight: var(--ios-pin-title-weight, 400);
+  letter-spacing: -0.02em;
+  opacity: 0.95;
+}
+
+.ios-pin__dots {
+  display: flex;
+  gap: 22px;
+  margin-bottom: 36px;
+}
+
+.ios-pin__dot {
+  width: var(--ios-pin-dot-size, 12px);
+  height: var(--ios-pin-dot-size, 12px);
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  transition: background 0.12s, border-color 0.12s, transform 0.12s;
+}
+
+.ios-pin__dot--on {
+  background: #fff;
+  border-color: #fff;
+  transform: scale(1.05);
+}
+
+.ios-pin__dots--shake {
+  animation: ios-pin-shake 0.48s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.ios-pin__dots--shake .ios-pin__dot {
+  border-color: rgba(255, 100, 100, 0.9);
+}
+
+.ios-pin__keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px 0;
+  width: 100%;
+  max-width: 320px;
+  margin-top: auto;
+}
+
+.ios-pin__key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--ios-pin-key-size, 75px);
+  height: var(--ios-pin-key-size, 75px);
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--ios-glass-fill, rgba(255, 255, 255, 0.12));
+  backdrop-filter: var(--ios-glass-blur);
+  -webkit-backdrop-filter: var(--ios-glass-blur);
+  border: 0.5px solid var(--ios-glass-border, rgba(255, 255, 255, 0.28));
+  color: #fff;
+  transition: background 0.08s, opacity 0.08s;
+}
+
+.ios-pin__key:active:not(.ios-pin__key--blank):not(.ios-pin__key--delete) {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.ios-pin__key--delete {
+  background: transparent;
+  border-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ios-pin__num {
+  font-size: var(--ios-pin-num-size, 32px);
+  font-weight: 300;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-pin__letters {
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  opacity: 0.82;
+}
+
+.ios-pin__footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 8px;
+  padding: 0 8px;
+}
+
+.ios-pin__link {
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+  opacity: 0.92;
+  padding: 8px 4px;
+}
+
+.ios-pin__link:active {
+  opacity: 0.5;
+}
+
+.ios-pin__link--emergency {
+  margin-left: auto;
+}
+
+/* ——— Home screen ——— */
+
+.ios-home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-top: var(--ios-home-grid-top, 4px);
+}
+
+.ios-app-icon {
+  display: block;
+  width: var(--ios-icon-size, 60px);
+  height: var(--ios-icon-size, 60px);
+}
+
+.ios-home--enter {
+  animation: ios-home-enter 0.52s var(--ios-spring) both;
+}
+
+.ios-home__pages {
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+  touch-action: pan-y;
+}
+
+.ios-home__track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.38s var(--ios-spring);
+}
+
+.ios-home__page {
+  flex: 0 0 100%;
+  overflow-y: auto;
+  padding: 0 var(--ios-grid-pad-x);
+  scrollbar-width: none;
+}
+
+.ios-home__page::-webkit-scrollbar {
+  display: none;
+}
+
+.ios-home__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--ios-grid-cols), 1fr);
+  column-gap: var(--ios-grid-gap-x, 0);
+  row-gap: var(--ios-grid-gap-y, 28px);
+  padding-top: 6px;
+  align-content: start;
+}
+
+.ios-home__pager {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.ios-home__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transition: all 0.28s var(--ios-spring);
+}
+
+.ios-home__dot--active {
+  width: 18px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.ios-home__search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 auto 10px;
+  min-width: var(--ios-home-search-min-w, 148px);
+  min-height: var(--ios-home-search-h, 29px);
+  padding: 6px 16px;
+  border-radius: var(--ios-home-search-radius, 38px);
+  background: var(--ios-glass-fill, rgba(255, 255, 255, 0.12));
+  backdrop-filter: var(--ios-glass-blur, blur(20px) saturate(180%));
+  -webkit-backdrop-filter: var(--ios-glass-blur, blur(20px) saturate(180%));
+  border: 0.5px solid var(--ios-glass-border, rgba(255, 255, 255, 0.28));
+  color: rgba(255, 255, 255, 0.92);
+  font-size: var(--ios-home-search-font-size, 11.5px);
+  font-weight: 590;
+  letter-spacing: 0;
+}
+
+.ios-home__search-icon {
+  font-family: "SF Pro", var(--ios-font);
+  line-height: 1;
+}
+
+.ios-home__search:active {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Dock */
+.ios-dock {
+  flex-shrink: 0;
+  min-height: var(--ios-dock-height, var(--ios-dock-zone-h, 120px));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 14px calc(var(--ios-home-indicator-bottom) + 6px);
+}
+
+.ios-dock__glass {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--ios-dock-gap, 24px);
+  min-height: var(--ios-dock-glass-h, 96px);
+  padding: 16px 18px;
+  border-radius: var(--ios-dock-radius, var(--ios-radius-dock));
+  background: var(--ios-fill-dock);
+  backdrop-filter: var(--ios-blur-dock);
+  -webkit-backdrop-filter: var(--ios-blur-dock);
+  border: 0.5px solid var(--ios-glass-border, rgba(255, 255, 255, 0.22));
+  box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.14) inset;
+}
+
+.ios-home .iphone__home-indicator {
+  margin-bottom: var(--ios-home-indicator-bottom);
+}
+
+/* ——— App icons ——— */
+
+.ios-icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #fff;
+}
+
+.ios-icon-btn:active .ios-app-icon {
+  transform: scale(0.92);
+  opacity: 0.85;
+}
+
+.ios-icon-btn__label {
+  font-size: var(--ios-icon-label);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.15;
+}
+
+.ios-icon-btn--dock {
+  gap: 0;
+}
+
+.ios-app-icon {
+  display: inline-flex;
+  border-radius: var(--ios-radius-icon);
+  overflow: hidden;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.22),
+    0 0.5px 0 rgba(255, 255, 255, 0.08) inset;
+  transition: transform 0.15s var(--ios-spring), opacity 0.15s;
+}
+
+.ios-app-icon--squircle {
+  border-radius: 22.37%;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,50 C0,8 8,0 50,0 C92,0 100,8 100,50 C100,92 92,100 50,100 C8,100 0,92 0,50' fill='white'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,50 C0,8 8,0 50,0 C92,0 100,8 100,50 C100,92 92,100 50,100 C8,100 0,92 0,50' fill='white'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+.ios-app-icon__img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* ——— Mode fenêtre navigateur (défaut dev) ——— */
+
+.phone-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: #0d0d0f;
+}
+
+.phone-page--loading,
+.phone-page--error {
+  background: #0d0d0f;
+}
+
+.phone-page__frame {
+  position: relative;
+  width: min(393px, 100%);
+  height: min(852px, calc(100dvh - 48px));
+  max-height: calc(100dvh - 48px);
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 24px 64px rgba(0, 0, 0, 0.55);
+  background: #000;
+}
+
+.phone-page__frame--error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 15px;
+  padding: 24px;
+  text-align: center;
+}
+
+.phone-page__frame .iphone {
+  width: 100%;
+  height: 100%;
+}
+
+.phone-page__frame .iphone__screen {
+  border-radius: 44px;
+}
+
+.phone-page__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* ——— Simulateur iOS (iPhone vide) ——— */
+
+.phone-page--simulator {
+  flex-direction: column;
+  gap: 20px;
+}
+
+.simulator-hud {
+  max-width: 393px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+}
+
+.simulator-hud__title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.simulator-hud__hint {
+  margin: 0 0 10px;
+}
+
+.simulator-hud__hint code {
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.simulator-hud__links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.simulator-hud__links a {
+  color: #0a84ff;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.simulator-hud__links a:hover {
+  text-decoration: underline;
+}
+
+.phone-page__frame--figma-compare {
+  position: relative;
+}
+
+.simulator-figma-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  pointer-events: none;
+  z-index: 50;
+  border-radius: inherit;
+}
+
+.simulator-hud__figma {
+  margin: 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.simulator-hud__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.simulator-hud__opacity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.simulator-hud__opacity input[type="range"] {
+  width: 120px;
+}
+
+.iphone-wake--inline {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* ——— Mode immersif plein écran (Capacitor / natif uniquement) ——— */
+
+body.phone-immersive {
+  background: #000;
+  overflow: hidden;
+}
+
+body.phone-immersive #root {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.iphone-immersive {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  background: #000;
+  z-index: 1000;
+}
+
+.iphone-immersive__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* Boot / chargement */
+.iphone-boot {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: #000;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--ios-font);
+  font-size: 15px;
+  z-index: 1000;
+}
+
+.iphone-boot__spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  animation: ios-spin 0.9s linear infinite;
+}
+
+.iphone-boot--error button {
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 15px;
+}
+
+/* ——— Animations ——— */
+
+@keyframes ios-pin-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ios-home-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ios-app-open {
+  from {
+    opacity: 0;
+    transform: scale(0.15);
+    border-radius: 22%;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    border-radius: 0;
+  }
+}
+
+@keyframes ios-app-enter {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ios-notif-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ios-pin-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  18% {
+    transform: translateX(-10px);
+  }
+  36% {
+    transform: translateX(10px);
+  }
+  54% {
+    transform: translateX(-8px);
+  }
+  72% {
+    transform: translateX(8px);
+  }
+}
+
+@keyframes ios-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ios-pin--enter,
+  .ios-home--enter,
+  .iphone__app-layer--enter,
+  .ios-notif,
+  .iphone--phase-pin .iphone__wallpaper {
+    animation: none !important;
+    transition: none !important;
+  }
+}

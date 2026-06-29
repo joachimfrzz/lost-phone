@@ -1,0 +1,889 @@
+
+/* ——— Phone Runtime (LPSP player) ——— */
+
+.phone-runtime {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  height: min(780px, calc(100dvh - 120px));
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.phone-runtime__shell {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background: linear-gradient(145deg, #2a2a2e 0%, #0a0a0c 100%);
+  border-radius: 44px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 80px rgba(0, 0, 0, 0.6),
+    0 0 60px var(--phone-glow, transparent);
+}
+
+.phone-runtime__bezel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 36px;
+  overflow: hidden;
+  background: #000;
+}
+
+.phone-runtime__island {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 28px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 20;
+}
+
+.phone-runtime__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-runtime__wallpaper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.phone-runtime__body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.phone-runtime__body--app {
+  background: #f2f2f7;
+}
+
+.phone-runtime__app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f2f2f7;
+  color: #000;
+}
+
+.phone-runtime__home-btn {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+  z-index: 30;
+}
+
+.phone-runtime__home-bar {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  z-index: 15;
+}
+
+/* Status bar */
+.os-status {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px 4px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.os-status--light {
+  color: #fff;
+}
+
+.os-status--dark {
+  color: #000;
+}
+
+.os-status__time {
+  min-width: 54px;
+}
+
+.ios-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ios-battery {
+  display: flex;
+  align-items: center;
+}
+
+/* iOS app icons */
+.ios-app-icon {
+  display: inline-flex;
+  border-radius: 13px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.ios-app-icon__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* iOS notifications */
+.ios-notif-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px 12px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 18px;
+  color: #fff;
+  text-align: left;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.ios-notif-card--read {
+  opacity: 0.72;
+}
+
+.ios-notif-card__icon {
+  flex-shrink: 0;
+  box-shadow: none;
+}
+
+.ios-notif-card__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.ios-notif-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.ios-notif-card__app {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+}
+
+.ios-notif-card__time {
+  font-size: 11px;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+.ios-notif-card__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.ios-notif-card__text {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.3;
+  opacity: 0.92;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Lock */
+.os-lock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  color: #fff;
+}
+
+.os-lock__top {
+  flex-shrink: 0;
+  text-align: center;
+  padding-top: 28px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+.os-lock__clock {
+  font-size: 82px;
+  font-weight: 200;
+  letter-spacing: -3px;
+  line-height: 0.95;
+}
+
+.os-lock__date {
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: 4px;
+  opacity: 0.92;
+}
+
+.os-lock__notifs-stack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px 8px;
+  min-height: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 12%);
+}
+
+.os-lock__swipe-bar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 20px;
+  width: 100%;
+}
+
+.os-lock__swipe-pill {
+  width: 130px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+/* PIN */
+.os-pin {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  padding: 24px 20px 32px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(30px);
+}
+
+.os-pin__label {
+  font-size: 17px;
+  font-weight: 400;
+  margin: 0 0 20px;
+  opacity: 0.9;
+}
+
+.os-pin__dots {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+.os-pin__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  transition: all 0.15s;
+}
+
+.os-pin__dot.filled {
+  background: #fff;
+  border-color: #fff;
+}
+
+.os-pin__dot.error {
+  border-color: #ff6b6b;
+}
+
+.os-pin__error {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin: 4px 0 12px;
+  min-height: 20px;
+}
+
+.os-pin__pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 28px;
+  margin-top: 16px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.os-pin__key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  transition: background 0.1s;
+}
+
+.os-pin__key:active {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.os-pin__key--empty {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.os-pin__key--delete {
+  background: transparent;
+}
+
+.os-pin__digit {
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.os-pin__sub {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  margin-top: 2px;
+  opacity: 0.85;
+}
+
+.os-pin__cancel {
+  margin-top: auto;
+  padding: 12px;
+  font-size: 17px;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Home */
+.os-home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 8px 0 0;
+}
+
+.os-home__pages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 22px;
+  scrollbar-width: none;
+}
+
+.os-home__pages::-webkit-scrollbar {
+  display: none;
+}
+
+.os-home__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px 0;
+  padding-top: 8px;
+  align-content: start;
+}
+
+.os-app-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.os-app-icon__label {
+  font-size: 11px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.os-dock {
+  flex-shrink: 0;
+  padding: 0 12px 28px;
+}
+
+.os-dock__inner {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 14px 12px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.os-app-icon--dock .ios-app-icon {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* In-app shared */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f2f2f7;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.app-header button {
+  font-size: 1.25rem;
+  padding: 4px 8px;
+  color: #0a84ff;
+}
+
+.app-header--notes,
+.app-header--signal {
+  background: #fff;
+}
+
+.app-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.app-list__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fff;
+  color: #000;
+}
+
+.app-list__row--static {
+  cursor: default;
+}
+
+.app-list__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #c7c7cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.app-list__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.app-list__body strong {
+  font-size: 0.9375rem;
+}
+
+.app-list__preview {
+  font-size: 0.8125rem;
+  color: #8e8e93;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-list__count {
+  font-size: 0.75rem;
+  color: #8e8e93;
+}
+
+.app-section-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #8e8e93;
+  text-transform: uppercase;
+  padding: 16px 16px 8px;
+  margin: 0;
+}
+
+.app-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+}
+
+.app-bubble {
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 18px;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.app-bubble p {
+  margin: 0;
+}
+
+.app-bubble time {
+  display: block;
+  font-size: 0.6875rem;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+.app-bubble--in {
+  align-self: flex-start;
+  background: #e9e9eb;
+  color: #000;
+}
+
+.app-bubble--out {
+  align-self: flex-end;
+  background: #0a84ff;
+  color: #fff;
+}
+
+.app-messages,
+.app-notes,
+.app-contacts,
+.app-photos,
+.app-safari,
+.app-signal,
+.app-generic {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-note-detail {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 40px;
+  background: #fff;
+}
+
+.app-note-detail h1 {
+  font-size: 1.375rem;
+  margin: 0 0 8px;
+}
+
+.app-note-meta {
+  font-size: 0.8125rem;
+  color: #8e8e93;
+}
+
+.app-note-body {
+  margin-top: 16px;
+  font-size: 1rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.app-photos__grid {
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.app-photo-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.app-photo-card__thumb {
+  height: 120px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.app-photo-card h3 {
+  margin: 0 0 4px;
+  font-size: 0.9375rem;
+}
+
+.app-photo-card p {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #666;
+}
+
+.app-generic {
+  background: #fff;
+}
+
+.app-generic__json {
+  flex: 1;
+  overflow: auto;
+  margin: 0;
+  padding: 12px;
+  font-size: 0.6875rem;
+  background: #1e1e1e;
+  color: #d4d4d4;
+}
+
+/* Calendrier */
+.app-calendrier,
+.app-mail,
+.app-instagram,
+.app-telephone,
+.app-banking,
+.app-uber {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+}
+
+.app-cal-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.app-cal-event {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.app-cal-event__date {
+  width: 44px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.app-cal-event__day {
+  display: block;
+  font-size: 22px;
+  font-weight: 300;
+  color: #ff3b30;
+  line-height: 1;
+}
+
+.app-cal-event__month {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #ff3b30;
+  font-weight: 600;
+}
+
+.app-cal-event__info h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.app-cal-event__time,
+.app-cal-event__place,
+.app-cal-event__note {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #8e8e93;
+}
+
+.app-header--cal h1,
+.app-header--bank h1,
+.app-header--uber h1 {
+  color: #ff3b30;
+}
+
+.app-header--bank h1 {
+  color: #003da5;
+}
+
+.app-header--uber h1 {
+  color: #000;
+}
+
+.app-list__row--unread strong {
+  font-weight: 700;
+}
+
+.app-list__subject {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-list__time {
+  font-size: 12px;
+  color: #8e8e93;
+  flex-shrink: 0;
+}
+
+.app-mail-detail {
+  padding: 16px 20px 40px;
+  overflow-y: auto;
+}
+
+.app-mail-detail__from {
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.app-mail-detail__date {
+  color: #8e8e93;
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.app-mail-detail__body {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+.app-bank-balance {
+  padding: 20px 16px;
+  background: linear-gradient(135deg, #003da5, #0052cc);
+  color: #fff;
+}
+
+.app-bank-balance__amount {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.app-bank-balance__label,
+.app-bank-balance__holder {
+  font-size: 13px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.app-bank-summary {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #666;
+  background: #f2f2f7;
+  margin: 0;
+}
+
+.app-bank-amount {
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.app-bank-amount.neg {
+  color: #ff3b30;
+}
+
+.app-bank-amount.pos {
+  color: #34c759;
+}
+
+.app-uber-price {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.app-ig-profile {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border-bottom: 1px solid #efefef;
+}
+
+.app-ig-profile__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fd5949, #d6249f, #285aeb);
+}
+
+.app-ig-tabs {
+  display: flex;
+  border-bottom: 1px solid #efefef;
+}
+
+.app-ig-tabs button {
+  flex: 1;
+  padding: 12px;
+  font-weight: 600;
+  color: #8e8e93;
+}
+
+.app-ig-tabs button.active {
+  color: #000;
+  border-bottom: 2px solid #000;
+}
+
+.app-ig-post__img {
+  height: 200px;
+  background: #efefef;
+}
+
+.app-ig-post {
+  border-bottom: 1px solid #efefef;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.app-call-type {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #34c759;
+  flex-shrink: 0;
+}
+
+.app-call-type--manque {
+  background: #ff3b30;
+}

@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 
-@MainActor
 final class PhoneViewModel: ObservableObject {
     @Published var phase: PhonePhase = .menu
     @Published var package: LpspPackage?

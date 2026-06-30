@@ -25,7 +25,6 @@ struct GameHomeView: View {
                     Image(systemName: "iphone.gen3")
                         .font(.system(size: 52, weight: .thin))
                         .foregroundStyle(.white.opacity(0.9))
-                        .symbolEffect(.pulse, options: .repeating.speed(0.35))
 
                     Text("Lost Phone")
                         .font(.system(size: 40, weight: .bold, design: .rounded))

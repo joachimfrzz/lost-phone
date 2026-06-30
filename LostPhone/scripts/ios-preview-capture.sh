@@ -117,14 +117,16 @@ prepare_xcode_and_simulators
 
 DERIVED_DATA="$LOSTPHONE/.derivedData-preview"
 
-echo "→ Build for iOS Simulator (generic destination — no named device required)"
+echo "→ Build for iOS Simulator (Release — no debug dylibs for Appetize)"
 xcodebuild \
   -project LostPhone.xcodeproj \
   -scheme LostPhone \
+  -configuration Release \
   -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath "$DERIVED_DATA" \
   CODE_SIGNING_ALLOWED=NO \
+  ENABLE_DEBUG_DYLIB=NO \
   build
 
 APP="$(find "$DERIVED_DATA" -name 'LostPhone.app' -type d | head -1)"
@@ -140,6 +142,9 @@ if [[ ! -f "$APP/stories/j3-louvre/lpsp.json" ]]; then
 fi
 echo "✓ LPSP stories present in app bundle"
 
+echo "→ Strip Xcode debug dylibs (break Appetize if left in bundle)"
+rm -f "$APP"/*.debug.dylib "$APP"/__preview.dylib
+
 echo "→ Package .app for Appetize"
 APPETIZE_ZIP="$ARTIFACTS/LostPhone-simulator.app.zip"
 rm -f "$APPETIZE_ZIP"
@@ -149,6 +154,10 @@ ditto -c -k --sequesterRsrc --keepParent "$APP" "$APPETIZE_ZIP"
 if ! unzip -Z1 "$APPETIZE_ZIP" | rg -q '^LostPhone\.app/'; then
   echo "ERROR: Appetize zip invalid (LostPhone.app/ missing at root)" >&2
   unzip -Z1 "$APPETIZE_ZIP" | head -20 >&2 || true
+  exit 1
+fi
+if unzip -Z1 "$APPETIZE_ZIP" | rg -q '\.debug\.dylib|__preview\.dylib'; then
+  echo "ERROR: debug dylibs must not ship to Appetize" >&2
   exit 1
 fi
 

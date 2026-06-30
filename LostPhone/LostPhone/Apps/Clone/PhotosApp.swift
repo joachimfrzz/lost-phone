@@ -11,28 +11,8 @@ struct GalleryPhoto: Identifiable, Hashable {
     let capturedLabel: String?
 }
 
-struct PicsumPhoto: Identifiable, Codable {
-    let id: String
-    let author: String
-    let width: Int
-    let height: Int
-    let url: String
-    let download_url: String
-    
-    // Smart URL helpers to get specific sizes for performance
-    var thumbnailURL: URL? {
-        URL(string: "https://picsum.photos/id/\(id)/250/250")
-    }
-    
-    var detailURL: URL? {
-        // Fetch a 1080 width version, maintaining aspect ratio roughly
-        URL(string: "https://picsum.photos/id/\(id)/1080/\(Int(1080 * (Double(height)/Double(width))))")
-    }
-}
-
 @MainActor
 class PhotoLibrary: ObservableObject {
-    @Published var photos: [PicsumPhoto] = []
     @Published var galleryPhotos: [GalleryPhoto] = []
     @Published var isLoading = false
 
@@ -40,12 +20,8 @@ class PhotoLibrary: ObservableObject {
         self.galleryPhotos = galleryPhotos
     }
 
-    var isEmpty: Bool { galleryPhotos.isEmpty && photos.isEmpty }
-    var totalCount: Int { galleryPhotos.isEmpty ? photos.count : galleryPhotos.count }
-    
-    func fetchPhotos() async {
-        isLoading = false
-    }
+    var isEmpty: Bool { galleryPhotos.isEmpty }
+    var totalCount: Int { galleryPhotos.count }
 }
 
 // MARK: - Main Tab View
@@ -85,60 +61,43 @@ struct PhotosView: View {
 struct LibraryView: View {
     @ObservedObject var library: PhotoLibrary
     @State private var gridColumns = Array(repeating: GridItem(.flexible(), spacing: 1), count: 3)
-    @State private var selectedSegment = 2 // Default to "All Photos"
+    @State private var selectedSegment = 2
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 ScrollView {
-                    LazyVGrid(columns: gridColumns, spacing: 1) {
-                        if !library.galleryPhotos.isEmpty {
+                    if library.isEmpty {
+                        ContentUnavailableView(
+                            "Aucune photo",
+                            systemImage: "photo.on.rectangle.angled",
+                            description: Text("Ajoutez des photos dans lpsp.json → content.apps.Photos")
+                        )
+                        .padding(.top, 80)
+                    } else {
+                        LazyVGrid(columns: gridColumns, spacing: 1) {
                             ForEach(library.galleryPhotos) { photo in
                                 NavigationLink(destination: GalleryPhotoDetailView(photo: photo)) {
                                     GalleryPhotoTile(photo: photo)
                                 }
                             }
-                        } else {
-                            ForEach(library.photos) { photo in
-                                NavigationLink(destination: PhotoDetailView(photo: photo)) {
-                                    AsyncImage(url: photo.thumbnailURL) { phase in
-                                        switch phase {
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(minWidth: 0, maxWidth: .infinity)
-                                                .aspectRatio(1, contentMode: .fit)
-                                                .clipped()
-                                        case .failure, .empty:
-                                            Color(uiColor: .secondarySystemBackground)
-                                                .aspectRatio(1, contentMode: .fit)
-                                        @unknown default:
-                                            EmptyView()
-                                        }
-                                    }
-                                    .id(photo.id)
-                                }
-                            }
                         }
-                    }
-                    .padding(.bottom, 20)
+                        .padding(.bottom, 20)
 
-                    VStack(spacing: 5) {
-                        Text("\(library.totalCount) Photos")
-                            .font(.system(size: 15, weight: .medium))
-                        Text("Synced with iCloud Just Now")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        VStack(spacing: 5) {
+                            Text("\(library.totalCount) Photos")
+                                .font(.system(size: 15, weight: .medium))
+                            Text("Synced with iCloud Just Now")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.bottom, 50)
                     }
-                    .padding(.bottom, 50)
-                    .opacity(library.isLoading ? 0 : 1)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    // Simulated Segmented Control (Years/Months/All)
                     Picker("", selection: $selectedSegment) {
                         Text("Years").tag(0)
                         Text("Months").tag(1)
@@ -158,9 +117,6 @@ struct LibraryView: View {
                         Image(systemName: "ellipsis.circle")
                     }
                 }
-            }
-            .task {
-                await library.fetchPhotos()
             }
         }
     }
@@ -191,13 +147,14 @@ struct GalleryPhotoTile: View {
 
 struct GalleryPhotoDetailView: View {
     let photo: GalleryPhoto
+    @Environment(\.lpspReadOnly) private var readOnly
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
             VStack(spacing: 16) {
                 Spacer()
-                Image(systemName: "photo.artframe")
+                Image(systemName: photo.caption.lowercased().contains("capture") ? "iphone" : "photo.artframe")
                     .font(.system(size: 56))
                     .foregroundStyle(.white.opacity(0.35))
                 Text(photo.caption)
@@ -219,167 +176,17 @@ struct GalleryPhotoDetailView: View {
             }
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-    }
-}
-
-// MARK: - Photo Detail View
-struct PhotoDetailView: View {
-    let photo: PicsumPhoto
-    @State private var isLiked = false
-    @State private var showInfo = false
-    @Environment(\.dismiss) var dismiss
-    
-    // Zoom state
-    @State private var currentScale: CGFloat = 1.0
-    @State private var lastScale: CGFloat = 1.0
-    @State private var offset: CGSize = .zero
-    @State private var lastOffset: CGSize = .zero
-    
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            
-            // Image Layer
-            GeometryReader { geometry in
-                AsyncImage(url: photo.detailURL) { phase in
-                    switch phase {
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .scaleEffect(currentScale)
-                                .offset(offset)
-                                .gesture(
-                                    // Zoom Gesture
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            let delta = value / lastScale
-                                            lastScale = value
-                                            let newScale = currentScale * delta
-                                            currentScale = min(max(newScale, 1), 5)
-                                        }
-                                        .onEnded { _ in
-                                            lastScale = 1.0
-                                            withAnimation(.spring()) {
-                                                if currentScale < 1 {
-                                                    currentScale = 1
-                                                    offset = .zero
-                                                }
-                                            }
-                                        }
-                                )
-                            // Double tap to reset
-                                .onTapGesture(count: 2) {
-                                    withAnimation {
-                                        currentScale = 1
-                                        offset = .zero
-                                    }
-                                }
-                        case .empty:
-                            ProgressView()
-                                .tint(.white)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        case .failure:
-                            Image(systemName: "exclamationmark.triangle")
-                                .foregroundStyle(.white)
-                        @unknown default:
-                            EmptyView()
-                    }
-                }
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-            }
-        }
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .toolbarBackground(.visible, for: .bottomBar) // Semi-transparent bottom bar
         .toolbar {
-            // Top Toolbar
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { isLiked.toggle() }) {
-                    Image(systemName: isLiked ? "heart.fill" : "heart")
-                        .foregroundStyle(isLiked ? .white : .white) // iOS Photos uses white icon unless active, then solid
+                Button(action: {}) {
+                    Image(systemName: "heart")
                 }
-            }
-            
-            // Bottom Toolbar
-            ToolbarItem(placement: .bottomBar) {
-                HStack {
-                    Button(action: {}) {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-                    Spacer()
-                    Button(action: { isLiked.toggle() }) {
-                        Image(systemName: isLiked ? "heart.fill" : "heart")
-                            .foregroundStyle(isLiked ? .red : .blue) // iOS uses Blue/Red in bottom bar context sometimes
-                    }
-                    Spacer()
-                    Button(action: { showInfo.toggle() }) {
-                        Image(systemName: "info.circle")
-                    }
-                    Spacer()
-                    Button(action: {}) {
-                        Image(systemName: "trash")
-                    }
-                }
-            }
-        }
-        .sheet(isPresented: $showInfo) {
-            InfoSheet(photo: photo)
-                .presentationDetents([.medium, .fraction(0.3)])
-        }
-    }
-}
-
-struct InfoSheet: View {
-    let photo: PicsumPhoto
-    
-    var body: some View {
-        List {
-            Section {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Apple iPhone 15 Pro")
-                            .font(.headline)
-                        Text("Main Camera — 24 mm f/1.78")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                }
-                
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("ISO 64")
-                        Text("24MP • \(photo.width) x \(photo.height) • 4.2 MB")
-                            .foregroundStyle(.secondary)
-                    }
-                    .font(.caption)
-                }
-            } header: {
-                Text(Date().formatted(date: .complete, time: .shortened))
-                    .textCase(nil)
-            }
-            
-            Section {
-                HStack {
-                    Image(systemName: "mappin.and.ellipse")
-                        .font(.title2)
-                        .foregroundStyle(.blue)
-                    VStack(alignment: .leading) {
-                        Text("Cupertino, CA")
-                            .font(.headline)
-                        Text("Taken locally")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                .padding(.vertical, 4)
+                .disabled(readOnly)
             }
         }
     }
 }
 
-// Helper to init with hex if needed, or just standard Preview
 #Preview {
     PhotosView()
 }

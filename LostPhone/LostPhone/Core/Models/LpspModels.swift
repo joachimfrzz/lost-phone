@@ -72,11 +72,18 @@ struct LpspSystem: Codable {
     let dock: [String]?
     let batterie: String?
     let wifiEnregistres: [WifiEntry]?
+    let proprietaire: DeviceOwnerConfig?
 
     enum CodingKeys: String, CodingKey {
         case dock, batterie
         case wifiEnregistres = "wifi_enregistrees"
+        case proprietaire
     }
+}
+
+struct DeviceOwnerConfig: Codable {
+    let nom: String?
+    let initiales: String?
 }
 
 struct WifiEntry: Codable {

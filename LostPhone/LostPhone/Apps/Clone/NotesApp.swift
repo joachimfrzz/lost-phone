@@ -62,6 +62,7 @@ class NotesManager: ObservableObject {
 struct NotesView: View {
     @StateObject private var manager: NotesManager
     @State private var navPath = NavigationPath()
+    @Environment(\.lpspReadOnly) private var readOnly
 
     init(manager: NotesManager = NotesManager()) {
         _manager = StateObject(wrappedValue: manager)
@@ -99,14 +100,17 @@ struct NotesView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Edit") {}.foregroundStyle(.yellow)
+                        .disabled(readOnly)
                 }
                 ToolbarItem(placement: .bottomBar) {
-                    HStack {
-                        Image(systemName: "folder.badge.plus")
-                            .foregroundStyle(.yellow)
-                        Spacer()
-                        Image(systemName: "square.and.pencil")
-                            .foregroundStyle(.yellow)
+                    if !readOnly {
+                        HStack {
+                            Image(systemName: "folder.badge.plus")
+                                .foregroundStyle(.yellow)
+                            Spacer()
+                            Image(systemName: "square.and.pencil")
+                                .foregroundStyle(.yellow)
+                        }
                     }
                 }
             }

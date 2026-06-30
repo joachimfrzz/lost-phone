@@ -114,4 +114,8 @@ enum LpspCloneBridge {
             )
         }
     }
+
+    static func musicManager(from payload: AnyCodable?) -> MusicManager {
+        MusicManager(tracks: LpspAdapters.musicTracks(from: payload))
+    }
 }

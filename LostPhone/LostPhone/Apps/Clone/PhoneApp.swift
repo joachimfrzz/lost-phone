@@ -294,6 +294,8 @@ struct RecentItem: Identifiable {
 // MARK: - 3. Contacts View
 struct ContactsView: View {
     @State private var searchText = ""
+    @Environment(\.deviceOwner) private var owner
+    @Environment(\.lpspReadOnly) private var readOnly
     let contacts: [PhoneContact]
 
     private static let demoContacts = ["Aaron", "Adam", "Brian", "Bob", "Charlie", "Craig Federighi", "David", "Emily", "Frank", "Greg", "Harry", "Ian", "John Appleseed", "Jony Ive", "Kate", "Larry", "Mike", "Nancy", "Oscar", "Pallav Agarwal", "Paul", "Quincy", "Rachel", "Steve Jobs", "Tim Cook", "Ursula", "Victor", "Wendy", "Xavier", "Yvonne", "Zach"]
@@ -327,10 +329,10 @@ struct ContactsView: View {
                         Circle()
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 60, height: 60)
-                            .overlay(Text("MG").font(.title2).bold().foregroundStyle(.white))
+                            .overlay(Text(owner.initials).font(.title2).bold().foregroundStyle(.white))
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Mathieu Garnier")
+                            Text(owner.name)
                                 .font(.title2)
                                 .fontWeight(.semibold)
                             Text("My Card")
@@ -437,44 +439,61 @@ struct VoicemailView: View {
 
 // MARK: - 5. Favorites
 struct FavoritesView: View {
+    @Environment(\.lpspReadOnly) private var readOnly
+
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(0..<3) { _ in
-                    HStack(spacing: 15) {
-                        Circle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 35, height: 35)
-                            .overlay(Text("TC").font(.caption).bold())
-                        
-                        VStack(alignment: .leading) {
-                            Text("Tim Cook")
-                                .fontWeight(.bold)
-                            HStack {
-                                Image(systemName: "iphone")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Text("mobile")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        Spacer()
-                        Image(systemName: "info.circle")
-                            .foregroundStyle(.blue)
-                            .font(.title2)
-                    }
-                    .padding(.vertical, 4)
+            Group {
+                if readOnly {
+                    ContentUnavailableView(
+                        "Favorites",
+                        systemImage: "star.fill",
+                        description: Text("Aucun favori")
+                    )
+                } else {
+                    favoritesDemoList
                 }
             }
-            .listStyle(.plain)
             .navigationTitle("Favorites")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {}) { Image(systemName: "plus") }
+                        .disabled(readOnly)
                 }
             }
         }
+    }
+
+    private var favoritesDemoList: some View {
+        List {
+            ForEach(0..<3) { _ in
+                HStack(spacing: 15) {
+                    Circle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 35, height: 35)
+                        .overlay(Text("TC").font(.caption).bold())
+                    
+                    VStack(alignment: .leading) {
+                        Text("Tim Cook")
+                            .fontWeight(.bold)
+                        HStack {
+                            Image(systemName: "iphone")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            Text("mobile")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Spacer()
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.blue)
+                        .font(.title2)
+                }
+                .padding(.vertical, 4)
+            }
+        }
+        .listStyle(.plain)
     }
 }
 

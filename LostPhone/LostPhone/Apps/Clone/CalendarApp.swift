@@ -275,11 +275,14 @@ struct TimelineGridView: View {
 struct EventsLayoutView: View {
     let selectedDate: Date
     let events: [CalendarEvent]
+    @Environment(\.lpspReadOnly) private var readOnly
     private let calendar = Calendar.current
     
     var body: some View {
         let dayEvents = events.filter { calendar.isDate($0.start, inSameDayAs: selectedDate) }
-        let displayEvents = dayEvents.isEmpty ? getMockEvents(for: selectedDate) : dayEvents
+        let displayEvents = dayEvents.isEmpty && !readOnly
+            ? getMockEvents(for: selectedDate)
+            : dayEvents
         
         ZStack(alignment: .topLeading) {
             ForEach(displayEvents) { event in

@@ -309,6 +309,8 @@ struct EmailRow: View {
 struct EmailDetailView: View {
     let email: Email
     @ObservedObject var manager: MailManager
+    @Environment(\.deviceOwner) private var owner
+    @Environment(\.lpspReadOnly) private var readOnly
     
     var body: some View {
         ScrollView {
@@ -343,7 +345,7 @@ struct EmailDetailView: View {
                                     .fontWeight(.semibold)
                                 Spacer()
                             }
-                            Text("To: John Appleseed")
+                            Text("To: \(owner.name)")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }

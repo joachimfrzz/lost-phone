@@ -179,7 +179,11 @@
         }
       ],
       "focus_actif": "Aucun",
-      "batterie": "34%"
+      "batterie": "34%",
+      "proprietaire": {
+        "nom": "Mathieu Garnier",
+        "initiales": "MG"
+      }
     },
     "apps": {
       "Contacts": {

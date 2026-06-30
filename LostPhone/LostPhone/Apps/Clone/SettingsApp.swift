@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @Environment(\.deviceOwner) private var owner
+    @Environment(\.lpspReadOnly) private var readOnly
     // Global Connectivity State
     @State private var airplaneMode = false
     @State private var wifiEnabled = true
@@ -24,7 +26,7 @@ struct SettingsView: View {
                                 .frame(width: 60, height: 60)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("John Appleseed")
+                                Text(owner.name)
                                     .font(.title2)
                                     .fontWeight(.regular)
                                 Text("Apple ID, iCloud+, Media & Purchases")
@@ -721,6 +723,8 @@ struct SoundsView: View {
 }
 
 struct AppleIDView: View {
+    @Environment(\.deviceOwner) private var owner
+
     var body: some View {
         List {
             Section {
@@ -730,9 +734,9 @@ struct AppleIDView: View {
                         .foregroundStyle(Color(uiColor: .systemGray4))
                         .frame(width: 80, height: 80)
                     
-                    Text("John Appleseed")
+                    Text(owner.name)
                         .font(.title)
-                    Text("john.appleseed@icloud.com")
+                    Text("\(owner.initials.lowercased())@icloud.com")
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)

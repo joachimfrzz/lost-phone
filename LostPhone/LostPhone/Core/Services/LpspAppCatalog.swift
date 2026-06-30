@@ -2,19 +2,7 @@ import SwiftUI
 
 enum LpspAppCatalog {
     static func cloneType(for lpspName: String) -> AppType? {
-        switch lpspName {
-        case "Messages": return .messages
-        case "Telephone": return .phone
-        case "Photos": return .photos
-        case "Safari": return .safari
-        case "Notes": return .notes
-        case "Mail": return .mail
-        case "Calendrier": return .calendar
-        case "Réglages", "Settings": return .settings
-        case "Spotify": return .music
-        case "Netflix": return .music
-        default: return nil
-        }
+        CloneAppCatalog.appType(for: lpspName)
     }
 
     static func iconAsset(for lpspName: String) -> String? {

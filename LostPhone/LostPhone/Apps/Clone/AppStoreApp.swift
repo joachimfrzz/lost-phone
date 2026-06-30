@@ -551,16 +551,17 @@ struct AccountIcon: View {
 
 struct AccountView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.deviceOwner) private var owner
     
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     HStack(spacing: 12) {
-                        Circle().fill(.blue).frame(width: 50, height: 50).overlay(Text("JA").foregroundStyle(.white))
+                        Circle().fill(.blue).frame(width: 50, height: 50).overlay(Text(owner.initials).foregroundStyle(.white))
                         VStack(alignment: .leading) {
-                            Text("John Appleseed").font(.headline)
-                            Text("john.appleseed@icloud.com").font(.caption).foregroundStyle(.secondary)
+                            Text(owner.name).font(.headline)
+                            Text("\(owner.initials.lowercased())@icloud.com").font(.caption).foregroundStyle(.secondary)
                         }
                     }
                 }

@@ -10,15 +10,33 @@ struct Track: Identifiable, Codable, Hashable {
     let artistName: String
     let artworkUrl100: String
     let previewUrl: String?
-    
+
     var id: Int { trackId }
+
+    init(stableId: String, trackName: String, artistName: String, artworkUrl100: String = "", previewUrl: String? = nil) {
+        self.trackId = abs(stableId.hashValue)
+        self.trackName = trackName
+        self.artistName = artistName
+        self.artworkUrl100 = artworkUrl100
+        self.previewUrl = previewUrl
+    }
+
+    init(trackId: Int, trackName: String, artistName: String, artworkUrl100: String, previewUrl: String?) {
+        self.trackId = trackId
+        self.trackName = trackName
+        self.artistName = artistName
+        self.artworkUrl100 = artworkUrl100
+        self.previewUrl = previewUrl
+    }
     
     var artworkLarge: URL? {
-        URL(string: artworkUrl100.replacingOccurrences(of: "100x100", with: "600x600"))
+        guard !artworkUrl100.isEmpty else { return nil }
+        return URL(string: artworkUrl100.replacingOccurrences(of: "100x100", with: "600x600"))
     }
     
     var artworkSmall: URL? {
-        URL(string: artworkUrl100)
+        guard !artworkUrl100.isEmpty else { return nil }
+        return URL(string: artworkUrl100)
     }
 }
 
@@ -34,7 +52,7 @@ class MusicManager: ObservableObject {
     @Published var currentTrack: Track?
     @Published var isPlaying: Bool = false
     @Published var showFullPlayer: Bool = false
-    @Published var searchText: String = "The Weeknd"
+    @Published var searchText: String = ""
     
     @Published var currentTime: Double = 0.0
     @Published var duration: Double = 29.0
@@ -42,23 +60,25 @@ class MusicManager: ObservableObject {
     private var player: AVPlayer?
     private var cancellables = Set<AnyCancellable>()
     private var timeObserver: Any?
+
+    static let storyFallbackTracks: [Track] = [
+        Track(stableId: "m1", trackName: "Louvre — ambiance ref", artistName: "Playlist perso"),
+        Track(stableId: "m2", trackName: "La Dame à l'hermine", artistName: "Podcast Arte"),
+        Track(stableId: "m3", trackName: "Nuit blanche", artistName: "Archive locale"),
+        Track(stableId: "m4", trackName: "Hugo 💙", artistName: "Mix maison"),
+    ]
     
-    init() {
-        searchMusic()
+    init(tracks: [Track] = storyFallbackTracks) {
+        self.tracks = tracks.isEmpty ? Self.storyFallbackTracks : tracks
     }
     
     func searchMusic() {
-        let query = searchText.replacingOccurrences(of: " ", with: "+")
-        guard let url = URL(string: "https://itunes.apple.com/search?term=\(query)&entity=song&limit=25") else { return }
-        
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map { $0.data }
-            .decode(type: ITunesResponse.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] response in
-                self?.tracks = response.results
-            })
-            .store(in: &cancellables)
+        // Lecture seule Lost Phone — pas d'appel iTunes.
+        guard !searchText.isEmpty else { return }
+        let query = searchText.lowercased()
+        tracks = (tracks.isEmpty ? Self.storyFallbackTracks : tracks).filter {
+            $0.trackName.lowercased().contains(query) || $0.artistName.lowercased().contains(query)
+        }
     }
     
     func play(_ track: Track) {
@@ -71,15 +91,22 @@ class MusicManager: ObservableObject {
             return
         }
         
-        guard let urlString = track.previewUrl, let url = URL(string: urlString) else { return }
+        guard let urlString = track.previewUrl, let url = URL(string: urlString) else {
+            currentTrack = track
+            isPlaying = false
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                showFullPlayer = true
+            }
+            return
+        }
         
-        // 2. CRITICAL FIX: Remove the old observer from the OLD player instance *before* overwriting 'player'
+        // Remove the old observer from the OLD player instance before overwriting 'player'
         if let observer = timeObserver {
             player?.removeTimeObserver(observer)
             timeObserver = nil
         }
         
-        // 3. Setup New Player
+        // Setup New Player
         currentTrack = track
         let playerItem = AVPlayerItem(url: url)
         player = AVPlayer(playerItem: playerItem)
@@ -128,8 +155,13 @@ class MusicManager: ObservableObject {
 // MARK: - Main View
 
 struct MusicView: View {
-    @StateObject private var manager = MusicManager()
+    @StateObject private var manager: MusicManager
     @Namespace private var animation
+    @Environment(\.lpspReadOnly) private var readOnly
+
+    init(manager: MusicManager = MusicManager()) {
+        _manager = StateObject(wrappedValue: manager)
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {

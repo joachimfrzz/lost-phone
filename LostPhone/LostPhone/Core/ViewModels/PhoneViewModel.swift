@@ -37,6 +37,10 @@ final class PhoneViewModel: ObservableObject {
         notifications.filter { !$0.lu }.count
     }
 
+    var deviceOwner: DeviceOwner {
+        LpspAdapters.deviceOwner(from: package)
+    }
+
     func startStory(_ storyId: String) async {
         GameProgressStore.recordStoryStarted(storyId)
         await loadStory(storyId: storyId)

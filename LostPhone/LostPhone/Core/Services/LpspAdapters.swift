@@ -108,6 +108,14 @@ struct LpspContact: Identifiable, Equatable, Hashable {
 }
 
 enum LpspAdapters {
+    static func deviceOwner(from package: LpspPackage?) -> DeviceOwner {
+        guard let config = package?.content.system?.proprietaire,
+              let name = config.nom, !name.isEmpty else {
+            return .fallback
+        }
+        return DeviceOwner(name: name, initials: config.initiales)
+    }
+
     static func messages(from payload: AnyCodable?) -> [LpspConversation] {
         threads(from: payload, key: "threads")
     }
@@ -251,6 +259,22 @@ enum LpspAdapters {
                 nickname: object["surnom"]?.stringValue ?? name,
                 relation: object["relation"]?.stringValue ?? "",
                 note: object["note"]?.stringValue ?? ""
+            )
+        }
+    }
+
+    static func musicTracks(from payload: AnyCodable?) -> [Track] {
+        guard let items = payload?["pistes"]?.arrayValue ?? payload?["tracks"]?.arrayValue else {
+            return MusicManager.storyFallbackTracks
+        }
+        return items.enumerated().compactMap { index, raw in
+            guard let object = raw.objectValue else { return nil }
+            let title = object["titre"]?.stringValue ?? object["title"]?.stringValue ?? "Titre"
+            let artist = object["artiste"]?.stringValue ?? object["artist"]?.stringValue ?? "Artiste"
+            return Track(
+                stableId: object["id"]?.stringValue ?? "track-\(index)",
+                trackName: title,
+                artistName: artist
             )
         }
     }

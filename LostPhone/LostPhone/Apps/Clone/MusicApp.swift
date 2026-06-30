@@ -46,7 +46,6 @@ struct ITunesResponse: Codable {
 
 // MARK: - Logic Manager
 
-@MainActor
 class MusicManager: ObservableObject {
     @Published var tracks: [Track] = []
     @Published var currentTrack: Track?

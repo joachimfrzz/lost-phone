@@ -117,7 +117,7 @@ prepare_xcode_and_simulators
 
 DERIVED_DATA="$LOSTPHONE/.derivedData-preview"
 
-echo "→ Build for iOS Simulator (Release — no debug dylibs for Appetize)"
+echo "→ Build for iOS Simulator (Release, universal binary for Appetize)"
 xcodebuild \
   -project LostPhone.xcodeproj \
   -scheme LostPhone \
@@ -127,6 +127,8 @@ xcodebuild \
   -derivedDataPath "$DERIVED_DATA" \
   CODE_SIGNING_ALLOWED=NO \
   ENABLE_DEBUG_DYLIB=NO \
+  ONLY_ACTIVE_ARCH=NO \
+  ARCHS="arm64 x86_64" \
   build
 
 APP="$(find "$DERIVED_DATA" -name 'LostPhone.app' -type d | head -1)"
@@ -144,6 +146,15 @@ echo "✓ LPSP stories present in app bundle"
 
 echo "→ Strip Xcode debug dylibs (break Appetize if left in bundle)"
 rm -f "$APP"/*.debug.dylib "$APP"/__preview.dylib
+
+echo "→ Ad-hoc codesign (required by some Appetize simulators)"
+codesign --force --sign - --timestamp=none --deep "$APP"
+codesign --verify --verbose=2 "$APP"
+
+if ! file "$APP/LostPhone" | grep -q "universal binary"; then
+  echo "WARN: LostPhone binary is not universal (Appetize prefers arm64+x86_64)" >&2
+  file "$APP/LostPhone" >&2
+fi
 
 echo "→ Package .app for Appetize"
 APPETIZE_ZIP="$ARTIFACTS/LostPhone-simulator.app.zip"

@@ -133,6 +133,13 @@ if [[ -z "$APP" ]]; then
   exit 1
 fi
 
+if [[ ! -f "$APP/stories/j3-louvre/lpsp.json" ]]; then
+  echo "ERROR: LPSP stories missing from app bundle ($APP/stories)" >&2
+  find "$APP" -maxdepth 3 -type f | head -30 >&2 || true
+  exit 1
+fi
+echo "✓ LPSP stories present in app bundle"
+
 echo "→ Package .app for Appetize"
 (cd "$(dirname "$APP")" && zip -qr "$ARTIFACTS/LostPhone-simulator.app.zip" "$(basename "$APP")")
 

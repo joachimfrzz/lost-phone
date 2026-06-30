@@ -27,6 +27,22 @@ targets:
       - path: LostPhone/Resources/stories
         type: folder
         buildPhase: resources
+    postBuildScripts:
+      - name: Embed LPSP stories
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          APP="${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}"
+          SRC="${SRCROOT}/LostPhone/Resources/stories"
+          DST="${APP}/stories"
+          if [ ! -d "$SRC" ]; then
+            echo "error: missing $SRC" >&2
+            exit 1
+          fi
+          rm -rf "$DST"
+          mkdir -p "$DST"
+          cp -R "$SRC/." "$DST/"
+          echo "Embedded LPSP stories into $DST"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.lostphone.game

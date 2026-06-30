@@ -1,6 +1,6 @@
-# Lost Phone — SwiftUI natif (base zerocode117)
+# Lost Phone — SwiftUI natif
 
-React + Figma ne sont **plus la cible**. Le jeu tourne en **SwiftUI** avec contenu **LPSP JSON** modifiable.
+Jeu d'investigation sur iPhone simulé. **SwiftUI + LPSP JSON** — React/Figma/Capacitor ne sont plus la cible iPhone.
 
 ## Démarrage (Mac cloud ou Codemagic)
 
@@ -12,28 +12,28 @@ open LostPhone.xcodeproj
 # Run sur iPhone — PIN J-3 : 1503
 ```
 
-Sans Mac local → voir `codemagic-swiftui.yaml` et [SWIFTUI-LPSP.md](./SWIFTUI-LPSP.md).
+Sans Mac local → voir `codemagic.yaml` et [SWIFTUI-LPSP.md](./SWIFTUI-LPSP.md).
 
 ## Architecture
 
+Trois mondes séparés — détail complet dans [ARCHITECTURE.md](./ARCHITECTURE.md).
+
 ```
 LostPhone/
-├── LostPhoneApp.swift          @main
-├── Core/
-│   ├── Models/LpspModels.swift   Types JSON
-│   ├── ViewModels/PhoneViewModel.swift
-│   └── Services/                   Loader, scénario, adapters
-├── System/                         Verrou, PIN, Home (zerocode117)
+├── Game/           Menu, choix histoire, progression
+├── Phone/          Verrou, PIN, home, overlays système
 ├── Apps/
-│   ├── Clone/                      Apps système zerocode117 (UI)
-│   ├── LpspMessagesView.swift      Messages ← LPSP
-│   └── LpspAppRouter.swift         Route app → vue
-└── Resources/stories/              Copie de public/stories/
+│   ├── Clone/      Apps Apple zerocode117 + injection LPSP
+│   └── Custom/     WhatsApp, Signal… (SwiftUI maison)
+├── Core/           Loader, adapters, bridge, scénario
+└── Resources/stories/<id>/lpsp.json
 ```
+
+Audit du clone : [docs/CLONE-AUDIT.md](./docs/CLONE-AUDIT.md).
 
 ## Contenu modifiable
 
-**Un seul fichier** par histoire : `Resources/stories/j3-louvre/lpsp.json`
+**Un fichier** par histoire : `Resources/stories/j3-louvre/lpsp.json` (sync : `npm run lpsp:sync` depuis la racine du monorepo).
 
 | Section JSON | Effet in-game |
 |---|---|
@@ -42,26 +42,32 @@ LostPhone/
 | `content.envelope.fond_ecran.source` | Fond d'écran |
 | `player_config.verrouillage.code` | Code PIN |
 | `content.apps.Messages.threads` | Conversations Messages |
+| `content.apps.Calendrier.evenements` | Calendrier |
+| `content.apps.Contacts.fiches` | Contacts |
 | `content.apps.*` | Données par app |
-| `scenario.evenements` | Notifs dynamiques en jeu |
+| `scenario.evenements` | Notifs dynamiques |
 | `manifest.apps_presentes` | Apps sur l'accueil |
 | `content.system.dock` | Apps du dock |
 
-Édite le JSON → rebuild → le jeu reflète les changements. **Aucun code Swift à toucher** pour du texte / messages / notifs.
+Édite le JSON → rebuild → le jeu reflète les changements. Pas de code Swift pour du texte / messages / notifs.
 
 ## Apps
 
-| App | UI | Données |
+| App | UI | Données LPSP |
 |---|---|---|
-| Messages | Clone + LPSP | ✅ JSON |
-| Photos, Safari, Mail, Phone, Notes, Calendrier, Réglages | zerocode117 | Demo (à brancher LPSP) |
-| WhatsApp, Signal, Instagram, Uber… | Générique JSON | ✅ JSON (vue debug) → à polir |
+| Messages, Notes, Photos, Mail, Telephone, Safari | Clone zerocode117 | ✅ |
+| Calendrier, Contacts | Clone (+ injection) | ✅ |
+| Réglages, Météo, Musique, Horloge… | Clone | Demo |
+| WhatsApp, Signal | Custom SwiftUI | ✅ |
+| Instagram, Uber, banque… | GenericLpspAppView | JSON brut → à polir |
+
+**Règle** : pas de `LpspXxxView` parallèle pour une app déjà dans `Apps/Clone/`.
 
 ## Crédits UI
 
-Shell et apps système : [zerocode117/iOS-26-clone](https://github.com/zerocode117/iOS-26-clone) (MIT).
+Shell apps système : [zerocode117/iOS-26-clone](https://github.com/zerocode117/iOS-26-clone) (MIT).
 
 ## Ancien stack (deprecated)
 
-- `game/src/` React — conservé pour référence Creator, **plus maintenu pour l'iPhone**
+- `game/src/` React — référence Creator, **plus maintenu pour l'iPhone**
 - Figma pipeline — abandonné

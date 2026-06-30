@@ -18,7 +18,8 @@ enum LpspAppCatalog {
     }
 
     static func iconAsset(for lpspName: String) -> String? {
-        cloneType(for: lpspName)?.assetName
+        if lpspName == "Contacts" { return "contacts" }
+        return cloneType(for: lpspName)?.assetName
     }
 
     static func displayName(_ lpspName: String) -> String {
@@ -50,7 +51,7 @@ struct LpspAppIconView: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 5) {
-                if let clone = LpspAppCatalog.cloneType(for: appName), let asset = clone.assetName {
+                if let asset = LpspAppCatalog.iconAsset(for: appName) {
                     Image(asset)
                         .resizable()
                         .aspectRatio(contentMode: .fit)

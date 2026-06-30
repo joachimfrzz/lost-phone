@@ -23,10 +23,12 @@ struct PhoneRootView: View {
                     }
             case .lock:
                 LockScreenView()
+                    .phoneSystemChrome()
             case .pin:
                 PinCodeView()
             case .home, .app:
                 HomeShellView()
+                    .phoneSystemChrome()
             }
         }
         .environmentObject(phone)

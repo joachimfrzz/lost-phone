@@ -25,6 +25,10 @@ struct LpspAppRouter: View {
     let appName: String
     @EnvironmentObject private var phone: PhoneViewModel
 
+    private var contacts: [PhoneContact] {
+        LpspCloneBridge.phoneContacts(from: LpspAdapters.contacts(from: phone.contactsPayload()))
+    }
+
     var body: some View {
         let payload = phone.appData(for: appName)
 
@@ -43,7 +47,14 @@ struct LpspAppRouter: View {
             case "Mail":
                 MailView(manager: LpspCloneBridge.mailManager(from: LpspAdapters.mail(from: payload)))
             case "Telephone":
-                PhoneView(recentCalls: LpspCloneBridge.recentCalls(from: LpspAdapters.phoneRecents(from: payload)))
+                PhoneView(
+                    recentCalls: LpspCloneBridge.recentCalls(from: LpspAdapters.phoneRecents(from: payload)),
+                    contacts: contacts
+                )
+            case "Contacts":
+                ContactsView(contacts: contacts)
+            case "Calendrier":
+                CalendarView(events: LpspCloneBridge.calendarEvents(from: LpspAdapters.calendar(from: payload)))
             case "Safari":
                 SafariView(model: LpspCloneBridge.safariViewModel(
                     tabs: LpspAdapters.safariTabs(from: payload),
@@ -67,7 +78,8 @@ struct LpspAppRouter: View {
         case .settings: SettingsView()
         case .appStore: AppStoreView()
         case .clock: ClockView()
-        case .calendar: CalendarView()
+        case .calendar:
+            CalendarView(events: LpspCloneBridge.calendarEvents(from: LpspAdapters.calendar(from: phone.appData(for: "Calendrier"))))
         case .camera: CameraView()
         case .music: MusicView()
         default:

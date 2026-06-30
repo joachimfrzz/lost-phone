@@ -60,7 +60,10 @@ struct GameHomeView: View {
                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                 Task { await phone.startStory(story.id) }
                             } label: {
-                                StoryCard(story: story)
+                                StoryCard(
+                                    story: story,
+                                    isLastPlayed: GameProgressStore.lastStoryId == story.id
+                                )
                             }
                             .buttonStyle(.plain)
                         }
@@ -83,6 +86,7 @@ struct GameHomeView: View {
 
 private struct StoryCard: View {
     let story: StoryEntry
+    var isLastPlayed = false
 
     var body: some View {
         HStack(spacing: 16) {
@@ -102,9 +106,19 @@ private struct StoryCard: View {
                 }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(story.title)
-                    .font(.headline)
-                    .foregroundStyle(.white)
+                HStack(spacing: 6) {
+                    Text(story.title)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                    if isLastPlayed {
+                        Text("Reprendre")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.85))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(Capsule().fill(.white.opacity(0.15)))
+                    }
+                }
                 if let subtitle = story.subtitle {
                     Text(subtitle)
                         .font(.subheadline)

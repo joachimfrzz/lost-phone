@@ -88,4 +88,30 @@ enum LpspCloneBridge {
             }
         )
     }
+
+    static func calendarEvents(from items: [LpspCalendarEvent]) -> [CalendarEvent] {
+        let palette: [Color] = [.orange, .blue, .purple, .green, .pink, .teal, .indigo]
+        return items.map { item in
+            let colorIndex = abs(item.id.hashValue) % palette.count
+            return CalendarEvent(
+                stableId: item.id,
+                title: item.title,
+                location: item.location?.isEmpty == false ? item.location : nil,
+                start: item.start,
+                end: item.end,
+                color: palette[colorIndex]
+            )
+        }
+    }
+
+    static func phoneContacts(from items: [LpspContact]) -> [PhoneContact] {
+        items.map { item in
+            PhoneContact(
+                stableId: item.id,
+                displayName: item.displayName,
+                relation: item.relation,
+                note: item.note
+            )
+        }
+    }
 }

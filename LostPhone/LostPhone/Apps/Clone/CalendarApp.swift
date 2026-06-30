@@ -3,18 +3,41 @@ import Combine
 
 // MARK: - Models
 struct CalendarEvent: Identifiable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let location: String?
     let start: Date
     let end: Date
     let color: Color
+
+    init(stableId: String, title: String, location: String?, start: Date, end: Date, color: Color) {
+        self.id = LpspStableId.uuid(stableId)
+        self.title = title
+        self.location = location
+        self.start = start
+        self.end = end
+        self.color = color
+    }
+
+    init(title: String, location: String?, start: Date, end: Date, color: Color) {
+        self.id = UUID()
+        self.title = title
+        self.location = location
+        self.start = start
+        self.end = end
+        self.color = color
+    }
 }
 
 // MARK: - Main View
 struct CalendarView: View {
+    let events: [CalendarEvent]
     @State private var selectedDate = Date()
     @State private var currentMonthOffset = 0 // 0 = Current Month
+
+    init(events: [CalendarEvent] = []) {
+        self.events = events
+    }
     
     var body: some View {
         NavigationStack {
@@ -26,7 +49,7 @@ struct CalendarView: View {
                 WeekDaysHeader()
                 
                 // 3. Month Grid
-                MonthGridView(selectedDate: $selectedDate)
+                MonthGridView(selectedDate: $selectedDate, events: events)
                     .padding(.bottom, 10)
                 
                 Divider()
@@ -39,7 +62,7 @@ struct CalendarView: View {
                             TimelineGridView()
                             
                             // Events Layer
-                            EventsLayoutView(selectedDate: selectedDate)
+                            EventsLayoutView(selectedDate: selectedDate, events: events)
                             
                             // Current Time Line indicator
                             if Calendar.current.isDateInToday(selectedDate) {
@@ -127,6 +150,7 @@ struct WeekDaysHeader: View {
 
 struct MonthGridView: View {
     @Binding var selectedDate: Date
+    let events: [CalendarEvent]
     private let calendar = Calendar.current
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     
@@ -136,7 +160,7 @@ struct MonthGridView: View {
         LazyVGrid(columns: columns, spacing: 12) {
             ForEach(days, id: \.self) { date in
                 if let date = date {
-                    DayCell(date: date, selectedDate: $selectedDate)
+                    DayCell(date: date, selectedDate: $selectedDate, events: events)
                 } else {
                     Text("") // Empty placeholder for offset days
                         .frame(height: 35)
@@ -172,11 +196,13 @@ struct MonthGridView: View {
 struct DayCell: View {
     let date: Date
     @Binding var selectedDate: Date
+    let events: [CalendarEvent]
     private let calendar = Calendar.current
     
     var body: some View {
         let isToday = calendar.isDateInToday(date)
         let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
+        let hasEvents = events.contains { calendar.isDate($0.start, inSameDayAs: date) }
         
         Button {
             selectedDate = date
@@ -198,8 +224,7 @@ struct DayCell: View {
                         .foregroundStyle(isToday ? .white : (isSelected ? Color(uiColor: .systemBackground) : .primary))
                 }
                 
-                // Mock Event Dot
-                if [2, 5, 14, 19, 23].contains(calendar.component(.day, from: date)) {
+                if hasEvents {
                     Circle()
                         .fill(isToday ? .red : (isSelected ? .primary : .gray))
                         .frame(width: 4, height: 4)
@@ -249,12 +274,15 @@ struct TimelineGridView: View {
 
 struct EventsLayoutView: View {
     let selectedDate: Date
+    let events: [CalendarEvent]
+    private let calendar = Calendar.current
     
     var body: some View {
-        let events = getMockEvents(for: selectedDate)
+        let dayEvents = events.filter { calendar.isDate($0.start, inSameDayAs: selectedDate) }
+        let displayEvents = dayEvents.isEmpty ? getMockEvents(for: selectedDate) : dayEvents
         
         ZStack(alignment: .topLeading) {
-            ForEach(events) { event in
+            ForEach(displayEvents) { event in
                 EventCard(event: event)
                     .padding(.leading, 60) // Clear the time labels
                     .padding(.trailing, 10)

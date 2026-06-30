@@ -81,6 +81,32 @@ struct LpspSafariSearch: Identifiable, Equatable {
     let dateRaw: String?
 }
 
+struct LpspCalendarEvent: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let location: String?
+    let note: String?
+    let start: Date
+    let end: Date
+    let hasReminder: Bool
+}
+
+struct LpspContact: Identifiable, Equatable, Hashable {
+    let id: String
+    let name: String
+    let nickname: String
+    let relation: String
+    let note: String
+
+    var displayName: String {
+        nickname.isEmpty ? name : nickname
+    }
+
+    var sortKey: String {
+        displayName.folding(options: .diacriticInsensitive, locale: .current)
+    }
+}
+
 enum LpspAdapters {
     static func messages(from payload: AnyCodable?) -> [LpspConversation] {
         threads(from: payload, key: "threads")
@@ -189,6 +215,42 @@ enum LpspAdapters {
                 query: object["recherche"]?.stringValue ?? "",
                 date: parseISO(dateRaw),
                 dateRaw: dateRaw
+            )
+        }
+    }
+
+    static func calendar(from payload: AnyCodable?) -> [LpspCalendarEvent] {
+        guard let events = payload?["evenements"]?.arrayValue else { return [] }
+        return events.enumerated().compactMap { index, raw in
+            guard let object = raw.objectValue else { return nil }
+            let title = object["titre"]?.stringValue ?? "Événement"
+            let dateRaw = object["date"]?.stringValue
+            guard let start = parseISO(dateRaw) else { return nil }
+            let durationMin = object["duree_min"]?.intValue ?? 60
+            let end = Calendar.current.date(byAdding: .minute, value: durationMin, to: start) ?? start
+            return LpspCalendarEvent(
+                id: object["id"]?.stringValue ?? "event-\(index)",
+                title: title,
+                location: object["lieu"]?.stringValue,
+                note: object["note"]?.stringValue,
+                start: start,
+                end: end,
+                hasReminder: object["rappel"]?.boolValue ?? false
+            )
+        }
+    }
+
+    static func contacts(from payload: AnyCodable?) -> [LpspContact] {
+        guard let cards = payload?["fiches"]?.arrayValue else { return [] }
+        return cards.enumerated().compactMap { index, raw in
+            guard let object = raw.objectValue else { return nil }
+            let name = object["nom"]?.stringValue ?? "Inconnu"
+            return LpspContact(
+                id: object["id"]?.stringValue ?? "contact-\(index)",
+                name: name,
+                nickname: object["surnom"]?.stringValue ?? name,
+                relation: object["relation"]?.stringValue ?? "",
+                note: object["note"]?.stringValue ?? ""
             )
         }
     }

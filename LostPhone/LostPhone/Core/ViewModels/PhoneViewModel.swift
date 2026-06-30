@@ -38,6 +38,7 @@ final class PhoneViewModel: ObservableObject {
     }
 
     func startStory(_ storyId: String) async {
+        GameProgressStore.recordStoryStarted(storyId)
         await loadStory(storyId: storyId)
     }
 
@@ -110,11 +111,23 @@ final class PhoneViewModel: ObservableObject {
     }
 
     func openNotificationCenter() {
+        guard overlay != .notifications else { return }
         overlay = .notifications
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
+
+    func openControlCenter() {
+        guard overlay != .controlCenter else { return }
+        overlay = .controlCenter
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
     func closeOverlay() {
         overlay = .none
+    }
+
+    func contactsPayload() -> AnyCodable? {
+        appData(for: "Contacts")
     }
 
     private func startScenarioLoop() {

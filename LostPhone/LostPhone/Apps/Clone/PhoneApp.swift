@@ -1,11 +1,33 @@
 import SwiftUI
 
+struct PhoneContact: Identifiable, Hashable {
+    let id: UUID
+    let displayName: String
+    let relation: String
+    let note: String
+
+    init(stableId: String, displayName: String, relation: String, note: String) {
+        self.id = LpspStableId.uuid(stableId)
+        self.displayName = displayName
+        self.relation = relation
+        self.note = note
+    }
+
+    var initials: String {
+        let parts = displayName.split(separator: " ")
+        let letters = parts.prefix(2).compactMap { $0.first.map(String.init) }
+        return letters.joined().uppercased()
+    }
+}
+
 // MARK: - Main Tab View
 struct PhoneView: View {
     let recentCalls: [RecentItem]
+    let contacts: [PhoneContact]
 
-    init(recentCalls: [RecentItem] = []) {
+    init(recentCalls: [RecentItem] = [], contacts: [PhoneContact] = []) {
         self.recentCalls = recentCalls
+        self.contacts = contacts
     }
 
     var body: some View {
@@ -16,7 +38,7 @@ struct PhoneView: View {
             RecentsView(recentCalls: recentCalls)
                 .tabItem { Label("Recents", systemImage: "clock.fill") }
             
-            ContactsView()
+            ContactsView(contacts: contacts)
                 .tabItem { Label("Contacts", systemImage: "person.circle.fill") }
             
             KeypadView()
@@ -272,11 +294,25 @@ struct RecentItem: Identifiable {
 // MARK: - 3. Contacts View
 struct ContactsView: View {
     @State private var searchText = ""
-    
-    let contacts = ["Aaron", "Adam", "Brian", "Bob", "Charlie", "Craig Federighi", "David", "Emily", "Frank", "Greg", "Harry", "Ian", "John Appleseed", "Jony Ive", "Kate", "Larry", "Mike", "Nancy", "Oscar", "Pallav Agarwal", "Paul", "Quincy", "Rachel", "Steve Jobs", "Tim Cook", "Ursula", "Victor", "Wendy", "Xavier", "Yvonne", "Zach"]
-    
-    var groupedContacts: [String: [String]] {
-        Dictionary(grouping: contacts, by: { String($0.prefix(1)) })
+    let contacts: [PhoneContact]
+
+    private static let demoContacts = ["Aaron", "Adam", "Brian", "Bob", "Charlie", "Craig Federighi", "David", "Emily", "Frank", "Greg", "Harry", "Ian", "John Appleseed", "Jony Ive", "Kate", "Larry", "Mike", "Nancy", "Oscar", "Pallav Agarwal", "Paul", "Quincy", "Rachel", "Steve Jobs", "Tim Cook", "Ursula", "Victor", "Wendy", "Xavier", "Yvonne", "Zach"]
+
+    init(contacts: [PhoneContact] = []) {
+        self.contacts = contacts
+    }
+
+    private var displayContacts: [PhoneContact] {
+        if !contacts.isEmpty { return contacts.sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending } }
+        return Self.demoContacts.map {
+            PhoneContact(stableId: "demo-\($0)", displayName: $0, relation: "", note: "")
+        }
+    }
+
+    var groupedContacts: [String: [PhoneContact]] {
+        Dictionary(grouping: displayContacts) { contact in
+            String(contact.displayName.prefix(1)).uppercased()
+        }
     }
     
     var sortedKeys: [String] {
@@ -286,16 +322,15 @@ struct ContactsView: View {
     var body: some View {
         NavigationStack {
             List {
-                // My Card
                 Section {
                     HStack(spacing: 15) {
                         Circle()
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 60, height: 60)
-                            .overlay(Text("JA").font(.title2).bold().foregroundStyle(.white))
+                            .overlay(Text("MG").font(.title2).bold().foregroundStyle(.white))
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("John Appleseed")
+                            Text("Mathieu Garnier")
                                 .font(.title2)
                                 .fontWeight(.semibold)
                             Text("My Card")
@@ -308,9 +343,13 @@ struct ContactsView: View {
                 
                 ForEach(sortedKeys, id: \.self) { key in
                     Section(header: Text(key).fontWeight(.bold)) {
-                        ForEach(groupedContacts[key]!, id: \.self) { contact in
-                            Text(contact)
-                                .fontWeight(.medium)
+                        ForEach(groupedContacts[key] ?? []) { contact in
+                            NavigationLink {
+                                ContactDetailView(contact: contact)
+                            } label: {
+                                Text(contact.displayName)
+                                    .fontWeight(.medium)
+                            }
                         }
                     }
                 }
@@ -327,6 +366,43 @@ struct ContactsView: View {
                 }
             }
         }
+    }
+}
+
+struct ContactDetailView: View {
+    let contact: PhoneContact
+
+    var body: some View {
+        List {
+            Section {
+                HStack {
+                    Spacer()
+                    VStack(spacing: 12) {
+                        Circle()
+                            .fill(Color.gray.opacity(0.25))
+                            .frame(width: 96, height: 96)
+                            .overlay(Text(contact.initials).font(.largeTitle.bold()))
+                        Text(contact.displayName)
+                            .font(.title2.weight(.semibold))
+                        if !contact.relation.isEmpty {
+                            Text(contact.relation)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Spacer()
+                }
+                .listRowBackground(Color.clear)
+            }
+
+            if !contact.note.isEmpty {
+                Section("Notes") {
+                    Text(contact.note)
+                }
+            }
+        }
+        .navigationTitle(contact.displayName)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

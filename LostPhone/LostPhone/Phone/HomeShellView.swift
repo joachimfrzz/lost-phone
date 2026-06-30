@@ -36,24 +36,38 @@ struct HomeShellView: View {
 
                 TabView(selection: $currentPage) {
                     ForEach(Array(pages.enumerated()), id: \.offset) { index, pageApps in
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(pageApps, id: \.self) { app in
-                                LpspAppIconView(appName: app) {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                        phone.openApp(app)
+                        VStack(spacing: 0) {
+                            LazyVGrid(columns: columns, spacing: 16) {
+                                ForEach(pageApps, id: \.self) { app in
+                                    LpspAppIconView(appName: app) {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            phone.openApp(app)
+                                        }
                                     }
                                 }
                             }
+                            .padding(.horizontal, 15)
+                            .padding(.top, 30)
+
+                            Spacer()
                         }
-                        .padding(.horizontal, 15)
-                        .padding(.top, 24)
-                        .frame(maxHeight: .infinity, alignment: .top)
                         .tag(index)
                     }
                 }
-                .tabViewStyle(.page(indexDisplayMode: pages.count > 1 ? .automatic : .never))
+                .tabViewStyle(.page(indexDisplayMode: .never))
 
-                Spacer(minLength: 0)
+                Spacer()
+
+                if pages.count > 1 {
+                    HStack(spacing: 8) {
+                        ForEach(0..<pages.count, id: \.self) { index in
+                            Circle()
+                                .fill(Color.white.opacity(currentPage == index ? 1.0 : 0.5))
+                                .frame(width: 8, height: 8)
+                        }
+                    }
+                    .padding(.bottom, 30)
+                }
 
                 HStack(spacing: 20) {
                     ForEach(phone.dockApps, id: \.self) { app in
@@ -68,9 +82,9 @@ struct HomeShellView: View {
                 .padding(.horizontal, 18)
                 .iosDockGlass(in: RoundedRectangle(cornerRadius: 35, style: .continuous))
                 .padding(.horizontal, 10)
-                .padding(.bottom, 8)
+                .padding(.bottom, -15)
             }
-            .padding(.vertical, 24)
+            .padding(.vertical, 45)
 
             HiddenVolumeView()
                 .frame(width: 0, height: 0)

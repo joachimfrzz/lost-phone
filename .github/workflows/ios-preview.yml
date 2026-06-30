@@ -45,7 +45,15 @@ jobs:
           chmod +x LostPhone/scripts/ios-preview-capture.sh
           LostPhone/scripts/ios-preview-capture.sh "$GITHUB_WORKSPACE/preview-artifacts"
 
-      - name: Upload preview artifacts
+      - name: Upload Appetize zip (upload THIS file to appetize.io)
+        uses: actions/upload-artifact@v4
+        with:
+          name: appetize-upload-${{ github.run_number }}
+          path: preview-artifacts/LostPhone-simulator.app.zip
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload preview artifacts (screenshots + full bundle)
         uses: actions/upload-artifact@v4
         with:
           name: ios-swiftui-preview-${{ github.run_number }}

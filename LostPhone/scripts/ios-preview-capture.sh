@@ -141,7 +141,34 @@ fi
 echo "✓ LPSP stories present in app bundle"
 
 echo "→ Package .app for Appetize"
-(cd "$(dirname "$APP")" && zip -qr "$ARTIFACTS/LostPhone-simulator.app.zip" "$(basename "$APP")")
+APPETIZE_ZIP="$ARTIFACTS/LostPhone-simulator.app.zip"
+rm -f "$APPETIZE_ZIP"
+# ditto keeps the .app bundle structure Appetize expects at zip root.
+ditto -c -k --sequesterRsrc --keepParent "$APP" "$APPETIZE_ZIP"
+
+if ! unzip -Z1 "$APPETIZE_ZIP" | rg -q '^LostPhone\.app/'; then
+  echo "ERROR: Appetize zip invalid (LostPhone.app/ missing at root)" >&2
+  unzip -Z1 "$APPETIZE_ZIP" | head -20 >&2 || true
+  exit 1
+fi
+
+cat > "$ARTIFACTS/APPETIZE-LISEZMOI.txt" <<'EOF'
+APPETIZE — quel fichier uploader ?
+==================================
+
+Option A (recommandée) — lien direct sans piège :
+  GitHub → Releases → "Appetize — dernier build iOS"
+  Télécharge LostPhone-simulator.app.zip
+  Upload ce fichier sur https://appetize.io (sans le dézipper)
+
+Option B — via Artifacts Actions :
+  1. Télécharge l'artifact "appetize-upload-XXX" depuis Actions
+  2. DÉZIPPE ce fichier (double-clic) — tu obtiens LostPhone-simulator.app.zip
+  3. Upload LostPhone-simulator.app.zip sur Appetize
+  ⚠️ N'upload PAS le fichier "appetize-upload-XXX.zip" tel quel !
+
+PIN dans l'app : 1503
+EOF
 
 CAPTURE_OK=0
 if UDID="$(ensure_simulator_udid)"; then

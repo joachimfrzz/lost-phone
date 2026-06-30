@@ -21,12 +21,12 @@ targets:
       - path: LostPhone
         excludes:
           - "**/Info.plist"
+          - "**/Resources/stories/**"
     resources:
+      # Folder reference preserves stories/<id>/lpsp.json (avoids flattening duplicate lpsp.json).
       - path: LostPhone/Resources/stories
+        type: folder
         buildPhase: resources
-      - path: ../public/stories
-        buildPhase: resources
-        optional: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.lostphone.game

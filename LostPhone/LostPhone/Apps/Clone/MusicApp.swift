@@ -245,7 +245,7 @@ struct FloatingMiniPlayer: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .glassEffect(.regular)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .shadow(color: .black.opacity(0.15), radius: 15, x: 0, y: 5)
         .padding(.horizontal, 10)
         .onTapGesture {

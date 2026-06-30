@@ -65,12 +65,8 @@ struct WallpaperView: View {
 }
 
 extension View {
-    @ViewBuilder
+    /// Dock / chrome glass — ultraThinMaterial on iOS 17+ (CI SDK).
     func iosDockGlass(in shape: some InsettableShape) -> some View {
-        if #available(iOS 26.0, *) {
-            self.glassEffect(.clear, in: shape)
-        } else {
-            self.background(.ultraThinMaterial, in: shape)
-        }
+        background(.ultraThinMaterial, in: shape)
     }
 }

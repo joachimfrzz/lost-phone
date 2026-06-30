@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct PhoneRootView: View {
-    @StateObject private var phone = PhoneViewModel()
-    private let stories = StoryCatalog.availableStories()
+    @EnvironmentObject private var phone: PhoneViewModel
+    @State private var stories: [StoryEntry] = []
 
     var body: some View {
         ZStack {
@@ -34,5 +34,10 @@ struct PhoneRootView: View {
             }
         }
         .environmentObject(phone)
+        .task {
+            if stories.isEmpty {
+                stories = StoryCatalog.availableStories()
+            }
+        }
     }
 }

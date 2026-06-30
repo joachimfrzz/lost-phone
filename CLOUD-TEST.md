@@ -7,6 +7,6 @@
 
 Quand le Cloud marche, cette ligne doit changer :
 
-**CLOUD_IPHONE = pending**
+**CLOUD_IPHONE = OK depuis iPhone**
 
 Instructions iPhone : voir message ci-dessous dans le chat Cursor.

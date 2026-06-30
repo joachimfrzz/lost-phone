@@ -151,12 +151,12 @@ rm -f "$APPETIZE_ZIP"
 # ditto keeps the .app bundle structure Appetize expects at zip root.
 ditto -c -k --sequesterRsrc --keepParent "$APP" "$APPETIZE_ZIP"
 
-if ! unzip -Z1 "$APPETIZE_ZIP" | rg -q '^LostPhone\.app/'; then
+if ! unzip -Z1 "$APPETIZE_ZIP" | grep -qE '^LostPhone\.app/'; then
   echo "ERROR: Appetize zip invalid (LostPhone.app/ missing at root)" >&2
   unzip -Z1 "$APPETIZE_ZIP" | head -20 >&2 || true
   exit 1
 fi
-if unzip -Z1 "$APPETIZE_ZIP" | rg -q '\.debug\.dylib|__preview\.dylib'; then
+if unzip -Z1 "$APPETIZE_ZIP" | grep -qE '\.debug\.dylib|__preview\.dylib'; then
   echo "ERROR: debug dylibs must not ship to Appetize" >&2
   exit 1
 fi

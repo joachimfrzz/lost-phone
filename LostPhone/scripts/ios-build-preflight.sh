@@ -10,7 +10,7 @@ echo "→ iOS build preflight"
 failed=0
 
 for pattern in '\.glassEffect\('; do
-  if matches="$(rg -n "$pattern" "$SWIFT_ROOT" --glob '*.swift' 2>/dev/null || true)"; then
+  if matches="$(grep -Rn "$pattern" "$SWIFT_ROOT" --include='*.swift' 2>/dev/null || true)"; then
     if [[ -n "$matches" ]]; then
       echo "ERROR: forbidden API « $pattern » (not in CI SDK). Found:" >&2
       echo "$matches" >&2

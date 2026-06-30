@@ -872,8 +872,6 @@ struct AppleIDView: View {
     }
 }
 
-}
-
 // MARK: - Placeholder detail screens
 
 struct SettingsPlaceholderRow: Identifiable, Hashable {

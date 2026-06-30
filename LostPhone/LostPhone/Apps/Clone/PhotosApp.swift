@@ -14,7 +14,6 @@ struct GalleryPhoto: Identifiable, Hashable {
     let album: String?
 }
 
-@MainActor
 class PhotoLibrary: ObservableObject {
     @Published var galleryPhotos: [GalleryPhoto] = []
     @Published var albums: [String] = []

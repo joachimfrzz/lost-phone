@@ -41,7 +41,6 @@ struct Conversation: Identifiable, Hashable {
 
 // MARK: - View Model
 
-@MainActor
 class MessagesViewModel: ObservableObject {
     let conversations: [Conversation]
 

@@ -24,7 +24,6 @@ SIM_NAME="${IOS_SIMULATOR_NAME:-iPhone 16}"
 DERIVED_DATA="$LOSTPHONE/.derivedData-preview"
 
 echo "→ Build for Simulator ($SIM_NAME)"
-set -o pipefail
 xcodebuild \
   -project LostPhone.xcodeproj \
   -scheme LostPhone \
@@ -32,8 +31,7 @@ xcodebuild \
   -destination "platform=iOS Simulator,name=$SIM_NAME" \
   -derivedDataPath "$DERIVED_DATA" \
   CODE_SIGNING_ALLOWED=NO \
-  build \
-  | xcpretty
+  build
 
 APP="$(find "$DERIVED_DATA" -name 'LostPhone.app' -type d | head -1)"
 if [[ -z "$APP" ]]; then
@@ -43,6 +41,11 @@ fi
 
 echo "→ Boot simulator"
 UDID="$(xcrun simctl list devices available | grep "$SIM_NAME" | head -1 | grep -Eo '[0-9A-F-]{36}')"
+if [[ -z "$UDID" ]]; then
+  echo "WARN: Simulator '$SIM_NAME' not found, trying iPhone 15..."
+  SIM_NAME="iPhone 15"
+  UDID="$(xcrun simctl list devices available | grep "$SIM_NAME" | head -1 | grep -Eo '[0-9A-F-]{36}')"
+fi
 if [[ -z "$UDID" ]]; then
   echo "ERROR: Simulator '$SIM_NAME' not found. Available:"
   xcrun simctl list devices available | grep iPhone | head -10

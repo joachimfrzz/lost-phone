@@ -37,7 +37,11 @@ struct SettingsView: View {
                         .padding(.vertical, 4)
                     }
                     
-                    NavigationLink(destination: Text("Family")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Family", rows: [
+                        .init("Set Up Family Sharing"),
+                        .init("Add Member"),
+                        .init("Family Checklist"),
+                    ])) {
                         HStack(spacing: 15) {
                             HStack(spacing: -8) {
                                 ForEach(0..<3) { _ in
@@ -59,6 +63,7 @@ struct SettingsView: View {
                     Toggle(isOn: $airplaneMode) {
                         SettingsIcon(icon: "airplane", color: .orange, title: "Airplane Mode")
                     }
+                    .disabled(readOnly)
                     .onChange(of: airplaneMode) { isActive in
                         if isActive {
                             withAnimation {
@@ -96,7 +101,11 @@ struct SettingsView: View {
                     }
                     
                     // Cellular
-                    NavigationLink(destination: Text("Cellular Settings")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Cellular", rows: [
+                        .init("Cellular Data", detail: "On"),
+                        .init("Data Mode", detail: "Standard"),
+                        .init("Voice & Data", detail: "5G Auto"),
+                    ])) {
                         HStack {
                             SettingsIcon(icon: "antenna.radiowaves.left.and.right", color: .green, title: "Cellular")
                             Spacer()
@@ -105,7 +114,10 @@ struct SettingsView: View {
                     }
                     
                     // Hotspot
-                    NavigationLink(destination: Text("Hotspot Settings")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Personal Hotspot", rows: [
+                        .init("Allow Others to Join", detail: "Off"),
+                        .init("Wi-Fi Password", detail: "••••••••"),
+                    ])) {
                         HStack {
                             SettingsIcon(icon: "personalhotspot", color: .green, title: "Personal Hotspot")
                             Spacer()
@@ -116,16 +128,29 @@ struct SettingsView: View {
                 
                 // MARK: - Notifications Section
                 Section {
-                    NavigationLink(destination: Text("Notifications")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Notifications", rows: [
+                        .init("Show Previews", detail: "Always"),
+                        .init("Siri Suggestions", detail: "On"),
+                        .init("Scheduled Summary", detail: "Off"),
+                    ])) {
                         SettingsIcon(icon: "bell.badge.fill", color: .red, title: "Notifications")
                     }
                     NavigationLink(destination: SoundsView()) {
                         SettingsIcon(icon: "speaker.wave.2.fill", color: .pink, title: "Sounds & Haptics")
                     }
-                    NavigationLink(destination: Text("Focus")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Focus", rows: [
+                        .init("Do Not Disturb"),
+                        .init("Sleep"),
+                        .init("Work"),
+                        .init("Personal"),
+                    ])) {
                         SettingsIcon(icon: "moon.fill", color: .indigo, title: "Focus")
                     }
-                    NavigationLink(destination: Text("Screen Time")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Screen Time", rows: [
+                        .init("App Limits"),
+                        .init("Communication Limits"),
+                        .init("Always Allowed"),
+                    ])) {
                         SettingsIcon(icon: "hourglass", color: .indigo, title: "Screen Time")
                     }
                 }
@@ -135,38 +160,69 @@ struct SettingsView: View {
                     NavigationLink(destination: GeneralView()) {
                         SettingsIcon(icon: "gear", color: .gray, title: "General")
                     }
-                    NavigationLink(destination: Text("Control Center")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Control Center", rows: [
+                        .init("Access Within Apps", detail: "On"),
+                        .init("Show Home Controls"),
+                        .init("Customize Controls"),
+                    ])) {
                         SettingsIcon(icon: "switch.2", color: .gray, title: "Control Center")
                     }
                     NavigationLink(destination: DisplayView()) {
                         SettingsIcon(icon: "textformat.size", color: .blue, title: "Display & Brightness")
                     }
-                    NavigationLink(destination: Text("Home Screen")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Home Screen & App Library", rows: [
+                        .init("Newly Downloaded Apps", detail: "App Library Only"),
+                        .init("Show in App Library", detail: "On"),
+                        .init("Notification Badges", detail: "On"),
+                    ])) {
                         SettingsIcon(icon: "apps.iphone", color: .indigo, title: "Home Screen & App Library")
                     }
-                    NavigationLink(destination: Text("Accessibility")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Accessibility", rows: [
+                        .init("Vision"),
+                        .init("Mobility"),
+                        .init("Hearing"),
+                        .init("Speech"),
+                    ])) {
                         SettingsIcon(icon: "accessibility", color: .blue, title: "Accessibility")
                     }
-                    NavigationLink(destination: Text("Wallpaper")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Wallpaper", rows: [
+                        .init("Choose a New Wallpaper"),
+                        .init("Add New Wallpaper"),
+                    ])) {
                         SettingsIcon(icon: "photo.on.rectangle", color: .cyan, title: "Wallpaper")
                     }
-                    NavigationLink(destination: Text("StandBy")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "StandBy", rows: [
+                        .init("Show When Charging", detail: "On"),
+                        .init("Night Mode", detail: "On"),
+                    ])) {
                         SettingsIcon(icon: "clock.fill", color: .black, title: "StandBy")
                     }
                     NavigationLink(destination: BatteryView()) {
                         SettingsIcon(icon: "battery.100", color: .green, title: "Battery")
                     }
-                    NavigationLink(destination: Text("Privacy")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Privacy & Security", rows: [
+                        .init("Location Services", detail: "On"),
+                        .init("Tracking", detail: "Ask App Not to Track"),
+                        .init("Analytics & Improvements"),
+                    ])) {
                         SettingsIcon(icon: "hand.raised.fill", color: .blue, title: "Privacy & Security")
                     }
                 }
                 
                 // MARK: - Stores
                 Section {
-                    NavigationLink(destination: Text("App Store")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "App Store", rows: [
+                        .init("App Downloads", detail: "Always Ask"),
+                        .init("Cellular Data", detail: "Off"),
+                        .init("Video Autoplay", detail: "Wi-Fi Only"),
+                    ])) {
                         SettingsIcon(icon: "apple.logo", color: .blue, title: "App Store")
                     }
-                    NavigationLink(destination: Text("Wallet")) {
+                    NavigationLink(destination: SettingsPlaceholderView(title: "Wallet & Apple Pay", rows: [
+                        .init("Default Card"),
+                        .init("Transaction Notifications", detail: "On"),
+                        .init("Double-Click Side Button", detail: "On"),
+                    ])) {
                         SettingsIcon(icon: "creditcard.fill", color: .black, title: "Wallet & Apple Pay")
                     }
                 }
@@ -338,25 +394,58 @@ struct GeneralView: View {
                 NavigationLink("Software Update", destination: SoftwareUpdateView())
             }
             Section {
-                NavigationLink("AirDrop", destination: Text("AirDrop"))
-                NavigationLink("AirPlay & Handoff", destination: Text("AirPlay"))
-                NavigationLink("Picture in Picture", destination: Text("PiP"))
+                NavigationLink("AirDrop", destination: SettingsPlaceholderView(title: "AirDrop", rows: [
+                    .init("Receiving Off"),
+                    .init("Contacts Only"),
+                    .init("Everyone for 10 Minutes"),
+                ]))
+                NavigationLink("AirPlay & Handoff", destination: SettingsPlaceholderView(title: "AirPlay & Handoff", rows: [
+                    .init("Automatically AirPlay", detail: "Never"),
+                    .init("Transfer to HomePod", detail: "On"),
+                    .init("Handoff", detail: "On"),
+                ]))
+                NavigationLink("Picture in Picture", destination: SettingsPlaceholderView(title: "Picture in Picture", rows: [
+                    .init("Start PiP Automatically", detail: "On"),
+                ]))
             }
             Section {
                 NavigationLink("iPhone Storage", destination: StorageView())
-                NavigationLink("Background App Refresh", destination: Text("Refresh"))
+                NavigationLink("Background App Refresh", destination: SettingsPlaceholderView(title: "Background App Refresh", rows: [
+                    .init("Background App Refresh", detail: "Wi-Fi & Cellular Data"),
+                    .init("Messages", detail: "Wi-Fi"),
+                    .init("Mail", detail: "Off"),
+                ]))
             }
             Section {
-                NavigationLink("Date & Time", destination: Text("Time"))
-                NavigationLink("Keyboard", destination: Text("Keyboard"))
-                NavigationLink("Fonts", destination: Text("Fonts"))
-                NavigationLink("Language & Region", destination: Text("Region"))
+                NavigationLink("Date & Time", destination: SettingsPlaceholderView(title: "Date & Time", rows: [
+                    .init("Set Automatically", detail: "On"),
+                    .init("Time Zone", detail: "Paris"),
+                    .init("24-Hour Time", detail: "On"),
+                ]))
+                NavigationLink("Keyboard", destination: SettingsPlaceholderView(title: "Keyboard", rows: [
+                    .init("Auto-Capitalization", detail: "On"),
+                    .init("Check Spelling", detail: "On"),
+                    .init("Predictive Text", detail: "On"),
+                ]))
+                NavigationLink("Fonts", destination: SettingsPlaceholderView(title: "Fonts", rows: [
+                    .init("System Font", detail: "San Francisco"),
+                ]))
+                NavigationLink("Language & Region", destination: SettingsPlaceholderView(title: "Language & Region", rows: [
+                    .init("iPhone Language", detail: "Français"),
+                    .init("Region", detail: "France"),
+                    .init("Calendar", detail: "Gregorian"),
+                ]))
             }
             Section {
-                NavigationLink("Transfer or Reset iPhone", destination: Text("Reset"))
+                NavigationLink("Transfer or Reset iPhone", destination: SettingsPlaceholderView(title: "Transfer or Reset iPhone", rows: [
+                    .init("Prepare for New iPhone"),
+                    .init("Erase All Content and Settings"),
+                ]))
             }
             Section {
-                NavigationLink("Shut Down", destination: Text("Bye"))
+                NavigationLink("Shut Down", destination: SettingsPlaceholderView(title: "Shut Down", rows: [
+                    .init("Slide to power off your iPhone."),
+                ]))
             }
         }
         .navigationTitle("General")
@@ -365,10 +454,12 @@ struct GeneralView: View {
 }
 
 struct AboutView: View {
+    @Environment(\.deviceOwner) private var owner
+
     var body: some View {
         List {
             Section {
-                InfoRow(label: "Name", value: "John's iPhone")
+                InfoRow(label: "Name", value: "\(owner.name)'s iPhone")
             }
             Section {
                 InfoRow(label: "iOS Version", value: "17.2.1")
@@ -777,6 +868,49 @@ struct AppleIDView: View {
             }
         }
         .navigationTitle("Apple ID")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+}
+
+// MARK: - Placeholder detail screens
+
+struct SettingsPlaceholderRow: Identifiable, Hashable {
+    let id = UUID()
+    let title: String
+    var detail: String?
+
+    init(_ title: String, detail: String? = nil) {
+        self.title = title
+        self.detail = detail
+    }
+}
+
+struct SettingsPlaceholderView: View {
+    let title: String
+    let rows: [SettingsPlaceholderRow]
+    @Environment(\.lpspReadOnly) private var readOnly
+
+    var body: some View {
+        List {
+            ForEach(rows) { row in
+                HStack {
+                    Text(row.title)
+                    Spacer()
+                    if let detail = row.detail {
+                        Text(detail)
+                            .foregroundStyle(.secondary)
+                    }
+                    if row.detail != nil || readOnly {
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+            }
+        }
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
     }
 }

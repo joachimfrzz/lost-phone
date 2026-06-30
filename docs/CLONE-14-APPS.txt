@@ -1,27 +1,25 @@
 LOST PHONE — 14 APPS CLONE REDDIT (zerocode117)
-Statut UX — branche cursor/clone-14-polish-a052 (passe 2)
+Statut UX — passe 3
 
 Legende : OK = shell UX pret | DEMO = mock statique clone propre
 
  1. Messages      OK
  2. Telephone     OK
- 3. Photos        OK       Library/For You/Albums ; Search placeholder investigation
- 4. Safari        OK       LPSP onglets ; pas de navigation web live en read-only
+ 3. Photos        OK       Search local + picker Years/Months/All
+ 4. Safari        OK
  5. Mail          OK
  6. Notes         OK
- 7. Calendrier    OK
- 8. Reglages      DEMO     Sous-ecrans profonds encore Text() — decor
+ 7. Calendrier    OK       Tap evenement → fiche detail (note LPSP)
+ 8. Reglages      OK       Sous-ecrans placeholder iOS-like (plus de Text() nu)
  9. Meteo         DEMO
-10. Horloge       DEMO     UI complete ; alarmes/timer desactives en read-only
+10. Horloge       DEMO
 11. Calculatrice  OK
-12. Appareil photo DEMO    Preview live ; capture desactivee en read-only
-13. App Store     DEMO     Arcade + GET desactives en read-only
-14. Musique       DEMO     Radio/Library/Browse remplis ; pistes locales
+12. Appareil photo DEMO
+13. App Store     DEMO
+14. Musique       DEMO
 
-PREVIEW SANS MAC
-- GitHub Actions iOS Preview (PR #2) ou Appetize avec .app.zip
+PREVIEW SANS MAC : GitHub Actions iOS Preview + Appetize (.app.zip)
 
-PROCHAINE PASSE UX
-- Reglages sous-ecrans stub
-- Calendrier detail evenement au tap
-- Photos Search fonctionnel (filtre local)
+PROCHAINE PASSE (optionnel)
+- Reglages : toggles desactives partout en read-only
+- Meteo / Horloge : polish visuel additionnel

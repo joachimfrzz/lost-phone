@@ -61,7 +61,7 @@ struct PhotosView: View {
                     Label("Albums", systemImage: "rectangle.stack.fill")
                 }
 
-            PhotosSearchView()
+            PhotosSearchView(library: library, storyId: storyId)
                 .tabItem {
                     Label("Search", systemImage: "magnifyingglass")
                 }
@@ -78,6 +78,25 @@ struct LibraryView: View {
     @State private var selectedSegment = 2
     @Environment(\.lpspReadOnly) private var readOnly
 
+    private var displayedPhotos: [GalleryPhoto] {
+        let calendar = Calendar.current
+        switch selectedSegment {
+        case 0:
+            let year = calendar.component(.year, from: Date())
+            return library.galleryPhotos.filter { photo in
+                guard let date = photo.capturedAt else { return false }
+                return calendar.component(.year, from: date) == year
+            }
+        case 1:
+            return library.galleryPhotos.filter { photo in
+                guard let date = photo.capturedAt else { return false }
+                return calendar.isDate(date, equalTo: Date(), toGranularity: .month)
+            }
+        default:
+            return library.galleryPhotos
+        }
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -91,7 +110,7 @@ struct LibraryView: View {
                         .padding(.top, 80)
                     } else {
                         LazyVGrid(columns: gridColumns, spacing: 1) {
-                            ForEach(library.galleryPhotos) { photo in
+                            ForEach(displayedPhotos) { photo in
                                 NavigationLink(destination: GalleryPhotoDetailView(photo: photo, storyId: storyId)) {
                                     GalleryPhotoTile(photo: photo, storyId: storyId)
                                 }
@@ -100,7 +119,7 @@ struct LibraryView: View {
                         .padding(.bottom, 20)
 
                         VStack(spacing: 5) {
-                            Text("\(library.totalCount) Photos")
+                            Text("\(displayedPhotos.count) Photos")
                                 .font(.system(size: 15, weight: .medium))
                             Text("Synced with iCloud Just Now")
                                 .font(.caption)
@@ -505,17 +524,95 @@ struct PhotosAlbumDetailView: View {
 // MARK: - Search
 
 struct PhotosSearchView: View {
+    @ObservedObject var library: PhotoLibrary
+    var storyId: String?
     @State private var searchText = ""
+
+    private var filteredPhotos: [GalleryPhoto] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !query.isEmpty else { return [] }
+        return library.galleryPhotos.filter { photo in
+            photo.caption.lowercased().contains(query)
+                || (photo.place?.lowercased().contains(query) ?? false)
+                || (photo.album?.lowercased().contains(query) ?? false)
+        }
+    }
+
+    private var suggestions: [String] {
+        var items: [String] = []
+        for photo in library.galleryPhotos {
+            if let place = photo.place, !place.isEmpty { items.append(place) }
+            if let album = photo.album, !album.isEmpty { items.append(album) }
+            let words = photo.caption.split(separator: " ").prefix(3).joined(separator: " ")
+            if !words.isEmpty { items.append(words) }
+        }
+        return Array(Set(items)).sorted().prefix(8).map { $0 }
+    }
 
     var body: some View {
         NavigationStack {
-            ContentUnavailableView(
-                "Search",
-                systemImage: "magnifyingglass",
-                description: Text("Recherche désactivée en mode investigation")
-            )
+            Group {
+                if searchText.isEmpty {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            if library.isEmpty {
+                                ContentUnavailableView(
+                                    "Search",
+                                    systemImage: "magnifyingglass",
+                                    description: Text("Aucune photo à rechercher")
+                                )
+                                .padding(.top, 60)
+                            } else {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("Suggestions")
+                                        .font(.headline)
+                                        .padding(.horizontal, 16)
+                                    ForEach(suggestions, id: \.self) { suggestion in
+                                        Button {
+                                            searchText = suggestion
+                                        } label: {
+                                            HStack {
+                                                Image(systemName: "magnifyingglass")
+                                                    .foregroundStyle(.secondary)
+                                                Text(suggestion)
+                                                    .foregroundStyle(.primary)
+                                                Spacer()
+                                            }
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if filteredPhotos.isEmpty {
+                    ContentUnavailableView(
+                        "Aucun résultat",
+                        systemImage: "photo.on.rectangle.angled",
+                        description: Text("Essayez un autre mot-clé")
+                    )
+                } else {
+                    ScrollView {
+                        LazyVGrid(
+                            columns: Array(repeating: GridItem(.flexible(), spacing: 2), count: 3),
+                            spacing: 2
+                        ) {
+                            ForEach(filteredPhotos) { photo in
+                                NavigationLink {
+                                    GalleryPhotoDetailView(photo: photo, storyId: storyId)
+                                } label: {
+                                    GalleryPhotoTile(photo: photo, storyId: storyId)
+                                }
+                            }
+                        }
+                        .padding(.bottom, 20)
+                    }
+                }
+            }
             .navigationTitle("Search")
-            .searchable(text: $searchText)
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         }
     }
 }

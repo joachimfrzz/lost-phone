@@ -6,23 +6,26 @@ struct CalendarEvent: Identifiable {
     let id: UUID
     let title: String
     let location: String?
+    let note: String?
     let start: Date
     let end: Date
     let color: Color
 
-    init(stableId: String, title: String, location: String?, start: Date, end: Date, color: Color) {
+    init(stableId: String, title: String, location: String?, note: String? = nil, start: Date, end: Date, color: Color) {
         self.id = LpspStableId.uuid(stableId)
         self.title = title
         self.location = location
+        self.note = note
         self.start = start
         self.end = end
         self.color = color
     }
 
-    init(title: String, location: String?, start: Date, end: Date, color: Color) {
+    init(title: String, location: String?, note: String? = nil, start: Date, end: Date, color: Color) {
         self.id = UUID()
         self.title = title
         self.location = location
+        self.note = note
         self.start = start
         self.end = end
         self.color = color
@@ -33,7 +36,7 @@ struct CalendarEvent: Identifiable {
 struct CalendarView: View {
     let events: [CalendarEvent]
     @State private var selectedDate = Date()
-    @State private var currentMonthOffset = 0 // 0 = Current Month
+    @Environment(\.lpspReadOnly) private var readOnly
 
     init(events: [CalendarEvent] = []) {
         self.events = events
@@ -43,7 +46,7 @@ struct CalendarView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 // 1. Month/Year Header
-                CalendarHeaderView(date: selectedDate)
+                CalendarHeaderView(date: selectedDate, readOnly: readOnly)
                 
                 // 2. Days of Week
                 WeekDaysHeader()
@@ -108,6 +111,7 @@ struct CalendarView: View {
 
 struct CalendarHeaderView: View {
     let date: Date
+    var readOnly: Bool = false
     
     var body: some View {
         HStack {
@@ -125,7 +129,8 @@ struct CalendarHeaderView: View {
                 Image(systemName: "plus")
             }
             .font(.title2)
-            .foregroundStyle(.red)
+            .foregroundStyle(readOnly ? .gray.opacity(0.35) : .red)
+            .allowsHitTesting(!readOnly)
         }
         .padding(.horizontal)
         .padding(.top, 10)
@@ -276,6 +281,7 @@ struct EventsLayoutView: View {
     let selectedDate: Date
     let events: [CalendarEvent]
     @Environment(\.lpspReadOnly) private var readOnly
+    @State private var selectedEvent: CalendarEvent?
     private let calendar = Calendar.current
     
     var body: some View {
@@ -286,12 +292,20 @@ struct EventsLayoutView: View {
         
         ZStack(alignment: .topLeading) {
             ForEach(displayEvents) { event in
-                EventCard(event: event)
-                    .padding(.leading, 60) // Clear the time labels
-                    .padding(.trailing, 10)
-                    .offset(y: calculateOffset(for: event.start))
-                    .frame(height: calculateHeight(start: event.start, end: event.end))
+                Button {
+                    selectedEvent = event
+                } label: {
+                    EventCard(event: event)
+                }
+                .buttonStyle(.plain)
+                .padding(.leading, 60)
+                .padding(.trailing, 10)
+                .offset(y: calculateOffset(for: event.start))
+                .frame(height: calculateHeight(start: event.start, end: event.end))
             }
+        }
+        .sheet(item: $selectedEvent) { event in
+            CalendarEventDetailView(event: event)
         }
     }
     
@@ -330,12 +344,10 @@ struct EventCard: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            // Color Indicator Line
             Rectangle()
                 .fill(event.color)
                 .frame(width: 4)
             
-            // Content
             VStack(alignment: .leading, spacing: 2) {
                 Text(event.title)
                     .font(.system(size: 12, weight: .semibold))
@@ -359,6 +371,58 @@ struct EventCard: View {
             RoundedRectangle(cornerRadius: 4)
                 .stroke(event.color.opacity(0.5), lineWidth: 0.5)
         )
+    }
+}
+
+struct CalendarEventDetailView: View {
+    let event: CalendarEvent
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.lpspReadOnly) private var readOnly
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(event.color)
+                            .frame(width: 14, height: 14)
+                        Text(event.title)
+                            .font(.title2.bold())
+                    }
+                }
+
+                Section {
+                    LabeledContent("Starts") {
+                        Text(event.start.formatted(date: .abbreviated, time: .shortened))
+                    }
+                    LabeledContent("Ends") {
+                        Text(event.end.formatted(date: .abbreviated, time: .shortened))
+                    }
+                    if let location = event.location, !location.isEmpty {
+                        LabeledContent("Location", value: location)
+                    }
+                }
+
+                if let note = event.note, !note.isEmpty {
+                    Section("Notes") {
+                        Text(note)
+                    }
+                }
+            }
+            .navigationTitle("Event")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+                if !readOnly {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Edit") { }
+                    }
+                }
+            }
+        }
     }
 }
 

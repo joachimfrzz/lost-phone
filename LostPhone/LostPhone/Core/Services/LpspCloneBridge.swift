@@ -123,6 +123,7 @@ enum LpspCloneBridge {
                 stableId: item.id,
                 title: item.title,
                 location: item.location?.isEmpty == false ? item.location : nil,
+                note: item.note?.isEmpty == false ? item.note : nil,
                 start: item.start,
                 end: item.end,
                 color: palette[colorIndex]

@@ -95,6 +95,13 @@
       "notifications_initiales": [
         {
           "app": "Messages",
+          "titre": "TEST Cursor iPhone",
+          "texte": "Si tu vois cette notif, Cursor iOS fonctionne ✅",
+          "heure": "14:29",
+          "lu": false
+        },
+        {
+          "app": "Messages",
           "titre": "Hugo 💙",
           "texte": "papa t'es où ? on fait toujours le parc samedi ? 💙",
           "heure": "14:12",

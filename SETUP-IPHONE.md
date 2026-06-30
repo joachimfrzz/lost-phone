@@ -40,4 +40,24 @@ npm run dev:phone
 
 ## ⚙️ Remote Control dans Cursor
 
-Si pas encore activé : **Settings → Agents → Remote Control → ON**
+**Prérequis : Cursor 3.9.8+** (tu es peut‑être en 3.6 → mets à jour d’abord)
+
+1. Menu **Help** → **Check for Updates** (ou télécharge sur [cursor.com](https://cursor.com))
+2. Redémarre Cursor
+3. **Cursor Settings** (icône engrenage en haut à droite, pas « VS Code Settings »)
+4. **Agents** → **Remote Control** → ON
+5. **Keep this computer awake** → ON
+
+### Tu ne vois pas Remote Control ?
+
+| Cause | Solution |
+|---|---|
+| Version &lt; 3.9.8 | Mettre à jour Cursor |
+| Plan gratuit | Remote Control = Pro / Pro+ / Ultra |
+| Mauvais menu | C’est **Cursor Settings → Agents**, pas File → Preferences |
+
+### Sans Remote Control : Cloud Agent (iPhone seul)
+
+1. Pousse le projet sur **GitHub**
+2. App Cursor iPhone → **New agent** → **Cloud**
+3. Choisis le repo → écris ta consigne (PC peut être éteint)

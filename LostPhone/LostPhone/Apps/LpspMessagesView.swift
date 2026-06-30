@@ -62,7 +62,7 @@ struct LpspInboxRow: View {
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(.primary)
                     Spacer()
-                    Text(LpspAdapters.formatShortDate(conversation.lastDate))
+                    Text(LpspAdapters.formatShortDate(conversation.lastDate, fallback: conversation.lastDateRaw))
                         .font(.subheadline)
                         .foregroundStyle(conversation.isUnread ? .blue : .secondary)
                 }

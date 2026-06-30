@@ -53,6 +53,10 @@ struct LpspAppRouter: View {
             switch appName {
             case "Messages":
                 LpspMessagesView(conversations: LpspAdapters.messages(from: payload))
+            case "WhatsApp":
+                LpspWhatsAppView(conversations: LpspAdapters.whatsApp(from: payload))
+            case "Signal":
+                LpspSignalView(conversations: LpspAdapters.signal(from: payload))
             default:
                 if let clone = LpspAppCatalog.cloneType(for: appName) {
                     cloneAppView(clone)

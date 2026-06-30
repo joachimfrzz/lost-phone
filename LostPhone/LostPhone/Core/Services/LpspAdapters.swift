@@ -6,6 +6,7 @@ struct LpspMessage: Identifiable, Equatable {
     let text: String
     let isUser: Bool
     let date: Date?
+    let dateRaw: String?
 }
 
 struct LpspConversation: Identifiable, Equatable, Hashable {
@@ -19,20 +20,34 @@ struct LpspConversation: Identifiable, Equatable, Hashable {
 
     var preview: String { messages.last?.text ?? "" }
     var lastDate: Date? { messages.last?.date }
+    var lastDateRaw: String? { messages.last?.dateRaw }
 }
 
 enum LpspAdapters {
     static func messages(from payload: AnyCodable?) -> [LpspConversation] {
-        guard let threads = payload?["threads"]?.arrayValue else { return [] }
+        threads(from: payload, key: "threads")
+    }
+
+    static func whatsApp(from payload: AnyCodable?) -> [LpspConversation] {
+        threads(from: payload, key: "threads")
+    }
+
+    static func signal(from payload: AnyCodable?) -> [LpspConversation] {
+        threads(from: payload, key: "conversations")
+    }
+
+    static func threads(from payload: AnyCodable?, key: String) -> [LpspConversation] {
+        guard let threads = payload?[key]?.arrayValue else { return [] }
         return threads.enumerated().compactMap { index, thread in
             guard let object = thread.objectValue else { return nil }
             let contact = object["contact"]?.stringValue ?? "Inconnu"
-            let messages = (object["messages"]?.arrayValue ?? []).enumerated().map { messageIndex, raw in
+            let rawMessages = object["messages"]?.arrayValue ?? []
+            let messages = rawMessages.enumerated().map { messageIndex, raw in
                 parseMessage(raw, index: messageIndex)
             }
-            let unread = messages.contains { !$0.isUser && object["lu"]?.stringValue == nil }
+            let unread = isThreadUnread(rawMessages: rawMessages)
             return LpspConversation(
-                id: "thread-\(index)",
+                id: "\(key)-\(index)",
                 contactName: contact,
                 messages: messages,
                 isUnread: unread
@@ -55,8 +70,24 @@ enum LpspAdapters {
             id: object["id"]?.stringValue ?? "msg-\(index)",
             text: text,
             isUser: isUser,
-            date: parseISO(iso)
+            date: parseISO(iso),
+            dateRaw: iso
         )
+    }
+
+    private static func isThreadUnread(rawMessages: [AnyCodable]) -> Bool {
+        for raw in rawMessages.reversed() {
+            guard let object = raw.objectValue else { continue }
+            let sender = (object["de"] ?? object["expediteur"] ?? object["from"])?.stringValue ?? ""
+            let lower = sender.lowercased()
+            let isUser = ["moi", "me", "mathieu", "m"].contains(lower)
+            guard !isUser else { continue }
+            if let read = object["lu"]?.boolValue {
+                return !read
+            }
+            return true
+        }
+        return false
     }
 
     static func parseISO(_ iso: String?) -> Date? {
@@ -68,11 +99,23 @@ enum LpspAdapters {
         return formatter.date(from: iso)
     }
 
-    static func formatShortDate(_ date: Date?) -> String {
-        guard let date else { return "" }
-        if Calendar.current.isDateInToday(date) {
+    static func formatShortDate(_ date: Date?, fallback: String? = nil) -> String {
+        if let date {
+            if Calendar.current.isDateInToday(date) {
+                return date.formatted(date: .omitted, time: .shortened)
+            }
+            return date.formatted(date: .numeric, time: .omitted)
+        }
+        return fallback ?? ""
+    }
+
+    static func formatMessageTime(_ message: LpspMessage) -> String? {
+        if let date = message.date {
             return date.formatted(date: .omitted, time: .shortened)
         }
-        return date.formatted(date: .numeric, time: .omitted)
+        if let raw = message.dateRaw, !raw.isEmpty {
+            return raw
+        }
+        return nil
     }
 }

@@ -66,6 +66,11 @@ enum AnyCodable: Codable, Equatable {
         return nil
     }
 
+    var boolValue: Bool? {
+        if case .bool(let value) = self { return value }
+        return nil
+    }
+
     subscript(key: String) -> AnyCodable? {
         objectValue?[key]
     }

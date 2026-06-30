@@ -1,30 +1,27 @@
 LOST PHONE — 14 APPS CLONE REDDIT (zerocode117)
-Statut après passe polish — branche cursor/clone-14-polish-a052
+Statut UX — branche cursor/clone-14-polish-a052 (passe 2)
 
-Legende : OK = pret Lost Phone | PARTIEL = UI ok, donnees a enrichir | DEMO = clone demo propre
+Legende : OK = shell UX pret | DEMO = mock statique clone propre
 
- 1. Messages      OK       LPSP threads, lecture seule, zero reseau
- 2. Telephone     OK       Recents + Contacts LPSP, favoris vide, clavier sans appel en read-only
- 3. Photos        PARTIEL  LPSP + albums + PhotoAssetResolver (images quand source/assets presents)
- 4. Safari        OK       Onglets + historique LPSP
- 5. Mail          OK       Boite LPSP, toolbars compose/reply desactivees en read-only
- 6. Notes         OK       Notes LPSP, creation desactivee en lecture seule
- 7. Calendrier    OK       Evenements LPSP, mock desactive en lecture seule
- 8. Reglages      OK       UI clone, nom proprietaire depuis LPSP system.proprietaire
- 9. Meteo         DEMO     Mock statique clone (pas de LPSP J-3)
-10. Horloge       DEMO     Mock statique clone
-11. Calculatrice  DEMO     Fonctionnelle (UI clone)
-12. Appareil photo DEMO    UI clone
-13. App Store     DEMO     Mock statique, compte = proprietaire LPSP
-14. Musique       DEMO     Pistes locales, zero iTunes, LPSP pistes optionnel
+ 1. Messages      OK
+ 2. Telephone     OK
+ 3. Photos        OK       Library/For You/Albums ; Search placeholder investigation
+ 4. Safari        OK       LPSP onglets ; pas de navigation web live en read-only
+ 5. Mail          OK
+ 6. Notes         OK
+ 7. Calendrier    OK
+ 8. Reglages      DEMO     Sous-ecrans profonds encore Text() — decor
+ 9. Meteo         DEMO
+10. Horloge       DEMO     UI complete ; alarmes/timer desactives en read-only
+11. Calculatrice  OK
+12. Appareil photo DEMO    Preview live ; capture desactivee en read-only
+13. App Store     DEMO     Arcade + GET desactives en read-only
+14. Musique       DEMO     Radio/Library/Browse remplis ; pistes locales
 
-INFRA COMMUNE
-- DeviceOwner (content.system.proprietaire)
-- CloneAppCatalog (14 noms FR + routes)
-- LpspAppRouter route explicitement les 14 apps clone
-- lpspStoryId environment pour assets bundlés
-- PhotoAssetResolver : Resources/stories/<id>/assets/<source>
-- Spotify/Netflix ne mappent plus sur Musique clone (apps tierces separees)
+PREVIEW SANS MAC
+- GitHub Actions iOS Preview (PR #2) ou Appetize avec .app.zip
 
-PROCHAINE ETAPE
-Photos — ajouter fichiers source dans lpsp.json + public/stories/<id>/assets/photos/
+PROCHAINE PASSE UX
+- Reglages sous-ecrans stub
+- Calendrier detail evenement au tap
+- Photos Search fonctionnel (filtre local)

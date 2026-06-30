@@ -402,8 +402,9 @@ struct EmailDetailView: View {
             }
         }
         .onAppear {
-            // Mark read when opened
-            manager.markAsRead(email)
+            if !readOnly {
+                manager.markAsRead(email)
+            }
         }
     }
 }

@@ -237,6 +237,7 @@ struct CameraPreview: UIViewRepresentable {
 struct CameraView: View {
     @StateObject var camera = CameraModel()
     @State private var shutterAnimation = false
+    @Environment(\.lpspReadOnly) private var readOnly
     
     var body: some View {
         ZStack {
@@ -348,6 +349,7 @@ struct CameraView: View {
                             
                             // Shutter
                             Button(action: {
+                                guard !readOnly else { return }
                                 if camera.mode == .photo {
                                     camera.capturePhoto()
                                     withAnimation(.linear(duration: 0.1)) { shutterAnimation = true }
@@ -364,6 +366,8 @@ struct CameraView: View {
                             }) {
                                 ShutterButtonView(mode: camera.mode, isRecording: camera.isRecording, animate: shutterAnimation)
                             }
+                            .disabled(readOnly)
+                            .opacity(readOnly ? 0.45 : 1)
                             
                             Spacer()
                             

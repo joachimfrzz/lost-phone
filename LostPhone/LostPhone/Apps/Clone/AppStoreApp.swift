@@ -83,7 +83,7 @@ struct AppStoreView: View {
             AppsView(title: "Apps", apps: data.featuredApps)
                 .tabItem { Label("Apps", systemImage: "square.stack.3d.up.fill") }
             
-            Text("Arcade")
+            ArcadeView(games: data.games)
                 .tabItem { Label("Arcade", systemImage: "arcade.stick") }
             
             SearchView(data: data)
@@ -315,6 +315,59 @@ struct FeaturedAppCard: View {
     }
 }
 
+struct ArcadeView: View {
+    let games: [AppItem]
+    @State private var showAccount = false
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    ZStack(alignment: .bottomLeading) {
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [.purple, .indigo, .black],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(height: 220)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("ARCADE")
+                                .font(.caption.bold())
+                                .foregroundStyle(.white.opacity(0.8))
+                            Text("Play without\nlimits")
+                                .font(.largeTitle.bold())
+                                .foregroundStyle(.white)
+                            Text("No ads. No in-app purchases.")
+                                .font(.subheadline)
+                                .foregroundStyle(.white.opacity(0.85))
+                        }
+                        .padding(20)
+                    }
+                    .padding(.horizontal, 20)
+
+                    AppSectionView(title: "Popular Games", apps: games)
+                    AppSectionView(title: "New in Arcade", apps: games.shuffled())
+                }
+                .padding(.bottom, 20)
+            }
+            .navigationTitle("Arcade")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { showAccount.toggle() }) {
+                        AccountIcon()
+                    }
+                }
+            }
+            .sheet(isPresented: $showAccount) {
+                AccountView()
+            }
+        }
+    }
+}
+
 // MARK: - 3. App Detail View (Product Page)
 
 struct AppDetailView: View {
@@ -504,6 +557,7 @@ struct SearchView: View {
 struct GetButton: View {
     var width: CGFloat = 72
     @State private var state: DownloadState = .get
+    @Environment(\.lpspReadOnly) private var readOnly
     
     enum DownloadState {
         case get, loading, open
@@ -511,6 +565,7 @@ struct GetButton: View {
     
     var body: some View {
         Button(action: {
+            guard !readOnly else { return }
             if state == .get {
                 withAnimation { state = .loading }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
@@ -525,7 +580,7 @@ struct GetButton: View {
                 if state == .get {
                     Text("GET")
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(readOnly ? .gray : .blue)
                 } else if state == .loading {
                     ProgressView()
                 } else {
@@ -537,6 +592,8 @@ struct GetButton: View {
             .frame(width: width, height: 28)
         }
         .buttonStyle(.plain)
+        .disabled(readOnly)
+        .opacity(readOnly ? 0.45 : 1)
     }
 }
 

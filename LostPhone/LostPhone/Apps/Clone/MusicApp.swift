@@ -173,10 +173,10 @@ struct MusicView: View {
                 BrowseView(manager: manager)
                     .tabItem { Label("Browse", systemImage: "square.grid.2x2.fill") }
                 
-                Text("Radio")
+                MusicRadioView(manager: manager)
                     .tabItem { Label("Radio", systemImage: "dot.radiowaves.left.and.right") }
                 
-                Text("Library")
+                MusicLibraryView(manager: manager)
                     .tabItem { Label("Library", systemImage: "square.stack.fill") }
                 
                 MusicSearchView(manager: manager)
@@ -655,14 +655,211 @@ struct MusicSearchView: View {
 
 struct BrowseView: View {
     @ObservedObject var manager: MusicManager
+
+    private let categories: [(String, String, Color)] = [
+        ("Découvertes", "sparkles", .pink),
+        ("Podcasts", "mic.fill", .purple),
+        ("Classique", "music.quarternote.3", .brown),
+        ("Hip-Hop", "headphones", .orange),
+        ("Chill", "leaf.fill", .teal),
+        ("Workout", "figure.run", .red),
+    ]
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading) {
-                    Text("Browse content...").padding()
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    ForEach(categories, id: \.0) { title, symbol, color in
+                        Button(action: {}) {
+                            ZStack(alignment: .bottomLeading) {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [color.opacity(0.85), color.opacity(0.45)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(height: 120)
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Image(systemName: symbol)
+                                        .font(.title2)
+                                    Text(title)
+                                        .font(.headline)
+                                        .multilineTextAlignment(.leading)
+                                }
+                                .foregroundStyle(.white)
+                                .padding(14)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
+                .padding()
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Playlists récentes")
+                        .font(.title3.bold())
+                        .padding(.horizontal)
+
+                    ForEach(manager.tracks.prefix(4)) { track in
+                        Button(action: { manager.play(track) }) {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color(uiColor: .secondarySystemBackground))
+                                    .frame(width: 50, height: 50)
+                                    .overlay(Image(systemName: "music.note.list").foregroundStyle(.red))
+                                VStack(alignment: .leading) {
+                                    Text(track.trackName)
+                                        .foregroundStyle(.primary)
+                                        .lineLimit(1)
+                                    Text(track.artistName)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.bottom, 100)
             }
             .navigationTitle("Browse")
+        }
+    }
+}
+
+struct MusicRadioView: View {
+    @ObservedObject var manager: MusicManager
+
+    private let stations: [(String, String, Color)] = [
+        ("Apple Music 1", "Live worldwide", .red),
+        ("Apple Music Hits", "Today's hits", .pink),
+        ("Apple Music Country", "Country mix", .orange),
+        ("Chill", "Relax & focus", .teal),
+    ]
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    ForEach(stations, id: \.0) { name, subtitle, color in
+                        Button(action: {
+                            if let track = manager.tracks.first {
+                                manager.play(track)
+                            }
+                        }) {
+                            HStack(spacing: 16) {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(color.gradient)
+                                    .frame(width: 72, height: 72)
+                                    .overlay {
+                                        Image(systemName: "dot.radiowaves.left.and.right")
+                                            .font(.title)
+                                            .foregroundStyle(.white)
+                                    }
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(name)
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                    Text(subtitle)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                    Text("LIVE")
+                                        .font(.caption2.bold())
+                                        .foregroundStyle(.red)
+                                }
+                                Spacer()
+                                Image(systemName: "play.circle.fill")
+                                    .font(.title)
+                                    .foregroundStyle(.red)
+                            }
+                            .padding(.horizontal)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.vertical)
+            }
+            .navigationTitle("Radio")
+        }
+    }
+}
+
+struct MusicLibraryView: View {
+    @ObservedObject var manager: MusicManager
+    @Environment(\.lpspReadOnly) private var readOnly
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    LibraryRow(icon: "arrow.down.circle.fill", color: .red, title: "Downloaded")
+                    LibraryRow(icon: "person.crop.circle.fill", color: .gray, title: "Artists")
+                    LibraryRow(icon: "music.note", color: .red, title: "Songs", count: manager.tracks.count)
+                    LibraryRow(icon: "square.stack.fill", color: .red, title: "Albums")
+                }
+
+                Section("Recently Added") {
+                    ForEach(manager.tracks) { track in
+                        Button(action: { manager.play(track) }) {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color(uiColor: .secondarySystemBackground))
+                                    .frame(width: 50, height: 50)
+                                    .overlay(Image(systemName: "music.note").foregroundStyle(.secondary))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(track.trackName)
+                                        .foregroundStyle(.primary)
+                                        .lineLimit(1)
+                                    Text(track.artistName)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Library")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {}) {
+                        Image(systemName: "plus")
+                    }
+                    .disabled(readOnly)
+                }
+            }
+        }
+    }
+}
+
+private struct LibraryRow: View {
+    let icon: String
+    let color: Color
+    let title: String
+    var count: Int?
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundStyle(color)
+                .frame(width: 28)
+            Text(title)
+            Spacer()
+            if let count {
+                Text("\(count)")
+                    .foregroundStyle(.secondary)
+            }
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.tertiary)
         }
     }
 }

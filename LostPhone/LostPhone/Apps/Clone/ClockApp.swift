@@ -3,6 +3,8 @@ import Combine
 
 // MARK: - Main Tab View
 struct ClockView: View {
+    @Environment(\.lpspReadOnly) private var readOnly
+
     var body: some View {
         TabView {
             WorldClockView()
@@ -14,14 +16,16 @@ struct ClockView: View {
             TimerView()
                 .tabItem { Label("Timer", systemImage: "timer") }
         }
+        .environment(\.lpspReadOnly, readOnly)
         .accentColor(.orange)
-        .preferredColorScheme(.dark) // Clock app is always dark
+        .preferredColorScheme(.dark)
     }
 }
 
 // MARK: - 1. World Clock View
 struct WorldClockView: View {
     @State private var date = Date()
+    @Environment(\.lpspReadOnly) private var readOnly
     
     // Timer to keep the clock ticking every minute
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -41,10 +45,12 @@ struct WorldClockView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     EditButton().foregroundStyle(.orange)
+                        .disabled(readOnly)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {} label: { Image(systemName: "plus") }
                         .foregroundStyle(.orange)
+                        .disabled(readOnly)
                 }
             }
             .onReceive(timer) { input in
@@ -91,6 +97,7 @@ struct AlarmView: View {
         AlarmModel(time: Date().addingTimeInterval(3600), label: "Work", isEnabled: false),
         AlarmModel(time: Date().addingTimeInterval(7200), label: "Gym", isEnabled: true)
     ]
+    @Environment(\.lpspReadOnly) private var readOnly
     
     var body: some View {
         NavigationStack {
@@ -107,6 +114,7 @@ struct AlarmView: View {
                             .background(Color.orange.opacity(0.2))
                             .foregroundStyle(.orange)
                             .clipShape(Capsule())
+                            .disabled(readOnly)
                     }
                 }
                 
@@ -127,10 +135,14 @@ struct AlarmView: View {
                             Spacer()
                             Toggle("", isOn: $alarm.isEnabled)
                                 .labelsHidden()
+                                .disabled(readOnly)
                         }
                         .padding(.vertical, 8)
                     }
-                    .onDelete { alarms.remove(atOffsets: $0) }
+                    .onDelete { indexSet in
+                        guard !readOnly else { return }
+                        alarms.remove(atOffsets: indexSet)
+                    }
                 }
             }
             .listStyle(.insetGrouped)
@@ -138,10 +150,12 @@ struct AlarmView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     EditButton().foregroundStyle(.orange)
+                        .disabled(readOnly)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {} label: { Image(systemName: "plus") }
                         .foregroundStyle(.orange)
+                        .disabled(readOnly)
                 }
             }
         }
@@ -322,7 +336,7 @@ struct TimerView: View {
             // MARK: - Options List (Label / Sound)
             // Only show reduced options when running to match iOS behavior
             VStack(spacing: 1) {
-                NavigationLink(destination: Text("Label")) {
+                NavigationLink(destination: TimerLabelSettingsView()) {
                     HStack {
                         Text("Label")
                             .foregroundStyle(.white)
@@ -337,7 +351,7 @@ struct TimerView: View {
                     .background(Color(uiColor: .tertiarySystemFill))
                 }
                 
-                NavigationLink(destination: Text("Radar")) {
+                NavigationLink(destination: TimerSoundSettingsView()) {
                     HStack {
                         Text("When Timer Ends")
                             .foregroundStyle(.white)
@@ -538,6 +552,39 @@ struct CircleButton: View {
         }
         .disabled(disabled)
         .opacity(disabled ? 0.5 : 1)
+    }
+}
+
+struct TimerLabelSettingsView: View {
+    @State private var label = "Timer"
+
+    var body: some View {
+        Form {
+            TextField("Label", text: $label)
+        }
+        .navigationTitle("Label")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct TimerSoundSettingsView: View {
+    private let sounds = ["Radar", "Beacon", "Signal", "Apex"]
+
+    var body: some View {
+        List {
+            ForEach(sounds, id: \.self) { sound in
+                HStack {
+                    Text(sound)
+                    Spacer()
+                    if sound == "Radar" {
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(.orange)
+                    }
+                }
+            }
+        }
+        .navigationTitle("When Timer Ends")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

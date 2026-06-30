@@ -25,6 +25,7 @@ class SafariViewModel: ObservableObject {
     @Published var canGoBack: Bool = false
     @Published var canGoForward: Bool = false
     @Published var progress: Double = 0.0
+    var allowsLiveBrowsing: Bool = true
 
     let lpspTabs: [SafariTabItem]
     let lpspHistory: [SafariHistoryItem]
@@ -47,6 +48,7 @@ class SafariViewModel: ObservableObject {
     }
 
     func load(input: String) {
+        guard allowsLiveBrowsing else { return }
         guard !input.isEmpty else { return }
         showLpspPage = false
         activeLpspTab = nil
@@ -136,7 +138,7 @@ struct SafariView: View {
                                 }
                         } else {
                             Button(action: {
-                                // Pre-fill input with current URL
+                                guard !readOnly else { return }
                                 inputText = displayTitle
                                 withAnimation { isEditingAddress = true }
                             }) {
@@ -216,13 +218,25 @@ struct SafariView: View {
                             .overlay(
                                 VStack {
                                     List {
-                                        Section(header: Text("Favorites")) {
-                                            ForEach(FavoritesData.list) { item in
-                                                Button(action: {
-                                                    model.load(input: item.url)
-                                                    endEditing()
-                                                }) {
-                                                    Label(item.name, systemImage: item.icon)
+                                        if readOnly, !model.lpspHistory.isEmpty {
+                                            Section(header: Text("Recent Searches")) {
+                                                ForEach(model.lpspHistory) { item in
+                                                    HStack {
+                                                        Image(systemName: "clock.arrow.circlepath")
+                                                            .foregroundStyle(.secondary)
+                                                        Text(item.query)
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Section(header: Text("Favorites")) {
+                                                ForEach(FavoritesData.list) { item in
+                                                    Button(action: {
+                                                        model.load(input: item.url)
+                                                        endEditing()
+                                                    }) {
+                                                        Label(item.name, systemImage: item.icon)
+                                                    }
                                                 }
                                             }
                                         }
@@ -309,6 +323,12 @@ struct SafariView: View {
         }
         // white mode
         .colorScheme(.light)
+        .onChange(of: readOnly) { _, locked in
+            model.allowsLiveBrowsing = !locked
+        }
+        .onAppear {
+            model.allowsLiveBrowsing = !readOnly
+        }
     }
     
     // --- Logic Helpers ---
@@ -343,6 +363,7 @@ struct SafariView: View {
 // MARK: - 3. Start Page (Favorites)
 struct StartPage: View {
     @ObservedObject var model: SafariViewModel
+    @Environment(\.lpspReadOnly) private var readOnly
 
     let columns = [
         GridItem(.flexible()),
@@ -426,6 +447,7 @@ struct StartPage: View {
                     LazyVGrid(columns: columns, spacing: 25) {
                         ForEach(FavoritesData.list) { item in
                             Button(action: {
+                                guard !readOnly else { return }
                                 model.load(input: item.url)
                             }) {
                                 VStack(spacing: 8) {

@@ -1,0 +1,47 @@
+# Aperçu SwiftUI sans Mac et sans Apple Developer.
+# Déclenchement manuel : GitHub → Actions → "iOS Preview (Simulator)" → Run workflow
+#
+# Produit : PNG + vidéo MP4/MOV + .app.zip (upload Appetize.io pour preview interactive)
+
+name: iOS Preview (Simulator)
+
+on:
+  workflow_dispatch:
+    inputs:
+      simulator:
+        description: "Simulateur iOS (ex. iPhone 16, iPhone 15)"
+        required: false
+        default: "iPhone 16"
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    name: Build simulator + captures
+    runs-on: macos-15
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen xcpretty
+
+      - name: Build & capture
+        env:
+          IOS_SIMULATOR_NAME: ${{ github.event.inputs.simulator || 'iPhone 16' }}
+        run: |
+          chmod +x LostPhone/scripts/ios-preview-capture.sh
+          LostPhone/scripts/ios-preview-capture.sh "$GITHUB_WORKSPACE/preview-artifacts"
+
+      - name: Upload preview artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-swiftui-preview-${{ github.run_number }}
+          path: preview-artifacts/
+          retention-days: 30

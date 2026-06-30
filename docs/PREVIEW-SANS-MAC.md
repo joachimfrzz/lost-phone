@@ -12,9 +12,9 @@ Option A (clone zerocode117 en SwiftUI) + previews gratuits ou quasi gratuits.
 2. Workflow **「iOS Preview (Simulator)」**
 3. **Run workflow** → laisse **Simulateur** vide (auto) → **Run workflow**
 4. Attends ~15–30 min (premier run peut télécharger la plateforme iOS)
-5. Télécharge l’artifact **`ios-swiftui-preview-XXX`** :
-   - **`LostPhone-simulator.app.zip`** — obligatoire pour Appetize
-   - `01-menu-accueil.png` / `preview-demo.mov` — bonus si le simulateur CI a démarré
+5. Télécharge l’artifact **`appetize-upload-XXX`** (un seul fichier `.zip` — c’est celui-là pour Appetize)
+   - ⚠️ **Ne pas** uploader l’artifact `ios-swiftui-preview-XXX` : il contient aussi PNG/MOV et Appetize affiche « No .app folder found »
+6. Va sur [appetize.io](https://appetize.io) → upload ce `.zip` **sans le décompresser**
 
 ### Coût
 

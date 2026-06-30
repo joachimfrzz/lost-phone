@@ -174,14 +174,7 @@ struct KeypadButton: View {
 struct RecentsView: View {
     @State private var filter = 0 // 0 = All, 1 = Missed
     
-    // Mock Data
-    let recentCalls = [
-        RecentItem(name: "Pallav Agarwal", label: "mobile", date: "12:42 PM", type: .missed),
-        RecentItem(name: "Mom", label: "home", date: "Yesterday", type: .outgoing),
-        RecentItem(name: "Craig Federighi", label: "work", date: "Friday", type: .incoming),
-        RecentItem(name: "Tim Cook", label: "iPhone", date: "Friday", type: .incoming),
-        RecentItem(name: "+1 (555) 123-4567", label: "Cupertino, CA", date: "Thursday", type: .missed)
-    ]
+    let recentCalls: [RecentItem] = []
     
     var filteredCalls: [RecentItem] {
         filter == 1 ? recentCalls.filter { $0.type == .missed } : recentCalls

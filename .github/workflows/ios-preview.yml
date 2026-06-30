@@ -1,7 +1,7 @@
 # Aperçu SwiftUI sans Mac et sans Apple Developer.
-# Déclenchement manuel : GitHub → Actions → "iOS Preview (Simulator)" → Run workflow
+# GitHub → Actions → "iOS Preview (Simulator)" → Run workflow
 #
-# Produit : PNG + vidéo MP4/MOV + .app.zip (upload Appetize.io pour preview interactive)
+# Artifacts: LostPhone-simulator.app.zip (Appetize) + PNG/MOV si simulateur OK
 
 name: iOS Preview (Simulator)
 
@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       simulator:
-        description: "Simulateur iOS (ex. iPhone 16, iPhone 15)"
+        description: "Simulateur préféré (vide = auto). Ex: iPhone 15 Pro"
         required: false
-        default: "iPhone 16"
+        default: ""
 
 permissions:
   contents: read
@@ -20,21 +20,21 @@ jobs:
   preview:
     name: Build simulator + captures
     runs-on: macos-15
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode.app
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
       - name: Install XcodeGen
         run: brew install xcodegen
 
       - name: Build & capture
         env:
-          IOS_SIMULATOR_NAME: ${{ github.event.inputs.simulator || 'iPhone 16' }}
+          IOS_SIMULATOR_NAME: ${{ github.event.inputs.simulator }}
         run: |
           chmod +x LostPhone/scripts/ios-preview-capture.sh
           LostPhone/scripts/ios-preview-capture.sh "$GITHUB_WORKSPACE/preview-artifacts"
@@ -45,3 +45,4 @@ jobs:
           name: ios-swiftui-preview-${{ github.run_number }}
           path: preview-artifacts/
           retention-days: 30
+          if-no-files-found: error

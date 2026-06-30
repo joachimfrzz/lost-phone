@@ -10,12 +10,11 @@ Option A (clone zerocode117 en SwiftUI) + previews gratuits ou quasi gratuits.
 
 1. Va sur GitHub → repo `lost-phone` → **Actions**
 2. Workflow **「iOS Preview (Simulator)」**
-3. **Run workflow** → Run
-4. Attends ~10–20 min
+3. **Run workflow** → laisse **Simulateur** vide (auto) → **Run workflow**
+4. Attends ~15–30 min (premier run peut télécharger la plateforme iOS)
 5. Télécharge l’artifact **`ios-swiftui-preview-XXX`** :
-   - `01-menu-accueil.png` — capture écran menu Lost Phone
-   - `preview-demo.mov` — vidéo ~20 s du simulateur
-   - `LostPhone-simulator.app.zip` — app simulateur (voir Appetize ci-dessous)
+   - **`LostPhone-simulator.app.zip`** — obligatoire pour Appetize
+   - `01-menu-accueil.png` / `preview-demo.mov` — bonus si le simulateur CI a démarré
 
 ### Coût
 

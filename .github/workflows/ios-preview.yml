@@ -20,7 +20,7 @@ on:
         default: ""
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   preview:
@@ -45,13 +45,37 @@ jobs:
           chmod +x LostPhone/scripts/ios-preview-capture.sh
           LostPhone/scripts/ios-preview-capture.sh "$GITHUB_WORKSPACE/preview-artifacts"
 
+      - name: Publish direct Appetize download (Releases)
+        run: |
+          gh release delete appetize-latest -y 2>/dev/null || true
+          gh release create appetize-latest \
+            preview-artifacts/LostPhone-simulator.app.zip \
+            --title "Appetize — dernier build iOS" \
+            --notes "**Télécharge \`LostPhone-simulator.app.zip\` ci-dessous** et uploade-le sur [appetize.io](https://appetize.io) **sans le dézipper**. PIN : **1503**."
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Upload Appetize zip (upload THIS file to appetize.io)
         uses: actions/upload-artifact@v4
         with:
           name: appetize-upload-${{ github.run_number }}
-          path: preview-artifacts/LostPhone-simulator.app.zip
+          path: |
+            preview-artifacts/LostPhone-simulator.app.zip
+            preview-artifacts/APPETIZE-LISEZMOI.txt
           retention-days: 30
           if-no-files-found: error
+
+      - name: Job summary
+        run: |
+          {
+            echo "## Appetize — comment tester"
+            echo ""
+            echo "1. **[Télécharger LostPhone-simulator.app.zip (Release)](https://github.com/${{ github.repository }}/releases/tag/appetize-latest)**"
+            echo "2. Upload ce fichier sur [appetize.io](https://appetize.io) **sans le dézipper**"
+            echo "3. PIN : **1503** · Histoire : **J-3**"
+            echo ""
+            echo "⚠️ Si Appetize dit « No .app folder found », tu as uploadé le mauvais zip (celui de l'artifact GitHub entier). Utilise le lien Release ci-dessus."
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload preview artifacts (screenshots + full bundle)
         uses: actions/upload-artifact@v4

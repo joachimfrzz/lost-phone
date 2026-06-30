@@ -2,60 +2,58 @@
 
 Option A (clone zerocode117 en SwiftUI) + previews gratuits ou quasi gratuits.
 
-## 1. GitHub Actions — captures à la demande (0 €)
+## 1. GitHub Actions — build iOS simulateur (0 €)
 
-**Pas de Mac. Pas de compte Apple Developer.** Le build cible le **simulateur iOS** (signature non requise).
+**Pas de Mac. Pas de compte Apple Developer.**
 
-### Lancer un aperçu
+Le workflow tourne automatiquement à chaque push sur `main` (dossier `LostPhone/`).
 
-1. Va sur GitHub → repo `lost-phone` → **Actions**
-2. Workflow **「iOS Preview (Simulator)」**
-3. **Run workflow** → laisse **Simulateur** vide (auto) → **Run workflow**
-4. Attends ~15–30 min (premier run peut télécharger la plateforme iOS)
-5. Télécharge l’artifact **`appetize-upload-XXX`** (un seul fichier `.zip` — c’est celui-là pour Appetize)
-   - ⚠️ **Ne pas** uploader l’artifact `ios-swiftui-preview-XXX` : il contient aussi PNG/MOV et Appetize affiche « No .app folder found »
-6. Va sur [appetize.io](https://appetize.io) → upload ce `.zip` **sans le décompresser**
+### Tester sur Appetize (méthode simple)
 
-### Coût
+1. Va sur **https://github.com/joachimfrzz/lost-phone/releases/tag/appetize-latest**
+2. Télécharge **`LostPhone-simulator.app.zip`** (lien direct, pas un artifact Actions)
+3. Upload **ce fichier** sur **https://appetize.io** — **sans le dézipper**
+4. Ouvre le lien Appetize → **J-3** → PIN **1503**
 
-- Repo **public** : minutes macOS GitHub gratuites
-- Repo **privé** : ~10–15 min macOS × 10 = crédit GitHub consommé ; largement suffisant pour quelques previews / mois
+### Si Appetize dit « No .app folder found »
 
----
+Tu as uploadé le **mauvais** fichier. Causes fréquentes :
 
-## 2. Appetize.io — preview interactive dans le navigateur (0 € limité)
+| Fichier uploadé | Résultat |
+|-----------------|----------|
+| `appetize-upload-9.zip` (artifact GitHub) | ❌ Il faut d'abord le **dézipper** pour obtenir `LostPhone-simulator.app.zip` |
+| `ios-swiftui-preview-9.zip` | ❌ Contient PNG + vidéo, pas le bon zip |
+| Dossier `LostPhone.app` re-zippé incorrectement | ❌ Le `.app` doit être **à la racine** du zip |
 
-Tu **pilotes** l’app comme sur un iPhone, dans Safari (PC ou iPhone).
-
-1. Récupère `LostPhone-simulator.app.zip` depuis l’artifact GitHub
-2. Compte gratuit [appetize.io](https://appetize.io) (~30 min / mois)
-3. Upload le `.zip`
-4. Ouvre le lien Appetize → navigue menu, verrou, apps
-
-**Limite :** session limitée en gratuit ; suffisant pour vérifier le rendu quand tu veux.
+**Solution :** utilise le lien **Releases → appetize-latest** (téléchargement direct du bon zip).
 
 ---
 
-## 3. Mac cloud 1 h — vrai iPhone physique (~5–20 €, ponctuel)
+## 2. Artifacts Actions (bonus)
 
-Quand tu veux **l’app sur ton iPhone** (pas simulateur) sans Apple Developer annuel :
+Sur un run vert dans **Actions → iOS Preview (Simulator)** :
 
-- Loue un Mac cloud 1 h
-- Build Xcode + Apple ID **gratuit** → install sur ton iPhone (~7 jours)
+- **`appetize-upload-XXX`** — zip Appetize + `APPETIZE-LISEZMOI.txt`
+- **`ios-swiftui-preview-XXX`** — zip + captures PNG/MOV
 
 ---
 
-## 4. Apple Developer + Codemagic — plus tard
+## 3. Mac cloud 1 h (~5–20 €, ponctuel)
 
-Quand tu voudras TestFlight, builds stables, testeurs : 99 €/an + Codemagic.
+Build Xcode + install sur ton iPhone (Apple ID gratuit, ~7 jours).
+
+---
+
+## 4. Apple Developer + TestFlight — plus tard
+
+99 €/an quand tu voudras distribuer proprement.
 
 ---
 
 ## Résumé
 
-| Besoin | Solution | Coût |
-|--------|----------|------|
-| Voir le rendu SwiftUI quand je veux | GitHub Actions → PNG + vidéo | 0 € |
-| Toucher / naviguer dans l’app | Appetize + .zip artifact | 0 € (limité) |
-| App sur mon vrai iPhone | Mac cloud 1 h | ~5–20 € |
-| Prod / testeurs | Developer + Codemagic | 99 €/an |
+| Besoin | Solution |
+|--------|----------|
+| Tester dans le navigateur | **Releases → appetize-latest** → Appetize |
+| Voir captures CI | Actions → artifact `ios-swiftui-preview-XXX` |
+| App sur vrai iPhone | Mac cloud 1 h |

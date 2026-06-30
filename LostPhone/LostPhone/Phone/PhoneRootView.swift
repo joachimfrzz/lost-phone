@@ -6,6 +6,8 @@ struct PhoneRootView: View {
 
     var body: some View {
         ZStack {
+            Color(red: 0.04, green: 0.05, blue: 0.12).ignoresSafeArea()
+
             switch phone.phase {
             case .menu:
                 GameHomeView(stories: stories)

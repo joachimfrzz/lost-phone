@@ -12,15 +12,24 @@ import Combine
 // MARK: - Models
 
 struct Email: Identifiable, Hashable {
-    let id = UUID()
+    let id: UUID
     let sender: String
     let subject: String
     let body: String
     let date: Date
     var isRead: Bool
     var isFlagged: Bool
-    
-    // computed preview for the list view (2 lines max)
+
+    init(stableId: String, sender: String, subject: String, body: String, date: Date, isRead: Bool, isFlagged: Bool) {
+        self.id = LpspStableId.uuid(stableId)
+        self.sender = sender
+        self.subject = subject
+        self.body = body
+        self.date = date
+        self.isRead = isRead
+        self.isFlagged = isFlagged
+    }
+
     var preview: String {
         body.replacingOccurrences(of: "\n", with: " ")
     }
@@ -28,9 +37,9 @@ struct Email: Identifiable, Hashable {
 
 class MailManager: ObservableObject {
     @Published var emails: [Email] = []
-    
-    init() {
-        loadMockData()
+
+    init(emails: [Email] = []) {
+        self.emails = emails
     }
     
     func delete(_ email: Email) {
@@ -62,17 +71,17 @@ class MailManager: ObservableObject {
     var unreadCount: Int {
         emails.filter { !$0.isRead }.count
     }
-    
-    private func loadMockData() {
-        emails = []
-    }
 }
 
 // MARK: - 1. Root Mailboxes View
 
 struct MailView: View {
-    @StateObject private var manager = MailManager()
+    @StateObject private var manager: MailManager
     @State private var showCompose = false
+
+    init(manager: MailManager = MailManager()) {
+        _manager = StateObject(wrappedValue: manager)
+    }
     
     var body: some View {
         NavigationStack {
@@ -163,6 +172,7 @@ struct InboxView: View {
     @ObservedObject var manager: MailManager
     let title: String
     @State private var searchText = ""
+    @Environment(\.lpspReadOnly) private var readOnly
     
     var filteredEmails: [Email] {
         if searchText.isEmpty {
@@ -188,27 +198,31 @@ struct InboxView: View {
                     EmailRow(email: email)
                 }
                 .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) {
-                        withAnimation { manager.delete(email) }
-                    } label: {
-                        Label("Trash", systemImage: "trash")
+                .swipeActions(edge: .trailing, allowsFullSwipe: !readOnly) {
+                    if !readOnly {
+                        Button(role: .destructive) {
+                            withAnimation { manager.delete(email) }
+                        } label: {
+                            Label("Trash", systemImage: "trash")
+                        }
+
+                        Button {
+                            withAnimation { manager.toggleFlag(email) }
+                        } label: {
+                            Label("Flag", systemImage: "flag")
+                        }
+                        .tint(.orange)
                     }
-                    
-                    Button {
-                        withAnimation { manager.toggleFlag(email) }
-                    } label: {
-                        Label("Flag", systemImage: "flag")
-                    }
-                    .tint(.orange)
                 }
-                .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                    Button {
-                        withAnimation { manager.toggleRead(email) }
-                    } label: {
-                        Label(email.isRead ? "Unread" : "Read", systemImage: "envelope.badge")
+                .swipeActions(edge: .leading, allowsFullSwipe: !readOnly) {
+                    if !readOnly {
+                        Button {
+                            withAnimation { manager.toggleRead(email) }
+                        } label: {
+                            Label(email.isRead ? "Unread" : "Read", systemImage: "envelope.badge")
+                        }
+                        .tint(.blue)
                     }
-                    .tint(.blue)
                 }
             }
         }

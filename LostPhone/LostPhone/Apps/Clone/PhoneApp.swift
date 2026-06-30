@@ -2,12 +2,18 @@ import SwiftUI
 
 // MARK: - Main Tab View
 struct PhoneView: View {
+    let recentCalls: [RecentItem]
+
+    init(recentCalls: [RecentItem] = []) {
+        self.recentCalls = recentCalls
+    }
+
     var body: some View {
         TabView {
             FavoritesView()
                 .tabItem { Label("Favorites", systemImage: "star.fill") }
-            
-            RecentsView()
+
+            RecentsView(recentCalls: recentCalls)
                 .tabItem { Label("Recents", systemImage: "clock.fill") }
             
             ContactsView()
@@ -172,9 +178,12 @@ struct KeypadButton: View {
 
 // MARK: - 2. Recents View (Accurate Navigation)
 struct RecentsView: View {
-    @State private var filter = 0 // 0 = All, 1 = Missed
-    
-    let recentCalls: [RecentItem] = []
+    @State private var filter = 0
+    let recentCalls: [RecentItem]
+
+    init(recentCalls: [RecentItem] = []) {
+        self.recentCalls = recentCalls
+    }
     
     var filteredCalls: [RecentItem] {
         filter == 1 ? recentCalls.filter { $0.type == .missed } : recentCalls
@@ -243,11 +252,20 @@ struct RecentsView: View {
 }
 
 struct RecentItem: Identifiable {
-    let id = UUID()
+    let id: UUID
     let name: String
     let label: String
     let date: String
     let type: CallType
+
+    init(stableId: String, name: String, label: String, date: String, type: CallType) {
+        self.id = LpspStableId.uuid(stableId)
+        self.name = name
+        self.label = label
+        self.date = date
+        self.type = type
+    }
+
     enum CallType { case incoming, outgoing, missed }
 }
 

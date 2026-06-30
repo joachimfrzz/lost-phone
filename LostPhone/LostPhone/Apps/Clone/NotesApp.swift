@@ -32,9 +32,9 @@ struct Note: Identifiable, Hashable, Codable {
 
 class NotesManager: ObservableObject {
     @Published var notes: [Note] = []
-    
-    init() {
-        notes = []
+
+    init(notes: [Note] = []) {
+        self.notes = notes
     }
     
     func createNote() -> Note {
@@ -60,9 +60,12 @@ class NotesManager: ObservableObject {
 // MARK: - 1. Folders View (Root)
 
 struct NotesView: View {
-    @StateObject private var manager = NotesManager()
-    // Modern Navigation Path to handle pushes programmatically
+    @StateObject private var manager: NotesManager
     @State private var navPath = NavigationPath()
+
+    init(manager: NotesManager = NotesManager()) {
+        _manager = StateObject(wrappedValue: manager)
+    }
     
     var body: some View {
         NavigationStack(path: $navPath) {
@@ -127,6 +130,7 @@ struct NotesListView: View {
     @ObservedObject var manager: NotesManager
     @Binding var navPath: NavigationPath
     @State private var searchText = ""
+    @Environment(\.lpspReadOnly) private var readOnly
     
     var filteredNotes: [Note] {
         if searchText.isEmpty {
@@ -153,7 +157,10 @@ struct NotesListView: View {
                 // Make the separator follow the text indentation
                 .alignmentGuide(.listRowSeparatorLeading) { _ in 20 }
             }
-            .onDelete(perform: manager.deleteNote)
+            .onDelete { offsets in
+                guard !readOnly else { return }
+                manager.deleteNote(at: offsets)
+            }
         }
         .listStyle(.plain)
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
@@ -176,6 +183,7 @@ struct NotesListView: View {
                     Spacer()
                     
                     Button(action: {
+                        guard !readOnly else { return }
                         let newNote = manager.createNote()
                         navPath.append(newNote)
                     }) {
@@ -183,6 +191,8 @@ struct NotesListView: View {
                             .font(.title3)
                             .foregroundStyle(.yellow)
                     }
+                    .disabled(readOnly)
+                    .opacity(readOnly ? 0.35 : 1)
                 }
             }
         }
@@ -235,24 +245,34 @@ struct NoteEditorView: View {
     @State var note: Note
     @ObservedObject var manager: NotesManager
     @FocusState private var isFocused: Bool
-    
+    @Environment(\.lpspReadOnly) private var readOnly
+
     var body: some View {
         VStack(spacing: 0) {
-            // Sub-header for the date (mimicking iOS style below the large title)
             Text(formatDate(note.lastModified))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
-            
-            TextEditor(text: $note.content)
-                .font(.body)
-                .padding(.horizontal)
-                .scrollContentBackground(.hidden)
-                .background(Color(uiColor: .systemBackground))
-                .focused($isFocused)
-                .onChange(of: note.content) { _ in
-                    manager.updateNote(note)
+
+            if readOnly {
+                ScrollView {
+                    Text(note.content)
+                        .font(.body)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
                 }
+            } else {
+                TextEditor(text: $note.content)
+                    .font(.body)
+                    .padding(.horizontal)
+                    .scrollContentBackground(.hidden)
+                    .background(Color(uiColor: .systemBackground))
+                    .focused($isFocused)
+                    .onChange(of: note.content) { _ in
+                        manager.updateNote(note)
+                    }
+            }
         }
         // 1. Set the dynamic title
         .navigationTitle(note.title)

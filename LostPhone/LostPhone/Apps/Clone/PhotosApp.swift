@@ -1,7 +1,16 @@
 import SwiftUI
 import Combine
 
-// MARK: - Models & API
+// MARK: - Models
+
+struct GalleryPhoto: Identifiable, Hashable {
+    let id: String
+    let caption: String
+    let place: String?
+    let capturedAt: Date?
+    let capturedLabel: String?
+}
+
 struct PicsumPhoto: Identifiable, Codable {
     let id: String
     let author: String
@@ -24,7 +33,15 @@ struct PicsumPhoto: Identifiable, Codable {
 @MainActor
 class PhotoLibrary: ObservableObject {
     @Published var photos: [PicsumPhoto] = []
+    @Published var galleryPhotos: [GalleryPhoto] = []
     @Published var isLoading = false
+
+    init(galleryPhotos: [GalleryPhoto] = []) {
+        self.galleryPhotos = galleryPhotos
+    }
+
+    var isEmpty: Bool { galleryPhotos.isEmpty && photos.isEmpty }
+    var totalCount: Int { galleryPhotos.isEmpty ? photos.count : galleryPhotos.count }
     
     func fetchPhotos() async {
         isLoading = false
@@ -33,7 +50,11 @@ class PhotoLibrary: ObservableObject {
 
 // MARK: - Main Tab View
 struct PhotosView: View {
-    @StateObject private var library = PhotoLibrary()
+    @StateObject private var library: PhotoLibrary
+
+    init(library: PhotoLibrary = PhotoLibrary()) {
+        _library = StateObject(wrappedValue: library)
+    }
     
     var body: some View {
         TabView {
@@ -71,10 +92,17 @@ struct LibraryView: View {
             VStack(spacing: 0) {
                 ScrollView {
                     LazyVGrid(columns: gridColumns, spacing: 1) {
-                        ForEach(library.photos) { photo in
-                            NavigationLink(destination: PhotoDetailView(photo: photo)) {
-                                AsyncImage(url: photo.thumbnailURL) { phase in
-                                    switch phase {
+                        if !library.galleryPhotos.isEmpty {
+                            ForEach(library.galleryPhotos) { photo in
+                                NavigationLink(destination: GalleryPhotoDetailView(photo: photo)) {
+                                    GalleryPhotoTile(photo: photo)
+                                }
+                            }
+                        } else {
+                            ForEach(library.photos) { photo in
+                                NavigationLink(destination: PhotoDetailView(photo: photo)) {
+                                    AsyncImage(url: photo.thumbnailURL) { phase in
+                                        switch phase {
                                         case .success(let image):
                                             image
                                                 .resizable()
@@ -87,17 +115,17 @@ struct LibraryView: View {
                                                 .aspectRatio(1, contentMode: .fit)
                                         @unknown default:
                                             EmptyView()
+                                        }
                                     }
+                                    .id(photo.id)
                                 }
-                                .id(photo.id)
                             }
                         }
                     }
                     .padding(.bottom, 20)
-                    
-                    // Bottom Status Count
+
                     VStack(spacing: 5) {
-                        Text("\(library.photos.count) Photos")
+                        Text("\(library.totalCount) Photos")
                             .font(.system(size: 15, weight: .medium))
                         Text("Synced with iCloud Just Now")
                             .font(.caption)
@@ -135,6 +163,62 @@ struct LibraryView: View {
                 await library.fetchPhotos()
             }
         }
+    }
+}
+
+struct GalleryPhotoTile: View {
+    let photo: GalleryPhoto
+
+    var body: some View {
+        Rectangle()
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color(hue: Double(abs(photo.id.hashValue) % 360) / 360, saturation: 0.35, brightness: 0.5),
+                        Color(hue: Double(abs(photo.id.hashValue) % 360) / 360, saturation: 0.45, brightness: 0.28),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .aspectRatio(1, contentMode: .fit)
+            .overlay {
+                Image(systemName: "photo.fill")
+                    .foregroundStyle(.white.opacity(0.45))
+            }
+    }
+}
+
+struct GalleryPhotoDetailView: View {
+    let photo: GalleryPhoto
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack(spacing: 16) {
+                Spacer()
+                Image(systemName: "photo.artframe")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.white.opacity(0.35))
+                Text(photo.caption)
+                    .font(.body)
+                    .foregroundStyle(.white.opacity(0.9))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+                if let place = photo.place {
+                    Label(place, systemImage: "mappin.and.ellipse")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.55))
+                }
+                if let label = photo.capturedLabel ?? photo.capturedAt?.formatted(date: .abbreviated, time: .shortened) {
+                    Text(label)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.45))
+                }
+                Spacer()
+            }
+        }
+        .toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 

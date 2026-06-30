@@ -8,37 +8,16 @@ struct LpspAppContainerView: View {
     @State private var initialVolume: Float = 0
 
     var body: some View {
-        ZStack {
-            LpspAppRouter(appName: appName)
-
-            VStack {
-                HStack {
-                    Button {
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        phone.closeApp()
-                        dismiss()
-                    } label: {
-                        Text("◀ Home")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.primary)
-                            .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.leading, 12)
-                    .padding(.top, 8)
-                    Spacer()
+        LpspAppRouter(appName: appName)
+            .environment(\.lpspReadOnly, true)
+            .onAppear { initialVolume = volumeObserver.volume }
+            .onChange(of: volumeObserver.volume) { _, newVolume in
+                if abs(newVolume - initialVolume) > 0.001 {
+                    phone.closeApp()
+                    dismiss()
                 }
-                Spacer()
+                initialVolume = newVolume
             }
-        }
-        .onAppear { initialVolume = volumeObserver.volume }
-        .onChange(of: volumeObserver.volume) { _, newVolume in
-            if abs(newVolume - initialVolume) > 0.001 {
-                phone.closeApp()
-                dismiss()
-            }
-            initialVolume = newVolume
-        }
     }
 }
 
@@ -52,24 +31,24 @@ struct LpspAppRouter: View {
         Group {
             switch appName {
             case "Messages":
-                LpspMessagesView(conversations: LpspAdapters.messages(from: payload))
+                MessagesView(viewModel: LpspCloneBridge.messagesViewModel(from: LpspAdapters.messages(from: payload)))
             case "WhatsApp":
                 LpspWhatsAppView(conversations: LpspAdapters.whatsApp(from: payload))
             case "Signal":
                 LpspSignalView(conversations: LpspAdapters.signal(from: payload))
             case "Notes":
-                LpspNotesView(notes: LpspAdapters.notes(from: payload))
+                NotesView(manager: LpspCloneBridge.notesManager(from: LpspAdapters.notes(from: payload)))
             case "Photos":
-                LpspPhotosView(photos: LpspAdapters.photos(from: payload))
+                PhotosView(library: LpspCloneBridge.photoLibrary(from: LpspAdapters.photos(from: payload)))
             case "Mail":
-                LpspMailView(emails: LpspAdapters.mail(from: payload))
+                MailView(manager: LpspCloneBridge.mailManager(from: LpspAdapters.mail(from: payload)))
             case "Telephone":
-                LpspTelephoneView(recents: LpspAdapters.phoneRecents(from: payload))
+                PhoneView(recentCalls: LpspCloneBridge.recentCalls(from: LpspAdapters.phoneRecents(from: payload)))
             case "Safari":
-                LpspSafariView(
+                SafariView(model: LpspCloneBridge.safariViewModel(
                     tabs: LpspAdapters.safariTabs(from: payload),
                     history: LpspAdapters.safariHistory(from: payload)
-                )
+                ))
             default:
                 if let clone = LpspAppCatalog.cloneType(for: appName) {
                     cloneAppView(clone)
@@ -113,7 +92,7 @@ struct GenericLpspAppView: View {
                     ContentUnavailableView(
                         appName,
                         systemImage: "app.fill",
-                        description: Text("Contenu LPSP absent pour cette app. Éditez stories/j3-louvre/lpsp.json")
+                        description: Text("Contenu LPSP absent pour cette app.")
                     )
                 }
             }

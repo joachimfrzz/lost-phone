@@ -2,30 +2,54 @@ import SwiftUI
 import WebKit
 import Combine
 
+struct SafariTabItem: Identifiable, Hashable {
+    let id: String
+    let title: String
+    let url: String
+}
+
+struct SafariHistoryItem: Identifiable, Hashable {
+    let id: String
+    let query: String
+    let dateLabel: String
+}
+
 // MARK: - 1. Web ViewModel (The Brain)
 class SafariViewModel: ObservableObject {
-    // State to drive UI switching
     @Published var shouldShowBrowser: Bool = false
-    
-    @Published var urlString: String = "" // Text in the bar
+    @Published var showLpspPage: Bool = false
+    @Published var activeLpspTab: SafariTabItem?
+
+    @Published var urlString: String = ""
     @Published var isLoading: Bool = false
     @Published var canGoBack: Bool = false
     @Published var canGoForward: Bool = false
     @Published var progress: Double = 0.0
-    
-    // The WebView instance must be held here to persist state
+
+    let lpspTabs: [SafariTabItem]
+    let lpspHistory: [SafariHistoryItem]
+
     let webView: WKWebView
-    
-    init() {
+
+    init(lpspTabs: [SafariTabItem] = [], lpspHistory: [SafariHistoryItem] = []) {
+        self.lpspTabs = lpspTabs
+        self.lpspHistory = lpspHistory
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
         self.webView = WKWebView(frame: .zero, configuration: config)
     }
-    
+
+    func openLpspTab(_ tab: SafariTabItem) {
+        activeLpspTab = tab
+        urlString = tab.url
+        showLpspPage = true
+        shouldShowBrowser = false
+    }
+
     func load(input: String) {
         guard !input.isEmpty else { return }
-        
-        // 1. Force the UI to switch to the browser immediately
+        showLpspPage = false
+        activeLpspTab = nil
         DispatchQueue.main.async {
             self.shouldShowBrowser = true
         }
@@ -56,6 +80,8 @@ class SafariViewModel: ObservableObject {
     
     func closeBrowser() {
         shouldShowBrowser = false
+        showLpspPage = false
+        activeLpspTab = nil
         urlString = ""
         progress = 0
         webView.stopLoading()
@@ -71,10 +97,15 @@ class SafariViewModel: ObservableObject {
 
 // MARK: - 2. Main Safari View
 struct SafariView: View {
-    @StateObject private var model = SafariViewModel()
+    @StateObject private var model: SafariViewModel
     @State private var isEditingAddress = false
     @State private var inputText = ""
     @FocusState private var isFocused: Bool
+    @Environment(\.lpspReadOnly) private var readOnly
+
+    init(model: SafariViewModel = SafariViewModel()) {
+        _model = StateObject(wrappedValue: model)
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -110,7 +141,7 @@ struct SafariView: View {
                                 withAnimation { isEditingAddress = true }
                             }) {
                                 HStack(spacing: 4) {
-                                    if model.shouldShowBrowser {
+                                    if model.shouldShowBrowser || model.showLpspPage {
                                         Image(systemName: "lock.fill")
                                             .font(.caption2)
                                             .foregroundStyle(.black)
@@ -170,8 +201,9 @@ struct SafariView: View {
                 
                 // --- MAIN CONTENT AREA ---
                 ZStack {
-                    // Switch logic: If 'shouldShowBrowser' is true, show WebView. Else StartPage.
-                    if model.shouldShowBrowser {
+                    if model.showLpspPage, let tab = model.activeLpspTab {
+                        SafariLpspPageView(tab: tab)
+                    } else if model.shouldShowBrowser {
                         SafariWebViewRepresentable(viewModel: model)
                     } else {
                         StartPage(model: model)
@@ -294,6 +326,9 @@ struct SafariView: View {
     }
     
     var displayTitle: String {
+        if model.showLpspPage, let tab = model.activeLpspTab {
+            return tab.title
+        }
         if !model.shouldShowBrowser { return "Search or enter website name" }
         
         // Clean up URL for pretty display
@@ -308,19 +343,80 @@ struct SafariView: View {
 // MARK: - 3. Start Page (Favorites)
 struct StartPage: View {
     @ObservedObject var model: SafariViewModel
-    
+
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.flexible()),
     ]
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 30) {
                 Color.clear.frame(height: 20)
-                
+
+                if !model.lpspTabs.isEmpty {
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("Tabs")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 20)
+
+                        LazyVGrid(columns: columns, spacing: 25) {
+                            ForEach(model.lpspTabs) { tab in
+                                Button {
+                                    model.openLpspTab(tab)
+                                } label: {
+                                    VStack(spacing: 8) {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color(uiColor: .secondarySystemBackground))
+                                            .frame(width: 62, height: 62)
+                                            .overlay {
+                                                Image(systemName: "globe")
+                                                    .font(.title2)
+                                                    .foregroundStyle(.blue)
+                                            }
+                                        Text(tab.title)
+                                            .font(.caption)
+                                            .foregroundStyle(.primary)
+                                            .lineLimit(2)
+                                            .multilineTextAlignment(.center)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 15)
+                    }
+                }
+
+                if !model.lpspHistory.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Recent Searches")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 20)
+                        ForEach(model.lpspHistory) { item in
+                            HStack {
+                                Image(systemName: "clock.arrow.circlepath")
+                                    .foregroundStyle(.secondary)
+                                VStack(alignment: .leading) {
+                                    Text(item.query)
+                                        .font(.subheadline)
+                                    if !item.dateLabel.isEmpty {
+                                        Text(item.dateLabel)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    }
+                }
+
+                if model.lpspTabs.isEmpty {
                 VStack(alignment: .leading, spacing: 15) {
                     Text("Favorites")
                         .font(.title2)
@@ -352,7 +448,8 @@ struct StartPage: View {
                     }
                     .padding(.horizontal, 15)
                 }
-                
+                }
+
                 // Privacy Report Mock
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Privacy Report")
@@ -382,6 +479,28 @@ struct StartPage: View {
                 Spacer()
             }
         }
+    }
+}
+
+struct SafariLpspPageView: View {
+    let tab: SafariTabItem
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(tab.title)
+                    .font(.title2.weight(.semibold))
+                Text(tab.url)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Text("Page en lecture seule — traces laissées sur ce téléphone.")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(20)
+        }
+        .background(Color(uiColor: .systemBackground))
     }
 }
 

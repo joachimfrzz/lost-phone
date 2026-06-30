@@ -3,12 +3,13 @@ import SwiftUI
 
 @MainActor
 final class PhoneViewModel: ObservableObject {
-    @Published var phase: PhonePhase = .loading
+    @Published var phase: PhonePhase = .menu
     @Published var package: LpspPackage?
     @Published var notifications: [RuntimeNotification] = []
     @Published var pinError = false
     @Published var overlay: SystemOverlay = .none
     @Published var activeApp: String?
+    @Published private(set) var currentStoryId: String?
 
     private var pinCode = ""
     private var scenarioTask: Task<Void, Never>?
@@ -36,9 +37,26 @@ final class PhoneViewModel: ObservableObject {
         notifications.filter { !$0.lu }.count
     }
 
+    func startStory(_ storyId: String) async {
+        await loadStory(storyId: storyId)
+    }
+
+    func returnToMenu() {
+        scenarioTask?.cancel()
+        package = nil
+        notifications = []
+        activeApp = nil
+        firedEventIds = []
+        scheduledEvents = []
+        currentStoryId = nil
+        pinCode = ""
+        phase = .menu
+    }
+
     func loadStory(storyId: String = "j3-louvre") async {
         phase = .loading
         scenarioTask?.cancel()
+        currentStoryId = storyId
         do {
             let loaded = try LpspLoader.load(storyId: storyId)
             package = loaded

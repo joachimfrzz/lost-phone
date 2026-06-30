@@ -27,23 +27,7 @@ class PhotoLibrary: ObservableObject {
     @Published var isLoading = false
     
     func fetchPhotos() async {
-        guard photos.isEmpty else { return } // Don't refetch if loaded
-        
-        isLoading = true
-        // Fetching 30 random distinct photos
-        guard let url = URL(string: "https://picsum.photos/v2/list?page=1&limit=40") else { return }
-        
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let decodedPhotos = try JSONDecoder().decode([PicsumPhoto].self, from: data)
-            withAnimation {
-                self.photos = decodedPhotos
-            }
-            isLoading = false
-        } catch {
-            print("Error fetching photos: \(error)")
-            isLoading = false
-        }
+        isLoading = false
     }
 }
 

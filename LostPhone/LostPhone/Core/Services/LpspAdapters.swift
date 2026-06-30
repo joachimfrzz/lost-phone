@@ -23,6 +23,64 @@ struct LpspConversation: Identifiable, Equatable, Hashable {
     var lastDateRaw: String? { messages.last?.dateRaw }
 }
 
+struct LpspNote: Identifiable, Equatable, Hashable {
+    let id: String
+    let title: String
+    let content: String
+    let folder: String
+    let modified: Date?
+    let modifiedRaw: String?
+
+    var preview: String {
+        let lines = content.components(separatedBy: .newlines).dropFirst()
+        return lines.joined(separator: " ")
+    }
+}
+
+struct LpspEmail: Identifiable, Equatable, Hashable {
+    let id: String
+    let sender: String
+    let subject: String
+    let preview: String
+    let body: String
+    let date: Date?
+    let dateRaw: String?
+    let isRead: Bool
+}
+
+struct LpspCall: Identifiable, Equatable {
+    let id: String
+    let contact: String
+    let type: String
+    let date: Date?
+    let dateRaw: String?
+    let durationSec: Int
+
+    var isMissed: Bool { type.lowercased().contains("manque") }
+    var isOutgoing: Bool { type.lowercased().contains("sortant") }
+}
+
+struct LpspPhoto: Identifiable, Equatable, Hashable {
+    let id: String
+    let description: String
+    let date: Date?
+    let dateRaw: String?
+    let place: String?
+}
+
+struct LpspSafariTab: Identifiable, Equatable, Hashable {
+    let id: String
+    let title: String
+    let url: String
+}
+
+struct LpspSafariSearch: Identifiable, Equatable {
+    let id: String
+    let query: String
+    let date: Date?
+    let dateRaw: String?
+}
+
 enum LpspAdapters {
     static func messages(from payload: AnyCodable?) -> [LpspConversation] {
         threads(from: payload, key: "threads")
@@ -34,6 +92,105 @@ enum LpspAdapters {
 
     static func signal(from payload: AnyCodable?) -> [LpspConversation] {
         threads(from: payload, key: "conversations")
+    }
+
+    static func notes(from payload: AnyCodable?) -> [LpspNote] {
+        let items = payload?.arrayValue ?? payload?["contenu"]?.arrayValue ?? []
+        return items.enumerated().compactMap { index, raw in
+            guard let object = raw.objectValue else { return nil }
+            let content = object["contenu"]?.stringValue ?? ""
+            let title = object["titre"]?.stringValue ?? content.components(separatedBy: .newlines).first ?? "Sans titre"
+            let modifiedRaw = object["date_modification"]?.stringValue ?? object["date_creation"]?.stringValue
+            return LpspNote(
+                id: object["id"]?.stringValue ?? "note-\(index)",
+                title: title.isEmpty ? "Sans titre" : title,
+                content: content,
+                folder: object["dossier"]?.stringValue ?? "Notes",
+                modified: parseISO(modifiedRaw),
+                modifiedRaw: modifiedRaw
+            )
+        }
+    }
+
+    static func mail(from payload: AnyCodable?) -> [LpspEmail] {
+        guard let inbox = payload?["boite_reception"]?.arrayValue else { return [] }
+        return inbox.enumerated().map { index, raw in
+            let object = raw.objectValue ?? [:]
+            let preview = object["extrait"]?.stringValue ?? ""
+            let dateRaw = object["date"]?.stringValue
+            return LpspEmail(
+                id: "mail-\(index)",
+                sender: object["de"]?.stringValue ?? "Inconnu",
+                subject: object["objet"]?.stringValue ?? "(Sans objet)",
+                preview: preview,
+                body: preview,
+                date: parseISO(dateRaw),
+                dateRaw: dateRaw,
+                isRead: object["lu"]?.boolValue ?? true
+            )
+        }
+    }
+
+    static func phoneRecents(from payload: AnyCodable?) -> [LpspCall] {
+        guard let recents = payload?["recents"]?.arrayValue else { return [] }
+        return recents.enumerated().map { index, raw in
+            let object = raw.objectValue ?? [:]
+            let dateRaw = object["date"]?.stringValue
+            let duration = object["duree_sec"]?.intValue ?? 0
+            return LpspCall(
+                id: "call-\(index)",
+                contact: object["contact"]?.stringValue ?? "Inconnu",
+                type: object["type"]?.stringValue ?? "entrant",
+                date: parseISO(dateRaw),
+                dateRaw: dateRaw,
+                durationSec: duration
+            )
+        }
+    }
+
+    static func photos(from payload: AnyCodable?) -> [LpspPhoto] {
+        guard let recents = payload?["recents"]?.arrayValue else { return [] }
+        return recents.enumerated().map { index, raw in
+            let object = raw.objectValue ?? [:]
+            let dateRaw = object["date"]?.stringValue
+            return LpspPhoto(
+                id: "photo-\(index)",
+                description: object["description"]?.stringValue ?? "",
+                date: parseISO(dateRaw),
+                dateRaw: dateRaw,
+                place: object["lieu"]?.stringValue
+            )
+        }
+    }
+
+    static func photoAlbums(from payload: AnyCodable?) -> [String] {
+        payload?["albums"]?.arrayValue?.compactMap(\.stringValue) ?? ["Récents"]
+    }
+
+    static func safariTabs(from payload: AnyCodable?) -> [LpspSafariTab] {
+        guard let tabs = payload?["onglets_ouverts"]?.arrayValue else { return [] }
+        return tabs.enumerated().map { index, raw in
+            let object = raw.objectValue ?? [:]
+            return LpspSafariTab(
+                id: "tab-\(index)",
+                title: object["titre"]?.stringValue ?? "Onglet",
+                url: object["url"]?.stringValue ?? ""
+            )
+        }
+    }
+
+    static func safariHistory(from payload: AnyCodable?) -> [LpspSafariSearch] {
+        guard let history = payload?["historique_recent"]?.arrayValue else { return [] }
+        return history.enumerated().map { index, raw in
+            let object = raw.objectValue ?? [:]
+            let dateRaw = object["date"]?.stringValue
+            return LpspSafariSearch(
+                id: "search-\(index)",
+                query: object["recherche"]?.stringValue ?? "",
+                date: parseISO(dateRaw),
+                dateRaw: dateRaw
+            )
+        }
     }
 
     static func threads(from payload: AnyCodable?, key: String) -> [LpspConversation] {

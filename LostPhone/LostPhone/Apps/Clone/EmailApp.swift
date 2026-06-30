@@ -64,14 +64,7 @@ class MailManager: ObservableObject {
     }
     
     private func loadMockData() {
-        emails = [
-            Email(sender: "Apple", subject: "Your receipt from Apple", body: "Date: Nov 20, 2025\nOrder ID: M4X0R1337\n\nTotal: $0.99\nThank you for your purchase.", date: Date(), isRead: false, isFlagged: false),
-            Email(sender: "Tim Cook", subject: "Big announcement coming", body: "Hey,\n\nJust wanted to give you a heads up about the event next Tuesday. It's going to be our best iPhone yet.\n\nSent from my iPhone", date: Date().addingTimeInterval(-3600), isRead: false, isFlagged: true),
-            Email(sender: "Netflix", subject: "New sign-in to your account", body: "Hi John,\nWe noticed a new sign-in to your Netflix account from a new device.\nLocation: San Jose, CA", date: Date().addingTimeInterval(-86400), isRead: true, isFlagged: false),
-            Email(sender: "Amazon.com", subject: "Your package has been delivered", body: "Hi John,\nYour package arrived earlier than expected. It was left near the front porch.", date: Date().addingTimeInterval(-172800), isRead: true, isFlagged: false),
-            Email(sender: "Slack", subject: "You have new notifications", body: "3 unread messages in #design-system.\nPallav: Can we check the hex codes?", date: Date().addingTimeInterval(-250000), isRead: true, isFlagged: false),
-            Email(sender: "Craig Federighi", subject: "Hair Products", body: "The secret is actually just humidity control. Let me know if you want the brand name.", date: Date().addingTimeInterval(-400000), isRead: true, isFlagged: true)
-        ]
+        emails = []
     }
 }
 

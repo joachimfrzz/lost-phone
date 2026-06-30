@@ -205,3 +205,45 @@ struct LpspSignalEncryptionBanner: View {
         .background(Color(red: 0.043, green: 0.043, blue: 0.043))
     }
 }
+
+// Bulle iMessage avec queue — partagée Messages / composants chat
+struct ChatBubbleShape: Shape {
+    let isUser: Bool
+
+    func path(in rect: CGRect) -> Path {
+        let width = rect.width
+        let height = rect.height
+        let radius: CGFloat = 18
+        let path = UIBezierPath()
+
+        if isUser {
+            path.move(to: CGPoint(x: width - 4, y: height))
+            path.addCurve(to: CGPoint(x: width, y: height - 4),
+                          controlPoint1: CGPoint(x: width - 2, y: height),
+                          controlPoint2: CGPoint(x: width, y: height - 1))
+            path.addLine(to: CGPoint(x: width, y: radius))
+            path.addArc(withCenter: CGPoint(x: width - radius, y: radius), radius: radius, startAngle: 0, endAngle: -.pi / 2, clockwise: false)
+            path.addLine(to: CGPoint(x: radius, y: 0))
+            path.addArc(withCenter: CGPoint(x: radius, y: radius), radius: radius, startAngle: -.pi / 2, endAngle: .pi, clockwise: false)
+            path.addLine(to: CGPoint(x: 0, y: height - radius))
+            path.addArc(withCenter: CGPoint(x: radius, y: height - radius), radius: radius, startAngle: .pi, endAngle: .pi / 2, clockwise: false)
+            path.addLine(to: CGPoint(x: width - 12, y: height))
+            path.addQuadCurve(to: CGPoint(x: width - 4, y: height), controlPoint: CGPoint(x: width - 8, y: height))
+        } else {
+            path.move(to: CGPoint(x: 4, y: height))
+            path.addCurve(to: CGPoint(x: 0, y: height - 4),
+                          controlPoint1: CGPoint(x: 2, y: height),
+                          controlPoint2: CGPoint(x: 0, y: height - 1))
+            path.addLine(to: CGPoint(x: 0, y: radius))
+            path.addArc(withCenter: CGPoint(x: radius, y: radius), radius: radius, startAngle: .pi, endAngle: -.pi / 2, clockwise: true)
+            path.addLine(to: CGPoint(x: width - radius, y: 0))
+            path.addArc(withCenter: CGPoint(x: width - radius, y: radius), radius: radius, startAngle: -.pi / 2, endAngle: 0, clockwise: true)
+            path.addLine(to: CGPoint(x: width, y: height - radius))
+            path.addArc(withCenter: CGPoint(x: width - radius, y: height - radius), radius: radius, startAngle: 0, endAngle: .pi / 2, clockwise: true)
+            path.addLine(to: CGPoint(x: 12, y: height))
+            path.addQuadCurve(to: CGPoint(x: 4, y: height), controlPoint: CGPoint(x: 8, y: height))
+        }
+
+        return Path(path.cgPath)
+    }
+}

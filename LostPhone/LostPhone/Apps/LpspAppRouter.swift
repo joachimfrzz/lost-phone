@@ -57,6 +57,19 @@ struct LpspAppRouter: View {
                 LpspWhatsAppView(conversations: LpspAdapters.whatsApp(from: payload))
             case "Signal":
                 LpspSignalView(conversations: LpspAdapters.signal(from: payload))
+            case "Notes":
+                LpspNotesView(notes: LpspAdapters.notes(from: payload))
+            case "Photos":
+                LpspPhotosView(photos: LpspAdapters.photos(from: payload))
+            case "Mail":
+                LpspMailView(emails: LpspAdapters.mail(from: payload))
+            case "Telephone":
+                LpspTelephoneView(recents: LpspAdapters.phoneRecents(from: payload))
+            case "Safari":
+                LpspSafariView(
+                    tabs: LpspAdapters.safariTabs(from: payload),
+                    history: LpspAdapters.safariHistory(from: payload)
+                )
             default:
                 if let clone = LpspAppCatalog.cloneType(for: appName) {
                     cloneAppView(clone)
@@ -72,16 +85,11 @@ struct LpspAppRouter: View {
         switch type {
         case .weather: WeatherView()
         case .calculator: CalculatorView()
-        case .notes: NotesView()
         case .settings: SettingsView()
-        case .mail: MailView()
         case .appStore: AppStoreView()
         case .clock: ClockView()
         case .calendar: CalendarView()
-        case .photos: PhotosView()
-        case .phone: PhoneView()
         case .camera: CameraView()
-        case .safari: SafariView()
         case .music: MusicView()
         default:
             GenericLpspAppView(appName: appName, payload: phone.appData(for: appName))

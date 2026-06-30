@@ -115,6 +115,7 @@ struct RuntimeNotification: Identifiable, Equatable {
 }
 
 enum PhonePhase: Equatable {
+    case menu
     case loading
     case error(String)
     case lock

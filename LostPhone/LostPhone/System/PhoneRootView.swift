@@ -2,17 +2,25 @@ import SwiftUI
 
 struct PhoneRootView: View {
     @StateObject private var phone = PhoneViewModel()
+    private let stories = StoryCatalog.availableStories()
 
     var body: some View {
         ZStack {
             switch phone.phase {
+            case .menu:
+                GameHomeView(stories: stories)
             case .loading:
-                ProgressView("Chargement LPSP…")
+                ProgressView("Chargement de l'histoire…")
                     .tint(.white)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(.black)
             case .error(let message):
                 ContentUnavailableView("Erreur LPSP", systemImage: "exclamationmark.triangle", description: Text(message))
+                    .overlay(alignment: .bottom) {
+                        Button("Retour au menu") { phone.returnToMenu() }
+                            .buttonStyle(.borderedProminent)
+                            .padding(.bottom, 40)
+                    }
             case .lock:
                 LockScreenView()
             case .pin:
@@ -22,8 +30,5 @@ struct PhoneRootView: View {
             }
         }
         .environmentObject(phone)
-        .task {
-            await phone.loadStory(storyId: "j3-louvre")
-        }
     }
 }

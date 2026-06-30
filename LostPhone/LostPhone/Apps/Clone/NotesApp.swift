@@ -34,11 +34,7 @@ class NotesManager: ObservableObject {
     @Published var notes: [Note] = []
     
     init() {
-        // Default Mock Data
-        notes = [
-            Note(content: "Project Ideas 💡\n1. Weather App Clone\n2. Calendar App Clone\n3. Notes App Fixes", lastModified: Date()),
-            Note(content: "Shopping List\nMilk\nCoffee Beans\nEggs", lastModified: Date().addingTimeInterval(-86400))
-        ]
+        notes = []
     }
     
     func createNote() -> Note {

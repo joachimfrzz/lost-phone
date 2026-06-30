@@ -1,0 +1,92 @@
+Oui — cette architecture est techniquement envisageable. Ce n'est pas une mauvaise direction. C'est même la bonne façon de séparer « jeu » et « téléphone simulé ».
+
+CE QUE JE DÉCRIS (VALIDÉ)
+
+Couche JEU :
+- Rôle : menu, histoires, saves, paramètres, logique narrative
+- Techno : libre (React, etc.) — PAS SwiftUI
+
+Couche TÉLÉPHONE :
+- Rôle : verrou, PIN, home, apps Apple fidèles
+- Techno : SwiftUI natif — clone Reddit/zerocode117 + LPSP
+
+Le joueur ne « développe pas en SwiftUI ». Il installe une app qui contient les deux : le jeu au lancement, le téléphone quand une histoire démarre.
+
+POURQUOI C'EST FAISABLE SUR iOS
+
+Une app iOS peut mélanger Web/React et SwiftUI natif dans le même binaire. C'est le modèle standard Capacitor (déjà présent dans le repo avec capacitor.config.ts et src/) :
+
+React (menu, saves, settings)
+    -> plugin natif : openPhone(storyId, saveState?)
+SwiftUI (clone iOS + injection LPSP)
+    -> callback : onExit(progress)
+React (met à jour la sauvegarde)
+
+Le téléphone s'ouvre en plein écran via une UIHostingController (SwiftUI). À la fermeture, le contrôle revient au jeu React. Une seule app, un seul App Store, aucun Mac chez le joueur.
+
+Le LPSP JSON (public/stories/.../lpsp.json) sert de contrat de contenu : le jeu le gère, le module SwiftUI le lit pour afficher le téléphone.
+
+CE QUI DOIT RESTER SWIFTUI (ET SEULEMENT ÇA)
+
+- Shell iPhone : verrou, PIN, home, dock, centre notifs/contrôle
+- Apps du clone Reddit (Messages, Photos, Mail, etc.)
+- Apps tierces custom dans la bulle téléphone (WhatsApp, Signal…) si absentes du clone
+
+PAS SwiftUI : menu, catalogue d'histoires, progression globale, paramètres, économie du jeu — tout ça reste dans la stack jeu (React ou autre).
+
+LES VRAIES CONTRAINTES (PAS DES BLOCAGES, MAIS DES LIMITES)
+
+1. Frontière explicite jeu <-> téléphone
+
+Il faut une API stable (plugin Capacitor ou équivalent) :
+
+Jeu -> Téléphone : storyId, état de sauvegarde, chemin/JSON LPSP
+Téléphone -> Jeu : événements scénario, progression, « retour au menu »
+
+Sans cette frontière, les deux mondes se mélangent — c'est ce qui s'est produit dans le repo : GameHomeView.swift a été écrit en SwiftUI alors que le jeu devrait rester ailleurs. Correction de périmètre, pas impossibilité technique.
+
+2. SwiftUI = Apple uniquement pour la simu iPhone
+
+Le clone Reddit ne tourne pas sur Android. Conséquence :
+- Jeu React -> cross-platform (iOS, Android, web)
+- Téléphone ultra-fidèle -> iOS d'abord ; Android = autre implémentation (web sim ou Compose) si on veut la même qualité plus tard
+
+Ce n'est pas un argument contre l'architecture — c'est une limite plateforme sur la brique téléphone.
+
+3. Build iOS = Mac ou CI (Codemagic)
+
+Pour compiler la partie SwiftUI, il faut macOS au build. Les joueurs n'en ont jamais besoin — comme pour Instagram, Duolingo, etc.
+
+4. Apps absentes du clone
+
+WhatsApp, Signal, Instagram… restent du SwiftUI custom dans le module téléphone, alimenté par LPSP. Ce n'est pas du React, mais ce n'est pas non plus « tout le jeu en SwiftUI ».
+
+CE QUI SERAIT UNE MAUVAISE DIRECTION
+
+- Tout en SwiftUI (jeu inclus) -> hors de l'objectif, maintenance lourde
+- Tout en React (téléphone inclus) -> on perd le clone Reddit et la fidélité iOS
+- Deux apps séparées -> mauvaise UX (deux icônes)
+- Pas de contrat LPSP / bridge -> les deux mondes s'enchevêtrent
+
+ÉCART ACTUEL DU REPO VS LA VISION CIBLE
+
+Aujourd'hui, le projet LostPhone/ SwiftUI contient aussi le menu jeu (Game/). C'était utile pour prototyper, mais ce n'est pas l'architecture cible.
+
+Architecture cible :
+
+src/              -> JEU (React)
+public/stories/   -> LPSP
+ios/              -> Capacitor + plugin PhoneSimulator
+PhoneSimulator/   -> SwiftUI uniquement (Phone/ + Apps/Clone/ + bridge)
+
+RÉPONSE DIRECTE
+
+Est-ce envisageable ? -> Oui.
+
+Pourquoi ce ne le serait pas ? -> Uniquement si on exige le même clone SwiftUI sur Android, ou si on refuse tout pont natif (alors il faudrait tout SwiftUI ou tout web — ce qu'on ne veut pas).
+
+La direction est la bonne : jeu indépendant + module téléphone SwiftUI encapsulé + LPSP comme lien de contenu.
+
+PROCHAINE ÉTAPE SUGGÉRÉE
+
+Rédiger le contrat du plugin Capacitor (3–4 méthodes, payloads JSON, cycle de vie) — sans toucher au code tant que le spec n'est pas validé.

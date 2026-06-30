@@ -6,6 +6,12 @@
 name: iOS Preview (Simulator)
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "LostPhone/**"
+      - "public/stories/**"
+      - ".github/workflows/ios-preview.yml"
   workflow_dispatch:
     inputs:
       simulator:

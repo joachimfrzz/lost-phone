@@ -35,7 +35,7 @@ enum LpspCloneBridge {
 
     static func photoLibrary(from items: [LpspPhoto], albums: [String]) -> PhotoLibrary {
         let albumNames = albums.isEmpty ? ["Récents"] : albums
-        PhotoLibrary(
+        return PhotoLibrary(
             galleryPhotos: items.map { item in
                 GalleryPhoto(
                     id: item.id,

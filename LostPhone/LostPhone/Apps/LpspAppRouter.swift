@@ -10,6 +10,7 @@ struct LpspAppContainerView: View {
     var body: some View {
         LpspAppRouter(appName: appName)
             .environment(\.lpspReadOnly, true)
+            .environment(\.lpspStoryId, phone.currentStoryId)
             .environment(\.deviceOwner, phone.deviceOwner)
             .onAppear { initialVolume = volumeObserver.volume }
             .onChange(of: volumeObserver.volume) { _, newVolume in
@@ -62,7 +63,10 @@ struct LpspAppRouter: View {
                 contacts: contacts
             )
         case "Photos":
-            PhotosView(library: LpspCloneBridge.photoLibrary(from: LpspAdapters.photos(from: payload)))
+            PhotosView(library: LpspCloneBridge.photoLibrary(
+                from: LpspAdapters.photos(from: payload),
+                albums: LpspAdapters.photoAlbums(from: payload)
+            ))
         case "Safari":
             SafariView(model: LpspCloneBridge.safariViewModel(
                 tabs: LpspAdapters.safariTabs(from: payload),

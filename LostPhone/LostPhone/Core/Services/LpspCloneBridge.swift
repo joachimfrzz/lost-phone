@@ -33,16 +33,42 @@ enum LpspCloneBridge {
         })
     }
 
-    static func photoLibrary(from items: [LpspPhoto]) -> PhotoLibrary {
-        PhotoLibrary(galleryPhotos: items.map { item in
-            GalleryPhoto(
-                id: item.id,
-                caption: item.description,
-                place: item.place,
-                capturedAt: item.date,
-                capturedLabel: item.dateRaw
-            )
-        })
+    static func photoLibrary(from items: [LpspPhoto], albums: [String]) -> PhotoLibrary {
+        let albumNames = albums.isEmpty ? ["Récents"] : albums
+        PhotoLibrary(
+            galleryPhotos: items.map { item in
+                GalleryPhoto(
+                    id: item.id,
+                    caption: item.description,
+                    place: item.place,
+                    capturedAt: item.date,
+                    capturedLabel: item.dateRaw,
+                    assetSource: item.assetSource,
+                    isScreenshot: item.isScreenshot,
+                    album: inferAlbum(for: item, albums: albumNames)
+                )
+            },
+            albums: albumNames
+        )
+    }
+
+    private static func inferAlbum(for photo: LpspPhoto, albums: [String]) -> String {
+        if photo.isScreenshot,
+           let captures = albums.first(where: { $0.localizedCaseInsensitiveContains("capture") }) {
+            return captures
+        }
+        let desc = photo.description.lowercased()
+        if desc.contains("hugo"),
+           let hugo = albums.first(where: { $0.localizedCaseInsensitiveContains("hugo") }) {
+            return hugo
+        }
+        if desc.contains("selfie"), albums.contains("Selfies") {
+            return "Selfies"
+        }
+        if desc.contains("whatsapp"), albums.contains("WhatsApp") {
+            return "WhatsApp"
+        }
+        return albums.first ?? "Récents"
     }
 
     static func recentCalls(from items: [LpspCall]) -> [RecentItem] {

@@ -66,6 +66,8 @@ struct LpspPhoto: Identifiable, Equatable, Hashable {
     let date: Date?
     let dateRaw: String?
     let place: String?
+    let assetSource: String?
+    let isScreenshot: Bool
 }
 
 struct LpspSafariTab: Identifiable, Equatable, Hashable {
@@ -187,12 +189,19 @@ enum LpspAdapters {
         return recents.enumerated().map { index, raw in
             let object = raw.objectValue ?? [:]
             let dateRaw = object["date"]?.stringValue
+            let description = object["description"]?.stringValue ?? ""
+            let type = object["type"]?.stringValue?.lowercased() ?? ""
+            let isScreenshot = type == "screenshot"
+                || type == "capture"
+                || description.lowercased().contains("capture d'écran")
             return LpspPhoto(
-                id: "photo-\(index)",
-                description: object["description"]?.stringValue ?? "",
+                id: object["id"]?.stringValue ?? "photo-\(index)",
+                description: description,
                 date: parseISO(dateRaw),
                 dateRaw: dateRaw,
-                place: object["lieu"]?.stringValue
+                place: object["lieu"]?.stringValue,
+                assetSource: object["source"]?.stringValue ?? object["fichier"]?.stringValue,
+                isScreenshot: isScreenshot
             )
         }
     }

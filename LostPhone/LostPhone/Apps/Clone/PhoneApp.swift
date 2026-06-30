@@ -54,6 +54,7 @@ struct PhoneView: View {
 // MARK: - 1. Keypad View (Highly Accurate)
 struct KeypadView: View {
     @State private var number = ""
+    @Environment(\.lpspReadOnly) private var readOnly
     
     // Grid Layout: 3 Columns, specifically spaced
     let columns = Array(repeating: GridItem(.fixed(78), spacing: 24), count: 3)
@@ -74,7 +75,8 @@ struct KeypadView: View {
                 Button("Add Number") { }
                     .font(.subheadline)
                     .foregroundStyle(.blue)
-                    .opacity(number.isEmpty ? 0 : 1)
+                    .opacity(number.isEmpty || readOnly ? 0 : 1)
+                    .disabled(readOnly)
                     .frame(height: 20)
             }
             .padding(.bottom, 20)
@@ -114,7 +116,7 @@ struct KeypadView: View {
                 // Call Button
                 Button(action: {}) {
                     Circle()
-                        .fill(Color.green) // iOS Green
+                        .fill(readOnly ? Color.green.opacity(0.35) : Color.green)
                         .frame(width: 78, height: 78)
                         .overlay(
                             Image(systemName: "phone.fill")
@@ -122,7 +124,8 @@ struct KeypadView: View {
                                 .foregroundStyle(.white)
                         )
                 }
-                .buttonStyle(IOSButtonStyle()) // Adds the dimming effect
+                .buttonStyle(IOSButtonStyle())
+                .disabled(readOnly)
                 
                 Spacer()
                 
@@ -305,7 +308,10 @@ struct ContactsView: View {
     }
 
     private var displayContacts: [PhoneContact] {
-        if !contacts.isEmpty { return contacts.sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending } }
+        if !contacts.isEmpty {
+            return contacts.sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
+        }
+        guard !readOnly else { return [] }
         return Self.demoContacts.map {
             PhoneContact(stableId: "demo-\($0)", displayName: $0, relation: "", note: "")
         }
@@ -323,51 +329,67 @@ struct ContactsView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    HStack(spacing: 15) {
-                        Circle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 60, height: 60)
-                            .overlay(Text(owner.initials).font(.title2).bold().foregroundStyle(.white))
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(owner.name)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                            Text("My Card")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
-                
-                ForEach(sortedKeys, id: \.self) { key in
-                    Section(header: Text(key).fontWeight(.bold)) {
-                        ForEach(groupedContacts[key] ?? []) { contact in
-                            NavigationLink {
-                                ContactDetailView(contact: contact)
-                            } label: {
-                                Text(contact.displayName)
-                                    .fontWeight(.medium)
-                            }
-                        }
-                    }
+            Group {
+                if displayContacts.isEmpty {
+                    ContentUnavailableView(
+                        "Contacts",
+                        systemImage: "person.crop.circle",
+                        description: Text(readOnly ? "Aucun contact LPSP" : "Aucun contact")
+                    )
+                } else {
+                    contactsList
                 }
             }
-            .listStyle(.plain)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
             .navigationTitle("Contacts")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Groups") {}
+                        .disabled(readOnly)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {}) { Image(systemName: "plus") }
+                        .disabled(readOnly)
                 }
             }
         }
+    }
+
+    private var contactsList: some View {
+        List {
+            Section {
+                HStack(spacing: 15) {
+                    Circle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 60, height: 60)
+                        .overlay(Text(owner.initials).font(.title2).bold().foregroundStyle(.white))
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(owner.name)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                        Text("My Card")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+            
+            ForEach(sortedKeys, id: \.self) { key in
+                Section(header: Text(key).fontWeight(.bold)) {
+                    ForEach(groupedContacts[key] ?? []) { contact in
+                        NavigationLink {
+                            ContactDetailView(contact: contact)
+                        } label: {
+                            Text(contact.displayName)
+                                .fontWeight(.medium)
+                        }
+                    }
+                }
+            }
+        }
+        .listStyle(.plain)
     }
 }
 

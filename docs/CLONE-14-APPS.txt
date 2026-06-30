@@ -1,13 +1,13 @@
 LOST PHONE — 14 APPS CLONE REDDIT (zerocode117)
-Statut après passe initiale — branche cursor/clone-14-apps-a052
+Statut après passe polish — branche cursor/clone-14-polish-a052
 
 Legende : OK = pret Lost Phone | PARTIEL = UI ok, donnees a enrichir | DEMO = clone demo propre
 
  1. Messages      OK       LPSP threads, lecture seule, zero reseau
- 2. Telephone     OK       Recents + Contacts LPSP, favoris vide en lecture seule
- 3. Photos        PARTIEL  LPSP texte/metadata, pas encore vraies images assets
+ 2. Telephone     OK       Recents + Contacts LPSP, favoris vide, clavier sans appel en read-only
+ 3. Photos        PARTIEL  LPSP + albums + PhotoAssetResolver (images quand source/assets presents)
  4. Safari        OK       Onglets + historique LPSP
- 5. Mail          OK       Boite LPSP, proprietaire dynamique
+ 5. Mail          OK       Boite LPSP, toolbars compose/reply desactivees en read-only
  6. Notes         OK       Notes LPSP, creation desactivee en lecture seule
  7. Calendrier    OK       Evenements LPSP, mock desactive en lecture seule
  8. Reglages      OK       UI clone, nom proprietaire depuis LPSP system.proprietaire
@@ -22,7 +22,9 @@ INFRA COMMUNE
 - DeviceOwner (content.system.proprietaire)
 - CloneAppCatalog (14 noms FR + routes)
 - LpspAppRouter route explicitement les 14 apps clone
+- lpspStoryId environment pour assets bundlés
+- PhotoAssetResolver : Resources/stories/<id>/assets/<source>
 - Spotify/Netflix ne mappent plus sur Musique clone (apps tierces separees)
 
-PROCHAINE APP A APPROFONDIR
-Photos — vraies images depuis assets LPSP (quand tu voudras)
+PROCHAINE ETAPE
+Photos — ajouter fichiers source dans lpsp.json + public/stories/<id>/assets/photos/

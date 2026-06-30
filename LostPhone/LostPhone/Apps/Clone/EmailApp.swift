@@ -78,6 +78,7 @@ class MailManager: ObservableObject {
 struct MailView: View {
     @StateObject private var manager: MailManager
     @State private var showCompose = false
+    @Environment(\.lpspReadOnly) private var readOnly
 
     init(manager: MailManager = MailManager()) {
         _manager = StateObject(wrappedValue: manager)
@@ -114,6 +115,7 @@ struct MailView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Edit") {}
+                        .disabled(readOnly)
                 }
                 
                 ToolbarItem(placement: .bottomBar) {
@@ -121,6 +123,7 @@ struct MailView: View {
                         Button(action: {}) {
                             Image(systemName: "line.3.horizontal.decrease.circle")
                         }
+                        .disabled(readOnly)
                         Spacer()
                         VStack(spacing: 0) {
                             Text("Updated Just Now")
@@ -131,6 +134,8 @@ struct MailView: View {
                         Button(action: { showCompose.toggle() }) {
                             Image(systemName: "square.and.pencil")
                         }
+                        .disabled(readOnly)
+                        .opacity(readOnly ? 0.35 : 1)
                     }
                 }
             }
@@ -233,10 +238,13 @@ struct InboxView: View {
             ToolbarItem(placement: .bottomBar) {
                 HStack {
                     Button(action: {}) { Image(systemName: "line.3.horizontal.decrease.circle") }
+                        .disabled(readOnly)
                     Spacer()
                     Text("Updated Just Now").font(.caption2)
                     Spacer()
                     Button(action: {}) { Image(systemName: "square.and.pencil") }
+                        .disabled(readOnly)
+                        .opacity(readOnly ? 0.35 : 1)
                 }
             }
         }
@@ -369,20 +377,28 @@ struct EmailDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 HStack {
                     Button(action: {}) { Image(systemName: "arrowshape.turn.up.backward") }
+                        .disabled(readOnly)
                     Button(action: {}) { Image(systemName: "trash") }
+                        .disabled(readOnly)
                 }
+                .opacity(readOnly ? 0.35 : 1)
             }
             
             ToolbarItem(placement: .bottomBar) {
                 HStack {
                     Button(action: {}) { Image(systemName: "archivebox") }
+                        .disabled(readOnly)
                     Spacer()
                     Button(action: {}) { Image(systemName: "folder") }
+                        .disabled(readOnly)
                     Spacer()
                     Button(action: {}) { Image(systemName: "arrowshape.turn.up.forward") }
+                        .disabled(readOnly)
                     Spacer()
                     Button(action: {}) { Image(systemName: "square.and.pencil") }
+                        .disabled(readOnly)
                 }
+                .opacity(readOnly ? 0.35 : 1)
             }
         }
         .onAppear {

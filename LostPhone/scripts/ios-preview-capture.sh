@@ -102,6 +102,10 @@ echo "→ Sync LPSP stories"
 mkdir -p "$LOSTPHONE/LostPhone/Resources/stories"
 cp -R "$ROOT/public/stories/"* "$LOSTPHONE/LostPhone/Resources/stories/"
 
+echo "→ Preflight (forbidden APIs, paths)"
+chmod +x "$LOSTPHONE/scripts/ios-build-preflight.sh"
+"$LOSTPHONE/scripts/ios-build-preflight.sh"
+
 echo "→ Generate Xcode project"
 cd "$LOSTPHONE"
 if ! command -v xcodegen >/dev/null 2>&1; then

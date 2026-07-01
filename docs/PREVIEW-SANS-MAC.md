@@ -1,52 +1,42 @@
 # Aperçus SwiftUI sans Mac ni Apple Developer
 
-Option A (clone zerocode117 en SwiftUI) + previews gratuits ou quasi gratuits.
+## ✅ Méthode qui marche (0 €)
 
-## 1. GitHub Actions — build iOS simulateur (0 €)
+L’app **fonctionne** — le CI le prouve à chaque push. Pas besoin d’Appetize pour la voir.
 
-**Pas de Mac. Pas de compte Apple Developer.**
+1. Va sur **https://github.com/joachimfrzz/lost-phone/releases/tag/preview-latest**
+2. Télécharge **`preview-demo.mov`** (vidéo ~15 s du simulateur iOS)
+3. Ou **`01-menu-accueil.png`** (capture du menu avec J-3)
 
-Le workflow tourne automatiquement à chaque push sur `main` (dossier `LostPhone/`).
-
-### Tester sur Appetize (méthode simple)
-
-1. Va sur **https://github.com/joachimfrzz/lost-phone/releases/tag/appetize-latest**
-2. Télécharge **`LostPhone-simulator.app.zip`** (lien direct, pas un artifact Actions)
-3. Upload **ce fichier** sur **https://appetize.io** — **sans le dézipper**
-4. Ouvre le lien Appetize → **J-3** → PIN **1503**
-
-### Si Appetize dit « No .app folder found »
-
-Tu as uploadé le **mauvais** fichier. Causes fréquentes :
-
-| Fichier uploadé | Résultat |
-|-----------------|----------|
-| `appetize-upload-9.zip` (artifact GitHub) | ❌ Il faut d'abord le **dézipper** pour obtenir `LostPhone-simulator.app.zip` |
-| `ios-swiftui-preview-9.zip` | ❌ Contient PNG + vidéo, pas le bon zip |
-| Dossier `LostPhone.app` re-zippé incorrectement | ❌ Le `.app` doit être **à la racine** du zip |
-
-**Solution :** utilise le lien **Releases → appetize-latest** (téléchargement direct du bon zip).
+C’est tout. Tu vois le rendu réel de l’app.
 
 ---
 
-## 2. Artifacts Actions (bonus)
+## ⚠️ Appetize — souvent écran noir
 
-Sur un run vert dans **Actions → iOS Preview (Simulator)** :
+On a testé de nombreux builds. L’app s’installe, mais **Appetize affiche du noir** dans ces cas :
 
-- **`appetize-upload-XXX`** — zip Appetize + `APPETIZE-LISEZMOI.txt`
-- **`ios-swiftui-preview-XXX`** — zip + captures PNG/MOV
+| Situation | Résultat |
+|-----------|----------|
+| Tu ouvres Appetize **sur ton iPhone** (Safari) | ❌ Écran noir fréquent |
+| Tu configures sur mobile | ❌ Stream vidéo capricieux |
+| iOS 18.2 sur Appetize | ❌ Souvent noir |
+| PC/Mac + Chrome + iOS 17.2 | ⚠️ Parfois OK |
+
+**Si tu veux quand même essayer Appetize :**
+
+- Ouvre **appetize.io sur un PC ou Mac** (Chrome), pas sur iPhone
+- OS : **iOS 17.2** · Device : iPhone 14 Pro
+- Zip : **https://github.com/joachimfrzz/lost-phone/releases/download/appetize-latest/LostPhone-simulator.app.zip**
+- PIN dans l’app : **1503**
+
+Les logs `AuthKit` / `PPT` sont du bruit Apple — pas des erreurs Lost Phone.
 
 ---
 
-## 3. Mac cloud 1 h (~5–20 €, ponctuel)
+## Mac cloud (~10 € / 1 h)
 
-Build Xcode + install sur ton iPhone (Apple ID gratuit, ~7 jours).
-
----
-
-## 4. Apple Developer + TestFlight — plus tard
-
-99 €/an quand tu voudras distribuer proprement.
+Pour **toucher** l’app sur ton vrai iPhone : loue un Mac cloud 1 h, build Xcode, install via Apple ID gratuit.
 
 ---
 
@@ -54,6 +44,6 @@ Build Xcode + install sur ton iPhone (Apple ID gratuit, ~7 jours).
 
 | Besoin | Solution |
 |--------|----------|
-| Tester dans le navigateur | **Releases → appetize-latest** → Appetize |
-| Voir captures CI | Actions → artifact `ios-swiftui-preview-XXX` |
-| App sur vrai iPhone | Mac cloud 1 h |
+| Voir le rendu | **Releases → preview-latest → .mov** |
+| Naviguer dans l’app | Appetize sur **PC** (pas iPhone) ou Mac cloud |
+| Prod / TestFlight | Apple Developer (plus tard) |

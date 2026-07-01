@@ -72,7 +72,7 @@ struct KeypadView: View {
                     .frame(height: 50)
                     .padding(.horizontal, 40)
                 
-                Button("Add Number") { }
+                Button("Ajouter un numéro") { }
                     .font(.subheadline)
                     .foregroundStyle(.blue)
                     .opacity(number.isEmpty || readOnly ? 0 : 1)
@@ -262,14 +262,14 @@ struct RecentsView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Picker("Filter", selection: $filter) {
-                        Text("All").tag(0)
-                        Text("Missed").tag(1)
+                        Text("Tous").tag(0)
+                        Text("Manqués").tag(1)
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 180)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Edit") {}
+                    Button("Modifier") {}
                 }
             }
         }
@@ -344,7 +344,7 @@ struct ContactsView: View {
             .navigationTitle("Contacts")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Groups") {}
+                    Button("Groupes") {}
                         .disabled(readOnly)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -368,7 +368,7 @@ struct ContactsView: View {
                         Text(owner.name)
                             .font(.title2)
                             .fontWeight(.semibold)
-                        Text("My Card")
+                        Text("Ma carte")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -437,7 +437,7 @@ struct VoicemailView: View {
             VStack(spacing: 15) {
                 Spacer()
                 
-                Text("Call Voicemail")
+                Text("Appeler la messagerie")
                     .font(.headline)
                     .foregroundStyle(.blue)
                     .padding(.vertical, 12)
@@ -452,7 +452,7 @@ struct VoicemailView: View {
             .navigationTitle("Messagerie vocale")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Greeting") {}
+                    Button("Message d'accueil") {}
                 }
             }
         }

@@ -219,7 +219,7 @@ struct SafariView: View {
                                 VStack {
                                     List {
                                         if readOnly, !model.lpspHistory.isEmpty {
-                                            Section(header: Text("Recent Searches")) {
+                                            Section(header: Text("Recherches récentes")) {
                                                 ForEach(model.lpspHistory) { item in
                                                     HStack {
                                                         Image(systemName: "clock.arrow.circlepath")
@@ -229,7 +229,7 @@ struct SafariView: View {
                                                 }
                                             }
                                         } else {
-                                            Section(header: Text("Favorites")) {
+                                            Section(header: Text("Favoris")) {
                                                 ForEach(FavoritesData.list) { item in
                                                     Button(action: {
                                                         model.load(input: item.url)
@@ -379,7 +379,7 @@ struct StartPage: View {
 
                 if !model.lpspTabs.isEmpty {
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("Tabs")
+                        Text("Onglets")
                             .font(.title2)
                             .fontWeight(.bold)
                             .padding(.horizontal, 20)
@@ -413,7 +413,7 @@ struct StartPage: View {
 
                 if !model.lpspHistory.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Recent Searches")
+                        Text("Recherches récentes")
                             .font(.title2)
                             .fontWeight(.bold)
                             .padding(.horizontal, 20)
@@ -439,7 +439,7 @@ struct StartPage: View {
 
                 if model.lpspTabs.isEmpty {
                 VStack(alignment: .leading, spacing: 15) {
-                    Text("Favorites")
+                    Text("Favoris")
                         .font(.title2)
                         .fontWeight(.bold)
                         .padding(.horizontal, 20)
@@ -474,7 +474,7 @@ struct StartPage: View {
 
                 // Privacy Report Mock
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Privacy Report")
+                    Text("Rapport de confidentialité")
                         .font(.title2)
                         .fontWeight(.bold)
                         .padding(.horizontal, 20)
@@ -483,7 +483,7 @@ struct StartPage: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("0")
                                 .font(.system(size: 32, weight: .medium))
-                            Text("Trackers Prevented")
+                            Text("Traqueurs bloqués")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }

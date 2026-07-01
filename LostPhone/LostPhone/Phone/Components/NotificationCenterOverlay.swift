@@ -3,6 +3,7 @@ import SwiftUI
 struct NotificationCenterOverlay: View {
     @EnvironmentObject private var phone: PhoneViewModel
     @State private var dragOffset: CGFloat = 0
+    @State private var expandedStacks = Set<String>()
 
     private var groupedNotifications: [(app: String, items: [RuntimeNotification])] {
         var seen = Set<String>()
@@ -19,68 +20,61 @@ struct NotificationCenterOverlay: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Color.black.opacity(0.25)
+            Color.black.opacity(0.01)
                 .ignoresSafeArea()
                 .onTapGesture { dismiss() }
 
             VStack(spacing: 0) {
-                header
-                    .padding(.horizontal, 20)
-                    .padding(.top, 52)
-                    .padding(.bottom, 16)
+                StatusBarView()
+                    .padding(.top, 4)
+
+                // iOS : grande date seule (pas d'heure ici)
+                HStack {
+                    Text(phone.lockDate.isEmpty ? formattedToday : phone.lockDate)
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundStyle(.white)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 14)
 
                 ScrollView(showsIndicators: false) {
-                    LazyVStack(spacing: 14) {
+                    LazyVStack(spacing: 10) {
                         if phone.notifications.isEmpty {
                             ContentUnavailableView(
-                                "Aucune notification",
+                                Fr.noNotifications,
                                 systemImage: "bell.slash",
-                                description: Text("Les alertes du scénario apparaîtront ici.")
+                                description: Text(Fr.notificationHint)
                             )
                             .foregroundStyle(.white)
-                            .padding(.top, 48)
+                            .padding(.top, 60)
                         } else {
                             ForEach(groupedNotifications, id: \.app) { group in
-                                NotificationStackSection(appName: group.app, notifications: group.items)
+                                IOSNotificationStack(
+                                    appName: group.app,
+                                    notifications: group.items,
+                                    isExpanded: expandedStacks.contains(group.app),
+                                    onToggleExpand: {
+                                        if expandedStacks.contains(group.app) {
+                                            expandedStacks.remove(group.app)
+                                        } else {
+                                            expandedStacks.insert(group.app)
+                                        }
+                                    }
+                                )
                             }
                         }
                     }
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 12)
                     .padding(.bottom, 40)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .background { notificationBackground }
+            .background { iosBlurBackground(darkness: 0.38) }
             .offset(y: dragOffset)
             .gesture(dismissGesture)
         }
-    }
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(phone.lockDate.isEmpty ? formattedToday : phone.lockDate)
-                        .font(.system(size: 34, weight: .bold))
-                        .foregroundStyle(.white)
-                    Text(phone.lockTime)
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.75))
-                }
-                Spacer()
-                if phone.unreadCount > 0 {
-                    Button("Effacer") {
-                        for index in phone.notifications.indices {
-                            phone.notifications[index].lu = true
-                        }
-                    }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.9))
-                    .padding(.top, 8)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var formattedToday: String {
@@ -90,27 +84,13 @@ struct NotificationCenterOverlay: View {
         return formatter.string(from: Date()).capitalized
     }
 
-    @ViewBuilder
-    private var notificationBackground: some View {
-        ZStack {
-            WallpaperView()
-                .blur(radius: 48)
-                .brightness(-0.12)
-                .ignoresSafeArea()
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .background(Color.black.opacity(0.35))
-                .ignoresSafeArea()
-        }
-    }
-
     private var dismissGesture: some Gesture {
         DragGesture(minimumDistance: 8)
             .onChanged { value in
                 dragOffset = min(0, value.translation.height)
             }
             .onEnded { value in
-                if value.translation.height < -72 {
+                if value.translation.height < -60 {
                     dismiss()
                 } else {
                     withAnimation(.spring(duration: 0.32)) { dragOffset = 0 }
@@ -125,51 +105,128 @@ struct NotificationCenterOverlay: View {
     }
 }
 
-private struct NotificationStackSection: View {
+private struct IOSNotificationStack: View {
     let appName: String
     let notifications: [RuntimeNotification]
+    let isExpanded: Bool
+    let onToggleExpand: () -> Void
     @EnvironmentObject private var phone: PhoneViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(LpspAppCatalog.accentColor(for: appName))
-                    .frame(width: 22, height: 22)
-                    .overlay {
-                        if let asset = LpspAppCatalog.iconAsset(for: appName) {
-                            Image(asset)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 14, height: 14)
-                        } else {
-                            Text(String(appName.prefix(1)))
-                                .font(.system(size: 9, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
+        VStack(spacing: 0) {
+            if isExpanded {
+                ForEach(Array(notifications.enumerated()), id: \.element.id) { index, notification in
+                    IOSNotificationRow(notification: notification)
+                        .padding(.top, index == 0 ? 0 : 8)
+                        .onTapGesture { phone.markNotificationRead(notification.id) }
+                }
+            } else {
+                ZStack(alignment: .top) {
+                    if notifications.count > 2 {
+                        stackShadow(offset: 8)
+                        stackShadow(offset: 4)
+                    } else if notifications.count > 1 {
+                        stackShadow(offset: 4)
                     }
-                Text(appName.uppercased())
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.55))
-                Spacer()
-                if notifications.count > 1 {
-                    Text("\(notifications.count)")
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.7))
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(.white.opacity(0.12)))
+
+                    if let top = notifications.first {
+                        IOSNotificationRow(notification: top, stackCount: notifications.count)
+                            .onTapGesture {
+                                if notifications.count > 1 {
+                                    withAnimation(.spring(duration: 0.32)) { onToggleExpand() }
+                                } else {
+                                    phone.markNotificationRead(top.id)
+                                }
+                            }
+                    }
                 }
             }
-            .padding(.horizontal, 4)
 
-            VStack(spacing: 8) {
-                ForEach(notifications) { notification in
-                    SystemNotificationCard(notification: notification)
-                        .onTapGesture {
-                            phone.markNotificationRead(notification.id)
-                        }
+            if isExpanded && notifications.count > 1 {
+                Button(Fr.showLess) {
+                    withAnimation(.spring(duration: 0.32)) { onToggleExpand() }
                 }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.55))
+                .frame(maxWidth: .infinity)
+                .padding(.top, 8)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func stackShadow(offset: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: IOSSystemStyle.notificationCornerRadius, style: .continuous)
+            .fill(Color.white.opacity(0.08))
+            .frame(height: 72)
+            .padding(.horizontal, 6)
+            .offset(y: offset)
+            .scaleEffect(0.98)
+    }
+}
+
+struct IOSNotificationRow: View {
+    let notification: RuntimeNotification
+    var stackCount: Int = 1
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            ZStack(alignment: .topTrailing) {
+                appIcon
+                if stackCount > 1 {
+                    Text("\(stackCount)")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(.red))
+                        .offset(x: 6, y: -6)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(notification.titre)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    Spacer(minLength: 6)
+                    Text(notification.heure)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Text(notification.texte)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(3)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: IOSSystemStyle.notificationCornerRadius, style: .continuous)
+                .fill(.regularMaterial)
+                .environment(\.colorScheme, .dark)
+        )
+    }
+
+    private var appIcon: some View {
+        Group {
+            if let asset = LpspAppCatalog.iconAsset(for: notification.app) {
+                Image(asset)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 38, height: 38)
+                    .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+            } else {
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .fill(LpspAppCatalog.accentColor(for: notification.app))
+                    .frame(width: 38, height: 38)
+                    .overlay {
+                        Text(String(notification.app.prefix(1)))
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.white)
+                    }
             }
         }
     }

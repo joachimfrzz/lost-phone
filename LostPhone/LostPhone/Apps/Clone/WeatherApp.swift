@@ -67,7 +67,7 @@ struct HeaderView: View {
                 .foregroundStyle(.white)
                 .shadow(radius: 2)
             
-            Text("Mostly Clear")
+            Text("Plutôt dégagé")
                 .font(.title3.weight(.medium))
                 .foregroundStyle(.white.opacity(0.6))
             
@@ -226,10 +226,10 @@ struct DetailsGridView: View {
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 12) {
-            DetailTile(icon: "sun.max.fill", title: "UV INDEX", value: "4", description: "Moderate")
-            DetailTile(icon: "sunset.fill", title: "SUNSET", value: "8:14PM", description: "Sunrise: 6:15AM")
-            DetailTile(icon: "wind", title: "WIND", value: "8 mph", description: "Gusts 12 mph")
-            DetailTile(icon: "drop.fill", title: "RAINFALL", value: "0\"", description: "None expected")
+            DetailTile(icon: "sun.max.fill", title: "INDEX UV", value: "4", description: "Modéré")
+            DetailTile(icon: "sunset.fill", title: "COUCHER", value: "20 h 14", description: "Lever : 6 h 15")
+            DetailTile(icon: "wind", title: "VENT", value: "13 km/h", description: "Rafales 19 km/h")
+            DetailTile(icon: "drop.fill", title: "PRÉCIP.", value: "0 mm", description: "Aucune prévue")
         }
     }
 }
@@ -278,15 +278,15 @@ struct HourlyMock: Identifiable {
     
     static func generate() -> [HourlyMock] {
         return [
-            HourlyMock(time: "Now", icon: "sun.max.fill", temp: 75),
-            HourlyMock(time: "12PM", icon: "sun.max.fill", temp: 76),
-            HourlyMock(time: "1PM", icon: "cloud.sun.fill", temp: 78),
-            HourlyMock(time: "2PM", icon: "cloud.sun.fill", temp: 80),
-            HourlyMock(time: "3PM", icon: "sun.max.fill", temp: 82),
-            HourlyMock(time: "4PM", icon: "sun.max.fill", temp: 81),
-            HourlyMock(time: "5PM", icon: "cloud.sun.fill", temp: 79),
-            HourlyMock(time: "6PM", icon: "sun.haze.fill", temp: 76),
-            HourlyMock(time: "7PM", icon: "moon.stars.fill", temp: 72)
+            HourlyMock(time: "Maintenant", icon: "sun.max.fill", temp: 24),
+            HourlyMock(time: "12 h", icon: "sun.max.fill", temp: 25),
+            HourlyMock(time: "13 h", icon: "cloud.sun.fill", temp: 26),
+            HourlyMock(time: "14 h", icon: "cloud.sun.fill", temp: 27),
+            HourlyMock(time: "15 h", icon: "sun.max.fill", temp: 28),
+            HourlyMock(time: "16 h", icon: "sun.max.fill", temp: 27),
+            HourlyMock(time: "17 h", icon: "cloud.sun.fill", temp: 26),
+            HourlyMock(time: "18 h", icon: "sun.haze.fill", temp: 24),
+            HourlyMock(time: "19 h", icon: "moon.stars.fill", temp: 22)
         ]
     }
 }
@@ -300,13 +300,13 @@ struct DailyMock: Identifiable {
     
     static func generate() -> [DailyMock] {
         return [
-            DailyMock(dayName: "Today", icon: "sun.max.fill", low: 68, high: 82),
-            DailyMock(dayName: "Wed", icon: "cloud.sun.fill", low: 66, high: 80),
-            DailyMock(dayName: "Thu", icon: "sun.max.fill", low: 65, high: 83),
-            DailyMock(dayName: "Fri", icon: "cloud.rain.fill", low: 62, high: 75),
-            DailyMock(dayName: "Sat", icon: "cloud.fill", low: 60, high: 74),
-            DailyMock(dayName: "Sun", icon: "sun.max.fill", low: 63, high: 78),
-            DailyMock(dayName: "Mon", icon: "cloud.sun.fill", low: 65, high: 80)
+            DailyMock(dayName: "Aujourd'hui", icon: "sun.max.fill", low: 18, high: 28),
+            DailyMock(dayName: "Mer.", icon: "cloud.sun.fill", low: 17, high: 26),
+            DailyMock(dayName: "Jeu.", icon: "sun.max.fill", low: 16, high: 29),
+            DailyMock(dayName: "Ven.", icon: "cloud.rain.fill", low: 15, high: 24),
+            DailyMock(dayName: "Sam.", icon: "cloud.fill", low: 14, high: 23),
+            DailyMock(dayName: "Dim.", icon: "sun.max.fill", low: 16, high: 27),
+            DailyMock(dayName: "Lun.", icon: "cloud.sun.fill", low: 17, high: 26)
         ]
     }
 }

@@ -75,10 +75,10 @@ struct AppStoreView: View {
     var body: some View {
         TabView {
             TodayView(data: data)
-                .tabItem { Label("Today", systemImage: "doc.text.image") }
+                .tabItem { Label("Aujourd'hui", systemImage: "doc.text.image") }
             
             AppsView(title: "Games", apps: data.games)
-                .tabItem { Label("Games", systemImage: "gamecontroller.fill") }
+                .tabItem { Label("Jeux", systemImage: "gamecontroller.fill") }
             
             AppsView(title: "Apps", apps: data.featuredApps)
                 .tabItem { Label("Apps", systemImage: "square.stack.3d.up.fill") }
@@ -105,11 +105,11 @@ struct TodayView: View {
                     // Header
                     HStack(alignment: .bottom) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("THURSDAY, NOVEMBER 20")
+                            Text("JEUDI 20 NOVEMBRE")
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.secondary)
-                            Text("Today")
+                            Text("Aujourd'hui")
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                         }
@@ -226,7 +226,7 @@ struct AppSectionView: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 Spacer()
-                Button("See All") {}
+                Button("Tout afficher") {}
                     .font(.body)
                     .foregroundStyle(.blue)
             }
@@ -289,7 +289,7 @@ struct SmallAppRow: View {
 struct FeaturedAppCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("NEW UPDATE")
+            Text("NOUVELLE MISE À JOUR")
                 .font(.caption)
                 .fontWeight(.bold)
                 .foregroundStyle(.blue)
@@ -298,7 +298,7 @@ struct FeaturedAppCard: View {
                 .font(.title2)
                 .fontWeight(.medium)
             
-            Text("Major Town Hall update.")
+            Text("Mise à jour majeure de l'Hôtel de Ville.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             
@@ -337,10 +337,10 @@ struct ArcadeView: View {
                             Text("ARCADE")
                                 .font(.caption.bold())
                                 .foregroundStyle(.white.opacity(0.8))
-                            Text("Play without\nlimits")
+                            Text("Jouez sans\nlimites")
                                 .font(.largeTitle.bold())
                                 .foregroundStyle(.white)
-                            Text("No ads. No in-app purchases.")
+                            Text("Sans pub. Sans achats intégrés.")
                                 .font(.subheadline)
                                 .foregroundStyle(.white.opacity(0.85))
                         }
@@ -420,7 +420,7 @@ struct AppDetailView: View {
                 
                 // What's New
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("What's New")
+                    Text("Nouveautés")
                         .font(.title3)
                         .fontWeight(.bold)
                     
@@ -433,7 +433,7 @@ struct AppDetailView: View {
                     }
                     .font(.subheadline)
                     
-                    Text("Bug fixes and performance improvements. Enjoy the latest update!")
+                    Text("Corrections et améliorations des performances.")
                         .font(.body)
                         .lineLimit(3)
                 }
@@ -467,7 +467,7 @@ struct AppDetailView: View {
                 // Description
                 VStack(alignment: .leading, spacing: 10) {
                     Text(app.description)
-                    Text("Size: \(app.size)")
+                    Text("Taille : \(app.size)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .padding(.top, 10)
@@ -518,7 +518,7 @@ struct SearchView: View {
         NavigationStack {
             List {
                 if searchText.isEmpty {
-                    Section(header: Text("Discover")) {
+                    Section(header: Text("Découvrir")) {
                         ForEach(["RPG Games", "Video Editors", "Fitness", "Wallpaper"], id: \.self) { item in
                             Button(action: { searchText = item }) {
                                 HStack {
@@ -530,7 +530,7 @@ struct SearchView: View {
                         }
                     }
                     
-                    Section(header: Text("Suggested")) {
+                    Section(header: Text("Suggestions")) {
                         ForEach(data.games.prefix(2)) { app in
                             NavigationLink(destination: AppDetailView(app: app)) {
                                 SmallAppRow(app: app)
@@ -578,13 +578,13 @@ struct GetButton: View {
                     .fill(state == .get ? Color(uiColor: .secondarySystemBackground) : (state == .open ? .blue : .clear))
                 
                 if state == .get {
-                    Text("GET")
+                    Text("OBTENIR")
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(readOnly ? .gray : .blue)
                 } else if state == .loading {
                     ProgressView()
                 } else {
-                    Text("OPEN")
+                    Text("OUVRIR")
                         .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(.white)
                 }
@@ -643,7 +643,7 @@ struct AccountView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }.fontWeight(.bold)
+                    Button("Terminé") { dismiss() }.fontWeight(.bold)
                 }
             }
         }

@@ -102,9 +102,9 @@ struct AlarmView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(header: Text("Sleep | Wake Up").font(.subheadline).fontWeight(.semibold).foregroundStyle(.orange)) {
+                Section(header: Text("Sommeil | Réveil").font(.subheadline).fontWeight(.semibold).foregroundStyle(.orange)) {
                     HStack {
-                        Text("No Alarm")
+                        Text("Pas d'alarme")
                             .foregroundStyle(.gray)
                         Spacer()
                         Button("SET UP") { }
@@ -118,7 +118,7 @@ struct AlarmView: View {
                     }
                 }
                 
-                Section(header: Text("Other").font(.subheadline).fontWeight(.semibold)) {
+                Section(header: Text("Autres").font(.subheadline).fontWeight(.semibold)) {
                     ForEach($alarms) { $alarm in
                         HStack {
                             VStack(alignment: .leading, spacing: 0) {
@@ -229,7 +229,7 @@ struct StopwatchView: View {
             List {
                 ForEach(laps) { lap in
                     HStack {
-                        Text("Lap \(lap.count)")
+                        Text("Tour \(lap.count)")
                         Spacer()
                         Text(formatTime(lap.time))
                             .monospacedDigit()
@@ -338,10 +338,10 @@ struct TimerView: View {
             VStack(spacing: 1) {
                 NavigationLink(destination: TimerLabelSettingsView()) {
                     HStack {
-                        Text("Label")
+                        Text("Nom")
                             .foregroundStyle(.white)
                         Spacer()
-                        Text("Timer")
+                        Text("Minuterie")
                             .foregroundStyle(.gray)
                         Image(systemName: "chevron.right")
                             .font(.caption)
@@ -353,7 +353,7 @@ struct TimerView: View {
                 
                 NavigationLink(destination: TimerSoundSettingsView()) {
                     HStack {
-                        Text("When Timer Ends")
+                        Text("À la fin")
                             .foregroundStyle(.white)
                         Spacer()
                         Text("Radar")
@@ -387,7 +387,7 @@ struct TimerView: View {
                             .stroke(Color.black, lineWidth: 0)
                             .frame(width: 76, height: 76)
                         
-                        Text("Cancel")
+                        Text("Annuler")
                             .font(.title3)
                             .foregroundStyle(.white) // Active when running
                     }
@@ -560,7 +560,7 @@ struct TimerLabelSettingsView: View {
 
     var body: some View {
         Form {
-            TextField("Label", text: $label)
+            TextField("Nom", text: $label)
         }
         .navigationTitle("Nom")
         .navigationBarTitleDisplayMode(.inline)

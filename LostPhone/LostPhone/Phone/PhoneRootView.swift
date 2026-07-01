@@ -34,5 +34,8 @@ struct PhoneRootView: View {
             }
         }
         .environmentObject(phone)
+        .task {
+            await PreviewTourDriver.run(phone: phone)
+        }
     }
 }

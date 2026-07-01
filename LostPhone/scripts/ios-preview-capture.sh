@@ -198,22 +198,38 @@ if UDID="$(ensure_simulator_udid)"; then
   echo "→ Using simulator $UDID"
   xcrun simctl boot "$UDID" 2>/dev/null || true
   if xcrun simctl bootstatus "$UDID" -b 2>/dev/null; then
-    echo "→ Install & launch"
+    echo "→ Install app"
     xcrun simctl install "$UDID" "$APP"
+
+    echo "→ Menu screenshot (before tour)"
     xcrun simctl launch "$UDID" com.lostphone.game || true
-    sleep 5
-
-    echo "→ Screenshot"
+    sleep 4
     xcrun simctl io "$UDID" screenshot "$ARTIFACTS/01-menu-accueil.png" || true
+    xcrun simctl terminate "$UDID" com.lostphone.game 2>/dev/null || true
+    sleep 1
 
-    echo "→ Screen recording (~15s)"
-    if xcrun simctl io "$UDID" recordVideo --force "$ARTIFACTS/preview-demo.mov" &
+    TOUR_SECONDS="${PREVIEW_TOUR_SECONDS:-100}"
+    TOUR_MOV="$ARTIFACTS/preview-tour.mov"
+
+    echo "→ Automated app tour + screen recording (~${TOUR_SECONDS}s)"
+    if xcrun simctl io "$UDID" recordVideo --force "$TOUR_MOV" &
     then
       REC_PID=$!
-      sleep 15
+      sleep 1
+      xcrun simctl launch "$UDID" com.lostphone.game -UIPreviewTour || true
+      sleep "$TOUR_SECONDS"
       kill -INT "$REC_PID" 2>/dev/null || true
       wait "$REC_PID" 2>/dev/null || true
     fi
+
+    if [[ -f "$TOUR_MOV" ]]; then
+      cp "$TOUR_MOV" "$ARTIFACTS/preview-demo.mov"
+      echo "✓ preview-tour.mov ($(du -h "$TOUR_MOV" | awk '{print $1}'))"
+    else
+      echo "WARN: preview-tour.mov missing — tour recording may have failed"
+    fi
+
+    xcrun simctl terminate "$UDID" com.lostphone.game 2>/dev/null || true
     CAPTURE_OK=1
   else
     echo "WARN: Simulator failed to boot — Appetize zip still available"

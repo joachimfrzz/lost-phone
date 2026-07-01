@@ -147,6 +147,7 @@ enum Fr {
     static let mostlyClear = "Plutôt dégagé"
 
     // Centre de contrôle iOS
+    static let ccTapToPlay = "Appuyer pour écouter"
     static let connectivity = "Connectivité"
     static let rotationLock = "Verrouillage"
     static let flashlight = "Lampe torche"

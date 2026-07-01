@@ -313,7 +313,7 @@ struct CameraView: View {
                         // Mode Slider
                         HStack(spacing: 30) {
                             Button(action: { withAnimation { camera.mode = .video } }) {
-                                Text("VIDEO")
+                                Text("VIDÉO")
                                     .font(.system(size: 13, weight: .bold))
                                     .foregroundColor(camera.mode == .video ? .yellow : .white)
                             }

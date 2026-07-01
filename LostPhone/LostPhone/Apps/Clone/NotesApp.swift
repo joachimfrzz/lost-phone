@@ -99,7 +99,7 @@ struct NotesView: View {
             .navigationTitle("Dossiers")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Edit") {}.foregroundStyle(.yellow)
+                    Button("Modifier") {}.foregroundStyle(.yellow)
                         .disabled(readOnly)
                 }
                 ToolbarItem(placement: .bottomBar) {
@@ -284,7 +284,7 @@ struct NoteEditorView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Done") {
+                Button("Terminé") {
                     isFocused = false
                 }
                 .fontWeight(.bold)

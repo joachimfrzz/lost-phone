@@ -84,17 +84,17 @@ struct CalendarView: View {
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
                     HStack {
-                        Button("Today") {
+                        Button("Aujourd'hui") {
                             selectedDate = Date()
                         }
                         .foregroundStyle(.red)
                         
-                        Button("Calendars") {
+                        Button("Calendriers") {
                             selectedDate = Date()
                         }
                         .foregroundStyle(.red)
                         
-                        Button("Inbox") {
+                        Button("Boîte de réception") {
                             selectedDate = Date()
                         }
                         .foregroundStyle(.red)
@@ -414,11 +414,11 @@ struct CalendarEventDetailView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button("Terminé") { dismiss() }
                 }
                 if !readOnly {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button("Edit") { }
+                        Button("Modifier") { }
                     }
                 }
             }

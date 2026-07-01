@@ -1,169 +1,195 @@
 import SwiftUI
 
+// MARK: - Tokens design système iOS
+
+enum IOSSystemStyle {
+    static let moduleCornerRadius: CGFloat = 24
+    static let moduleFill = Color.white.opacity(0.16)
+    static let moduleFillActive = Color.white.opacity(0.22)
+    static let controlCircleSize: CGFloat = 48
+    static let sliderWidth: CGFloat = 48
+    static let sliderHeight: CGFloat = 178
+    static let notificationCornerRadius: CGFloat = 18
+}
+
+// MARK: - Centre de contrôle (iOS 17)
+
 struct ControlCenterOverlay: View {
     @EnvironmentObject private var phone: PhoneViewModel
     @State private var dragOffset: CGFloat = 0
-    @State private var brightness: Double = 0.72
-    @State private var volume: Double = 0.48
-    @State private var wifiOn = true
-    @State private var cellularOn = true
-    @State private var bluetoothOn = true
+    @State private var brightness: Double = 0.68
+    @State private var volume: Double = 0.45
     @State private var airplaneMode = false
+    @State private var cellularOn = true
+    @State private var wifiOn = true
+    @State private var bluetoothOn = true
     @State private var rotationLock = false
     @State private var focusOn = false
+    @State private var silentMode = false
+    @State private var flashlightOn = false
 
     var body: some View {
         ZStack(alignment: .top) {
-            Color.black.opacity(0.15)
+            Color.black.opacity(0.01)
                 .ignoresSafeArea()
                 .onTapGesture { dismiss() }
 
             VStack(spacing: 0) {
-                Capsule()
-                    .fill(.white.opacity(0.35))
-                    .frame(width: 36, height: 5)
-                    .padding(.top, 10)
-                    .padding(.bottom, 14)
+                StatusBarView()
+                    .padding(.top, 4)
 
                 HStack(alignment: .top, spacing: 14) {
-                    leftModules
-                    verticalSliders
+                    leftColumn
+                    rightSliders
                 }
-                .padding(.horizontal, 18)
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
 
                 Spacer(minLength: 0)
             }
-            .padding(.top, 44)
+            .padding(.top, 4)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .background { controlBackground }
+            .background { iosBlurBackground(darkness: 0.52) }
             .offset(y: dragOffset)
             .gesture(dismissGesture)
         }
     }
 
-    private var leftModules: some View {
+    private var leftColumn: some View {
         VStack(spacing: 12) {
-            connectivityModule
+            // Module connectivité — 4 icônes sans libellé (comme iOS)
+            HStack(spacing: 0) {
+                ccToggle(icon: "airplane", isOn: $airplaneMode, active: .orange)
+                ccToggle(icon: "antenna.radiowaves.left.and.right", isOn: $cellularOn, active: .green)
+                ccToggle(icon: "wifi", isOn: $wifiOn, active: .blue)
+                ccToggle(icon: "bluetooth", isOn: $bluetoothOn, active: .blue)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 10)
+            .background(IOSSystemStyle.moduleFill, in: RoundedRectangle(cornerRadius: IOSSystemStyle.moduleCornerRadius, style: .continuous))
 
-            nowPlayingModule
-
+            // Lecture en cours
             HStack(spacing: 12) {
-                ControlCircleToggle(icon: "lock.rotation", label: "Verrouillage", isOn: $rotationLock, tint: .red)
-                ControlCircleToggle(icon: "moon.fill", label: "Concentration", isOn: $focusOn, tint: .indigo)
-                ControlCircleToggle(icon: "repeat", label: "Miroir", isOn: .constant(false), tint: .blue)
-                ControlCircleToggle(icon: "flashlight.on.fill", label: "Lampe", isOn: .constant(false), tint: .gray)
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(red: 0.95, green: 0.35, blue: 0.45), Color(red: 0.55, green: 0.25, blue: 0.85)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 44, height: 44)
+                    .overlay {
+                        Image(systemName: "music.note")
+                            .font(.body)
+                            .foregroundStyle(.white)
+                    }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(Fr.notPlaying)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                    Text("Musique")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.55))
+                }
+
+                Spacer()
+
+                HStack(spacing: 20) {
+                    ccMediaButton("backward.fill")
+                    ccMediaButton("play.fill", size: 18)
+                    ccMediaButton("forward.fill")
+                }
+            }
+            .padding(14)
+            .background(IOSSystemStyle.moduleFill, in: RoundedRectangle(cornerRadius: IOSSystemStyle.moduleCornerRadius, style: .continuous))
+
+            // Rangée de toggles ronds — icônes seules
+            HStack(spacing: 0) {
+                ccRoundIcon("lock.rotation", isOn: rotationLock, active: .red) { rotationLock.toggle() }
+                ccRoundIcon("bell.slash.fill", isOn: silentMode, active: .red) { silentMode.toggle() }
+                ccRoundIcon("moon.fill", isOn: focusOn, active: .indigo) { focusOn.toggle() }
+                ccRoundIcon("flashlight.on.fill", isOn: flashlightOn, active: .white) { flashlightOn.toggle() }
             }
 
+            // Grille 2×2 — icônes seules
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ControlQuickTile(icon: "timer", label: "Minuteur")
-                ControlQuickTile(icon: "calculator", label: "Calculatrice")
-                ControlQuickTile(icon: "camera.fill", label: "Appareil photo")
-                ControlQuickTile(icon: "qrcode.viewfinder", label: "Code QR")
+                ccSquareIcon("timer")
+                ccSquareIcon("calculator")
+                ccSquareIcon("camera.fill")
+                ccSquareIcon("qrcode.viewfinder")
             }
         }
         .frame(maxWidth: .infinity)
     }
 
-    private var connectivityModule: some View {
-        HStack(spacing: 0) {
-            connectivityToggle(icon: "airplane", label: "Avion", isOn: $airplaneMode, tint: .orange)
-            connectivityToggle(icon: "antenna.radiowaves.left.and.right", label: "Cellulaire", isOn: $cellularOn, tint: .green)
-            connectivityToggle(icon: "wifi", label: "Wi‑Fi", isOn: $wifiOn, tint: .blue)
-            connectivityToggle(icon: "bluetooth", label: "Bluetooth", isOn: $bluetoothOn, tint: .blue)
+    private var rightSliders: some View {
+        VStack(spacing: 16) {
+            IOSSVerticalSlider(value: $brightness, topIcon: "sun.max.fill", bottomIcon: "sun.min.fill")
+            IOSSVerticalSlider(value: $volume, topIcon: "speaker.wave.3.fill", bottomIcon: "speaker.fill")
         }
-        .padding(12)
-        .background(.white.opacity(0.14), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .frame(width: IOSSystemStyle.sliderWidth)
     }
 
-    private func connectivityToggle(icon: String, label: String, isOn: Binding<Bool>, tint: Color) -> some View {
+    @ViewBuilder
+    private func ccToggle(icon: String, isOn: Binding<Bool>, active: Color) -> some View {
         Button {
             isOn.wrappedValue.toggle()
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } label: {
-            VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .frame(width: 52, height: 52)
-                    .background(isOn.wrappedValue ? tint : .white.opacity(0.1), in: Circle())
-                Text(label)
-                    .font(.caption2)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-            .foregroundStyle(isOn.wrappedValue ? .white : .white.opacity(0.65))
-            .frame(maxWidth: .infinity)
+            Image(systemName: icon)
+                .font(.system(size: 20, weight: .medium))
+                .foregroundStyle(isOn.wrappedValue ? .white : .white.opacity(0.85))
+                .frame(maxWidth: .infinity)
+                .frame(height: IOSSystemStyle.controlCircleSize)
+                .background(isOn.wrappedValue ? active : Color.white.opacity(0.12), in: Circle())
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 4)
+    }
+
+    @ViewBuilder
+    private func ccRoundIcon(_ icon: String, isOn: Bool, active: Color, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        } label: {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .medium))
+                .foregroundStyle(isOn ? .white : .white.opacity(0.9))
+                .frame(width: 52, height: 52)
+                .background(isOn ? active.opacity(0.95) : IOSSystemStyle.moduleFill, in: Circle())
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+    }
+
+    @ViewBuilder
+    private func ccSquareIcon(_ icon: String) -> some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        } label: {
+            Image(systemName: icon)
+                .font(.system(size: 22, weight: .medium))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, minHeight: 64)
+                .background(IOSSystemStyle.moduleFill, in: RoundedRectangle(cornerRadius: IOSSystemStyle.moduleCornerRadius, style: .continuous))
         }
         .buttonStyle(.plain)
     }
 
-    private var nowPlayingModule: some View {
-        HStack(spacing: 12) {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [.pink.opacity(0.8), .purple.opacity(0.8)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: 48, height: 48)
-                .overlay {
-                    Image(systemName: "music.note")
-                        .foregroundStyle(.white)
-                }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text("En lecture")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("Aucune lecture")
-                    .font(.subheadline.weight(.semibold))
-                    .lineLimit(1)
-                Text("Musique")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            HStack(spacing: 18) {
-                ControlButton(icon: "backward.fill")
-                ControlButton(icon: "play.fill", large: true)
-                ControlButton(icon: "forward.fill")
-            }
-        }
-        .padding(14)
-        .background(.white.opacity(0.14), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-    }
-
-    private var verticalSliders: some View {
-        VStack(spacing: 16) {
-            VerticalControlSlider(
-                value: $brightness,
-                iconTop: "sun.max.fill",
-                iconBottom: "sun.min.fill"
-            )
-            VerticalControlSlider(
-                value: $volume,
-                iconTop: "speaker.wave.3.fill",
-                iconBottom: "speaker.fill"
-            )
-        }
-        .frame(width: 54)
-    }
-
     @ViewBuilder
-    private var controlBackground: some View {
-        ZStack {
-            WallpaperView()
-                .blur(radius: 40)
-                .brightness(-0.2)
-                .ignoresSafeArea()
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .background(Color.black.opacity(0.48))
-                .ignoresSafeArea()
+    private func ccMediaButton(_ icon: String, size: CGFloat = 15) -> some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        } label: {
+            Image(systemName: icon)
+                .font(.system(size: size, weight: .semibold))
+                .foregroundStyle(.white)
         }
+        .buttonStyle(.plain)
     }
 
     private var dismissGesture: some Gesture {
@@ -172,7 +198,7 @@ struct ControlCenterOverlay: View {
                 dragOffset = min(0, value.translation.height)
             }
             .onEnded { value in
-                if value.translation.height < -72 {
+                if value.translation.height < -60 {
                     dismiss()
                 } else {
                     withAnimation(.spring(duration: 0.32)) { dragOffset = 0 }
@@ -187,31 +213,31 @@ struct ControlCenterOverlay: View {
     }
 }
 
-private struct VerticalControlSlider: View {
+private struct IOSSVerticalSlider: View {
     @Binding var value: Double
-    let iconTop: String
-    let iconBottom: String
+    let topIcon: String
+    let bottomIcon: String
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
                 Capsule()
-                    .fill(.white.opacity(0.14))
+                    .fill(Color.white.opacity(0.18))
                 Capsule()
-                    .fill(.white.opacity(0.92))
-                    .frame(height: max(24, geo.size.height * value))
+                    .fill(Color.white)
+                    .frame(height: max(28, geo.size.height * value))
             }
             .overlay(alignment: .top) {
-                Image(systemName: iconTop)
-                    .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.85))
-                    .padding(.top, 10)
+                Image(systemName: topIcon)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .padding(.top, 12)
             }
             .overlay(alignment: .bottom) {
-                Image(systemName: iconBottom)
-                    .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.55))
-                    .padding(.bottom, 10)
+                Image(systemName: bottomIcon)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.black.opacity(0.45))
+                    .padding(.bottom, 12)
             }
             .gesture(
                 DragGesture(minimumDistance: 0)
@@ -221,73 +247,20 @@ private struct VerticalControlSlider: View {
                     }
             )
         }
-        .frame(width: 54, height: 160)
+        .frame(width: IOSSystemStyle.sliderWidth, height: IOSSystemStyle.sliderHeight)
     }
 }
 
-private struct ControlCircleToggle: View {
-    let icon: String
-    let label: String
-    @Binding var isOn: Bool
-    let tint: Color
-
-    var body: some View {
-        Button {
-            isOn.toggle()
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        } label: {
-            VStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.body)
-                    .frame(width: 44, height: 44)
-                    .background(isOn ? tint : .white.opacity(0.12), in: Circle())
-                Text(label)
-                    .font(.system(size: 10))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-private struct ControlButton: View {
-    let icon: String
-    var large = false
-
-    var body: some View {
-        Button {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        } label: {
-            Image(systemName: icon)
-                .font(large ? .title3 : .footnote)
-                .foregroundStyle(.white)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-private struct ControlQuickTile: View {
-    let icon: String
-    let label: String
-
-    var body: some View {
-        Button {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        } label: {
-            VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.title3)
-                Text(label)
-                    .font(.caption2)
-                    .lineLimit(1)
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 68)
-            .background(.white.opacity(0.14), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        }
-        .buttonStyle(.plain)
+@ViewBuilder
+func iosBlurBackground(darkness: Double) -> some View {
+    ZStack {
+        WallpaperView()
+            .blur(radius: 50)
+            .brightness(-0.08)
+            .ignoresSafeArea()
+        Rectangle()
+            .fill(.ultraThinMaterial)
+            .background(Color.black.opacity(darkness))
+            .ignoresSafeArea()
     }
 }

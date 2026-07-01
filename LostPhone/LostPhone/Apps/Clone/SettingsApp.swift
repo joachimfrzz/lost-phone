@@ -29,7 +29,7 @@ struct SettingsView: View {
                                 Text(owner.name)
                                     .font(.title2)
                                     .fontWeight(.regular)
-                                Text("Apple ID, iCloud+, Media & Purchases")
+                                Text("Apple ID, iCloud+, Médias et achats")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -109,7 +109,7 @@ struct SettingsView: View {
                         HStack {
                             SettingsIcon(icon: "antenna.radiowaves.left.and.right", color: .green, title: "Cellular")
                             Spacer()
-                            if airplaneMode { Text("Off").foregroundStyle(.secondary) }
+                            if airplaneMode { Text("Désactivé").foregroundStyle(.secondary) }
                         }
                     }
                     
@@ -862,7 +862,7 @@ struct AppleIDView: View {
             }
             
             Section {
-                Text("Sign Out")
+                Text("Se déconnecter")
                     .foregroundStyle(.red)
                     .frame(maxWidth: .infinity, alignment: .center)
             }

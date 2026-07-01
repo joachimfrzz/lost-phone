@@ -141,7 +141,7 @@ struct LibraryView: View {
                 }
 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Select") { }
+                    Button("Sélectionner") { }
                         .fontWeight(.medium)
                         .disabled(readOnly)
                 }

@@ -89,8 +89,8 @@ struct MailView: View {
             List {
                 // Section 1: Smart Folders
                 Section {
-                    NavigationLink(destination: InboxView(manager: manager, title: "All Inboxes")) {
-                        MailboxRow(icon: "tray.2.fill", title: "All Inboxes", count: manager.unreadCount, color: .blue)
+                    NavigationLink(destination: InboxView(manager: manager, title: "Toutes les boîtes")) {
+                        MailboxRow(icon: "tray.2.fill", title: "Toutes les boîtes", count: manager.unreadCount, color: .blue)
                     }
                     NavigationLink(destination: InboxView(manager: manager, title: "iCloud")) {
                         MailboxRow(icon: "tray.fill", title: "iCloud", count: 0, color: .blue)
@@ -102,19 +102,19 @@ struct MailView: View {
                 
                 // Section 2: iCloud Accounts
                 Section(header: Text("iCloud").textCase(nil)) {
-                    MailboxRow(icon: "tray", title: "Inbox", count: 0, color: .blue)
-                    MailboxRow(icon: "doc", title: "Drafts", count: 0, color: .blue)
-                    MailboxRow(icon: "paperplane", title: "Sent", count: 0, color: .blue)
-                    MailboxRow(icon: "bin.xmark", title: "Junk", count: 0, color: .blue)
-                    MailboxRow(icon: "trash", title: "Trash", count: 0, color: .blue)
-                    MailboxRow(icon: "archivebox", title: "Archive", count: 0, color: .blue)
+                    MailboxRow(icon: "tray", title: "Boîte de réception", count: 0, color: .blue)
+                    MailboxRow(icon: "doc", title: "Brouillons", count: 0, color: .blue)
+                    MailboxRow(icon: "paperplane", title: "Envoyés", count: 0, color: .blue)
+                    MailboxRow(icon: "bin.xmark", title: "Indésirables", count: 0, color: .blue)
+                    MailboxRow(icon: "trash", title: "Corbeille", count: 0, color: .blue)
+                    MailboxRow(icon: "archivebox", title: "Archives", count: 0, color: .blue)
                 }
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Boîtes mail")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Edit") {}
+                    Button("Modifier") {}
                         .disabled(readOnly)
                 }
                 
@@ -126,7 +126,7 @@ struct MailView: View {
                         .disabled(readOnly)
                         Spacer()
                         VStack(spacing: 0) {
-                            Text("Updated Just Now")
+                            Text("Mis à jour à l'instant")
                                 .font(.caption2)
                                 .foregroundStyle(.primary)
                         }
@@ -208,13 +208,13 @@ struct InboxView: View {
                         Button(role: .destructive) {
                             withAnimation { manager.delete(email) }
                         } label: {
-                            Label("Trash", systemImage: "trash")
+                            Label("Corbeille", systemImage: "trash")
                         }
 
                         Button {
                             withAnimation { manager.toggleFlag(email) }
                         } label: {
-                            Label("Flag", systemImage: "flag")
+                            Label("Signaler", systemImage: "flag")
                         }
                         .tint(.orange)
                     }
@@ -240,7 +240,7 @@ struct InboxView: View {
                     Button(action: {}) { Image(systemName: "line.3.horizontal.decrease.circle") }
                         .disabled(readOnly)
                     Spacer()
-                    Text("Updated Just Now").font(.caption2)
+                    Text("Mis à jour à l'instant").font(.caption2)
                     Spacer()
                     Button(action: {}) { Image(systemName: "square.and.pencil") }
                         .disabled(readOnly)
@@ -353,7 +353,7 @@ struct EmailDetailView: View {
                                     .fontWeight(.semibold)
                                 Spacer()
                             }
-                            Text("To: \(owner.name)")
+                            Text("À : \(owner.name)")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -429,7 +429,7 @@ struct ComposeView: View {
                 // Header Fields
                 VStack(spacing: 0) {
                     HStack {
-                        Text("To:")
+                        Text("À :")
                             .foregroundStyle(.secondary)
                             .frame(width: 50, alignment: .trailing)
                         TextField("", text: $to)
@@ -439,7 +439,7 @@ struct ComposeView: View {
                     Divider()
                     
                     HStack {
-                        Text("Cc/Bcc:")
+                        Text("Cc/Cci :")
                             .foregroundStyle(.secondary)
                             .frame(width: 50, alignment: .trailing)
                         TextField("", text: $cc)
@@ -449,7 +449,7 @@ struct ComposeView: View {
                     Divider()
                     
                     HStack {
-                        Text("Subject:")
+                        Text("Objet :")
                             .foregroundStyle(.secondary)
                             .frame(width: 50, alignment: .trailing)
                         TextField("", text: $subject)
@@ -472,12 +472,12 @@ struct ComposeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("Annuler") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Send") {
+                    Button("Envoyer") {
                         dismiss()
                     }
                     .fontWeight(.bold)

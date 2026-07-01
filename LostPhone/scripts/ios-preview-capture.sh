@@ -117,11 +117,11 @@ prepare_xcode_and_simulators
 
 DERIVED_DATA="$LOSTPHONE/.derivedData-preview"
 
-echo "→ Build for iOS Simulator (Release, universal binary for Appetize)"
+echo "→ Build for iOS Simulator (Debug, universal — Appetize-compatible)"
 xcodebuild \
   -project LostPhone.xcodeproj \
   -scheme LostPhone \
-  -configuration Release \
+  -configuration Debug \
   -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath "$DERIVED_DATA" \
@@ -188,6 +188,9 @@ Option B — via Artifacts Actions :
   ⚠️ N'upload PAS le fichier "appetize-upload-XXX.zip" tel quel !
 
 PIN dans l'app : 1503
+
+Sur Appetize : clique DANS l'écran du téléphone simulé si rien ne bouge.
+Les logs AuthKit / PPT sont normaux (bruit simulateur Apple).
 EOF
 
 CAPTURE_OK=0

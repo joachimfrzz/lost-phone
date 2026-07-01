@@ -2,7 +2,7 @@ import SwiftUI
 
 struct PhoneRootView: View {
     @EnvironmentObject private var phone: PhoneViewModel
-    @State private var stories: [StoryEntry] = []
+    private let stories = StoryCatalog.availableStories()
 
     var body: some View {
         ZStack {
@@ -34,10 +34,5 @@ struct PhoneRootView: View {
             }
         }
         .environmentObject(phone)
-        .task {
-            if stories.isEmpty {
-                stories = StoryCatalog.availableStories()
-            }
-        }
     }
 }

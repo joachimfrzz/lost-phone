@@ -33,19 +33,19 @@ struct PhoneView: View {
     var body: some View {
         TabView {
             FavoritesView()
-                .tabItem { Label("Favorites", systemImage: "star.fill") }
+                .tabItem { Label("Favoris", systemImage: "star.fill") }
 
             RecentsView(recentCalls: recentCalls)
-                .tabItem { Label("Recents", systemImage: "clock.fill") }
+                .tabItem { Label("Récents", systemImage: "clock.fill") }
             
             ContactsView(contacts: contacts)
                 .tabItem { Label("Contacts", systemImage: "person.circle.fill") }
             
             KeypadView()
-                .tabItem { Label("Keypad", systemImage: "circle.grid.3x3.fill") }
+                .tabItem { Label("Clavier", systemImage: "circle.grid.3x3.fill") }
             
             VoicemailView()
-                .tabItem { Label("Voicemail", systemImage: "recordingtape") }
+                .tabItem { Label("Messagerie vocale", systemImage: "recordingtape") }
         }
         .accentColor(.blue)
     }
@@ -257,7 +257,7 @@ struct RecentsView: View {
                 }
             }
             .listStyle(.plain)
-            .navigationTitle("Recents")
+            .navigationTitle("Récents")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -449,7 +449,7 @@ struct VoicemailView: View {
                 
                 Spacer()
             }
-            .navigationTitle("Voicemail")
+            .navigationTitle("Messagerie vocale")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Greeting") {}
@@ -476,7 +476,7 @@ struct FavoritesView: View {
                     favoritesDemoList
                 }
             }
-            .navigationTitle("Favorites")
+            .navigationTitle("Favoris")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {}) { Image(systemName: "plus") }

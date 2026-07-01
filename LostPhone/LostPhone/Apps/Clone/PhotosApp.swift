@@ -47,12 +47,12 @@ struct PhotosView: View {
         TabView {
             LibraryView(library: library, storyId: storyId)
                 .tabItem {
-                    Label("Library", systemImage: "photo.fill.on.rectangle.fill")
+                    Label("Bibliothèque", systemImage: "photo.fill.on.rectangle.fill")
                 }
 
             PhotosForYouView(library: library, storyId: storyId)
                 .tabItem {
-                    Label("For You", systemImage: "heart.text.square.fill")
+                    Label("Pour vous", systemImage: "heart.text.square.fill")
                 }
 
             PhotosAlbumsView(library: library, storyId: storyId)
@@ -62,7 +62,7 @@ struct PhotosView: View {
 
             PhotosSearchView(library: library, storyId: storyId)
                 .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
+                    Label("Rechercher", systemImage: "magnifyingglass")
                 }
         }
     }
@@ -120,7 +120,7 @@ struct LibraryView: View {
                         VStack(spacing: 5) {
                             Text("\(displayedPhotos.count) Photos")
                                 .font(.system(size: 15, weight: .medium))
-                            Text("Synced with iCloud Just Now")
+                            Text("Synchronisé avec iCloud à l'instant")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -132,9 +132,9 @@ struct LibraryView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Picker("", selection: $selectedSegment) {
-                        Text("Years").tag(0)
-                        Text("Months").tag(1)
-                        Text("All").tag(2)
+                        Text("Années").tag(0)
+                        Text("Mois").tag(1)
+                        Text("Tout").tag(2)
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 220)
@@ -353,7 +353,7 @@ struct PhotosForYouView: View {
                     .padding(.vertical, 16)
                 }
             }
-            .navigationTitle("For You")
+            .navigationTitle("Pour vous")
         }
     }
 }
@@ -610,7 +610,7 @@ struct PhotosSearchView: View {
                     }
                 }
             }
-            .navigationTitle("Search")
+            .navigationTitle("Rechercher")
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         }
     }

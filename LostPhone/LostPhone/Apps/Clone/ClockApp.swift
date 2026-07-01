@@ -8,13 +8,13 @@ struct ClockView: View {
     var body: some View {
         TabView {
             WorldClockView()
-                .tabItem { Label("World Clock", systemImage: "globe") }
+                .tabItem { Label("Horloge mondiale", systemImage: "globe") }
             AlarmView()
-                .tabItem { Label("Alarm", systemImage: "alarm.fill") }
+                .tabItem { Label("Alarme", systemImage: "alarm.fill") }
             StopwatchView()
-                .tabItem { Label("Stopwatch", systemImage: "stopwatch.fill") }
+                .tabItem { Label("Chronomètre", systemImage: "stopwatch.fill") }
             TimerView()
-                .tabItem { Label("Timer", systemImage: "timer") }
+                .tabItem { Label("Minuterie", systemImage: "timer") }
         }
         .environment(\.lpspReadOnly, readOnly)
         .accentColor(.orange)
@@ -41,7 +41,7 @@ struct WorldClockView: View {
                 WorldClockRow(city: "Sydney", timeZoneOffset: 15 * 3600, date: date)
             }
             .listStyle(.plain)
-            .navigationTitle("World Clock")
+            .navigationTitle("Horloge mondiale")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     EditButton().foregroundStyle(.orange)
@@ -146,7 +146,7 @@ struct AlarmView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Alarm")
+            .navigationTitle("Alarme")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     EditButton().foregroundStyle(.orange)
@@ -562,7 +562,7 @@ struct TimerLabelSettingsView: View {
         Form {
             TextField("Label", text: $label)
         }
-        .navigationTitle("Label")
+        .navigationTitle("Nom")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -583,7 +583,7 @@ struct TimerSoundSettingsView: View {
                 }
             }
         }
-        .navigationTitle("When Timer Ends")
+        .navigationTitle("À la fin")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

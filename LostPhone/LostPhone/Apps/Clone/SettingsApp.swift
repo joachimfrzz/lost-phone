@@ -52,7 +52,7 @@ struct SettingsView: View {
                                         .overlay(Circle().stroke(Color(uiColor: .systemBackground), lineWidth: 2))
                                 }
                             }
-                            Text("Family")
+                            Text("Famille")
                         }
                     }
                 }
@@ -228,7 +228,7 @@ struct SettingsView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Settings")
+            .navigationTitle("Réglages")
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         }
     }
@@ -448,7 +448,7 @@ struct GeneralView: View {
                 ]))
             }
         }
-        .navigationTitle("General")
+        .navigationTitle("Général")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -478,7 +478,7 @@ struct AboutView: View {
                 InfoRow(label: "Available", value: "120 GB")
             }
         }
-        .navigationTitle("About")
+        .navigationTitle("Informations")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -528,7 +528,7 @@ struct SoftwareUpdateView: View {
                 }
             }
         }
-        .navigationTitle("Software Update")
+        .navigationTitle("Mise à jour logicielle")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -588,7 +588,7 @@ struct StorageView: View {
                 StorageAppRow(name: "Instagram", size: "2.2 GB", icon: "camera.fill", color: .purple)
             }
         }
-        .navigationTitle("iPhone Storage")
+        .navigationTitle("Stockage iPhone")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -701,7 +701,7 @@ struct DisplayView: View {
                 NavigationLink("Bold Text") { }
             }
         }
-        .navigationTitle("Display & Brightness")
+        .navigationTitle("Écran et luminosité")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -767,7 +767,7 @@ struct BatteryView: View {
                 StorageAppRow(name: "Safari", size: "8%", icon: "safari", color: .blue)
             }
         }
-        .navigationTitle("Battery")
+        .navigationTitle("Batterie")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -808,7 +808,7 @@ struct SoundsView: View {
                 }
             }
         }
-        .navigationTitle("Sounds & Haptics")
+        .navigationTitle("Sons et vibrations")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -867,7 +867,7 @@ struct AppleIDView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
             }
         }
-        .navigationTitle("Apple ID")
+        .navigationTitle("Identifiant Apple")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

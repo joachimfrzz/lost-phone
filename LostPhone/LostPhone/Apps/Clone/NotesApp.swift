@@ -96,7 +96,7 @@ struct NotesView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Folders")
+            .navigationTitle("Dossiers")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Edit") {}.foregroundStyle(.yellow)

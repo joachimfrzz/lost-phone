@@ -111,7 +111,7 @@ struct MailView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Mailboxes")
+            .navigationTitle("Boîtes mail")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Edit") {}
@@ -468,7 +468,7 @@ struct ComposeView: View {
                 
                 Spacer()
             }
-            .navigationTitle("New Message")
+            .navigationTitle("Nouveau message")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

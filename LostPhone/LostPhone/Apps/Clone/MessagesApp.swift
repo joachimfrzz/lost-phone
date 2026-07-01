@@ -75,7 +75,7 @@ struct MessagesView: View {
             .navigationTitle("Messages")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Edit") {}
+                    Button("Modifier") {}
                         .disabled(true)
                 }
                 ToolbarItem(placement: .topBarTrailing) {

@@ -546,7 +546,7 @@ struct SearchView: View {
                 }
             }
             .listStyle(.plain)
-            .navigationTitle("Search")
+            .navigationTitle("Rechercher")
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         }
     }
@@ -639,7 +639,7 @@ struct AccountView: View {
                     Button("Sign Out") { dismiss() }.foregroundStyle(.blue)
                 }
             }
-            .navigationTitle("Account")
+            .navigationTitle("Compte")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

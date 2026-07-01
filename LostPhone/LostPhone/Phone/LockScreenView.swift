@@ -28,7 +28,7 @@ struct LockScreenView: View {
                     ScrollView {
                         VStack(spacing: 10) {
                             ForEach(phone.notifications.prefix(4)) { notification in
-                                LockNotificationCard(notification: notification)
+                                SystemNotificationCard(notification: notification, compact: true)
                             }
                         }
                         .padding(.horizontal, 16)
@@ -90,47 +90,5 @@ struct LockShortcutButton: View {
             .frame(width: 56, height: 56)
             .background(Circle().fill(.white.opacity(0.14)))
             .overlay(Circle().strokeBorder(.white.opacity(0.28), lineWidth: 1))
-    }
-}
-
-struct LockNotificationCard: View {
-    let notification: RuntimeNotification
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(appTint(notification.app))
-                .frame(width: 38, height: 38)
-                .overlay {
-                    Text(String(notification.app.prefix(1)))
-                        .font(.caption.weight(.bold))
-                        .foregroundStyle(.white)
-                }
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(notification.titre)
-                        .font(.subheadline.weight(.semibold))
-                    Spacer()
-                    Text(notification.heure)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Text(notification.texte)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
-        }
-        .padding(12)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-    }
-
-    private func appTint(_ app: String) -> Color {
-        switch app {
-        case "Messages": return .green
-        case "WhatsApp": return Color(red: 0.15, green: 0.78, blue: 0.45)
-        case "Signal": return .blue
-        default: return .gray
-        }
     }
 }

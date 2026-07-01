@@ -66,6 +66,7 @@ final class SplashViewController: UIViewController {
         let host = UIHostingController(
             rootView: PhoneRootView()
                 .environmentObject(phone)
+                .environment(\.locale, Locale(identifier: "fr_FR"))
                 .preferredColorScheme(.dark)
         )
         host.view.backgroundColor = UIColor(red: 0.04, green: 0.05, blue: 0.12, alpha: 1)

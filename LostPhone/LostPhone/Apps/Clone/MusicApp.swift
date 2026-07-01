@@ -167,19 +167,19 @@ struct MusicView: View {
             // 1. Tab View
             TabView {
                 HomeView(manager: manager)
-                    .tabItem { Label("Listen Now", systemImage: "play.circle.fill") }
+                    .tabItem { Label("À écouter", systemImage: "play.circle.fill") }
                 
                 BrowseView(manager: manager)
-                    .tabItem { Label("Browse", systemImage: "square.grid.2x2.fill") }
+                    .tabItem { Label("Explorer", systemImage: "square.grid.2x2.fill") }
                 
                 MusicRadioView(manager: manager)
                     .tabItem { Label("Radio", systemImage: "dot.radiowaves.left.and.right") }
                 
                 MusicLibraryView(manager: manager)
-                    .tabItem { Label("Library", systemImage: "square.stack.fill") }
+                    .tabItem { Label("Bibliothèque", systemImage: "square.stack.fill") }
                 
                 MusicSearchView(manager: manager)
-                    .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                    .tabItem { Label("Rechercher", systemImage: "magnifyingglass") }
             }
             .accentColor(.red)
             
@@ -494,7 +494,7 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 25) {
                     
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("Top Picks")
+                        Text("Sélection")
                             .font(.title2).bold()
                             .padding(.horizontal)
                         
@@ -533,7 +533,7 @@ struct HomeView: View {
                     Divider().padding(.leading, 20)
                     
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("Made For You")
+                        Text("Pour vous")
                             .font(.title2).bold()
                             .padding(.horizontal)
                         
@@ -567,7 +567,7 @@ struct HomeView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("Recently Played")
+                        Text("Écoutés récemment")
                             .font(.title2).bold()
                             .padding(.horizontal)
                         
@@ -604,7 +604,7 @@ struct HomeView: View {
                 }
                 .padding(.top)
             }
-            .navigationTitle("Listen Now")
+            .navigationTitle("À écouter")
         }
     }
 }
@@ -647,7 +647,7 @@ struct MusicSearchView: View {
             .onSubmit(of: .search) {
                 manager.searchMusic()
             }
-            .navigationTitle("Search")
+            .navigationTitle("Rechercher")
         }
     }
 }
@@ -725,7 +725,7 @@ struct BrowseView: View {
                 }
                 .padding(.bottom, 100)
             }
-            .navigationTitle("Browse")
+            .navigationTitle("Explorer")
         }
     }
 }
@@ -825,7 +825,7 @@ struct MusicLibraryView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Library")
+            .navigationTitle("Bibliothèque")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {}) {

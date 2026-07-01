@@ -410,7 +410,7 @@ struct CalendarEventDetailView: View {
                     }
                 }
             }
-            .navigationTitle("Event")
+            .navigationTitle("Événement")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

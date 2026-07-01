@@ -45,13 +45,38 @@ jobs:
           chmod +x LostPhone/scripts/ios-preview-capture.sh
           LostPhone/scripts/ios-preview-capture.sh "$GITHUB_WORKSPACE/preview-artifacts"
 
-      - name: Publish direct Appetize download (Releases)
+      - name: Publish preview (Release)
+        run: |
+          gh release delete preview-latest -y 2>/dev/null || true
+          gh release create preview-latest \
+            preview-artifacts/LostPhone-simulator.app.zip \
+            preview-artifacts/preview-demo.mov \
+            preview-artifacts/01-menu-accueil.png \
+            --title "Preview Lost Phone — vidéo + app" \
+            --notes "$(cat <<'EOF'
+## Voir l'app sans Appetize (recommandé)
+
+1. Télécharge **`preview-demo.mov`** — vidéo 15 s du simulateur iOS (menu + navigation)
+2. Ou **`01-menu-accueil.png`** — capture écran
+
+## Appetize (souvent écran noir sur iPhone)
+
+- Utilise **Chrome sur PC/Mac**, pas Safari sur iPhone
+- OS : **iOS 17.2**, Device : iPhone 14 Pro
+- Upload **`LostPhone-simulator.app.zip`** sans dézipper
+- PIN : **1503**
+EOF
+)"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Publish Appetize zip alias (legacy tag)
         run: |
           gh release delete appetize-latest -y 2>/dev/null || true
           gh release create appetize-latest \
             preview-artifacts/LostPhone-simulator.app.zip \
-            --title "Appetize — dernier build iOS" \
-            --notes "**Télécharge \`LostPhone-simulator.app.zip\` ci-dessous** et uploade-le sur [appetize.io](https://appetize.io) **sans le dézipper**. PIN : **1503**."
+            --title "Appetize — zip simulateur" \
+            --notes "Voir plutôt **preview-latest** pour la vidéo. Appetize : PC/Mac + iOS 17.2. PIN **1503**."
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -68,13 +93,11 @@ jobs:
       - name: Job summary
         run: |
           {
-            echo "## Appetize — comment tester"
+            echo "## Preview Lost Phone"
             echo ""
-            echo "1. **[Télécharger LostPhone-simulator.app.zip (Release)](https://github.com/${{ github.repository }}/releases/tag/appetize-latest)**"
-            echo "2. Upload ce fichier sur [appetize.io](https://appetize.io) **sans le dézipper**"
-            echo "3. PIN : **1503** · Histoire : **J-3**"
+            echo "**Sans Appetize (recommandé)** : [preview-latest Release](https://github.com/${{ github.repository }}/releases/tag/preview-latest) → \`preview-demo.mov\`"
             echo ""
-            echo "⚠️ Si Appetize dit « No .app folder found », tu as uploadé le mauvais zip (celui de l'artifact GitHub entier). Utilise le lien Release ci-dessus."
+            echo "**Appetize** (PC/Mac uniquement) : [appetize-latest](https://github.com/${{ github.repository }}/releases/tag/appetize-latest) · iOS **17.2** · PIN **1503**"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload preview artifacts (screenshots + full bundle)

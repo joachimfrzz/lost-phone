@@ -5,10 +5,14 @@
 L’app **fonctionne** — le CI le prouve à chaque push. Pas besoin d’Appetize pour la voir.
 
 1. Va sur **https://github.com/joachimfrzz/lost-phone/releases/tag/preview-latest**
-2. Télécharge **`preview-demo.mov`** (vidéo ~15 s du simulateur iOS)
-3. Ou **`01-menu-accueil.png`** (capture du menu avec J-3)
+2. Télécharge **`preview-tour.mov`** — visite guidée ~90 s du simulateur iOS :
+   - menu Lost Phone → histoire **J-3**
+   - écran verrou + notifications
+   - saisie PIN **1503**
+   - ouverture des apps (Messages, Photos, WhatsApp, Signal, Notes, Safari, Mail, Contacts…)
+3. Ou **`01-menu-accueil.png`** — capture du menu avec J-3
 
-C’est tout. Tu vois le rendu réel de l’app.
+C’est tout. Tu vois le rendu réel de l’app et un aperçu de chaque clone.
 
 ---
 
@@ -44,6 +48,6 @@ Pour **toucher** l’app sur ton vrai iPhone : loue un Mac cloud 1 h, build Xcod
 
 | Besoin | Solution |
 |--------|----------|
-| Voir le rendu | **Releases → preview-latest → .mov** |
-| Naviguer dans l’app | Appetize sur **PC** (pas iPhone) ou Mac cloud |
+| Voir le rendu + apps | **Releases → preview-latest → preview-tour.mov** |
+| Naviguer soi-même | Appetize sur **PC** (pas iPhone) ou Mac cloud |
 | Prod / TestFlight | Apple Developer (plus tard) |

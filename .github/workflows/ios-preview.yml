@@ -50,14 +50,18 @@ jobs:
           gh release delete preview-latest -y 2>/dev/null || true
           gh release create preview-latest \
             preview-artifacts/LostPhone-simulator.app.zip \
+            preview-artifacts/preview-tour.mov \
             preview-artifacts/preview-demo.mov \
             preview-artifacts/01-menu-accueil.png \
-            --title "Preview Lost Phone — vidéo + app" \
+            --title "Preview Lost Phone — vidéo tour + app" \
             --notes "$(cat <<'EOF'
 ## Voir l'app sans Appetize (recommandé)
 
-1. Télécharge **`preview-demo.mov`** — vidéo 15 s du simulateur iOS (menu + navigation)
-2. Ou **`01-menu-accueil.png`** — capture écran
+1. Télécharge **`preview-tour.mov`** — visite guidée ~90 s (menu → verrou → PIN → apps)
+2. Ou **`01-menu-accueil.png`** — capture écran du menu
+
+Le CI ouvre automatiquement : Messages, Photos, WhatsApp, Signal, Notes, Safari, Mail, Contacts, etc.
+PIN utilisé dans la vidéo : **1503**
 
 ## Appetize (souvent écran noir sur iPhone)
 
@@ -95,7 +99,7 @@ EOF
           {
             echo "## Preview Lost Phone"
             echo ""
-            echo "**Sans Appetize (recommandé)** : [preview-latest Release](https://github.com/${{ github.repository }}/releases/tag/preview-latest) → \`preview-demo.mov\`"
+            echo "**Sans Appetize (recommandé)** : [preview-latest Release](https://github.com/${{ github.repository }}/releases/tag/preview-latest) → \`preview-tour.mov\` (visite guidée ~90 s)"
             echo ""
             echo "**Appetize** (PC/Mac uniquement) : [appetize-latest](https://github.com/${{ github.repository }}/releases/tag/appetize-latest) · iOS **17.2** · PIN **1503**"
           } >> "$GITHUB_STEP_SUMMARY"

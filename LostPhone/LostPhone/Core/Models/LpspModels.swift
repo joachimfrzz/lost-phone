@@ -121,7 +121,7 @@ struct RuntimeNotification: Identifiable, Equatable {
     var lu: Bool
 }
 
-enum PhonePhase: Equatable {
+enum PhonePhase: Equatable, Hashable {
     case menu
     case loading
     case error(String)

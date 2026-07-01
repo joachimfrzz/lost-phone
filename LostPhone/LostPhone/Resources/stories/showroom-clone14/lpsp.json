@@ -1,0 +1,80 @@
+{
+  "lpsp_version": "1.0",
+  "manifest": {
+    "project_id": "showroom-clone14-0000-0000-0000-000000000001",
+    "title": "Showroom — 14 apps Reddit",
+    "exported_at": "2026-06-30T12:00:00+00:00",
+    "profil_temporel": {
+      "type": "showroom",
+      "description": "Catalogue des 14 clones zerocode117 — même disposition que le projet Reddit."
+    },
+    "apps_presentes": [
+      "Météo",
+      "Calendrier",
+      "Photos",
+      "Appareil photo",
+      "Notes",
+      "Calculatrice",
+      "Réglages",
+      "Mail",
+      "Horloge",
+      "App Store",
+      "Telephone",
+      "Safari",
+      "Messages",
+      "Musique"
+    ],
+    "coeur_narratif": null
+  },
+  "player_config": {
+    "verrouillage": {
+      "type": "déverrouillé",
+      "code": ""
+    },
+    "spectre_actions": {
+      "definition": "Mode showroom — tester les 14 clones UI sans histoire.",
+      "actions_possibles": ["Ouvrir chaque app clone"],
+      "actions_impossibles": []
+    },
+    "apps_accessibles": [
+      "Météo",
+      "Calendrier",
+      "Photos",
+      "Appareil photo",
+      "Notes",
+      "Calculatrice",
+      "Réglages",
+      "Mail",
+      "Horloge",
+      "App Store",
+      "Telephone",
+      "Safari",
+      "Messages",
+      "Musique"
+    ]
+  },
+  "content": {
+    "envelope": {
+      "heure_verrou": "9:41",
+      "date_verrou": "Showroom",
+      "notifications_initiales": [],
+      "fond_ecran": {
+        "description": "Wallpaper clone Reddit",
+        "source": "default"
+      }
+    },
+    "system": {
+      "dock": [
+        "Telephone",
+        "Safari",
+        "Messages",
+        "Musique"
+      ],
+      "layout": "clone14_reddit"
+    },
+    "apps": {}
+  },
+  "scenario": {
+    "evenements": []
+  }
+}

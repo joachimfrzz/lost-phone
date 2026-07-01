@@ -8,23 +8,57 @@ struct LpspAppContainerView: View {
     @State private var initialVolume: Float = 0
 
     var body: some View {
-        LpspAppRouter(appName: appName)
-            .environment(\.lpspReadOnly, true)
+        ZStack {
+            Group {
+                if phone.isCloneShowroom {
+                    LpspAppRouter(appName: appName, useShowroomDefaults: true)
+                } else {
+                    LpspAppRouter(appName: appName)
+                }
+            }
+            .environment(\.lpspReadOnly, !phone.isCloneShowroom)
             .environment(\.lpspStoryId, phone.currentStoryId)
             .environment(\.deviceOwner, phone.deviceOwner)
-            .onAppear { initialVolume = volumeObserver.volume }
-            .onChange(of: volumeObserver.volume) { _, newVolume in
-                if abs(newVolume - initialVolume) > 0.001 {
-                    phone.closeApp()
-                    dismiss()
+
+            if phone.isCloneShowroom {
+                VStack {
+                    HStack {
+                        Button {
+                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            phone.closeApp()
+                            dismiss()
+                        } label: {
+                            Text("◀ Home")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.primary)
+                                .shadow(color: .black.opacity(0.25), radius: 3, x: 0, y: 1)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 8)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.leading, 12)
+                        .padding(.top, 4)
+
+                        Spacer()
+                    }
+                    Spacer()
                 }
-                initialVolume = newVolume
             }
+        }
+        .onAppear { initialVolume = volumeObserver.volume }
+        .onChange(of: volumeObserver.volume) { _, newVolume in
+            if abs(newVolume - initialVolume) > 0.001 {
+                phone.closeApp()
+                dismiss()
+            }
+            initialVolume = newVolume
+        }
     }
 }
 
 struct LpspAppRouter: View {
     let appName: String
+    var useShowroomDefaults = false
     @EnvironmentObject private var phone: PhoneViewModel
 
     private var contacts: [PhoneContact] {
@@ -36,7 +70,11 @@ struct LpspAppRouter: View {
 
         Group {
             if CloneAppCatalog.isCloneApp(appName) {
-                cloneView(named: appName, payload: payload)
+                if useShowroomDefaults {
+                    showroomCloneView(named: appName)
+                } else {
+                    cloneView(named: appName, payload: payload)
+                }
             } else {
                 switch appName {
                 case "WhatsApp":
@@ -49,6 +87,42 @@ struct LpspAppRouter: View {
                     GenericLpspAppView(appName: appName, payload: payload)
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func showroomCloneView(named appName: String) -> some View {
+        switch appName {
+        case "Messages":
+            MessagesView()
+        case "Telephone":
+            PhoneView()
+        case "Photos":
+            PhotosView()
+        case "Safari":
+            SafariView()
+        case "Mail":
+            MailView()
+        case "Notes":
+            NotesView()
+        case "Calendrier":
+            CalendarView()
+        case "Réglages", "Settings":
+            SettingsView()
+        case "Météo", "Weather":
+            WeatherView()
+        case "Horloge", "Clock":
+            ClockView()
+        case "Calculatrice", "Calculator":
+            CalculatorView()
+        case "Appareil photo", "Camera", "Caméra":
+            CameraView()
+        case "App Store":
+            AppStoreView()
+        case "Musique", "Music":
+            MusicView()
+        default:
+            cloneView(named: appName, payload: nil)
         }
     }
 

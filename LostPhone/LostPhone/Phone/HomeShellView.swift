@@ -12,6 +12,9 @@ struct HomeShellView: View {
     ]
 
     private var gridApps: [String] {
+        if phone.isCloneShowroom {
+            return CloneShowroomLayout.gridApps
+        }
         var names = phone.appNames.filter { !phone.dockApps.contains($0) }
         if !names.contains("Réglages") {
             names.append("Réglages")
@@ -20,9 +23,16 @@ struct HomeShellView: View {
     }
 
     private var pages: [[String]] {
-        stride(from: 0, to: max(gridApps.count, 1), by: 16).map { start in
+        if phone.isCloneShowroom {
+            return [CloneShowroomLayout.gridApps, []]
+        }
+        return stride(from: 0, to: max(gridApps.count, 1), by: 16).map { start in
             Array(gridApps.dropFirst(start).prefix(16))
         }
+    }
+
+    private var pageIndicatorCount: Int {
+        phone.isCloneShowroom ? 2 : pages.count
     }
 
     var body: some View {
@@ -37,17 +47,21 @@ struct HomeShellView: View {
                 TabView(selection: $currentPage) {
                     ForEach(Array(pages.enumerated()), id: \.offset) { index, pageApps in
                         VStack(spacing: 0) {
-                            LazyVGrid(columns: columns, spacing: 16) {
-                                ForEach(pageApps, id: \.self) { app in
-                                    LpspAppIconView(appName: app) {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            phone.openApp(app)
+                            if pageApps.isEmpty {
+                                Spacer()
+                            } else {
+                                LazyVGrid(columns: columns, spacing: 16) {
+                                    ForEach(pageApps, id: \.self) { app in
+                                        LpspAppIconView(appName: app) {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                phone.openApp(app)
+                                            }
                                         }
                                     }
                                 }
+                                .padding(.horizontal, 15)
+                                .padding(.top, 30)
                             }
-                            .padding(.horizontal, 15)
-                            .padding(.top, 30)
 
                             Spacer()
                         }
@@ -58,9 +72,9 @@ struct HomeShellView: View {
 
                 Spacer()
 
-                if pages.count > 1 {
+                if pageIndicatorCount > 1 {
                     HStack(spacing: 8) {
-                        ForEach(0..<pages.count, id: \.self) { index in
+                        ForEach(0..<pageIndicatorCount, id: \.self) { index in
                             Circle()
                                 .fill(Color.white.opacity(currentPage == index ? 1.0 : 0.5))
                                 .frame(width: 8, height: 8)

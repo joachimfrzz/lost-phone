@@ -187,7 +187,11 @@ Option B — via Artifacts Actions :
   3. Upload LostPhone-simulator.app.zip sur Appetize
   ⚠️ N'upload PAS le fichier "appetize-upload-XXX.zip" tel quel !
 
-PIN dans l'app : 1503
+PIN dans l'app : 1503 (histoire J-3)
+
+SHOWROOM — TESTER LES 14 APPS REDDIT :
+  Menu → « Showroom — 14 apps Reddit » → accès direct sans PIN
+  Grille + dock identiques au clone zerocode117 · bouton « ◀ Home » dans chaque app
 
 Sur Appetize : clique DANS l'écran du téléphone simulé si rien ne bouge.
 Les logs AuthKit / PPT sont normaux (bruit simulateur Apple).

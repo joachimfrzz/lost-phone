@@ -21,7 +21,14 @@ final class PhoneViewModel: ObservableObject {
     }
 
     var dockApps: [String] {
-        package?.content.system?.dock ?? Array(appNames.prefix(4))
+        if CloneShowroomLayout.isShowroom(storyId: currentStoryId) {
+            return CloneShowroomLayout.dockApps
+        }
+        return package?.content.system?.dock ?? Array(appNames.prefix(4))
+    }
+
+    var isCloneShowroom: Bool {
+        CloneShowroomLayout.isShowroom(storyId: currentStoryId)
     }
 
     var lockTime: String {

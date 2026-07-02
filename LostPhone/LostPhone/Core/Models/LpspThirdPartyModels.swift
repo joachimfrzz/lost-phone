@@ -129,6 +129,26 @@ struct LpspSpotifyData: Equatable {
     let recentTracks: [LpspSpotifyTrack]
 }
 
+struct LpspAppleMusicTrack: Identifiable, Equatable, Hashable {
+    let id: String
+    let title: String
+    let artist: String
+}
+
+struct LpspAppleMusicPlaylist: Identifiable, Equatable, Hashable {
+    let id: String
+    let title: String
+    let trackCount: Int
+    let tracks: [LpspAppleMusicTrack]
+}
+
+struct LpspAppleMusicData: Equatable {
+    let username: String
+    let plan: String
+    let playlists: [LpspAppleMusicPlaylist]
+    let recentTracks: [LpspAppleMusicTrack]
+}
+
 struct LpspNetflixProfile: Identifiable, Equatable, Hashable {
     let id: String
     let name: String

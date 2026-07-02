@@ -263,6 +263,44 @@ extension LpspAdapters {
         )
     }
 
+    // MARK: - Apple Music
+
+    static func appleMusic(from payload: AnyCodable?) -> LpspAppleMusicData? {
+        guard let root = contentObject(payload) else { return nil }
+        let account = root["compte"]?.objectValue ?? [:]
+        let playlists = (root["playlists"]?.arrayValue ?? []).enumerated().map { pi, raw in
+            let o = raw.objectValue ?? [:]
+            let tracks = (o["titres_visibles"]?.arrayValue ?? []).enumerated().map { ti, tr in
+                let t = tr.objectValue ?? [:]
+                return LpspAppleMusicTrack(
+                    id: "am-pl-\(pi)-\(ti)",
+                    title: t["titre"]?.stringValue ?? "",
+                    artist: t["artiste"]?.stringValue ?? ""
+                )
+            }
+            return LpspAppleMusicPlaylist(
+                id: "am-playlist-\(pi)",
+                title: o["titre"]?.stringValue ?? "Playlist",
+                trackCount: o["nombre_titres"]?.intValue ?? tracks.count,
+                tracks: tracks
+            )
+        }
+        let recent = (root["ecoutes_recentes"]?.arrayValue ?? []).enumerated().map { i, raw in
+            let o = raw.objectValue ?? [:]
+            return LpspAppleMusicTrack(
+                id: "am-recent-\(i)",
+                title: o["titre"]?.stringValue ?? o["nom"]?.stringValue ?? "",
+                artist: o["artiste"]?.stringValue ?? ""
+            )
+        }
+        return LpspAppleMusicData(
+            username: account["nom_utilisateur"]?.stringValue ?? "",
+            plan: account["abonnement"]?.stringValue ?? "",
+            playlists: playlists,
+            recentTracks: recent
+        )
+    }
+
     // MARK: - Netflix
 
     static func netflix(from payload: AnyCodable?) -> LpspNetflixData? {

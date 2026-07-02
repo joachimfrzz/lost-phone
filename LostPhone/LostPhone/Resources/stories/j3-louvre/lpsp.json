@@ -1,4 +1,4 @@
-﻿{
+{
   "lpsp_version": "1.0",
   "manifest": {
     "project_id": "b54af033-bae5-4585-aea8-1a4ea5bf38a4",
@@ -21,11 +21,11 @@
       "Safari",
       "WhatsApp",
       "Signal",
-      "Google Maps",
+      "Plans",
       "Instagram",
       "Uber",
       "Spotify",
-      "Crédit Agricole",
+      "Banque",
       "Netflix",
       "Mail",
       "Calendrier",
@@ -52,7 +52,7 @@
         "Écouter les messages vocaux",
         "Parcourir les contacts et leurs fiches",
         "Ouvrir les fichiers téléchargés (PDF, images scannées)",
-        "Consulter les trajets récents (Google Maps, Uber)",
+        "Consulter les trajets récents (Plans, Uber)",
         "Explorer le compte Instagram (posts, stories, likes, abonnements)",
         "Voir les playlists et l'historique Spotify",
         "Consulter le solde et les mouvements bancaires (app LCL)",
@@ -76,11 +76,11 @@
       "Safari",
       "WhatsApp",
       "Signal",
-      "Google Maps",
+      "Plans",
       "Instagram",
       "Uber",
       "Spotify",
-      "Crédit Agricole",
+      "Banque",
       "Netflix",
       "Mail",
       "Calendrier",
@@ -136,7 +136,7 @@
           "lu": false
         },
         {
-          "app": "Crédit Agricole",
+          "app": "Banque",
           "titre": "Alerte solde",
           "texte": "Votre compte courant présente un solde de -847,32 €. Découvert autorisé : -900,00 €.",
           "heure": "08:02",
@@ -497,7 +497,7 @@
                 "detail": "Aucune entrée calendrier pour le 18 avril — le rendez-vous au Café de Flore n'a pas été noté (prudence instinctive)."
               },
               {
-                "app": "Google Maps",
+                "app": "Plans",
                 "detail": "Trajet vers le Café de Flore le 18 avril."
               }
             ]
@@ -514,7 +514,7 @@
                 "detail": "Message de Nadia : 'achète-toi un petit compact, pas de photos avec ton tel dans les salles chaudes.'"
               },
               {
-                "app": "Crédit Agricole",
+                "app": "Banque",
                 "detail": "Achat Amazon 899 € visible sur un compte à -847 €. L'incohérence financière est un signal d'alerte majeur."
               },
               {
@@ -539,7 +539,7 @@
                 "detail": "Entrée 'Louvre — recherche visuelle' du 2 mai, date de création de cette note."
               },
               {
-                "app": "Google Maps",
+                "app": "Plans",
                 "detail": "Premier trajet vers le Louvre le 2 mai."
               }
             ]
@@ -607,7 +607,7 @@
                 "detail": "Brief annoté : 'Sortie personnel → quai livraison → 90 sec' — timing identique à celui de cette note."
               },
               {
-                "app": "Google Maps",
+                "app": "Plans",
                 "detail": "Trajet vers l'entrepôt de Gennevilliers le 2 juin — même date que la MAJ de la note mentionnant la vérification de Sam."
               },
               {
@@ -620,7 +620,7 @@
             "id_note": "note_12",
             "refs": [
               {
-                "app": "Crédit Agricole",
+                "app": "Banque",
                 "detail": "Solde -847,32 €, pension Hugo rejetée le 1er juin. Les calculs de la note correspondent aux montants visibles dans l'app bancaire."
               },
               {
@@ -649,7 +649,7 @@
                 "detail": "Brief annoté : 'Vitrine : V. confirme 4 min' — timing repris dans cette note à 21h09."
               },
               {
-                "app": "Google Maps",
+                "app": "Plans",
                 "detail": "Itinéraire sauvegardé Louvre → Pont Neuf → périphérique nord — correspond à l'itinéraire validé mentionné ici."
               },
               {
@@ -666,7 +666,7 @@
                 "detail": "Entrée 'Dîner chez N. — Montreuil — 20h' le 6 juin — correspond à la réunion 2 décrite dans cette note."
               },
               {
-                "app": "Google Maps",
+                "app": "Plans",
                 "detail": "Deuxième trajet vers Montreuil (adresse de Nadia)."
               },
               {
@@ -717,7 +717,7 @@
                 "detail": "Entrée du 15 juin : 'Louvre — dernière session' — planifiée après la rédaction de cette note."
               },
               {
-                "app": "Google Maps",
+                "app": "Plans",
                 "detail": "Trajet Bastille → Louvre le 15 juin — exécution de la décision prise dans cette note."
               },
               {
@@ -738,7 +738,7 @@
                 "detail": "Échanges tendres avec Hugo 💙 — le ton de cette note intime correspond à la chaleur des messages père-fils."
               },
               {
-                "app": "Crédit Agricole",
+                "app": "Banque",
                 "detail": "Le contraste entre la promesse 'on ira à la mer' et le solde à -847 € renforce le poids émotionnel de la note."
               }
             ]
@@ -3091,7 +3091,7 @@
             "apps": [
               "Signal",
               "WhatsApp",
-              "Google Maps"
+              "Plans"
             ],
             "messages_concernes": [
               "sig_046",
@@ -3120,7 +3120,7 @@
               "Signal",
               "Photos",
               "Mail",
-              "Crédit Agricole"
+              "Banque"
             ],
             "messages_concernes": [
               "sig_004"
@@ -3145,7 +3145,7 @@
               "Messages",
               "Mail",
               "Notes",
-              "Crédit Agricole"
+              "Banque"
             ],
             "messages_concernes": [
               "sig_034",
@@ -3227,572 +3227,6 @@
             "id": "trace_10",
             "type": "notification_ecran_verrouillage",
             "description": "Le dernier message Signal (sig_067 : 'On ne revient pas sur ce qui a été dit. Tu restes loin.') est la notification visible sur l'écran de verrouillage quand le joueur trouve le téléphone. C'est le premier contact du joueur avec Nadia — et le ton menaçant, sans contexte, crée l'impulsion initiale de fouiller. Le joueur ne comprend cette phrase qu'après avoir lu toute la conversation Signal. C'est une boucle narrative : la dernière chose vue est la première chose comprise."
-          }
-        ]
-      },
-      "Google Maps": {
-        "app": "Google Maps",
-        "profondeur": "profonde",
-        "contenu": {
-          "adresses_enregistrees": [
-            {
-              "label": "Domicile",
-              "adresse": "17 rue de la Roquette, 75011 Paris",
-              "coordonnees": "48.8533, 2.3725",
-              "note": "Adresse par défaut pour tous les trajets sortants. Quartier Bastille."
-            },
-            {
-              "label": "Travail",
-              "adresse": "Musée du Louvre, Rue de Rivoli, 75001 Paris",
-              "coordonnees": "48.8606, 2.3376",
-              "note": "Configuré comme lieu de travail — cohérent avec la couverture de projet freelance événementiel. Date d'ajout estimée : début mai 2025."
-            },
-            {
-              "label": "Claire — Hugo",
-              "adresse": "8 avenue du Château, 94300 Vincennes",
-              "coordonnees": "48.8474, 2.4392",
-              "note": "Domicile de l'ex-femme. Lieu d'échange de garde de Hugo. Trajets réguliers les vendredis soir et dimanches soir, un week-end sur deux."
-            },
-            {
-              "label": "Maman",
-              "adresse": "12 rue des Lilas, 92140 Clamart",
-              "coordonnees": "48.8003, 2.2637",
-              "note": "Domicile de Martine Garnier. Visites occasionnelles, souvent le dimanche midi quand Mathieu n'a pas Hugo."
-            }
-          ],
-          "itineraires_sauvegardes": [
-            {
-              "id": "itineraire_01",
-              "nom": null,
-              "depart": "Quai François Mitterrand, 75001 Paris",
-              "arrivee": "Zone industrielle des Chanteraines, Gennevilliers",
-              "waypoints": [
-                "Quai de la Mégisserie, 75001 Paris",
-                "Pont Neuf, 75001 Paris",
-                "Rue de Rivoli direction Châtelet",
-                "Boulevard de Sébastopol nord",
-                "Porte de Clignancourt — Périphérique nord"
-              ],
-              "duree_estimee": "28 min (trafic faible)",
-              "date_creation": "2025-06-03T21:44:00",
-              "note_interne": "Itinéraire de fuite principal. Le départ 'Quai François Mitterrand' correspond au quai de livraison du Louvre, côté Seine. Arrivée : entrepôt de Gennevilliers. Créé le lendemain de la visite de repérage du 2 juin à Gennevilliers."
-            },
-            {
-              "id": "itineraire_02",
-              "nom": null,
-              "depart": "Quai François Mitterrand, 75001 Paris",
-              "arrivee": "Zone industrielle des Chanteraines, Gennevilliers",
-              "waypoints": [
-                "Pont du Carrousel, 75001 Paris",
-                "Boulevard Saint-Germain ouest",
-                "Quai de Grenelle",
-                "Pont du Garigliano — Périphérique ouest",
-                "A86 nord direction Gennevilliers"
-              ],
-              "duree_estimee": "35 min (trafic faible)",
-              "date_creation": "2025-06-05T19:12:00",
-              "note_interne": "Itinéraire de fuite alternatif par l'ouest, évitant le centre. Plus long mais contourne les zones de caméras LAPI denses du 1er arrondissement. Correspond à l'une des '3 options pour la sortie' mentionnées par Sam."
-            },
-            {
-              "id": "itineraire_03",
-              "nom": "Vincennes sam",
-              "depart": "17 rue de la Roquette, 75011 Paris",
-              "arrivee": "8 avenue du Château, 94300 Vincennes",
-              "waypoints": [],
-              "duree_estimee": "22 min",
-              "date_creation": "2025-04-11T18:30:00",
-              "note_interne": "Trajet de garde classique. Rien de suspect. Humanise le personnage."
-            }
-          ],
-          "historique_trajets": [
-            {
-              "id": "trajet_001",
-              "date": "2025-03-20T18:52:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Galerie Perrotin, 76 rue de Turenne, 75003 Paris",
-              "mode": "à pied",
-              "duree": "14 min",
-              "note_interne": "Vernissage où Mathieu retrouve Vincent Morel. Point de départ de toute la chaîne de recrutement."
-            },
-            {
-              "id": "trajet_002",
-              "date": "2025-04-08T19:48:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Le Petit Cler, 29 rue Oberkampf, 75011 Paris",
-              "mode": "à pied",
-              "duree": "11 min",
-              "note_interne": "Dîner où Vincent présente Mathieu à Nadia. Restaurant à Oberkampf. Correspond à la photo de groupe dans Photos."
-            },
-            {
-              "id": "trajet_003",
-              "date": "2025-04-18T14:15:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Café de Flore, 172 Boulevard Saint-Germain, 75006 Paris",
-              "mode": "métro",
-              "duree": "25 min",
-              "note_interne": "Café avec Nadia où elle expose le projet réel. Correspond à la note Notes du 18/04 : 'Projet N. — 40K — réfléchir.' et aux premières recherches Safari sur La Dame à l'hermine."
-            },
-            {
-              "id": "trajet_004",
-              "date": "2025-04-25T19:32:00",
-              "depart": "Place de la Bastille, Paris",
-              "arrivee": "23 rue de la Fraternité, 93100 Montreuil",
-              "mode": "Uber",
-              "duree": "24 min",
-              "note_interne": "Première réunion de l'équipe complète chez Nadia. Correspond au calendrier ('Dîner chez N. — Montreuil — 20h'), à la photo de pizza avec plan architectural flou en arrière-plan, et au message de Sam le lendemain ('C'était bien hier')."
-            },
-            {
-              "id": "trajet_005",
-              "date": "2025-05-02T09:47:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "18 min",
-              "note_interne": "Première visite de repérage. Correspond au calendrier ('Louvre — recherche visuelle'), au selfie devant la Joconde dans Photos, et au message WhatsApp à Maman sur les 'relevés visuels'."
-            },
-            {
-              "id": "trajet_006",
-              "date": "2025-05-07T10:22:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "19 min",
-              "note_interne": "Deuxième visite de repérage."
-            },
-            {
-              "id": "trajet_007",
-              "date": "2025-05-09T14:03:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "8 avenue du Château, 94300 Vincennes",
-              "mode": "métro",
-              "duree": "28 min",
-              "note_interne": "Week-end de garde. Récupération de Hugo chez Claire."
-            },
-            {
-              "id": "trajet_008",
-              "date": "2025-05-11T18:34:00",
-              "depart": "8 avenue du Château, 94300 Vincennes",
-              "arrivee": "17 rue de la Roquette, Paris",
-              "mode": "métro",
-              "duree": "27 min",
-              "note_interne": "Retour de Hugo chez Claire le dimanche soir."
-            },
-            {
-              "id": "trajet_009",
-              "date": "2025-05-12T10:08:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "17 min",
-              "note_interne": "Troisième visite de repérage."
-            },
-            {
-              "id": "trajet_010",
-              "date": "2025-05-15T09:55:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "20 min",
-              "note_interne": "Visite où Mathieu découvre le système Prosegur. Correspond aux recherches Safari et à la note Notes : 'Prosegur — vitrine classe 4'. Message Signal à Nadia le soir même : 'Le coffrage est plus sérieux que prévu.'"
-            },
-            {
-              "id": "trajet_011",
-              "date": "2025-05-19T11:14:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "18 min",
-              "note_interne": "Cinquième visite. Observation des rondes de sécurité du matin."
-            },
-            {
-              "id": "trajet_012",
-              "date": "2025-05-22T17:31:00",
-              "depart": "Musée du Louvre, Paris",
-              "arrivee": "17 rue de la Roquette, Paris",
-              "mode": "à pied",
-              "duree": "38 min",
-              "note_interne": "Retour à pied après une visite. Le même soir, Mathieu reçoit le mail de Claire avec le courrier de l'avocat. La longue marche à pied un jour de semaine suggère un homme qui rumine."
-            },
-            {
-              "id": "trajet_013",
-              "date": "2025-05-23T16:45:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "12 rue des Lilas, 92140 Clamart",
-              "mode": "RER",
-              "duree": "42 min",
-              "note_interne": "Visite à sa mère le lendemain du mail de l'avocat. Mathieu cherche probablement du réconfort. Correspond au mensonge_01 : il parle du 'gros projet' à Maman."
-            },
-            {
-              "id": "trajet_014",
-              "date": "2025-05-26T10:30:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "18 min",
-              "note_interne": "Sixième visite de repérage."
-            },
-            {
-              "id": "trajet_015",
-              "date": "2025-05-29T14:12:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "19 min",
-              "note_interne": "Septième visite. Observation des rondes de l'après-midi et du changement d'équipe."
-            },
-            {
-              "id": "trajet_016",
-              "date": "2025-06-02T11:05:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "17 min",
-              "note_interne": "Huitième visite."
-            },
-            {
-              "id": "trajet_017",
-              "date": "2025-06-02T16:22:00",
-              "depart": "Musée du Louvre, Paris",
-              "arrivee": "Zone industrielle des Chanteraines, Boulevard Camélinat, 92230 Gennevilliers",
-              "mode": "Uber",
-              "duree": "38 min",
-              "note_interne": "Trajet crucial. Mathieu va directement du Louvre à l'entrepôt de Gennevilliers. Correspond au message WhatsApp de Sam : 'C'est bon pour le local. Propre, discret, accès camionnette facile.' C'est le lieu de transfert prévu de l'œuvre au client 'G.' Itinéraire de fuite créé le lendemain."
-            },
-            {
-              "id": "trajet_018",
-              "date": "2025-06-02T17:48:00",
-              "depart": "Zone industrielle des Chanteraines, Gennevilliers",
-              "arrivee": "17 rue de la Roquette, Paris",
-              "mode": "Uber",
-              "duree": "41 min",
-              "note_interne": "Retour de l'entrepôt. Heure de pointe, trajet plus long."
-            },
-            {
-              "id": "trajet_019",
-              "date": "2025-06-04T10:15:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "18 min",
-              "note_interne": "Neuvième visite de repérage."
-            },
-            {
-              "id": "trajet_020",
-              "date": "2025-06-06T18:55:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "23 rue de la Fraternité, 93100 Montreuil",
-              "mode": "métro",
-              "duree": "31 min",
-              "note_interne": "Deuxième réunion de l'équipe chez Nadia. Correspond au calendrier du 6 juin. Finalisation du plan opérationnel."
-            },
-            {
-              "id": "trajet_021",
-              "date": "2025-06-06T23:17:00",
-              "depart": "23 rue de la Fraternité, 93100 Montreuil",
-              "arrivee": "17 rue de la Roquette, Paris",
-              "mode": "Uber",
-              "duree": "19 min",
-              "note_interne": "Retour tardif de la réunion. Durée de la réunion : environ 4 heures. Longue soirée de planification."
-            },
-            {
-              "id": "trajet_022",
-              "date": "2025-06-09T10:40:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "métro",
-              "duree": "19 min",
-              "note_interne": "Dixième visite de repérage."
-            },
-            {
-              "id": "trajet_023",
-              "date": "2025-06-10T14:20:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "vélo",
-              "duree": "22 min",
-              "note_interne": "Onzième et dernière visite autorisée. Vélo pour la première fois — peut-être pour varier les modes d'arrivée et ne pas être repéré toujours aux mêmes entrées de métro."
-            },
-            {
-              "id": "trajet_024",
-              "date": "2025-06-13T17:50:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "8 avenue du Château, 94300 Vincennes",
-              "mode": "métro",
-              "duree": "27 min",
-              "note_interne": "Week-end de garde. Récupération de Hugo. Dernier week-end avec Hugo avant le braquage du 18."
-            },
-            {
-              "id": "trajet_025",
-              "date": "2025-06-15T10:03:00",
-              "depart": "8 avenue du Château, 94300 Vincennes",
-              "arrivee": "17 rue de la Roquette, Paris",
-              "mode": "métro",
-              "duree": "26 min",
-              "note_interne": "Retour de Hugo chez Claire le dimanche matin — inhabituel, normalement c'est le dimanche soir. Mathieu a écourté le week-end de garde pour aller au Louvre. Correspond à la note du 14 juin : 'Demain matin : vérifier écart ronde PM/soir.'"
-            },
-            {
-              "id": "trajet_026",
-              "date": "2025-06-15T11:14:00",
-              "depart": "17 rue de la Roquette, Paris",
-              "arrivee": "Musée du Louvre, Paris",
-              "mode": "à pied",
-              "duree": "32 min",
-              "note_interne": "La visite fatale. Non autorisée par Nadia. À pied — probablement pour éviter les caméras du métro, signe de paranoïa croissante. Correspond au calendrier ('Louvre — dernière session'), à la note du 14 juin ('Pour Hugo'), et au silence total sur Signal ce jour-là. C'est pendant cette visite que Mathieu perd le téléphone en salle 710. Dernier trajet enregistré."
-            }
-          ],
-          "recherches_recentes": [
-            {
-              "query": "entrepôt stockage location Gennevilliers",
-              "date": "2025-05-28T20:33:00",
-              "note_interne": "Recherche du lieu de transfert. Précède la visite du 2 juin à Gennevilliers avec Sam."
-            },
-            {
-              "query": "horaires Louvre mercredi soir nocturne juin 2025",
-              "date": "2025-06-01T22:08:00",
-              "note_interne": "Vérification des horaires de nocturne. Le braquage est prévu un mercredi soir pendant une fermeture exceptionnelle pour maintenance."
-            },
-            {
-              "query": "quai de livraison Louvre accès Seine",
-              "date": "2025-06-03T21:22:00",
-              "note_interne": "Recherche précédant immédiatement la création de l'itinéraire de fuite n°1. Le quai de livraison côté Seine est le point de sortie prévu pour l'équipe après le vol. Correspond à l'annotation dans le brief : 'Sortie personnel → quai livraison → 90 sec'."
-            },
-            {
-              "query": "travaux quai de Bercy juin 2025",
-              "date": "2025-06-05T18:50:00",
-              "note_interne": "Vérification suite au message de Sam : 'Le point C c'est le plus rapide mais y'a des travaux quai de Bercy en ce moment.' Mathieu vérifie l'info avant de créer l'itinéraire alternatif n°2."
-            },
-            {
-              "query": "caméras LAPI Paris 1er arrondissement carte",
-              "date": "2025-06-05T19:01:00",
-              "note_interne": "Recherche sur les caméras de lecture automatique de plaques d'immatriculation. Explique pourquoi l'itinéraire n°2 contourne le centre par l'ouest. Niveau de préparation inquiétant."
-            },
-            {
-              "query": "Vincennes école primaire Jules Ferry horaires",
-              "date": "2025-06-08T09:15:00",
-              "note_interne": "Recherche liée à Hugo, pas au braquage. Mathieu vérifie les horaires de l'école de son fils. Mêlé au reste, humanise le personnage."
-            },
-            {
-              "query": "Louvre salle 710 aile Denon plan",
-              "date": "2025-06-10T08:44:00",
-              "note_interne": "Dernière recherche liée au repérage avant la consigne d'arrêt de Nadia le 12 juin."
-            }
-          ],
-          "lieux_frequents_timeline": [
-            {
-              "lieu": "17 rue de la Roquette, Paris 11e",
-              "label_auto": "Domicile",
-              "frequence": "Quotidien",
-              "premiere_occurrence": "2025-03-20",
-              "derniere_occurrence": "2025-06-15",
-              "note_interne": "Base de vie de Mathieu."
-            },
-            {
-              "lieu": "Musée du Louvre, Paris 1er",
-              "label_auto": "Travail",
-              "frequence": "2-3 fois par semaine (mai-juin)",
-              "premiere_occurrence": "2025-05-02",
-              "derniere_occurrence": "2025-06-15",
-              "duree_moyenne_sur_place": "2h45",
-              "note_interne": "12 visites en 6 semaines. La fréquence et la durée sont anormales pour un graphiste freelance. Google Maps l'a automatiquement étiqueté comme 'Travail' — ironie involontaire qui renforce la couverture mais devient sinistre une fois le braquage compris."
-            },
-            {
-              "lieu": "8 avenue du Château, Vincennes",
-              "label_auto": null,
-              "frequence": "Un week-end sur deux",
-              "premiere_occurrence": "2025-03-21",
-              "derniere_occurrence": "2025-06-15",
-              "note_interne": "Échanges de garde de Hugo. Régulier comme un métronome sauf le 15 juin : retour le matin au lieu du soir."
-            },
-            {
-              "lieu": "23 rue de la Fraternité, Montreuil",
-              "label_auto": null,
-              "frequence": "2 visites",
-              "premiere_occurrence": "2025-04-25",
-              "derniere_occurrence": "2025-06-06",
-              "duree_moyenne_sur_place": "3h30",
-              "note_interne": "Appartement de Nadia. QG opérationnel. Seulement 2 visites — le cloisonnement est réel."
-            },
-            {
-              "lieu": "Zone industrielle des Chanteraines, Gennevilliers",
-              "label_auto": null,
-              "frequence": "1 visite",
-              "premiere_occurrence": "2025-06-02",
-              "derniere_occurrence": "2025-06-02",
-              "duree_moyenne_sur_place": "1h15",
-              "note_interne": "Entrepôt de transfert. Visite unique et ciblée. Le fait que Mathieu n'y soit allé qu'une fois est cohérent avec le cloisonnement : Sam gère la logistique, Mathieu vérifie juste le lieu."
-            },
-            {
-              "lieu": "12 rue des Lilas, Clamart",
-              "label_auto": null,
-              "frequence": "2-3 fois par mois",
-              "premiere_occurrence": "2025-03-23",
-              "derniere_occurrence": "2025-06-01",
-              "note_interne": "Chez Maman. Visites régulières, souvent le dimanche."
-            }
-          ],
-          "contributions_avis": [
-            {
-              "lieu": "Musée du Louvre",
-              "note": 5,
-              "date": "2025-05-08",
-              "texte": "Collection incroyable, on y revient toujours avec plaisir. Le personnel est très présent, on se sent en sécurité.",
-              "note_interne": "Avis laissé après la deuxième visite de repérage. Le commentaire sur le personnel 'très présent' et le sentiment de 'sécurité' est un double sens involontaire — ou une note mentale déguisée en avis public. Le joueur attentif remarquera l'ironie."
-            },
-            {
-              "lieu": "Café de Flore, Paris",
-              "note": 3,
-              "date": "2025-04-18",
-              "texte": "Café correct, un peu cher pour ce que c'est.",
-              "note_interne": "Laissé le jour du rendez-vous avec Nadia. Anodin. Confirme le trajet du 18 avril."
-            }
-          ],
-          "partage_position": {
-            "actif": false,
-            "historique": [
-              {
-                "contact": "Claire",
-                "periode": "2024-09-01 au 2025-01-15",
-                "statut": "désactivé",
-                "note_interne": "Partage de position avec Claire probablement lié à la garde de Hugo — savoir quand Mathieu est en route. Désactivé en janvier, peut-être au moment où les tensions se sont accrues autour de la pension impayée."
-              }
-            ]
-          },
-          "notifications_trafic": [
-            {
-              "date": "2025-06-15T10:45:00",
-              "contenu": "Temps de trajet habituel vers Travail : 18 min. Trafic fluide.",
-              "note_interne": "Notification automatique de Google Maps le matin du 15 juin, basée sur l'étiquette 'Travail' = Louvre. Mathieu la voit en rentrant de Vincennes. Confirmation involontaire que Maps a intégré le Louvre dans sa routine."
-            },
-            {
-              "date": "2025-06-14T08:12:00",
-              "contenu": "Temps de trajet habituel vers Travail : 20 min. Trafic modéré.",
-              "note_interne": "Notification de routine."
-            }
-          ]
-        },
-        "cross_apps_refs": [
-          {
-            "ref_id": "cross_04",
-            "nom": "Les trois sorties de Sam",
-            "detail": "L'itinéraire sauvegardé n°1 (Louvre → Pont Neuf → périphérique nord → Gennevilliers) et l'itinéraire n°2 (par l'ouest) correspondent aux '3 options pour la sortie' mentionnées par Sam dans WhatsApp. La recherche 'travaux quai de Bercy juin 2025' confirme le message de Sam : 'Le point C c'est le plus rapide mais y'a des travaux quai de Bercy.' Le troisième itinéraire (point C via Bercy) n'a pas été sauvegardé, probablement écarté à cause des travaux.",
-            "apps_liees": [
-              "WhatsApp",
-              "Fichiers"
-            ]
-          },
-          {
-            "ref_id": "cross_03",
-            "nom": "La pizza révélatrice",
-            "detail": "Le trajet du 25 avril (Bastille → 23 rue de la Fraternité, Montreuil, en Uber à 19h32) confirme le lieu et l'heure du 'Dîner chez N.' visible dans le calendrier. La photo de pizza avec plan architectural flou en arrière-plan est géolocalisée à cette adresse dans Photos.",
-            "apps_liees": [
-              "Calendrier",
-              "Photos",
-              "WhatsApp"
-            ]
-          },
-          {
-            "ref_id": "cross_06",
-            "nom": "La désobéissance fatale",
-            "detail": "Le trajet du 15 juin (Bastille → Louvre, à pied, 11h14) est le dernier trajet enregistré. Il contredit le 'Compris.' envoyé à Nadia sur Signal le 12 juin. Le trajet matinal Vincennes → Bastille (10h03) montre que Mathieu a écourté le week-end de garde de Hugo pour aller au Louvre — il a ramené Hugo le dimanche matin au lieu du dimanche soir habituel. Le choix d'aller à pied plutôt qu'en métro (inhabituel, 32 min au lieu de 18) suggère une volonté d'éviter les caméras.",
-            "apps_liees": [
-              "Signal",
-              "Notes",
-              "Calendrier",
-              "Messages"
-            ]
-          },
-          {
-            "ref_id": "cross_01",
-            "nom": "L'achat incongru",
-            "detail": "Le trajet du 18 avril vers le Café de Flore correspond au jour de la note 'Projet N. — 40K — réfléchir' dans Notes et aux premières recherches Safari sur La Dame à l'hermine. L'avis Google laissé au Café de Flore ce jour-là confirme la présence physique.",
-            "apps_liees": [
-              "Notes",
-              "Safari",
-              "Mail",
-              "Crédit Agricole"
-            ]
-          },
-          {
-            "ref_id": "nouveau_cross_maps_01",
-            "nom": "Le Louvre comme Travail",
-            "detail": "Google Maps a automatiquement étiqueté le Musée du Louvre comme 'Travail' en raison de la fréquence des visites (12 en 6 semaines, durée moyenne 2h45). Cette étiquette automatique renforce la couverture de Mathieu ('projet freelance') mais devient un indice accablant pour le joueur : aucun graphiste freelance ne passe 2h45 deux à trois fois par semaine dans un musée pendant six semaines. La notification trafic du 15 juin ('Temps de trajet habituel vers Travail : 18 min') confirme que Maps considère le Louvre comme sa destination professionnelle principale.",
-            "apps_liees": [
-              "Calendrier",
-              "Notes",
-              "Signal"
-            ]
-          },
-          {
-            "ref_id": "nouveau_cross_maps_02",
-            "nom": "Gennevilliers — le maillon manquant",
-            "detail": "Le trajet du 2 juin (Louvre → Gennevilliers en Uber, 16h22) est le seul trajet vers cette zone industrielle. Il correspond au message WhatsApp de Sam : 'C'est bon pour le local. Propre, discret, accès camionnette facile.' L'itinéraire de fuite n°1 a été créé le lendemain (3 juin, 21h44), ce qui montre que Mathieu a d'abord vu le lieu physiquement avant de tracer la route de fuite. La recherche Maps 'entrepôt stockage location Gennevilliers' datée du 28 mai précède la visite de 5 jours — phase de repérage préalable.",
-            "apps_liees": [
-              "WhatsApp",
-              "Fichiers"
-            ]
-          },
-          {
-            "ref_id": "nouveau_cross_maps_03",
-            "nom": "Le week-end écourté",
-            "detail": "Le trajet Vincennes → Bastille du 15 juin à 10h03 est anormal. Tous les autres retours de week-end de garde (9 mai, 11 mai, 23 mai, 8 juin) se font le dimanche entre 18h et 19h. Le 15 juin, Mathieu ramène Hugo à 10h du matin. Recoupement avec Messages : Hugo écrit le 14 juin 'Papa tu me manques, vivement samedi 💙' — il attendait ce week-end. Mathieu a écourté le temps avec son fils pour aller au Louvre une dernière fois. La note du 14 juin ('Pour Hugo') révèle l'ironie tragique : c'est au nom de Hugo qu'il sacrifie du temps avec Hugo.",
-            "apps_liees": [
-              "Messages",
-              "Notes",
-              "Calendrier"
-            ]
-          },
-          {
-            "ref_id": "nouveau_cross_maps_04",
-            "nom": "Les caméras LAPI",
-            "detail": "La recherche Maps 'caméras LAPI Paris 1er arrondissement carte' (5 juin, 19h01) précède de 11 minutes la création de l'itinéraire de fuite n°2 (19h12), qui contourne le 1er arrondissement par l'ouest. Le joueur qui recoupe ces deux éléments comprend que l'itinéraire alternatif a été conçu spécifiquement pour éviter les caméras de lecture de plaques. Niveau de sophistication qui pointe vers Nadia ou Sam comme source de la consigne.",
-            "apps_liees": [
-              "Safari",
-              "Signal"
-            ]
-          }
-        ],
-        "traces_narratives": [
-          {
-            "id": "trace_maps_01",
-            "titre": "La spirale centripète",
-            "description": "L'historique des trajets dessine une géographie qui se resserre progressivement autour du Louvre. En mars-avril, les déplacements de Mathieu sont variés : galerie Perrotin, Oberkampf, Café de Flore, Clamart, Vincennes. À partir de mai, le Louvre absorbe presque toute sa mobilité. En juin, il ne va pratiquement plus nulle part sauf au Louvre, chez Nadia, et à Gennevilliers. Sa vie sociale se contracte autour du braquage. Les seuls trajets non liés au plan sont les allers-retours à Vincennes pour Hugo — le dernier fil qui le relie à sa vie d'avant.",
-            "phase": "transversale"
-          },
-          {
-            "id": "trace_maps_02",
-            "titre": "Le Louvre étiqueté Travail — l'algorithme complice",
-            "description": "Google Maps a identifié le Louvre comme lieu de travail de Mathieu par apprentissage automatique. Cette étiquette est à la fois une couverture parfaite (si quelqu'un regarde son téléphone, le Louvre apparaît comme son lieu de travail) et une preuve accablante (la fréquence et la durée des visites sont documentées avec précision). L'algorithme est devenu un témoin involontaire. Le joueur peut consulter la timeline des 'lieux fréquents' et voir exactement combien de temps Mathieu a passé au Louvre chaque jour — données que même Nadia ne possède pas.",
-            "phase": "phase 2"
-          },
-          {
-            "id": "trace_maps_03",
-            "titre": "Le trajet à pied du 15 juin",
-            "description": "Sur 12 trajets vers le Louvre, 10 sont en métro, 1 en vélo, et le dernier — celui du 15 juin — est à pied. Ce changement de mode est significatif. Mathieu marche 32 minutes au lieu de prendre le métro (18 min) pour sa visite non autorisée. Le joueur peut interpréter cela comme de la prudence (éviter les caméras du métro), de la paranoïa (il sait qu'il désobéit), ou de la résolution (il marche pour se donner le courage). Le trajet à pied passe par le Pont des Arts et longe la Seine — un itinéraire contemplatif pour un homme qui sait qu'il franchit un point de non-retour.",
-            "phase": "phase 3-4"
-          },
-          {
-            "id": "trace_maps_04",
-            "titre": "Deux itinéraires sans nom",
-            "description": "Les deux itinéraires de fuite sauvegardés n'ont pas de nom. Contrairement à 'Vincennes sam' (clairement étiqueté), ces routes Louvre → Gennevilliers sont anonymes. L'absence de label est en soi un indice : Mathieu ne voulait pas qu'un nom apparaisse dans sa liste d'itinéraires. Mais il ne les a pas supprimés non plus — soit par négligence, soit parce qu'il en avait encore besoin pour les transmettre à Sam. Le joueur qui ouvre ces itinéraires voit un trajet nocturne optimisé depuis le quai de livraison du Louvre vers une zone industrielle de banlieue. Aucune interprétation innocente n'est possible.",
-            "phase": "phase 3"
-          },
-          {
-            "id": "trace_maps_05",
-            "titre": "L'avis Google — le double sens",
-            "description": "L'avis 5 étoiles laissé par Mathieu sur le Louvre le 8 mai ('Le personnel est très présent, on se sent en sécurité') fonctionne sur deux niveaux. Pour un visiteur normal, c'est un compliment. Pour Mathieu le repéreur, c'est une observation de terrain : le personnel de sécurité est nombreux et visible. Le joueur qui relit cet avis après avoir compris le braquage y entend un homme qui documente ses propres obstacles. La note de 5 étoiles est presque cruelle — il adore le lieu qu'il s'apprête à cambrioler.",
-            "phase": "phase 2-3"
-          },
-          {
-            "id": "trace_maps_06",
-            "titre": "Hugo, le métronome brisé",
-            "description": "Les trajets vers Vincennes forment un rythme régulier : vendredi soir aller, dimanche soir retour, un week-end sur deux, comme un battement de cœur. Le 15 juin, ce rythme se brise : le retour est le dimanche matin au lieu du dimanche soir. Mathieu a amputé son week-end avec Hugo de 8 heures pour aller au Louvre. Le joueur qui compare les horaires de retour de Vincennes (18h34, 18h15, 18h50... puis 10h03) voit le moment exact où le braquage a commencé à dévorer la relation père-fils. Et c'est cette visite volée à Hugo qui cause la perte du téléphone.",
-            "phase": "phase 4"
-          },
-          {
-            "id": "trace_maps_07",
-            "titre": "Le fantôme de Claire",
-            "description": "Le partage de position avec Claire, actif de septembre 2024 à janvier 2025 puis désactivé, raconte silencieusement la dégradation du lien. Pendant 4 mois après la séparation, ils maintenaient cette transparence — probablement pour la logistique de Hugo. La désactivation en janvier coïncide avec le début des retards de pension. Claire n'a plus accès à la position de Mathieu. Si elle l'avait encore, elle verrait le Louvre étiqueté 'Travail' et les 12 visites en 6 semaines. Elle poserait des questions. Le cloisonnement du braquage a commencé bien avant que Mathieu ne rencontre Nadia.",
-            "phase": "phase 1-2"
           }
         ]
       },
@@ -4574,7 +4008,7 @@
             "description": "L'aller-retour vers la zone industrielle de Gennevilliers le 2 juin (uber_007/008) correspond au trajet Google Maps vers le même lieu et au message WhatsApp de Sam : 'C'est bon pour le local. Propre, discret, accès camionnette facile.' Mathieu a visité l'entrepôt de transfert prévu pour l'œuvre. La durée sur place (~1h25) indique une inspection sérieuse.",
             "apps": [
               "Uber",
-              "Google Maps",
+              "Plans",
               "WhatsApp"
             ]
           },
@@ -4619,7 +4053,7 @@
             "apps": [
               "Uber",
               "Messages",
-              "Crédit Agricole"
+              "Banque"
             ]
           },
           {
@@ -4627,7 +4061,7 @@
             "description": "Les courses Uber et commandes Uber Eats totalisent environ 580 € sur 3 mois — une dépense significative pour un compte à -847 €. Le joueur peut recouper avec Crédit Agricole pour constater que Mathieu dépense en transport et livraison ce qu'il n'a pas pour le loyer et la pension. Les courses vers le Louvre représentent à elles seules ~115 € — de l'argent investi dans les repérages du braquage.",
             "apps": [
               "Uber",
-              "Crédit Agricole"
+              "Banque"
             ]
           },
           {
@@ -4647,7 +4081,7 @@
               "Signal",
               "Notes",
               "Calendrier",
-              "Google Maps"
+              "Plans"
             ]
           }
         ],
@@ -5304,7 +4738,7 @@
             "description": "Steve Reich 'Music for 18 Musicians' écouté le 10 juin à 10h22 (playlist 'Louvre — ambiance ref'). Google Maps : trajet vers le Louvre le 10 juin. C'est la 11e et dernière visite de repérage autorisée. Mathieu écoute sa playlist de couverture muséale dans les salles pendant qu'il observe les rondes.",
             "apps": [
               "Spotify",
-              "Google Maps"
+              "Plans"
             ]
           },
           {
@@ -5320,7 +4754,7 @@
             "description": "Le compte Spotify est en version Free (rétrogradé en février 2025 après rejet de prélèvement). Crédit Agricole : solde -847,32 €, découvert quasi maximal. Mathieu ne peut même plus se payer 10,99 €/mois de Spotify Premium. Détail de précarité cohérent avec l'ensemble du portrait financier.",
             "apps": [
               "Spotify",
-              "Crédit Agricole"
+              "Banque"
             ]
           },
           {
@@ -5380,587 +4814,6 @@
             "id": "trace_08",
             "type": "podcast_miroir",
             "description": "Le podcast 'Garde alternée : le point de vue des pères' écouté le 24 mai (deux jours après le mail de l'avocat) et arrêté à 67% est un moment de vulnérabilité brute. Mathieu cherche des réponses, de la solidarité, du réconfort — et n'arrive pas à finir l'épisode. Ce podcast inachevé, juxtaposé au podcast sur le vol de la Joconde (écouté intégralement), dessine un homme qui peut se documenter froidement sur un crime mais pas supporter d'entendre parler de la perte de son fils."
-          }
-        ]
-      },
-      "Crédit Agricole": {
-        "app": "Crédit Agricole",
-        "profondeur": "profonde",
-        "contenu": {
-          "titulaire": {
-            "nom": "Mathieu Garnier",
-            "identifiant_client": "MG-4471829",
-            "agence": "LCL Paris Bastille — 12 rue de la Roquette, 75011 Paris",
-            "conseiller": "Mme Audrey Fontaine",
-            "date_ouverture_compte": "2016-09-14"
-          },
-          "comptes": [
-            {
-              "type": "Compte courant",
-              "numero_partiel": "****6183",
-              "solde": -847.32,
-              "devise": "EUR",
-              "decouvert_autorise": -900.0,
-              "date_solde": "2025-06-15T08:00:00",
-              "alerte_decouvert": true,
-              "message_alerte": "Attention : votre solde approche la limite de votre découvert autorisé (-900,00 €). Contactez votre conseillère."
-            },
-            {
-              "type": "Livret A",
-              "numero_partiel": "****2907",
-              "solde": 23.17,
-              "devise": "EUR",
-              "date_solde": "2025-06-15T08:00:00"
-            }
-          ],
-          "carte_bancaire": {
-            "type": "Visa Classic",
-            "numero_partiel": "****8234",
-            "expiration": "09/26",
-            "statut": "Active",
-            "plafond_paiement_mensuel": 1500.0,
-            "plafond_retrait_hebdo": 300.0,
-            "paiement_utilise_mois_en_cours": 1287.45,
-            "opposition": false
-          },
-          "operations": [
-            {
-              "date": "2025-06-15T07:42:00",
-              "libelle": "PAUL BASTILLE CB****8234",
-              "montant": -4.7,
-              "solde_apres": -847.32,
-              "categorie": "Restauration",
-              "note_contextuelle": "Café et croissant le matin de la visite non autorisée au Louvre"
-            },
-            {
-              "date": "2025-06-14T20:13:00",
-              "libelle": "UBER EATS PARIS FR",
-              "montant": -18.9,
-              "solde_apres": -842.62,
-              "categorie": "Restauration"
-            },
-            {
-              "date": "2025-06-14T12:01:00",
-              "libelle": "FRANPRIX BASTILLE",
-              "montant": -7.83,
-              "solde_apres": -823.72,
-              "categorie": "Alimentation"
-            },
-            {
-              "date": "2025-06-13T09:15:00",
-              "libelle": "FREE MOBILE PRELEVEMENT",
-              "montant": -19.99,
-              "solde_apres": -815.89,
-              "categorie": "Abonnement"
-            },
-            {
-              "date": "2025-06-12T17:44:00",
-              "libelle": "MONOPRIX RICHARD LENOIR",
-              "montant": -23.16,
-              "solde_apres": -795.9,
-              "categorie": "Alimentation"
-            },
-            {
-              "date": "2025-06-11T08:30:00",
-              "libelle": "NETFLIX FR",
-              "montant": -13.49,
-              "solde_apres": -772.74,
-              "categorie": "Abonnement"
-            },
-            {
-              "date": "2025-06-10T14:22:00",
-              "libelle": "UBER PARIS FR",
-              "montant": -12.4,
-              "solde_apres": -759.25,
-              "categorie": "Transport",
-              "note_contextuelle": "Course retour de la dernière visite autorisée au Louvre le 10 juin"
-            },
-            {
-              "date": "2025-06-09T10:00:00",
-              "libelle": "VIR REÇU GARNIER MARTINE — BISOUS MON GRAND",
-              "montant": 200.0,
-              "solde_apres": -746.85,
-              "categorie": "Virement reçu",
-              "note_contextuelle": "Virement de sa mère — libellé affectueux typique de Martine"
-            },
-            {
-              "date": "2025-06-07T19:55:00",
-              "libelle": "UBER EATS PARIS FR",
-              "montant": -16.7,
-              "solde_apres": -946.85,
-              "categorie": "Restauration"
-            },
-            {
-              "date": "2025-06-06T21:38:00",
-              "libelle": "UBER PARIS FR — BASTILLE → MONTREUIL",
-              "montant": -14.2,
-              "solde_apres": -930.15,
-              "categorie": "Transport",
-              "note_contextuelle": "Course vers Montreuil — deuxième réunion de l'équipe chez Nadia"
-            },
-            {
-              "date": "2025-06-05T08:45:00",
-              "libelle": "Netflix FR",
-              "montant": -8.99,
-              "solde_apres": -915.95,
-              "categorie": "Abonnement",
-              "note_contextuelle": "Profil 'Hugo 🚀' actif sur le compte"
-            },
-            {
-              "date": "2025-06-02T16:10:00",
-              "libelle": "UBER PARIS FR — BASTILLE → GENNEVILLIERS",
-              "montant": -22.8,
-              "solde_apres": -906.96,
-              "categorie": "Transport",
-              "note_contextuelle": "Course vers la zone industrielle de Gennevilliers — repérage de l'entrepôt de transfert"
-            },
-            {
-              "date": "2025-06-01T08:00:00",
-              "libelle": "PRELEVEMENT PENSION ALIMENTAIRE HUGO — REJETÉ",
-              "montant": 0.0,
-              "solde_apres": -884.16,
-              "statut": "REJETÉ — PROVISION INSUFFISANTE",
-              "categorie": "Pension alimentaire",
-              "note_contextuelle": "Deuxième mois consécutif de rejet — alimente la menace juridique de Claire"
-            },
-            {
-              "date": "2025-06-01T08:00:00",
-              "libelle": "LOYER JUIN — SCI BASTILLE HABITAT — REJETÉ",
-              "montant": 0.0,
-              "solde_apres": -884.16,
-              "statut": "REJETÉ — PROVISION INSUFFISANTE",
-              "categorie": "Loyer",
-              "note_contextuelle": "Troisième mois consécutif de loyer rejeté"
-            },
-            {
-              "date": "2025-05-28T14:33:00",
-              "libelle": "PHARMACIE DU MARAIS",
-              "montant": -6.2,
-              "solde_apres": -884.16,
-              "categorie": "Santé"
-            },
-            {
-              "date": "2025-05-26T10:15:00",
-              "libelle": "VIR REÇU DUVAL CLAIRE — HUGO CHAUSSURES",
-              "montant": 85.0,
-              "solde_apres": -877.96,
-              "categorie": "Virement reçu",
-              "note_contextuelle": "Claire envoie de l'argent fléché pour Hugo — inversion des rôles financiers humiliante pour Mathieu"
-            },
-            {
-              "date": "2025-05-24T16:40:00",
-              "libelle": "DECATHLON BERCY CB****8234",
-              "montant": -34.9,
-              "solde_apres": -962.96,
-              "categorie": "Loisirs",
-              "note_contextuelle": "Achat pour Hugo — week-end de garde"
-            },
-            {
-              "date": "2025-05-22T09:00:00",
-              "libelle": "VIR REÇU GARNIER MARTINE — POUR TE DEPANNER",
-              "montant": 150.0,
-              "solde_apres": -928.06,
-              "categorie": "Virement reçu"
-            },
-            {
-              "date": "2025-05-19T11:20:00",
-              "libelle": "UBER PARIS FR",
-              "montant": -9.6,
-              "solde_apres": -1078.06,
-              "categorie": "Transport"
-            },
-            {
-              "date": "2025-05-17T14:05:00",
-              "libelle": "PICARD BASTILLE",
-              "montant": -12.4,
-              "solde_apres": -1068.46,
-              "categorie": "Alimentation"
-            },
-            {
-              "date": "2025-05-15T20:32:00",
-              "libelle": "UBER EATS PARIS FR",
-              "montant": -21.5,
-              "solde_apres": -1056.06,
-              "categorie": "Restauration",
-              "note_contextuelle": "Soir de la découverte du système Prosegur — commande de réconfort après le stress"
-            },
-            {
-              "date": "2025-05-12T09:00:00",
-              "libelle": "VIR REÇU GARNIER MARTINE — COURAGE",
-              "montant": 150.0,
-              "solde_apres": -1034.56,
-              "categorie": "Virement reçu"
-            },
-            {
-              "date": "2025-05-10T13:12:00",
-              "libelle": "UBER PARIS FR — BASTILLE → LOUVRE",
-              "montant": -8.9,
-              "solde_apres": -1184.56,
-              "categorie": "Transport"
-            },
-            {
-              "date": "2025-05-07T19:00:00",
-              "libelle": "SPOTIFY PREMIUM",
-              "montant": -10.99,
-              "solde_apres": -1175.66,
-              "categorie": "Abonnement"
-            },
-            {
-              "date": "2025-05-05T08:00:00",
-              "libelle": "PRELEVEMENT PENSION ALIMENTAIRE HUGO — REJETÉ",
-              "montant": 0.0,
-              "solde_apres": -1164.67,
-              "statut": "REJETÉ — PROVISION INSUFFISANTE",
-              "categorie": "Pension alimentaire",
-              "note_contextuelle": "Premier rejet de pension — déclenche la procédure de Claire"
-            },
-            {
-              "date": "2025-05-05T08:00:00",
-              "libelle": "LOYER MAI — SCI BASTILLE HABITAT — REJETÉ",
-              "montant": 0.0,
-              "solde_apres": -1164.67,
-              "statut": "REJETÉ — PROVISION INSUFFISANTE",
-              "categorie": "Loyer"
-            },
-            {
-              "date": "2025-05-02T10:45:00",
-              "libelle": "MUSEE DU LOUVRE — PASS ANNUEL",
-              "montant": -70.0,
-              "solde_apres": -1164.67,
-              "categorie": "Loisirs",
-              "note_contextuelle": "Achat du pass annuel pour les repérages — sur instruction de Nadia"
-            },
-            {
-              "date": "2025-04-30T08:00:00",
-              "libelle": "VIR REÇU STUDIO BELVÉDÈRE — FACTURE 2025-018",
-              "montant": 480.0,
-              "solde_apres": -1094.67,
-              "categorie": "Revenu professionnel",
-              "note_contextuelle": "Dernier paiement freelance reçu — client Studio Belvédère, maquettes packaging"
-            },
-            {
-              "date": "2025-04-25T19:32:00",
-              "libelle": "UBER PARIS FR — BASTILLE → MONTREUIL",
-              "montant": -16.4,
-              "solde_apres": -1574.67,
-              "categorie": "Transport",
-              "note_contextuelle": "Course vers Montreuil — première réunion de l'équipe chez Nadia"
-            },
-            {
-              "date": "2025-04-24T14:18:00",
-              "libelle": "AMAZON FR — COMMANDE #402-7891453",
-              "montant": -899.0,
-              "solde_apres": -1558.27,
-              "categorie": "Achats en ligne",
-              "note_contextuelle": "Achat du Ricoh GR III — appareil compact pour les photos de repérage, sur instruction Signal de Nadia"
-            },
-            {
-              "date": "2025-04-22T08:00:00",
-              "libelle": "VIR REÇU GARNIER MARTINE — BON ANNIVERSAIRE EN RETARD 😘",
-              "montant": 300.0,
-              "solde_apres": -659.27,
-              "categorie": "Virement reçu"
-            },
-            {
-              "date": "2025-04-18T10:45:00",
-              "libelle": "CAFÉ DE FLORE CB****8234",
-              "montant": -9.4,
-              "solde_apres": -959.27,
-              "categorie": "Restauration",
-              "note_contextuelle": "Café avec Nadia — présentation du projet réel, 40 000 € proposés"
-            },
-            {
-              "date": "2025-04-14T08:00:00",
-              "libelle": "LOYER AVRIL — SCI BASTILLE HABITAT — REJETÉ",
-              "montant": 0.0,
-              "solde_apres": -949.87,
-              "statut": "REJETÉ — PROVISION INSUFFISANTE",
-              "categorie": "Loyer",
-              "note_contextuelle": "Premier mois de loyer rejeté"
-            },
-            {
-              "date": "2025-04-08T20:55:00",
-              "libelle": "LE CHARDENOUX OBERKAMPF CB****8234",
-              "montant": -38.0,
-              "solde_apres": -949.87,
-              "categorie": "Restauration",
-              "note_contextuelle": "Dîner à Oberkampf — Vincent présente Nadia à Mathieu"
-            },
-            {
-              "date": "2025-04-05T08:00:00",
-              "libelle": "PRELEVEMENT PENSION ALIMENTAIRE HUGO",
-              "montant": -450.0,
-              "solde_apres": -911.87,
-              "categorie": "Pension alimentaire",
-              "note_contextuelle": "Dernier prélèvement pension réussi — avril"
-            },
-            {
-              "date": "2025-04-01T08:00:00",
-              "libelle": "LOYER AVRIL — SCI BASTILLE HABITAT",
-              "montant": -780.0,
-              "solde_apres": -461.87,
-              "categorie": "Loyer",
-              "note_contextuelle": "Dernier loyer prélevé avec succès — le compte bascule ensuite"
-            },
-            {
-              "date": "2025-03-31T08:00:00",
-              "libelle": "VIR REÇU ATELIER GRAPHIQUE MOREL — FACTURE 2025-012",
-              "montant": 650.0,
-              "solde_apres": 318.13,
-              "categorie": "Revenu professionnel",
-              "note_contextuelle": "Paiement d'un ancien client — dernière période de solvabilité"
-            },
-            {
-              "date": "2025-03-28T16:20:00",
-              "libelle": "GALERIE PERROTIN CB****8234",
-              "montant": -15.0,
-              "solde_apres": -331.87,
-              "categorie": "Loisirs",
-              "note_contextuelle": "Consommation au vernissage où Mathieu retrouve Vincent Morel"
-            },
-            {
-              "date": "2025-03-20T21:15:00",
-              "libelle": "LE BOUILLON CHARTIER CB****8234",
-              "montant": -22.5,
-              "solde_apres": -346.87,
-              "categorie": "Restauration",
-              "note_contextuelle": "Dîner après le vernissage Perrotin — retrouvailles avec Vincent"
-            }
-          ],
-          "operations_a_venir": [
-            {
-              "date_prevue": "2025-06-18",
-              "libelle": "LOYER JUILLET — SCI BASTILLE HABITAT (prévisionnel)",
-              "montant_prevu": -780.0,
-              "statut": "PROVISION INSUFFISANTE — REJET PROBABLE",
-              "categorie": "Loyer"
-            },
-            {
-              "date_prevue": "2025-07-05",
-              "libelle": "PRELEVEMENT PENSION ALIMENTAIRE HUGO (prévisionnel)",
-              "montant_prevu": -450.0,
-              "statut": "PROVISION INSUFFISANTE — REJET PROBABLE",
-              "categorie": "Pension alimentaire"
-            }
-          ],
-          "notifications_bancaires": [
-            {
-              "date": "2025-06-15T08:02:00",
-              "type": "alerte_solde",
-              "message": "Votre solde est de -847,32 €. Vous approchez votre limite de découvert autorisé (-900,00 €). Pensez à alimenter votre compte."
-            },
-            {
-              "date": "2025-06-13T08:00:00",
-              "type": "alerte_solde",
-              "message": "Votre solde est de -795,90 €. Découvert autorisé : -900,00 €."
-            },
-            {
-              "date": "2025-06-01T08:05:00",
-              "type": "rejet_prelevement",
-              "message": "Le prélèvement PENSION ALIMENTAIRE HUGO de 450,00 € a été rejeté pour provision insuffisante. Contactez votre conseillère."
-            },
-            {
-              "date": "2025-06-01T08:03:00",
-              "type": "rejet_prelevement",
-              "message": "Le prélèvement LOYER JUIN — SCI BASTILLE HABITAT de 780,00 € a été rejeté pour provision insuffisante."
-            },
-            {
-              "date": "2025-05-22T10:30:00",
-              "type": "message_conseillere",
-              "message": "Bonjour M. Garnier, suite aux rejets de prélèvements constatés sur votre compte, je souhaiterais faire un point avec vous. Merci de me contacter au 01 43 47 XX XX. Cordialement, A. Fontaine."
-            },
-            {
-              "date": "2025-05-05T08:04:00",
-              "type": "rejet_prelevement",
-              "message": "Le prélèvement PENSION ALIMENTAIRE HUGO de 450,00 € a été rejeté pour provision insuffisante."
-            },
-            {
-              "date": "2025-05-05T08:02:00",
-              "type": "rejet_prelevement",
-              "message": "Le prélèvement LOYER MAI — SCI BASTILLE HABITAT de 780,00 € a été rejeté pour provision insuffisante."
-            },
-            {
-              "date": "2025-04-24T14:20:00",
-              "type": "alerte_solde",
-              "message": "Paiement carte de 899,00 € (AMAZON FR). Votre nouveau solde est de -1 558,27 €. Vous avez dépassé votre découvert autorisé."
-            },
-            {
-              "date": "2025-04-14T08:05:00",
-              "type": "rejet_prelevement",
-              "message": "Le prélèvement LOYER AVRIL — SCI BASTILLE HABITAT de 780,00 € a été rejeté pour provision insuffisante. Des frais de rejet de 20,00 € seront débités."
-            }
-          ],
-          "messagerie_interne_banque": [
-            {
-              "date": "2025-06-10T14:15:00",
-              "expediteur": "Mathieu Garnier",
-              "destinataire": "Mme Audrey Fontaine — Conseillère",
-              "objet": "Re: Point sur votre situation",
-              "contenu": "Bonjour Mme Fontaine, je vous remercie pour votre message. Je suis en attente du règlement d'un contrat important qui devrait arriver avant fin juin. Est-il possible de maintenir le découvert en l'état jusqu'à cette date ? Cordialement, M. Garnier"
-            },
-            {
-              "date": "2025-06-10T16:42:00",
-              "expediteur": "Mme Audrey Fontaine — Conseillère",
-              "destinataire": "Mathieu Garnier",
-              "objet": "Re: Re: Point sur votre situation",
-              "contenu": "Bonjour M. Garnier, je prends note de votre situation. Votre découvert autorisé est maintenu à -900 € mais je vous informe que tout dépassement supplémentaire entraînera des agios au taux de 16,20 % et des frais d'incident. Il serait souhaitable de régulariser la situation rapidement. Je reste à votre disposition. Cordialement, A. Fontaine"
-            },
-            {
-              "date": "2025-05-23T09:10:00",
-              "expediteur": "Mme Audrey Fontaine — Conseillère",
-              "destinataire": "Mathieu Garnier",
-              "objet": "Point sur votre situation",
-              "contenu": "Bonjour M. Garnier, j'ai essayé de vous joindre par téléphone sans succès. Votre compte présente un dépassement de découvert depuis le 24 avril et deux prélèvements ont été rejetés en mai (loyer et pension alimentaire). Pouvez-vous me contacter rapidement afin que nous trouvions une solution ? Cordialement, A. Fontaine"
-            },
-            {
-              "date": "2025-04-25T11:00:00",
-              "expediteur": "Mathieu Garnier",
-              "destinataire": "Mme Audrey Fontaine — Conseillère",
-              "objet": "Dépassement découvert — achat exceptionnel",
-              "contenu": "Bonjour, je vous écris au sujet du dépassement de découvert suite à un achat de matériel professionnel (appareil photo pour un contrat en cours). Un paiement client est attendu sous 3 semaines. Merci de votre compréhension. Cordialement, M. Garnier"
-            }
-          ],
-          "virements_programmes": [],
-          "beneficiaires_enregistres": [
-            {
-              "nom": "Claire Duval",
-              "iban_partiel": "FR76 ****  **** 4821",
-              "libelle_habituel": "Pension Hugo"
-            },
-            {
-              "nom": "SCI Bastille Habitat",
-              "iban_partiel": "FR76 ****  **** 7703",
-              "libelle_habituel": "Loyer"
-            },
-            {
-              "nom": "Martine Garnier",
-              "iban_partiel": "FR76 ****  **** 1156",
-              "libelle_habituel": "Maman"
-            }
-          ],
-          "synthese_financiere": {
-            "revenus_3_derniers_mois": {
-              "mars": 650.0,
-              "avril": 480.0,
-              "mai": 0.0,
-              "juin": 0.0,
-              "source_principale": "Freelance graphisme — irrégulier",
-              "aide_famille": "Virements Martine Garnier : 200 € (mars), 300 € (avril), 150+150 € (mai), 200 € (juin) = 1 000 € sur 3 mois"
-            },
-            "charges_fixes_mensuelles": {
-              "loyer": 780.0,
-              "pension_alimentaire": 450.0,
-              "netflix": 13.49,
-              "spotify": 10.99,
-              "netflix": 8.99,
-              "free_mobile": 19.99,
-              "total_estimé": 1283.46
-            },
-            "situation": "Insolvabilité progressive depuis avril 2025. Revenus freelance taris. Survie financière assurée par les virements maternels. Trois mois de loyer impayé, deux mois de pension alimentaire impayée. Dépassement de découvert chronique. Le compte ne peut pas absorber les charges fixes."
-          }
-        },
-        "cross_apps_refs": [
-          {
-            "id": "cross_01",
-            "ref": "L'achat incongru",
-            "detail": "L'opération Amazon du 24/04 à 899 € (Ricoh GR III) apparaît sur un compte déjà à -659,27 €, provoquant un dépassement de découvert à -1 558,27 €. L'alerte bancaire immédiate ('Vous avez dépassé votre découvert autorisé') et le message de Mathieu à sa conseillère ('achat de matériel professionnel pour un contrat en cours') recoupent le mail Amazon (confirmation commande Ricoh GR III) et le message Signal de Nadia ('achète-toi un petit compact, pas de photos avec ton tel dans les salles chaudes'). Le mensonge à la banque ('contrat en cours') est le même que celui fait à Claire et à Maman."
-          },
-          {
-            "id": "cross_mensonge_02",
-            "ref": "Le mensonge de la pension",
-            "detail": "Les deux rejets de pension (mai et juin) visibles dans les opérations et notifications recoupent le SMS de Claire ('Si la pension n'est pas régularisée avant le 30 juin, on demande une révision de la garde') et la note dans Notes ('40K - impôts ? → loyer x3 + pension x2 + avance = ~8K → reste 32K → Hugo OK'). Le calcul de Mathieu dans Notes correspond exactement aux montants visibles dans LCL : 3 × 780 € (loyer) + 2 × 450 € (pension) = 3 240 €, arrondi à ~8K avec les frais, agios et avances."
-          },
-          {
-            "id": "cross_uber_reunions",
-            "ref": "Les courses vers Montreuil et Gennevilliers",
-            "detail": "Les deux courses Uber Bastille → Montreuil (25/04 à 16,40 € et 06/06 à 14,20 €) recoupent les entrées calendrier ('Dîner chez N. — Montreuil'), les courses Uber dans l'app Uber, et la photo de pizza avec le plan architectural en arrière-plan (Photos). La course Bastille → Gennevilliers du 02/06 à 22,80 € recoupe le trajet Google Maps vers la zone industrielle et le message WhatsApp de Sam ('C'est bon pour le local. Propre, discret, accès camionnette facile')."
-          },
-          {
-            "id": "cross_cafe_flore",
-            "ref": "Le café de la proposition",
-            "detail": "Le paiement Café de Flore du 18/04 à 9,40 € recoupe le SMS de Nadia ('Dispo pour un café cette semaine ?'), le trajet Google Maps vers le Café de Flore, et la note dans Notes ('Projet N. — 40K — réfléchir') datée du même jour. C'est le moment où Mathieu apprend la nature réelle du projet."
-          },
-          {
-            "id": "cross_pass_louvre",
-            "ref": "Le pass annuel du repéreur",
-            "detail": "L'achat du pass annuel Louvre le 02/05 à 70 € recoupe le mail de confirmation du Louvre, le message Signal de Nadia ('Prends un abonnement là-bas. Familiarise-toi'), et la première entrée calendrier 'Louvre — recherche visuelle'. Le pass permet 11 visites de repérage sur 5 semaines sans acheter de billets individuels traçables."
-          },
-          {
-            "id": "cross_vernissage_perrotin",
-            "ref": "Les retrouvailles fondatrices",
-            "detail": "Le paiement Galerie Perrotin du 28/03 (15 €) et le dîner au Bouillon Chartier le 20/03 (22,50 €) recoupent la chronologie du canon : Mathieu retrouve Vincent Morel lors d'un vernissage à la galerie Perrotin le 20 mars. Le paiement Atelier Graphique Morel du 31/03 (650 €) confirme un lien professionnel préexistant avec un 'Morel' — possiblement le même réseau, ou une coïncidence qui enrichit l'ambiguïté."
-          },
-          {
-            "id": "cross_claire_inversion",
-            "ref": "Le virement humiliant de Claire",
-            "detail": "Le virement reçu de Claire Duval le 26/05 (85 € — libellé 'HUGO CHAUSSURES') recoupe les échanges Messages avec Claire et la dynamique de pouvoir inversée : c'est l'ex-femme à qui Mathieu doit une pension qui lui envoie de l'argent fléché pour leur fils. Ce détail recoupe la tension visible dans les SMS ('Tu dis ça à chaque fois') et le mail de l'avocat."
-          },
-          {
-            "id": "cross_maman_survie",
-            "ref": "Le filet maternel",
-            "detail": "Les quatre virements de Martine Garnier (mars à juin, total 1 000 €) avec leurs libellés affectueux ('BISOUS MON GRAND', 'POUR TE DEPANNER', 'COURAGE') recoupent les messages WhatsApp Maman où Mathieu minimise sa situation ('J'ai un gros projet en ce moment, ça me prend du temps mais c'est bien payé 😊'). Martine envoie de l'argent régulièrement — elle sait que son fils est en difficulté malgré ses mensonges."
-          },
-          {
-            "id": "cross_conseillere_mensonge",
-            "ref": "Le mensonge à la banque",
-            "detail": "Le message de Mathieu à sa conseillère le 10/06 ('en attente du règlement d'un contrat important qui devrait arriver avant fin juin') est une version du même mensonge fait à Claire, Maman et Julien. Le 'contrat important' est le braquage. La date 'avant fin juin' correspond à la deadline de l'avocat de Claire (30 juin) et au braquage (18 juin). La conseillère répond professionnellement sans savoir qu'elle participe involontairement au maintien de la couverture."
-          },
-          {
-            "id": "cross_decathlon_hugo",
-            "ref": "Le père qui dépense pour son fils",
-            "detail": "L'achat Decathlon Bercy du 24/05 (34,90 €) alors que le compte est à -962,96 € recoupe les messages tendres avec Hugo 💙 et le week-end de garde. Mathieu dépense pour Hugo même quand il ne peut pas se le permettre. Ce détail recoupe la note 'Pour Hugo' du 14 juin et la motivation fondamentale du personnage : tout ce qu'il fait, y compris le braquage, est pour garder son fils."
-          }
-        ],
-        "traces_narratives": [
-          {
-            "id": "trace_spirale",
-            "description": "La chronologie des opérations dessine une spirale descendante lisible mois par mois : en mars, le solde oscille autour de zéro avec des revenus freelance réguliers. En avril, l'achat du Ricoh (899 €) fait basculer le compte en dépassement de découvert. En mai, les revenus freelance tombent à zéro et les prélèvements commencent à être rejetés. En juin, le compte est maintenu artificiellement par les virements maternels. Le joueur peut reconstituer visuellement la dégradation financière qui pousse Mathieu vers le braquage.",
-            "phase_decouverte": "Phase 1 — établit la détresse financière comme fait objectif, pas comme déclaration du personnage"
-          },
-          {
-            "id": "trace_ricoh_bascule",
-            "description": "L'achat Amazon à 899 € du 24 avril est l'opération la plus incongrue du relevé : un homme dont le loyer est rejeté achète un appareil photo haut de gamme. L'alerte bancaire immédiate et le message à la conseillère ('matériel professionnel pour un contrat') créent un micro-récit de justification. Le joueur qui a lu le message Signal de Nadia ('achète-toi un petit compact') comprend que cet achat est le premier acte concret de participation au braquage — le moment où Mathieu passe de la réflexion ('40K — réfléchir') à l'action.",
-            "phase_decouverte": "Transition phase 1 → phase 2"
-          },
-          {
-            "id": "trace_pension_rejetee",
-            "description": "Les deux rejets de pension alimentaire (mai et juin), affichés en rouge avec le statut 'REJETÉ — PROVISION INSUFFISANTE', sont les opérations les plus chargées émotionnellement du relevé. Chaque rejet est un échec paternel documenté par la banque. Le joueur peut les recouper avec le SMS de Claire ('Si la pension n'est pas régularisée avant le 30 juin'), le mail de l'avocat, et le calcul dans Notes. La pension Hugo est à la fois la cause de la menace juridique et le moteur du braquage.",
-            "phase_decouverte": "Phase 1-2 — ancrage émotionnel"
-          },
-          {
-            "id": "trace_maman_libelles",
-            "description": "Les libellés des virements de Martine Garnier sont des micro-messages d'amour maternel inscrits dans le système bancaire : 'BISOUS MON GRAND', 'POUR TE DEPANNER', 'COURAGE', 'BON ANNIVERSAIRE EN RETARD 😘'. Ils contrastent avec la froideur administrative des rejets de prélèvement et révèlent une mère qui aide son fils sans poser de questions — ou qui n'ose pas en poser. Le joueur qui lit les WhatsApp avec Maman ('c'est bien payé 😊') comprend que Martine envoie de l'argent malgré les mensonges de Mathieu, pas à cause d'eux.",
-            "phase_decouverte": "Phase 1 — humanisation"
-          },
-          {
-            "id": "trace_uber_cartographie",
-            "description": "Les courses Uber forment une cartographie involontaire des lieux du braquage : Bastille (domicile), Louvre (cible), Montreuil (QG de Nadia), Gennevilliers (entrepôt de transfert). Le joueur qui recoupe ces destinations avec Google Maps, le calendrier et les conversations WhatsApp/Signal peut reconstituer le réseau géographique de l'opération. La course vers Gennevilliers du 2 juin est particulièrement révélatrice quand elle est croisée avec le message de Sam.",
-            "phase_decouverte": "Phase 2-3 — reconstitution du plan"
-          },
-          {
-            "id": "trace_revenus_zero",
-            "description": "L'absence totale de revenus freelance en mai et juin (dernier paiement client : Studio Belvédère le 30 avril, 480 €) contredit le mensonge du 'gros contrat' raconté à Claire, Maman et la conseillère bancaire. Le joueur peut vérifier dans les mails l'annulation de commande par un client en mai. Mathieu n'a aucune source de revenus légitime — les 40 000 € du braquage sont sa seule perspective financière. Ce vide dans les revenus est aussi éloquent que les messages Signal.",
-            "phase_decouverte": "Phase 2 — recoupement avec mensonge_01 et mensonge_02"
-          },
-          {
-            "id": "trace_claire_virement",
-            "description": "Le virement de 85 € de Claire Duval ('HUGO CHAUSSURES') est un détail douloureux : la femme à qui Mathieu doit 900 € de pension impayée lui envoie de l'argent pour acheter des chaussures à leur fils. L'inversion des rôles financiers — le débiteur reçoit de l'argent de sa créancière — concentre toute l'humiliation et l'impuissance de Mathieu. Ce virement n'est jamais mentionné dans les SMS entre Mathieu et Claire, ce qui suggère un malaise partagé.",
-            "phase_decouverte": "Phase 1-2 — profondeur émotionnelle"
-          },
-          {
-            "id": "trace_conseillere_ironie",
-            "description": "L'échange avec la conseillère bancaire Audrey Fontaine est un miroir ironique du braquage : Mathieu négocie le maintien de son découvert en promettant un 'contrat important avant fin juin'. La conseillère répond avec des formules professionnelles ('agios au taux de 16,20 %') sans savoir que le 'contrat' est un vol de tableau. Le joueur perçoit le décalage entre le langage bancaire normé et la réalité criminelle qu'il dissimule. La date 'avant fin juin' est la même que celle donnée à Claire — tout converge vers le 18 juin.",
-            "phase_decouverte": "Phase 2-3 — ironie dramatique"
-          },
-          {
-            "id": "trace_operations_prevues",
-            "description": "Les opérations à venir (loyer juillet et pension juillet, tous deux en 'REJET PROBABLE') montrent que même si le braquage réussit, l'argent ne transitera jamais par ce compte bancaire — 40 000 € en cash ou en crypto ne régularisent pas un compte LCL. Le joueur attentif réalise que le plan financier de Mathieu (la note '40K → loyer x3 + pension x2') est naïf : comment justifier 40 000 € d'origine inconnue auprès de sa banque, de Claire, de son avocat ? Le braquage ne résout pas le problème, il en crée de nouveaux.",
-            "phase_decouverte": "Phase 3 — lucidité du joueur vs aveuglement du personnage"
-          },
-          {
-            "id": "trace_cafe_matin_15",
-            "description": "La dernière opération du relevé — un café à 4,70 € chez Paul Bastille le matin du 15 juin à 7h42 — est la trace la plus banale et la plus poignante. Mathieu a pris un café-croissant avant d'aller au Louvre pour sa visite non autorisée, celle où il perdra son téléphone. Le joueur qui a lu la note du 14 juin ('Demain matin : vérifier écart ronde PM/soir. Dernier point. Ensuite c'est fini. Pour Hugo.') peut imaginer Mathieu assis chez Paul, mangeant son croissant, convaincu que c'est la dernière fois. Le café à 4,70 € est le dernier geste normal avant que tout bascule.",
-            "phase_decouverte": "Phase 4 — résonance émotionnelle finale"
           }
         ]
       },
@@ -6300,7 +5153,7 @@
             "ref_id": "disney_lcl_abonnement",
             "apps": [
               "Netflix",
-              "Crédit Agricole"
+              "Banque"
             ],
             "description": "L'abonnement Netflix à 5,99 €/mois est prélevé le 1er juin sur un compte à -847 €. C'est l'un des rares prélèvements qui passe encore — Mathieu maintient cet abonnement pour Hugo malgré sa situation financière catastrophique. Le loyer et la pension sont rejetés, mais Netflix tient. Priorité révélatrice.",
             "phase": 1
@@ -7228,7 +6081,7 @@
             "apps_impliquees": [
               "Fichiers",
               "Notes",
-              "Crédit Agricole",
+              "Banque",
               "Messages"
             ],
             "description": "Le jugement de garde (pension 450 €/mois), le courrier de l'avocat (900 € d'arriérés), le bail (loyer 1 150 €/mois), l'avis d'impôt (14 200 €/an), le solde LCL (-847 €), la note dans Notes ('40K - impôts ? → loyer x3 + pension x2 + avance = ~8K → reste 32K → Hugo OK'), le SMS de Claire ('Tu dis ça à chaque fois'), et le planning vacances Hugo ('Bretagne si budget OK — attendre juin'). Tous ces éléments convergent vers une équation impossible sans les 40 000 € du braquage. Le joueur fait le calcul lui-même et comprend que Mathieu n'a littéralement aucune autre option financière.",
@@ -7242,7 +6095,7 @@
               "Signal",
               "Notes",
               "Calendrier",
-              "Google Maps"
+              "Plans"
             ],
             "description": "Le mémo vocal du 12 juin ('Mon boulot est fini... C'est pour Hugo') est enregistré le soir même où Nadia ordonne l'arrêt des visites sur Signal ('Maintenant tu restes loin'). Mathieu répond 'Compris.' Mais Notes du 14 juin montre 'Demain matin : vérifier écart ronde PM/soir. Dernier point. Pour Hugo.' Calendrier du 15 juin : 'Louvre — dernière session'. Google Maps du 15 juin : trajet Bastille → Louvre. Le joueur entend Mathieu dire que son travail est fini, puis le voit décider d'y retourner quand même deux jours plus tard. La note 'Pour Hugo' fait écho au mémo vocal 'C'est pour Hugo' — la même justification, le même aveuglement paternel qui cause la catastrophe.",
             "phase_decouverte": "Phase 3 → résolution"
@@ -7253,7 +6106,7 @@
             "apps_impliquees": [
               "Fichiers",
               "Mail",
-              "Crédit Agricole",
+              "Banque",
               "Signal",
               "Photos"
             ],
@@ -7889,6 +6742,1152 @@
             "description": "Nadia impose le cloisonnement ('Chacun connaît sa partie'), mais les Rappels de Mathieu le trahissent : 'RDV Gennevilliers avec Sam', 'Brief V3 — relire annotations avant envoi', 'Réunion chez N.', 'Vérifier que les timings collent avec le nouveau créneau de V.' Un enquêteur (ou un joueur attentif) peut reconstituer les quatre membres de l'équipe, leurs rôles et le calendrier opérationnel uniquement à partir des Rappels, en recoupant les initiales et les contextes."
           }
         ]
+      },
+      "Plans": {
+        "app": "Plans",
+        "profondeur": "profonde",
+        "contenu": {
+          "adresses_enregistrees": [
+            {
+              "label": "Domicile",
+              "adresse": "17 rue de la Roquette, 75011 Paris",
+              "coordonnees": "48.8533, 2.3725",
+              "note": "Adresse par défaut pour tous les trajets sortants. Quartier Bastille."
+            },
+            {
+              "label": "Travail",
+              "adresse": "Musée du Louvre, Rue de Rivoli, 75001 Paris",
+              "coordonnees": "48.8606, 2.3376",
+              "note": "Configuré comme lieu de travail — cohérent avec la couverture de projet freelance événementiel. Date d'ajout estimée : début mai 2025."
+            },
+            {
+              "label": "Claire — Hugo",
+              "adresse": "8 avenue du Château, 94300 Vincennes",
+              "coordonnees": "48.8474, 2.4392",
+              "note": "Domicile de l'ex-femme. Lieu d'échange de garde de Hugo. Trajets réguliers les vendredis soir et dimanches soir, un week-end sur deux."
+            },
+            {
+              "label": "Maman",
+              "adresse": "12 rue des Lilas, 92140 Clamart",
+              "coordonnees": "48.8003, 2.2637",
+              "note": "Domicile de Martine Garnier. Visites occasionnelles, souvent le dimanche midi quand Mathieu n'a pas Hugo."
+            }
+          ],
+          "itineraires_sauvegardes": [
+            {
+              "id": "itineraire_01",
+              "nom": null,
+              "depart": "Quai François Mitterrand, 75001 Paris",
+              "arrivee": "Zone industrielle des Chanteraines, Gennevilliers",
+              "waypoints": [
+                "Quai de la Mégisserie, 75001 Paris",
+                "Pont Neuf, 75001 Paris",
+                "Rue de Rivoli direction Châtelet",
+                "Boulevard de Sébastopol nord",
+                "Porte de Clignancourt — Périphérique nord"
+              ],
+              "duree_estimee": "28 min (trafic faible)",
+              "date_creation": "2025-06-03T21:44:00",
+              "note_interne": "Itinéraire de fuite principal. Le départ 'Quai François Mitterrand' correspond au quai de livraison du Louvre, côté Seine. Arrivée : entrepôt de Gennevilliers. Créé le lendemain de la visite de repérage du 2 juin à Gennevilliers."
+            },
+            {
+              "id": "itineraire_02",
+              "nom": null,
+              "depart": "Quai François Mitterrand, 75001 Paris",
+              "arrivee": "Zone industrielle des Chanteraines, Gennevilliers",
+              "waypoints": [
+                "Pont du Carrousel, 75001 Paris",
+                "Boulevard Saint-Germain ouest",
+                "Quai de Grenelle",
+                "Pont du Garigliano — Périphérique ouest",
+                "A86 nord direction Gennevilliers"
+              ],
+              "duree_estimee": "35 min (trafic faible)",
+              "date_creation": "2025-06-05T19:12:00",
+              "note_interne": "Itinéraire de fuite alternatif par l'ouest, évitant le centre. Plus long mais contourne les zones de caméras LAPI denses du 1er arrondissement. Correspond à l'une des '3 options pour la sortie' mentionnées par Sam."
+            },
+            {
+              "id": "itineraire_03",
+              "nom": "Vincennes sam",
+              "depart": "17 rue de la Roquette, 75011 Paris",
+              "arrivee": "8 avenue du Château, 94300 Vincennes",
+              "waypoints": [],
+              "duree_estimee": "22 min",
+              "date_creation": "2025-04-11T18:30:00",
+              "note_interne": "Trajet de garde classique. Rien de suspect. Humanise le personnage."
+            }
+          ],
+          "historique_trajets": [
+            {
+              "id": "trajet_001",
+              "date": "2025-03-20T18:52:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Galerie Perrotin, 76 rue de Turenne, 75003 Paris",
+              "mode": "à pied",
+              "duree": "14 min",
+              "note_interne": "Vernissage où Mathieu retrouve Vincent Morel. Point de départ de toute la chaîne de recrutement."
+            },
+            {
+              "id": "trajet_002",
+              "date": "2025-04-08T19:48:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Le Petit Cler, 29 rue Oberkampf, 75011 Paris",
+              "mode": "à pied",
+              "duree": "11 min",
+              "note_interne": "Dîner où Vincent présente Mathieu à Nadia. Restaurant à Oberkampf. Correspond à la photo de groupe dans Photos."
+            },
+            {
+              "id": "trajet_003",
+              "date": "2025-04-18T14:15:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Café de Flore, 172 Boulevard Saint-Germain, 75006 Paris",
+              "mode": "métro",
+              "duree": "25 min",
+              "note_interne": "Café avec Nadia où elle expose le projet réel. Correspond à la note Notes du 18/04 : 'Projet N. — 40K — réfléchir.' et aux premières recherches Safari sur La Dame à l'hermine."
+            },
+            {
+              "id": "trajet_004",
+              "date": "2025-04-25T19:32:00",
+              "depart": "Place de la Bastille, Paris",
+              "arrivee": "23 rue de la Fraternité, 93100 Montreuil",
+              "mode": "Uber",
+              "duree": "24 min",
+              "note_interne": "Première réunion de l'équipe complète chez Nadia. Correspond au calendrier ('Dîner chez N. — Montreuil — 20h'), à la photo de pizza avec plan architectural flou en arrière-plan, et au message de Sam le lendemain ('C'était bien hier')."
+            },
+            {
+              "id": "trajet_005",
+              "date": "2025-05-02T09:47:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "18 min",
+              "note_interne": "Première visite de repérage. Correspond au calendrier ('Louvre — recherche visuelle'), au selfie devant la Joconde dans Photos, et au message WhatsApp à Maman sur les 'relevés visuels'."
+            },
+            {
+              "id": "trajet_006",
+              "date": "2025-05-07T10:22:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "19 min",
+              "note_interne": "Deuxième visite de repérage."
+            },
+            {
+              "id": "trajet_007",
+              "date": "2025-05-09T14:03:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "8 avenue du Château, 94300 Vincennes",
+              "mode": "métro",
+              "duree": "28 min",
+              "note_interne": "Week-end de garde. Récupération de Hugo chez Claire."
+            },
+            {
+              "id": "trajet_008",
+              "date": "2025-05-11T18:34:00",
+              "depart": "8 avenue du Château, 94300 Vincennes",
+              "arrivee": "17 rue de la Roquette, Paris",
+              "mode": "métro",
+              "duree": "27 min",
+              "note_interne": "Retour de Hugo chez Claire le dimanche soir."
+            },
+            {
+              "id": "trajet_009",
+              "date": "2025-05-12T10:08:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "17 min",
+              "note_interne": "Troisième visite de repérage."
+            },
+            {
+              "id": "trajet_010",
+              "date": "2025-05-15T09:55:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "20 min",
+              "note_interne": "Visite où Mathieu découvre le système Prosegur. Correspond aux recherches Safari et à la note Notes : 'Prosegur — vitrine classe 4'. Message Signal à Nadia le soir même : 'Le coffrage est plus sérieux que prévu.'"
+            },
+            {
+              "id": "trajet_011",
+              "date": "2025-05-19T11:14:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "18 min",
+              "note_interne": "Cinquième visite. Observation des rondes de sécurité du matin."
+            },
+            {
+              "id": "trajet_012",
+              "date": "2025-05-22T17:31:00",
+              "depart": "Musée du Louvre, Paris",
+              "arrivee": "17 rue de la Roquette, Paris",
+              "mode": "à pied",
+              "duree": "38 min",
+              "note_interne": "Retour à pied après une visite. Le même soir, Mathieu reçoit le mail de Claire avec le courrier de l'avocat. La longue marche à pied un jour de semaine suggère un homme qui rumine."
+            },
+            {
+              "id": "trajet_013",
+              "date": "2025-05-23T16:45:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "12 rue des Lilas, 92140 Clamart",
+              "mode": "RER",
+              "duree": "42 min",
+              "note_interne": "Visite à sa mère le lendemain du mail de l'avocat. Mathieu cherche probablement du réconfort. Correspond au mensonge_01 : il parle du 'gros projet' à Maman."
+            },
+            {
+              "id": "trajet_014",
+              "date": "2025-05-26T10:30:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "18 min",
+              "note_interne": "Sixième visite de repérage."
+            },
+            {
+              "id": "trajet_015",
+              "date": "2025-05-29T14:12:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "19 min",
+              "note_interne": "Septième visite. Observation des rondes de l'après-midi et du changement d'équipe."
+            },
+            {
+              "id": "trajet_016",
+              "date": "2025-06-02T11:05:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "17 min",
+              "note_interne": "Huitième visite."
+            },
+            {
+              "id": "trajet_017",
+              "date": "2025-06-02T16:22:00",
+              "depart": "Musée du Louvre, Paris",
+              "arrivee": "Zone industrielle des Chanteraines, Boulevard Camélinat, 92230 Gennevilliers",
+              "mode": "Uber",
+              "duree": "38 min",
+              "note_interne": "Trajet crucial. Mathieu va directement du Louvre à l'entrepôt de Gennevilliers. Correspond au message WhatsApp de Sam : 'C'est bon pour le local. Propre, discret, accès camionnette facile.' C'est le lieu de transfert prévu de l'œuvre au client 'G.' Itinéraire de fuite créé le lendemain."
+            },
+            {
+              "id": "trajet_018",
+              "date": "2025-06-02T17:48:00",
+              "depart": "Zone industrielle des Chanteraines, Gennevilliers",
+              "arrivee": "17 rue de la Roquette, Paris",
+              "mode": "Uber",
+              "duree": "41 min",
+              "note_interne": "Retour de l'entrepôt. Heure de pointe, trajet plus long."
+            },
+            {
+              "id": "trajet_019",
+              "date": "2025-06-04T10:15:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "18 min",
+              "note_interne": "Neuvième visite de repérage."
+            },
+            {
+              "id": "trajet_020",
+              "date": "2025-06-06T18:55:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "23 rue de la Fraternité, 93100 Montreuil",
+              "mode": "métro",
+              "duree": "31 min",
+              "note_interne": "Deuxième réunion de l'équipe chez Nadia. Correspond au calendrier du 6 juin. Finalisation du plan opérationnel."
+            },
+            {
+              "id": "trajet_021",
+              "date": "2025-06-06T23:17:00",
+              "depart": "23 rue de la Fraternité, 93100 Montreuil",
+              "arrivee": "17 rue de la Roquette, Paris",
+              "mode": "Uber",
+              "duree": "19 min",
+              "note_interne": "Retour tardif de la réunion. Durée de la réunion : environ 4 heures. Longue soirée de planification."
+            },
+            {
+              "id": "trajet_022",
+              "date": "2025-06-09T10:40:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "métro",
+              "duree": "19 min",
+              "note_interne": "Dixième visite de repérage."
+            },
+            {
+              "id": "trajet_023",
+              "date": "2025-06-10T14:20:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "vélo",
+              "duree": "22 min",
+              "note_interne": "Onzième et dernière visite autorisée. Vélo pour la première fois — peut-être pour varier les modes d'arrivée et ne pas être repéré toujours aux mêmes entrées de métro."
+            },
+            {
+              "id": "trajet_024",
+              "date": "2025-06-13T17:50:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "8 avenue du Château, 94300 Vincennes",
+              "mode": "métro",
+              "duree": "27 min",
+              "note_interne": "Week-end de garde. Récupération de Hugo. Dernier week-end avec Hugo avant le braquage du 18."
+            },
+            {
+              "id": "trajet_025",
+              "date": "2025-06-15T10:03:00",
+              "depart": "8 avenue du Château, 94300 Vincennes",
+              "arrivee": "17 rue de la Roquette, Paris",
+              "mode": "métro",
+              "duree": "26 min",
+              "note_interne": "Retour de Hugo chez Claire le dimanche matin — inhabituel, normalement c'est le dimanche soir. Mathieu a écourté le week-end de garde pour aller au Louvre. Correspond à la note du 14 juin : 'Demain matin : vérifier écart ronde PM/soir.'"
+            },
+            {
+              "id": "trajet_026",
+              "date": "2025-06-15T11:14:00",
+              "depart": "17 rue de la Roquette, Paris",
+              "arrivee": "Musée du Louvre, Paris",
+              "mode": "à pied",
+              "duree": "32 min",
+              "note_interne": "La visite fatale. Non autorisée par Nadia. À pied — probablement pour éviter les caméras du métro, signe de paranoïa croissante. Correspond au calendrier ('Louvre — dernière session'), à la note du 14 juin ('Pour Hugo'), et au silence total sur Signal ce jour-là. C'est pendant cette visite que Mathieu perd le téléphone en salle 710. Dernier trajet enregistré."
+            }
+          ],
+          "recherches_recentes": [
+            {
+              "query": "entrepôt stockage location Gennevilliers",
+              "date": "2025-05-28T20:33:00",
+              "note_interne": "Recherche du lieu de transfert. Précède la visite du 2 juin à Gennevilliers avec Sam."
+            },
+            {
+              "query": "horaires Louvre mercredi soir nocturne juin 2025",
+              "date": "2025-06-01T22:08:00",
+              "note_interne": "Vérification des horaires de nocturne. Le braquage est prévu un mercredi soir pendant une fermeture exceptionnelle pour maintenance."
+            },
+            {
+              "query": "quai de livraison Louvre accès Seine",
+              "date": "2025-06-03T21:22:00",
+              "note_interne": "Recherche précédant immédiatement la création de l'itinéraire de fuite n°1. Le quai de livraison côté Seine est le point de sortie prévu pour l'équipe après le vol. Correspond à l'annotation dans le brief : 'Sortie personnel → quai livraison → 90 sec'."
+            },
+            {
+              "query": "travaux quai de Bercy juin 2025",
+              "date": "2025-06-05T18:50:00",
+              "note_interne": "Vérification suite au message de Sam : 'Le point C c'est le plus rapide mais y'a des travaux quai de Bercy en ce moment.' Mathieu vérifie l'info avant de créer l'itinéraire alternatif n°2."
+            },
+            {
+              "query": "caméras LAPI Paris 1er arrondissement carte",
+              "date": "2025-06-05T19:01:00",
+              "note_interne": "Recherche sur les caméras de lecture automatique de plaques d'immatriculation. Explique pourquoi l'itinéraire n°2 contourne le centre par l'ouest. Niveau de préparation inquiétant."
+            },
+            {
+              "query": "Vincennes école primaire Jules Ferry horaires",
+              "date": "2025-06-08T09:15:00",
+              "note_interne": "Recherche liée à Hugo, pas au braquage. Mathieu vérifie les horaires de l'école de son fils. Mêlé au reste, humanise le personnage."
+            },
+            {
+              "query": "Louvre salle 710 aile Denon plan",
+              "date": "2025-06-10T08:44:00",
+              "note_interne": "Dernière recherche liée au repérage avant la consigne d'arrêt de Nadia le 12 juin."
+            }
+          ],
+          "lieux_frequents_timeline": [
+            {
+              "lieu": "17 rue de la Roquette, Paris 11e",
+              "label_auto": "Domicile",
+              "frequence": "Quotidien",
+              "premiere_occurrence": "2025-03-20",
+              "derniere_occurrence": "2025-06-15",
+              "note_interne": "Base de vie de Mathieu."
+            },
+            {
+              "lieu": "Musée du Louvre, Paris 1er",
+              "label_auto": "Travail",
+              "frequence": "2-3 fois par semaine (mai-juin)",
+              "premiere_occurrence": "2025-05-02",
+              "derniere_occurrence": "2025-06-15",
+              "duree_moyenne_sur_place": "2h45",
+              "note_interne": "12 visites en 6 semaines. La fréquence et la durée sont anormales pour un graphiste freelance. Google Maps l'a automatiquement étiqueté comme 'Travail' — ironie involontaire qui renforce la couverture mais devient sinistre une fois le braquage compris."
+            },
+            {
+              "lieu": "8 avenue du Château, Vincennes",
+              "label_auto": null,
+              "frequence": "Un week-end sur deux",
+              "premiere_occurrence": "2025-03-21",
+              "derniere_occurrence": "2025-06-15",
+              "note_interne": "Échanges de garde de Hugo. Régulier comme un métronome sauf le 15 juin : retour le matin au lieu du soir."
+            },
+            {
+              "lieu": "23 rue de la Fraternité, Montreuil",
+              "label_auto": null,
+              "frequence": "2 visites",
+              "premiere_occurrence": "2025-04-25",
+              "derniere_occurrence": "2025-06-06",
+              "duree_moyenne_sur_place": "3h30",
+              "note_interne": "Appartement de Nadia. QG opérationnel. Seulement 2 visites — le cloisonnement est réel."
+            },
+            {
+              "lieu": "Zone industrielle des Chanteraines, Gennevilliers",
+              "label_auto": null,
+              "frequence": "1 visite",
+              "premiere_occurrence": "2025-06-02",
+              "derniere_occurrence": "2025-06-02",
+              "duree_moyenne_sur_place": "1h15",
+              "note_interne": "Entrepôt de transfert. Visite unique et ciblée. Le fait que Mathieu n'y soit allé qu'une fois est cohérent avec le cloisonnement : Sam gère la logistique, Mathieu vérifie juste le lieu."
+            },
+            {
+              "lieu": "12 rue des Lilas, Clamart",
+              "label_auto": null,
+              "frequence": "2-3 fois par mois",
+              "premiere_occurrence": "2025-03-23",
+              "derniere_occurrence": "2025-06-01",
+              "note_interne": "Chez Maman. Visites régulières, souvent le dimanche."
+            }
+          ],
+          "contributions_avis": [
+            {
+              "lieu": "Musée du Louvre",
+              "note": 5,
+              "date": "2025-05-08",
+              "texte": "Collection incroyable, on y revient toujours avec plaisir. Le personnel est très présent, on se sent en sécurité.",
+              "note_interne": "Avis laissé après la deuxième visite de repérage. Le commentaire sur le personnel 'très présent' et le sentiment de 'sécurité' est un double sens involontaire — ou une note mentale déguisée en avis public. Le joueur attentif remarquera l'ironie."
+            },
+            {
+              "lieu": "Café de Flore, Paris",
+              "note": 3,
+              "date": "2025-04-18",
+              "texte": "Café correct, un peu cher pour ce que c'est.",
+              "note_interne": "Laissé le jour du rendez-vous avec Nadia. Anodin. Confirme le trajet du 18 avril."
+            }
+          ],
+          "partage_position": {
+            "actif": false,
+            "historique": [
+              {
+                "contact": "Claire",
+                "periode": "2024-09-01 au 2025-01-15",
+                "statut": "désactivé",
+                "note_interne": "Partage de position avec Claire probablement lié à la garde de Hugo — savoir quand Mathieu est en route. Désactivé en janvier, peut-être au moment où les tensions se sont accrues autour de la pension impayée."
+              }
+            ]
+          },
+          "notifications_trafic": [
+            {
+              "date": "2025-06-15T10:45:00",
+              "contenu": "Temps de trajet habituel vers Travail : 18 min. Trafic fluide.",
+              "note_interne": "Notification automatique de Google Maps le matin du 15 juin, basée sur l'étiquette 'Travail' = Louvre. Mathieu la voit en rentrant de Vincennes. Confirmation involontaire que Maps a intégré le Louvre dans sa routine."
+            },
+            {
+              "date": "2025-06-14T08:12:00",
+              "contenu": "Temps de trajet habituel vers Travail : 20 min. Trafic modéré.",
+              "note_interne": "Notification de routine."
+            }
+          ]
+        },
+        "cross_apps_refs": [
+          {
+            "ref_id": "cross_04",
+            "nom": "Les trois sorties de Sam",
+            "detail": "L'itinéraire sauvegardé n°1 (Louvre → Pont Neuf → périphérique nord → Gennevilliers) et l'itinéraire n°2 (par l'ouest) correspondent aux '3 options pour la sortie' mentionnées par Sam dans WhatsApp. La recherche 'travaux quai de Bercy juin 2025' confirme le message de Sam : 'Le point C c'est le plus rapide mais y'a des travaux quai de Bercy.' Le troisième itinéraire (point C via Bercy) n'a pas été sauvegardé, probablement écarté à cause des travaux.",
+            "apps_liees": [
+              "WhatsApp",
+              "Fichiers"
+            ]
+          },
+          {
+            "ref_id": "cross_03",
+            "nom": "La pizza révélatrice",
+            "detail": "Le trajet du 25 avril (Bastille → 23 rue de la Fraternité, Montreuil, en Uber à 19h32) confirme le lieu et l'heure du 'Dîner chez N.' visible dans le calendrier. La photo de pizza avec plan architectural flou en arrière-plan est géolocalisée à cette adresse dans Photos.",
+            "apps_liees": [
+              "Calendrier",
+              "Photos",
+              "WhatsApp"
+            ]
+          },
+          {
+            "ref_id": "cross_06",
+            "nom": "La désobéissance fatale",
+            "detail": "Le trajet du 15 juin (Bastille → Louvre, à pied, 11h14) est le dernier trajet enregistré. Il contredit le 'Compris.' envoyé à Nadia sur Signal le 12 juin. Le trajet matinal Vincennes → Bastille (10h03) montre que Mathieu a écourté le week-end de garde de Hugo pour aller au Louvre — il a ramené Hugo le dimanche matin au lieu du dimanche soir habituel. Le choix d'aller à pied plutôt qu'en métro (inhabituel, 32 min au lieu de 18) suggère une volonté d'éviter les caméras.",
+            "apps_liees": [
+              "Signal",
+              "Notes",
+              "Calendrier",
+              "Messages"
+            ]
+          },
+          {
+            "ref_id": "cross_01",
+            "nom": "L'achat incongru",
+            "detail": "Le trajet du 18 avril vers le Café de Flore correspond au jour de la note 'Projet N. — 40K — réfléchir' dans Notes et aux premières recherches Safari sur La Dame à l'hermine. L'avis Google laissé au Café de Flore ce jour-là confirme la présence physique.",
+            "apps_liees": [
+              "Notes",
+              "Safari",
+              "Mail",
+              "Banque"
+            ]
+          },
+          {
+            "ref_id": "nouveau_cross_maps_01",
+            "nom": "Le Louvre comme Travail",
+            "detail": "Google Maps a automatiquement étiqueté le Musée du Louvre comme 'Travail' en raison de la fréquence des visites (12 en 6 semaines, durée moyenne 2h45). Cette étiquette automatique renforce la couverture de Mathieu ('projet freelance') mais devient un indice accablant pour le joueur : aucun graphiste freelance ne passe 2h45 deux à trois fois par semaine dans un musée pendant six semaines. La notification trafic du 15 juin ('Temps de trajet habituel vers Travail : 18 min') confirme que Maps considère le Louvre comme sa destination professionnelle principale.",
+            "apps_liees": [
+              "Calendrier",
+              "Notes",
+              "Signal"
+            ]
+          },
+          {
+            "ref_id": "nouveau_cross_maps_02",
+            "nom": "Gennevilliers — le maillon manquant",
+            "detail": "Le trajet du 2 juin (Louvre → Gennevilliers en Uber, 16h22) est le seul trajet vers cette zone industrielle. Il correspond au message WhatsApp de Sam : 'C'est bon pour le local. Propre, discret, accès camionnette facile.' L'itinéraire de fuite n°1 a été créé le lendemain (3 juin, 21h44), ce qui montre que Mathieu a d'abord vu le lieu physiquement avant de tracer la route de fuite. La recherche Maps 'entrepôt stockage location Gennevilliers' datée du 28 mai précède la visite de 5 jours — phase de repérage préalable.",
+            "apps_liees": [
+              "WhatsApp",
+              "Fichiers"
+            ]
+          },
+          {
+            "ref_id": "nouveau_cross_maps_03",
+            "nom": "Le week-end écourté",
+            "detail": "Le trajet Vincennes → Bastille du 15 juin à 10h03 est anormal. Tous les autres retours de week-end de garde (9 mai, 11 mai, 23 mai, 8 juin) se font le dimanche entre 18h et 19h. Le 15 juin, Mathieu ramène Hugo à 10h du matin. Recoupement avec Messages : Hugo écrit le 14 juin 'Papa tu me manques, vivement samedi 💙' — il attendait ce week-end. Mathieu a écourté le temps avec son fils pour aller au Louvre une dernière fois. La note du 14 juin ('Pour Hugo') révèle l'ironie tragique : c'est au nom de Hugo qu'il sacrifie du temps avec Hugo.",
+            "apps_liees": [
+              "Messages",
+              "Notes",
+              "Calendrier"
+            ]
+          },
+          {
+            "ref_id": "nouveau_cross_maps_04",
+            "nom": "Les caméras LAPI",
+            "detail": "La recherche Maps 'caméras LAPI Paris 1er arrondissement carte' (5 juin, 19h01) précède de 11 minutes la création de l'itinéraire de fuite n°2 (19h12), qui contourne le 1er arrondissement par l'ouest. Le joueur qui recoupe ces deux éléments comprend que l'itinéraire alternatif a été conçu spécifiquement pour éviter les caméras de lecture de plaques. Niveau de sophistication qui pointe vers Nadia ou Sam comme source de la consigne.",
+            "apps_liees": [
+              "Safari",
+              "Signal"
+            ]
+          }
+        ],
+        "traces_narratives": [
+          {
+            "id": "trace_maps_01",
+            "titre": "La spirale centripète",
+            "description": "L'historique des trajets dessine une géographie qui se resserre progressivement autour du Louvre. En mars-avril, les déplacements de Mathieu sont variés : galerie Perrotin, Oberkampf, Café de Flore, Clamart, Vincennes. À partir de mai, le Louvre absorbe presque toute sa mobilité. En juin, il ne va pratiquement plus nulle part sauf au Louvre, chez Nadia, et à Gennevilliers. Sa vie sociale se contracte autour du braquage. Les seuls trajets non liés au plan sont les allers-retours à Vincennes pour Hugo — le dernier fil qui le relie à sa vie d'avant.",
+            "phase": "transversale"
+          },
+          {
+            "id": "trace_maps_02",
+            "titre": "Le Louvre étiqueté Travail — l'algorithme complice",
+            "description": "Google Maps a identifié le Louvre comme lieu de travail de Mathieu par apprentissage automatique. Cette étiquette est à la fois une couverture parfaite (si quelqu'un regarde son téléphone, le Louvre apparaît comme son lieu de travail) et une preuve accablante (la fréquence et la durée des visites sont documentées avec précision). L'algorithme est devenu un témoin involontaire. Le joueur peut consulter la timeline des 'lieux fréquents' et voir exactement combien de temps Mathieu a passé au Louvre chaque jour — données que même Nadia ne possède pas.",
+            "phase": "phase 2"
+          },
+          {
+            "id": "trace_maps_03",
+            "titre": "Le trajet à pied du 15 juin",
+            "description": "Sur 12 trajets vers le Louvre, 10 sont en métro, 1 en vélo, et le dernier — celui du 15 juin — est à pied. Ce changement de mode est significatif. Mathieu marche 32 minutes au lieu de prendre le métro (18 min) pour sa visite non autorisée. Le joueur peut interpréter cela comme de la prudence (éviter les caméras du métro), de la paranoïa (il sait qu'il désobéit), ou de la résolution (il marche pour se donner le courage). Le trajet à pied passe par le Pont des Arts et longe la Seine — un itinéraire contemplatif pour un homme qui sait qu'il franchit un point de non-retour.",
+            "phase": "phase 3-4"
+          },
+          {
+            "id": "trace_maps_04",
+            "titre": "Deux itinéraires sans nom",
+            "description": "Les deux itinéraires de fuite sauvegardés n'ont pas de nom. Contrairement à 'Vincennes sam' (clairement étiqueté), ces routes Louvre → Gennevilliers sont anonymes. L'absence de label est en soi un indice : Mathieu ne voulait pas qu'un nom apparaisse dans sa liste d'itinéraires. Mais il ne les a pas supprimés non plus — soit par négligence, soit parce qu'il en avait encore besoin pour les transmettre à Sam. Le joueur qui ouvre ces itinéraires voit un trajet nocturne optimisé depuis le quai de livraison du Louvre vers une zone industrielle de banlieue. Aucune interprétation innocente n'est possible.",
+            "phase": "phase 3"
+          },
+          {
+            "id": "trace_maps_05",
+            "titre": "L'avis Google — le double sens",
+            "description": "L'avis 5 étoiles laissé par Mathieu sur le Louvre le 8 mai ('Le personnel est très présent, on se sent en sécurité') fonctionne sur deux niveaux. Pour un visiteur normal, c'est un compliment. Pour Mathieu le repéreur, c'est une observation de terrain : le personnel de sécurité est nombreux et visible. Le joueur qui relit cet avis après avoir compris le braquage y entend un homme qui documente ses propres obstacles. La note de 5 étoiles est presque cruelle — il adore le lieu qu'il s'apprête à cambrioler.",
+            "phase": "phase 2-3"
+          },
+          {
+            "id": "trace_maps_06",
+            "titre": "Hugo, le métronome brisé",
+            "description": "Les trajets vers Vincennes forment un rythme régulier : vendredi soir aller, dimanche soir retour, un week-end sur deux, comme un battement de cœur. Le 15 juin, ce rythme se brise : le retour est le dimanche matin au lieu du dimanche soir. Mathieu a amputé son week-end avec Hugo de 8 heures pour aller au Louvre. Le joueur qui compare les horaires de retour de Vincennes (18h34, 18h15, 18h50... puis 10h03) voit le moment exact où le braquage a commencé à dévorer la relation père-fils. Et c'est cette visite volée à Hugo qui cause la perte du téléphone.",
+            "phase": "phase 4"
+          },
+          {
+            "id": "trace_maps_07",
+            "titre": "Le fantôme de Claire",
+            "description": "Le partage de position avec Claire, actif de septembre 2024 à janvier 2025 puis désactivé, raconte silencieusement la dégradation du lien. Pendant 4 mois après la séparation, ils maintenaient cette transparence — probablement pour la logistique de Hugo. La désactivation en janvier coïncide avec le début des retards de pension. Claire n'a plus accès à la position de Mathieu. Si elle l'avait encore, elle verrait le Louvre étiqueté 'Travail' et les 12 visites en 6 semaines. Elle poserait des questions. Le cloisonnement du braquage a commencé bien avant que Mathieu ne rencontre Nadia.",
+            "phase": "phase 1-2"
+          }
+        ]
+      },
+      "Banque": {
+        "app": "Banque",
+        "profondeur": "profonde",
+        "contenu": {
+          "titulaire": {
+            "nom": "Mathieu Garnier",
+            "identifiant_client": "MG-4471829",
+            "agence": "LCL Paris Bastille — 12 rue de la Roquette, 75011 Paris",
+            "conseiller": "Mme Audrey Fontaine",
+            "date_ouverture_compte": "2016-09-14"
+          },
+          "comptes": [
+            {
+              "type": "Compte courant",
+              "numero_partiel": "****6183",
+              "solde": -847.32,
+              "devise": "EUR",
+              "decouvert_autorise": -900.0,
+              "date_solde": "2025-06-15T08:00:00",
+              "alerte_decouvert": true,
+              "message_alerte": "Attention : votre solde approche la limite de votre découvert autorisé (-900,00 €). Contactez votre conseillère."
+            },
+            {
+              "type": "Livret A",
+              "numero_partiel": "****2907",
+              "solde": 23.17,
+              "devise": "EUR",
+              "date_solde": "2025-06-15T08:00:00"
+            }
+          ],
+          "carte_bancaire": {
+            "type": "Visa Classic",
+            "numero_partiel": "****8234",
+            "expiration": "09/26",
+            "statut": "Active",
+            "plafond_paiement_mensuel": 1500.0,
+            "plafond_retrait_hebdo": 300.0,
+            "paiement_utilise_mois_en_cours": 1287.45,
+            "opposition": false
+          },
+          "operations": [
+            {
+              "date": "2025-06-15T07:42:00",
+              "libelle": "PAUL BASTILLE CB****8234",
+              "montant": -4.7,
+              "solde_apres": -847.32,
+              "categorie": "Restauration",
+              "note_contextuelle": "Café et croissant le matin de la visite non autorisée au Louvre"
+            },
+            {
+              "date": "2025-06-14T20:13:00",
+              "libelle": "UBER EATS PARIS FR",
+              "montant": -18.9,
+              "solde_apres": -842.62,
+              "categorie": "Restauration"
+            },
+            {
+              "date": "2025-06-14T12:01:00",
+              "libelle": "FRANPRIX BASTILLE",
+              "montant": -7.83,
+              "solde_apres": -823.72,
+              "categorie": "Alimentation"
+            },
+            {
+              "date": "2025-06-13T09:15:00",
+              "libelle": "FREE MOBILE PRELEVEMENT",
+              "montant": -19.99,
+              "solde_apres": -815.89,
+              "categorie": "Abonnement"
+            },
+            {
+              "date": "2025-06-12T17:44:00",
+              "libelle": "MONOPRIX RICHARD LENOIR",
+              "montant": -23.16,
+              "solde_apres": -795.9,
+              "categorie": "Alimentation"
+            },
+            {
+              "date": "2025-06-11T08:30:00",
+              "libelle": "NETFLIX FR",
+              "montant": -13.49,
+              "solde_apres": -772.74,
+              "categorie": "Abonnement"
+            },
+            {
+              "date": "2025-06-10T14:22:00",
+              "libelle": "UBER PARIS FR",
+              "montant": -12.4,
+              "solde_apres": -759.25,
+              "categorie": "Transport",
+              "note_contextuelle": "Course retour de la dernière visite autorisée au Louvre le 10 juin"
+            },
+            {
+              "date": "2025-06-09T10:00:00",
+              "libelle": "VIR REÇU GARNIER MARTINE — BISOUS MON GRAND",
+              "montant": 200.0,
+              "solde_apres": -746.85,
+              "categorie": "Virement reçu",
+              "note_contextuelle": "Virement de sa mère — libellé affectueux typique de Martine"
+            },
+            {
+              "date": "2025-06-07T19:55:00",
+              "libelle": "UBER EATS PARIS FR",
+              "montant": -16.7,
+              "solde_apres": -946.85,
+              "categorie": "Restauration"
+            },
+            {
+              "date": "2025-06-06T21:38:00",
+              "libelle": "UBER PARIS FR — BASTILLE → MONTREUIL",
+              "montant": -14.2,
+              "solde_apres": -930.15,
+              "categorie": "Transport",
+              "note_contextuelle": "Course vers Montreuil — deuxième réunion de l'équipe chez Nadia"
+            },
+            {
+              "date": "2025-06-05T08:45:00",
+              "libelle": "Netflix FR",
+              "montant": -8.99,
+              "solde_apres": -915.95,
+              "categorie": "Abonnement",
+              "note_contextuelle": "Profil 'Hugo 🚀' actif sur le compte"
+            },
+            {
+              "date": "2025-06-02T16:10:00",
+              "libelle": "UBER PARIS FR — BASTILLE → GENNEVILLIERS",
+              "montant": -22.8,
+              "solde_apres": -906.96,
+              "categorie": "Transport",
+              "note_contextuelle": "Course vers la zone industrielle de Gennevilliers — repérage de l'entrepôt de transfert"
+            },
+            {
+              "date": "2025-06-01T08:00:00",
+              "libelle": "PRELEVEMENT PENSION ALIMENTAIRE HUGO — REJETÉ",
+              "montant": 0.0,
+              "solde_apres": -884.16,
+              "statut": "REJETÉ — PROVISION INSUFFISANTE",
+              "categorie": "Pension alimentaire",
+              "note_contextuelle": "Deuxième mois consécutif de rejet — alimente la menace juridique de Claire"
+            },
+            {
+              "date": "2025-06-01T08:00:00",
+              "libelle": "LOYER JUIN — SCI BASTILLE HABITAT — REJETÉ",
+              "montant": 0.0,
+              "solde_apres": -884.16,
+              "statut": "REJETÉ — PROVISION INSUFFISANTE",
+              "categorie": "Loyer",
+              "note_contextuelle": "Troisième mois consécutif de loyer rejeté"
+            },
+            {
+              "date": "2025-05-28T14:33:00",
+              "libelle": "PHARMACIE DU MARAIS",
+              "montant": -6.2,
+              "solde_apres": -884.16,
+              "categorie": "Santé"
+            },
+            {
+              "date": "2025-05-26T10:15:00",
+              "libelle": "VIR REÇU DUVAL CLAIRE — HUGO CHAUSSURES",
+              "montant": 85.0,
+              "solde_apres": -877.96,
+              "categorie": "Virement reçu",
+              "note_contextuelle": "Claire envoie de l'argent fléché pour Hugo — inversion des rôles financiers humiliante pour Mathieu"
+            },
+            {
+              "date": "2025-05-24T16:40:00",
+              "libelle": "DECATHLON BERCY CB****8234",
+              "montant": -34.9,
+              "solde_apres": -962.96,
+              "categorie": "Loisirs",
+              "note_contextuelle": "Achat pour Hugo — week-end de garde"
+            },
+            {
+              "date": "2025-05-22T09:00:00",
+              "libelle": "VIR REÇU GARNIER MARTINE — POUR TE DEPANNER",
+              "montant": 150.0,
+              "solde_apres": -928.06,
+              "categorie": "Virement reçu"
+            },
+            {
+              "date": "2025-05-19T11:20:00",
+              "libelle": "UBER PARIS FR",
+              "montant": -9.6,
+              "solde_apres": -1078.06,
+              "categorie": "Transport"
+            },
+            {
+              "date": "2025-05-17T14:05:00",
+              "libelle": "PICARD BASTILLE",
+              "montant": -12.4,
+              "solde_apres": -1068.46,
+              "categorie": "Alimentation"
+            },
+            {
+              "date": "2025-05-15T20:32:00",
+              "libelle": "UBER EATS PARIS FR",
+              "montant": -21.5,
+              "solde_apres": -1056.06,
+              "categorie": "Restauration",
+              "note_contextuelle": "Soir de la découverte du système Prosegur — commande de réconfort après le stress"
+            },
+            {
+              "date": "2025-05-12T09:00:00",
+              "libelle": "VIR REÇU GARNIER MARTINE — COURAGE",
+              "montant": 150.0,
+              "solde_apres": -1034.56,
+              "categorie": "Virement reçu"
+            },
+            {
+              "date": "2025-05-10T13:12:00",
+              "libelle": "UBER PARIS FR — BASTILLE → LOUVRE",
+              "montant": -8.9,
+              "solde_apres": -1184.56,
+              "categorie": "Transport"
+            },
+            {
+              "date": "2025-05-07T19:00:00",
+              "libelle": "SPOTIFY PREMIUM",
+              "montant": -10.99,
+              "solde_apres": -1175.66,
+              "categorie": "Abonnement"
+            },
+            {
+              "date": "2025-05-05T08:00:00",
+              "libelle": "PRELEVEMENT PENSION ALIMENTAIRE HUGO — REJETÉ",
+              "montant": 0.0,
+              "solde_apres": -1164.67,
+              "statut": "REJETÉ — PROVISION INSUFFISANTE",
+              "categorie": "Pension alimentaire",
+              "note_contextuelle": "Premier rejet de pension — déclenche la procédure de Claire"
+            },
+            {
+              "date": "2025-05-05T08:00:00",
+              "libelle": "LOYER MAI — SCI BASTILLE HABITAT — REJETÉ",
+              "montant": 0.0,
+              "solde_apres": -1164.67,
+              "statut": "REJETÉ — PROVISION INSUFFISANTE",
+              "categorie": "Loyer"
+            },
+            {
+              "date": "2025-05-02T10:45:00",
+              "libelle": "MUSEE DU LOUVRE — PASS ANNUEL",
+              "montant": -70.0,
+              "solde_apres": -1164.67,
+              "categorie": "Loisirs",
+              "note_contextuelle": "Achat du pass annuel pour les repérages — sur instruction de Nadia"
+            },
+            {
+              "date": "2025-04-30T08:00:00",
+              "libelle": "VIR REÇU STUDIO BELVÉDÈRE — FACTURE 2025-018",
+              "montant": 480.0,
+              "solde_apres": -1094.67,
+              "categorie": "Revenu professionnel",
+              "note_contextuelle": "Dernier paiement freelance reçu — client Studio Belvédère, maquettes packaging"
+            },
+            {
+              "date": "2025-04-25T19:32:00",
+              "libelle": "UBER PARIS FR — BASTILLE → MONTREUIL",
+              "montant": -16.4,
+              "solde_apres": -1574.67,
+              "categorie": "Transport",
+              "note_contextuelle": "Course vers Montreuil — première réunion de l'équipe chez Nadia"
+            },
+            {
+              "date": "2025-04-24T14:18:00",
+              "libelle": "AMAZON FR — COMMANDE #402-7891453",
+              "montant": -899.0,
+              "solde_apres": -1558.27,
+              "categorie": "Achats en ligne",
+              "note_contextuelle": "Achat du Ricoh GR III — appareil compact pour les photos de repérage, sur instruction Signal de Nadia"
+            },
+            {
+              "date": "2025-04-22T08:00:00",
+              "libelle": "VIR REÇU GARNIER MARTINE — BON ANNIVERSAIRE EN RETARD 😘",
+              "montant": 300.0,
+              "solde_apres": -659.27,
+              "categorie": "Virement reçu"
+            },
+            {
+              "date": "2025-04-18T10:45:00",
+              "libelle": "CAFÉ DE FLORE CB****8234",
+              "montant": -9.4,
+              "solde_apres": -959.27,
+              "categorie": "Restauration",
+              "note_contextuelle": "Café avec Nadia — présentation du projet réel, 40 000 € proposés"
+            },
+            {
+              "date": "2025-04-14T08:00:00",
+              "libelle": "LOYER AVRIL — SCI BASTILLE HABITAT — REJETÉ",
+              "montant": 0.0,
+              "solde_apres": -949.87,
+              "statut": "REJETÉ — PROVISION INSUFFISANTE",
+              "categorie": "Loyer",
+              "note_contextuelle": "Premier mois de loyer rejeté"
+            },
+            {
+              "date": "2025-04-08T20:55:00",
+              "libelle": "LE CHARDENOUX OBERKAMPF CB****8234",
+              "montant": -38.0,
+              "solde_apres": -949.87,
+              "categorie": "Restauration",
+              "note_contextuelle": "Dîner à Oberkampf — Vincent présente Nadia à Mathieu"
+            },
+            {
+              "date": "2025-04-05T08:00:00",
+              "libelle": "PRELEVEMENT PENSION ALIMENTAIRE HUGO",
+              "montant": -450.0,
+              "solde_apres": -911.87,
+              "categorie": "Pension alimentaire",
+              "note_contextuelle": "Dernier prélèvement pension réussi — avril"
+            },
+            {
+              "date": "2025-04-01T08:00:00",
+              "libelle": "LOYER AVRIL — SCI BASTILLE HABITAT",
+              "montant": -780.0,
+              "solde_apres": -461.87,
+              "categorie": "Loyer",
+              "note_contextuelle": "Dernier loyer prélevé avec succès — le compte bascule ensuite"
+            },
+            {
+              "date": "2025-03-31T08:00:00",
+              "libelle": "VIR REÇU ATELIER GRAPHIQUE MOREL — FACTURE 2025-012",
+              "montant": 650.0,
+              "solde_apres": 318.13,
+              "categorie": "Revenu professionnel",
+              "note_contextuelle": "Paiement d'un ancien client — dernière période de solvabilité"
+            },
+            {
+              "date": "2025-03-28T16:20:00",
+              "libelle": "GALERIE PERROTIN CB****8234",
+              "montant": -15.0,
+              "solde_apres": -331.87,
+              "categorie": "Loisirs",
+              "note_contextuelle": "Consommation au vernissage où Mathieu retrouve Vincent Morel"
+            },
+            {
+              "date": "2025-03-20T21:15:00",
+              "libelle": "LE BOUILLON CHARTIER CB****8234",
+              "montant": -22.5,
+              "solde_apres": -346.87,
+              "categorie": "Restauration",
+              "note_contextuelle": "Dîner après le vernissage Perrotin — retrouvailles avec Vincent"
+            }
+          ],
+          "operations_a_venir": [
+            {
+              "date_prevue": "2025-06-18",
+              "libelle": "LOYER JUILLET — SCI BASTILLE HABITAT (prévisionnel)",
+              "montant_prevu": -780.0,
+              "statut": "PROVISION INSUFFISANTE — REJET PROBABLE",
+              "categorie": "Loyer"
+            },
+            {
+              "date_prevue": "2025-07-05",
+              "libelle": "PRELEVEMENT PENSION ALIMENTAIRE HUGO (prévisionnel)",
+              "montant_prevu": -450.0,
+              "statut": "PROVISION INSUFFISANTE — REJET PROBABLE",
+              "categorie": "Pension alimentaire"
+            }
+          ],
+          "notifications_bancaires": [
+            {
+              "date": "2025-06-15T08:02:00",
+              "type": "alerte_solde",
+              "message": "Votre solde est de -847,32 €. Vous approchez votre limite de découvert autorisé (-900,00 €). Pensez à alimenter votre compte."
+            },
+            {
+              "date": "2025-06-13T08:00:00",
+              "type": "alerte_solde",
+              "message": "Votre solde est de -795,90 €. Découvert autorisé : -900,00 €."
+            },
+            {
+              "date": "2025-06-01T08:05:00",
+              "type": "rejet_prelevement",
+              "message": "Le prélèvement PENSION ALIMENTAIRE HUGO de 450,00 € a été rejeté pour provision insuffisante. Contactez votre conseillère."
+            },
+            {
+              "date": "2025-06-01T08:03:00",
+              "type": "rejet_prelevement",
+              "message": "Le prélèvement LOYER JUIN — SCI BASTILLE HABITAT de 780,00 € a été rejeté pour provision insuffisante."
+            },
+            {
+              "date": "2025-05-22T10:30:00",
+              "type": "message_conseillere",
+              "message": "Bonjour M. Garnier, suite aux rejets de prélèvements constatés sur votre compte, je souhaiterais faire un point avec vous. Merci de me contacter au 01 43 47 XX XX. Cordialement, A. Fontaine."
+            },
+            {
+              "date": "2025-05-05T08:04:00",
+              "type": "rejet_prelevement",
+              "message": "Le prélèvement PENSION ALIMENTAIRE HUGO de 450,00 € a été rejeté pour provision insuffisante."
+            },
+            {
+              "date": "2025-05-05T08:02:00",
+              "type": "rejet_prelevement",
+              "message": "Le prélèvement LOYER MAI — SCI BASTILLE HABITAT de 780,00 € a été rejeté pour provision insuffisante."
+            },
+            {
+              "date": "2025-04-24T14:20:00",
+              "type": "alerte_solde",
+              "message": "Paiement carte de 899,00 € (AMAZON FR). Votre nouveau solde est de -1 558,27 €. Vous avez dépassé votre découvert autorisé."
+            },
+            {
+              "date": "2025-04-14T08:05:00",
+              "type": "rejet_prelevement",
+              "message": "Le prélèvement LOYER AVRIL — SCI BASTILLE HABITAT de 780,00 € a été rejeté pour provision insuffisante. Des frais de rejet de 20,00 € seront débités."
+            }
+          ],
+          "messagerie_interne_banque": [
+            {
+              "date": "2025-06-10T14:15:00",
+              "expediteur": "Mathieu Garnier",
+              "destinataire": "Mme Audrey Fontaine — Conseillère",
+              "objet": "Re: Point sur votre situation",
+              "contenu": "Bonjour Mme Fontaine, je vous remercie pour votre message. Je suis en attente du règlement d'un contrat important qui devrait arriver avant fin juin. Est-il possible de maintenir le découvert en l'état jusqu'à cette date ? Cordialement, M. Garnier"
+            },
+            {
+              "date": "2025-06-10T16:42:00",
+              "expediteur": "Mme Audrey Fontaine — Conseillère",
+              "destinataire": "Mathieu Garnier",
+              "objet": "Re: Re: Point sur votre situation",
+              "contenu": "Bonjour M. Garnier, je prends note de votre situation. Votre découvert autorisé est maintenu à -900 € mais je vous informe que tout dépassement supplémentaire entraînera des agios au taux de 16,20 % et des frais d'incident. Il serait souhaitable de régulariser la situation rapidement. Je reste à votre disposition. Cordialement, A. Fontaine"
+            },
+            {
+              "date": "2025-05-23T09:10:00",
+              "expediteur": "Mme Audrey Fontaine — Conseillère",
+              "destinataire": "Mathieu Garnier",
+              "objet": "Point sur votre situation",
+              "contenu": "Bonjour M. Garnier, j'ai essayé de vous joindre par téléphone sans succès. Votre compte présente un dépassement de découvert depuis le 24 avril et deux prélèvements ont été rejetés en mai (loyer et pension alimentaire). Pouvez-vous me contacter rapidement afin que nous trouvions une solution ? Cordialement, A. Fontaine"
+            },
+            {
+              "date": "2025-04-25T11:00:00",
+              "expediteur": "Mathieu Garnier",
+              "destinataire": "Mme Audrey Fontaine — Conseillère",
+              "objet": "Dépassement découvert — achat exceptionnel",
+              "contenu": "Bonjour, je vous écris au sujet du dépassement de découvert suite à un achat de matériel professionnel (appareil photo pour un contrat en cours). Un paiement client est attendu sous 3 semaines. Merci de votre compréhension. Cordialement, M. Garnier"
+            }
+          ],
+          "virements_programmes": [],
+          "beneficiaires_enregistres": [
+            {
+              "nom": "Claire Duval",
+              "iban_partiel": "FR76 ****  **** 4821",
+              "libelle_habituel": "Pension Hugo"
+            },
+            {
+              "nom": "SCI Bastille Habitat",
+              "iban_partiel": "FR76 ****  **** 7703",
+              "libelle_habituel": "Loyer"
+            },
+            {
+              "nom": "Martine Garnier",
+              "iban_partiel": "FR76 ****  **** 1156",
+              "libelle_habituel": "Maman"
+            }
+          ],
+          "synthese_financiere": {
+            "revenus_3_derniers_mois": {
+              "mars": 650.0,
+              "avril": 480.0,
+              "mai": 0.0,
+              "juin": 0.0,
+              "source_principale": "Freelance graphisme — irrégulier",
+              "aide_famille": "Virements Martine Garnier : 200 € (mars), 300 € (avril), 150+150 € (mai), 200 € (juin) = 1 000 € sur 3 mois"
+            },
+            "charges_fixes_mensuelles": {
+              "loyer": 780.0,
+              "pension_alimentaire": 450.0,
+              "netflix": 8.99,
+              "spotify": 10.99,
+              "free_mobile": 19.99,
+              "total_estimé": 1283.46
+            },
+            "situation": "Insolvabilité progressive depuis avril 2025. Revenus freelance taris. Survie financière assurée par les virements maternels. Trois mois de loyer impayé, deux mois de pension alimentaire impayée. Dépassement de découvert chronique. Le compte ne peut pas absorber les charges fixes."
+          }
+        },
+        "cross_apps_refs": [
+          {
+            "id": "cross_01",
+            "ref": "L'achat incongru",
+            "detail": "L'opération Amazon du 24/04 à 899 € (Ricoh GR III) apparaît sur un compte déjà à -659,27 €, provoquant un dépassement de découvert à -1 558,27 €. L'alerte bancaire immédiate ('Vous avez dépassé votre découvert autorisé') et le message de Mathieu à sa conseillère ('achat de matériel professionnel pour un contrat en cours') recoupent le mail Amazon (confirmation commande Ricoh GR III) et le message Signal de Nadia ('achète-toi un petit compact, pas de photos avec ton tel dans les salles chaudes'). Le mensonge à la banque ('contrat en cours') est le même que celui fait à Claire et à Maman."
+          },
+          {
+            "id": "cross_mensonge_02",
+            "ref": "Le mensonge de la pension",
+            "detail": "Les deux rejets de pension (mai et juin) visibles dans les opérations et notifications recoupent le SMS de Claire ('Si la pension n'est pas régularisée avant le 30 juin, on demande une révision de la garde') et la note dans Notes ('40K - impôts ? → loyer x3 + pension x2 + avance = ~8K → reste 32K → Hugo OK'). Le calcul de Mathieu dans Notes correspond exactement aux montants visibles dans LCL : 3 × 780 € (loyer) + 2 × 450 € (pension) = 3 240 €, arrondi à ~8K avec les frais, agios et avances."
+          },
+          {
+            "id": "cross_uber_reunions",
+            "ref": "Les courses vers Montreuil et Gennevilliers",
+            "detail": "Les deux courses Uber Bastille → Montreuil (25/04 à 16,40 € et 06/06 à 14,20 €) recoupent les entrées calendrier ('Dîner chez N. — Montreuil'), les courses Uber dans l'app Uber, et la photo de pizza avec le plan architectural en arrière-plan (Photos). La course Bastille → Gennevilliers du 02/06 à 22,80 € recoupe le trajet Google Maps vers la zone industrielle et le message WhatsApp de Sam ('C'est bon pour le local. Propre, discret, accès camionnette facile')."
+          },
+          {
+            "id": "cross_cafe_flore",
+            "ref": "Le café de la proposition",
+            "detail": "Le paiement Café de Flore du 18/04 à 9,40 € recoupe le SMS de Nadia ('Dispo pour un café cette semaine ?'), le trajet Google Maps vers le Café de Flore, et la note dans Notes ('Projet N. — 40K — réfléchir') datée du même jour. C'est le moment où Mathieu apprend la nature réelle du projet."
+          },
+          {
+            "id": "cross_pass_louvre",
+            "ref": "Le pass annuel du repéreur",
+            "detail": "L'achat du pass annuel Louvre le 02/05 à 70 € recoupe le mail de confirmation du Louvre, le message Signal de Nadia ('Prends un abonnement là-bas. Familiarise-toi'), et la première entrée calendrier 'Louvre — recherche visuelle'. Le pass permet 11 visites de repérage sur 5 semaines sans acheter de billets individuels traçables."
+          },
+          {
+            "id": "cross_vernissage_perrotin",
+            "ref": "Les retrouvailles fondatrices",
+            "detail": "Le paiement Galerie Perrotin du 28/03 (15 €) et le dîner au Bouillon Chartier le 20/03 (22,50 €) recoupent la chronologie du canon : Mathieu retrouve Vincent Morel lors d'un vernissage à la galerie Perrotin le 20 mars. Le paiement Atelier Graphique Morel du 31/03 (650 €) confirme un lien professionnel préexistant avec un 'Morel' — possiblement le même réseau, ou une coïncidence qui enrichit l'ambiguïté."
+          },
+          {
+            "id": "cross_claire_inversion",
+            "ref": "Le virement humiliant de Claire",
+            "detail": "Le virement reçu de Claire Duval le 26/05 (85 € — libellé 'HUGO CHAUSSURES') recoupe les échanges Messages avec Claire et la dynamique de pouvoir inversée : c'est l'ex-femme à qui Mathieu doit une pension qui lui envoie de l'argent fléché pour leur fils. Ce détail recoupe la tension visible dans les SMS ('Tu dis ça à chaque fois') et le mail de l'avocat."
+          },
+          {
+            "id": "cross_maman_survie",
+            "ref": "Le filet maternel",
+            "detail": "Les quatre virements de Martine Garnier (mars à juin, total 1 000 €) avec leurs libellés affectueux ('BISOUS MON GRAND', 'POUR TE DEPANNER', 'COURAGE') recoupent les messages WhatsApp Maman où Mathieu minimise sa situation ('J'ai un gros projet en ce moment, ça me prend du temps mais c'est bien payé 😊'). Martine envoie de l'argent régulièrement — elle sait que son fils est en difficulté malgré ses mensonges."
+          },
+          {
+            "id": "cross_conseillere_mensonge",
+            "ref": "Le mensonge à la banque",
+            "detail": "Le message de Mathieu à sa conseillère le 10/06 ('en attente du règlement d'un contrat important qui devrait arriver avant fin juin') est une version du même mensonge fait à Claire, Maman et Julien. Le 'contrat important' est le braquage. La date 'avant fin juin' correspond à la deadline de l'avocat de Claire (30 juin) et au braquage (18 juin). La conseillère répond professionnellement sans savoir qu'elle participe involontairement au maintien de la couverture."
+          },
+          {
+            "id": "cross_decathlon_hugo",
+            "ref": "Le père qui dépense pour son fils",
+            "detail": "L'achat Decathlon Bercy du 24/05 (34,90 €) alors que le compte est à -962,96 € recoupe les messages tendres avec Hugo 💙 et le week-end de garde. Mathieu dépense pour Hugo même quand il ne peut pas se le permettre. Ce détail recoupe la note 'Pour Hugo' du 14 juin et la motivation fondamentale du personnage : tout ce qu'il fait, y compris le braquage, est pour garder son fils."
+          }
+        ],
+        "traces_narratives": [
+          {
+            "id": "trace_spirale",
+            "description": "La chronologie des opérations dessine une spirale descendante lisible mois par mois : en mars, le solde oscille autour de zéro avec des revenus freelance réguliers. En avril, l'achat du Ricoh (899 €) fait basculer le compte en dépassement de découvert. En mai, les revenus freelance tombent à zéro et les prélèvements commencent à être rejetés. En juin, le compte est maintenu artificiellement par les virements maternels. Le joueur peut reconstituer visuellement la dégradation financière qui pousse Mathieu vers le braquage.",
+            "phase_decouverte": "Phase 1 — établit la détresse financière comme fait objectif, pas comme déclaration du personnage"
+          },
+          {
+            "id": "trace_ricoh_bascule",
+            "description": "L'achat Amazon à 899 € du 24 avril est l'opération la plus incongrue du relevé : un homme dont le loyer est rejeté achète un appareil photo haut de gamme. L'alerte bancaire immédiate et le message à la conseillère ('matériel professionnel pour un contrat') créent un micro-récit de justification. Le joueur qui a lu le message Signal de Nadia ('achète-toi un petit compact') comprend que cet achat est le premier acte concret de participation au braquage — le moment où Mathieu passe de la réflexion ('40K — réfléchir') à l'action.",
+            "phase_decouverte": "Transition phase 1 → phase 2"
+          },
+          {
+            "id": "trace_pension_rejetee",
+            "description": "Les deux rejets de pension alimentaire (mai et juin), affichés en rouge avec le statut 'REJETÉ — PROVISION INSUFFISANTE', sont les opérations les plus chargées émotionnellement du relevé. Chaque rejet est un échec paternel documenté par la banque. Le joueur peut les recouper avec le SMS de Claire ('Si la pension n'est pas régularisée avant le 30 juin'), le mail de l'avocat, et le calcul dans Notes. La pension Hugo est à la fois la cause de la menace juridique et le moteur du braquage.",
+            "phase_decouverte": "Phase 1-2 — ancrage émotionnel"
+          },
+          {
+            "id": "trace_maman_libelles",
+            "description": "Les libellés des virements de Martine Garnier sont des micro-messages d'amour maternel inscrits dans le système bancaire : 'BISOUS MON GRAND', 'POUR TE DEPANNER', 'COURAGE', 'BON ANNIVERSAIRE EN RETARD 😘'. Ils contrastent avec la froideur administrative des rejets de prélèvement et révèlent une mère qui aide son fils sans poser de questions — ou qui n'ose pas en poser. Le joueur qui lit les WhatsApp avec Maman ('c'est bien payé 😊') comprend que Martine envoie de l'argent malgré les mensonges de Mathieu, pas à cause d'eux.",
+            "phase_decouverte": "Phase 1 — humanisation"
+          },
+          {
+            "id": "trace_uber_cartographie",
+            "description": "Les courses Uber forment une cartographie involontaire des lieux du braquage : Bastille (domicile), Louvre (cible), Montreuil (QG de Nadia), Gennevilliers (entrepôt de transfert). Le joueur qui recoupe ces destinations avec Google Maps, le calendrier et les conversations WhatsApp/Signal peut reconstituer le réseau géographique de l'opération. La course vers Gennevilliers du 2 juin est particulièrement révélatrice quand elle est croisée avec le message de Sam.",
+            "phase_decouverte": "Phase 2-3 — reconstitution du plan"
+          },
+          {
+            "id": "trace_revenus_zero",
+            "description": "L'absence totale de revenus freelance en mai et juin (dernier paiement client : Studio Belvédère le 30 avril, 480 €) contredit le mensonge du 'gros contrat' raconté à Claire, Maman et la conseillère bancaire. Le joueur peut vérifier dans les mails l'annulation de commande par un client en mai. Mathieu n'a aucune source de revenus légitime — les 40 000 € du braquage sont sa seule perspective financière. Ce vide dans les revenus est aussi éloquent que les messages Signal.",
+            "phase_decouverte": "Phase 2 — recoupement avec mensonge_01 et mensonge_02"
+          },
+          {
+            "id": "trace_claire_virement",
+            "description": "Le virement de 85 € de Claire Duval ('HUGO CHAUSSURES') est un détail douloureux : la femme à qui Mathieu doit 900 € de pension impayée lui envoie de l'argent pour acheter des chaussures à leur fils. L'inversion des rôles financiers — le débiteur reçoit de l'argent de sa créancière — concentre toute l'humiliation et l'impuissance de Mathieu. Ce virement n'est jamais mentionné dans les SMS entre Mathieu et Claire, ce qui suggère un malaise partagé.",
+            "phase_decouverte": "Phase 1-2 — profondeur émotionnelle"
+          },
+          {
+            "id": "trace_conseillere_ironie",
+            "description": "L'échange avec la conseillère bancaire Audrey Fontaine est un miroir ironique du braquage : Mathieu négocie le maintien de son découvert en promettant un 'contrat important avant fin juin'. La conseillère répond avec des formules professionnelles ('agios au taux de 16,20 %') sans savoir que le 'contrat' est un vol de tableau. Le joueur perçoit le décalage entre le langage bancaire normé et la réalité criminelle qu'il dissimule. La date 'avant fin juin' est la même que celle donnée à Claire — tout converge vers le 18 juin.",
+            "phase_decouverte": "Phase 2-3 — ironie dramatique"
+          },
+          {
+            "id": "trace_operations_prevues",
+            "description": "Les opérations à venir (loyer juillet et pension juillet, tous deux en 'REJET PROBABLE') montrent que même si le braquage réussit, l'argent ne transitera jamais par ce compte bancaire — 40 000 € en cash ou en crypto ne régularisent pas un compte LCL. Le joueur attentif réalise que le plan financier de Mathieu (la note '40K → loyer x3 + pension x2') est naïf : comment justifier 40 000 € d'origine inconnue auprès de sa banque, de Claire, de son avocat ? Le braquage ne résout pas le problème, il en crée de nouveaux.",
+            "phase_decouverte": "Phase 3 — lucidité du joueur vs aveuglement du personnage"
+          },
+          {
+            "id": "trace_cafe_matin_15",
+            "description": "La dernière opération du relevé — un café à 4,70 € chez Paul Bastille le matin du 15 juin à 7h42 — est la trace la plus banale et la plus poignante. Mathieu a pris un café-croissant avant d'aller au Louvre pour sa visite non autorisée, celle où il perdra son téléphone. Le joueur qui a lu la note du 14 juin ('Demain matin : vérifier écart ronde PM/soir. Dernier point. Ensuite c'est fini. Pour Hugo.') peut imaginer Mathieu assis chez Paul, mangeant son croissant, convaincu que c'est la dernière fois. Le café à 4,70 € est le dernier geste normal avant que tout bascule.",
+            "phase_decouverte": "Phase 4 — résonance émotionnelle finale"
+          }
+        ]
       }
     }
   },
@@ -8140,7 +8139,7 @@
       {
         "id": "sv_023",
         "type": "notification",
-        "app": "Crédit Agricole",
+        "app": "Banque",
         "condition": "delay_60min",
         "contenu": {
           "expediteur": "LCL",
@@ -8587,7 +8586,7 @@
       {
         "id": "sv_023",
         "type": "notification",
-        "app": "Crédit Agricole",
+        "app": "Banque",
         "condition": "delay_60min",
         "contenu": {
           "expediteur": "LCL",

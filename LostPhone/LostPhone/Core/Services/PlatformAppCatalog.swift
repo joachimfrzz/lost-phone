@@ -74,7 +74,7 @@ enum PlatformAppCatalog {
 
         // ——— Templates tiers (file dev J-3) ———
         Entry(lpspKey: "Uber", template: .rideHailing, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone Reddit 264Gaurav/UBER-ios + Activité LPSP"),
-        Entry(lpspKey: "Banque", template: .bank, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspBanqueView · pixel polish · solde + opérations"),
+        Entry(lpspKey: "Banque", template: .bank, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone GeraudLuku/YT-BankingApp + opérations LPSP J-3"),
         Entry(lpspKey: "Plans", template: .maps, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspPlansView · pixel polish · carte + trajets"),
         Entry(lpspKey: "Fichiers", template: .files, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspFichiersView · pixel polish · parcourir + supprimés"),
         Entry(lpspKey: "Rappels", template: .reminders, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone azamsharp/RemindersClone + listes LPSP J-3"),

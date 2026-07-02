@@ -30,7 +30,7 @@ struct LpspWhatsAppView: View {
                     .listStyle(.plain)
                 }
             }
-            .navigationTitle("WhatsApp")
+            .navigationTitle(LpspAppCatalog.displayName("WhatsApp"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(headerGreen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)

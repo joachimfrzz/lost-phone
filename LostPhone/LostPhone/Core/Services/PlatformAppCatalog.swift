@@ -80,7 +80,7 @@ enum PlatformAppCatalog {
         Entry(lpspKey: "Rappels", template: .reminders, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspRappelsView · pixel polish · listes iOS"),
         Entry(lpspKey: "Instagram", template: .socialFeed, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone NDCSwift/InstagramRecreation2 + profil LPSP"),
         Entry(lpspKey: "Spotify", template: .streamingMusic, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspSpotifyView · pixel polish · accueil sombre"),
-        Entry(lpspKey: "Netflix", template: .streamingVideo, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspNetflixView · pixel polish · profils + continue"),
+        Entry(lpspKey: "Netflix", template: .streamingVideo, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone debuging-life/netflix-clone + LPSP profils/Reprendre"),
 
         // ——— Extension templates (après ancres ci-dessus) ———
         Entry(lpspKey: "Bolt", template: .rideHailing, status: .planned, devPriority: 10, fidelity: .high, notes: "Même UI qu'Uber · branding Bolt"),

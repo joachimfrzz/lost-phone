@@ -280,6 +280,9 @@ extension LpspAdapters {
         var watching: [LpspNetflixItem] = []
         if let cw = root["continuer_a_regarder"]?.objectValue {
             for (profileName, items) in cw {
+                let displayName = profileName
+                    .replacingOccurrences(of: "profil_", with: "")
+                    .capitalized
                 for (i, raw) in (items.arrayValue ?? []).enumerated() {
                     let o = raw.objectValue ?? [:]
                     watching.append(LpspNetflixItem(
@@ -287,7 +290,7 @@ extension LpspAdapters {
                         title: o["titre"]?.stringValue ?? "",
                         kind: o["type"]?.stringValue ?? "",
                         progress: o["progression"]?.stringValue ?? "",
-                        profileName: profileName.replacingOccurrences(of: "profil_", with: "").capitalized
+                        profileName: displayName
                     ))
                 }
             }

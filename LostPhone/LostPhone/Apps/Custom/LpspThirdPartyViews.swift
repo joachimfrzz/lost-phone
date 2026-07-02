@@ -1046,10 +1046,6 @@ struct LpspInstagramView: View {
             .navigationTitle(LpspAppCatalog.displayName("Instagram"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Text(LpspAppCatalog.displayName("Instagram"))
-                        .font(.title3.weight(.bold))
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: 16) {
                         Image(systemName: "plus.app")
@@ -1602,7 +1598,8 @@ struct LpspNetflixView: View {
 
     private func filteredItems(_ items: [LpspNetflixItem]) -> [LpspNetflixItem] {
         guard let profile = selectedProfile else { return items }
-        return items.filter { $0.profileName.localizedCaseInsensitiveContains(profile.name.prefix(4)) || profile.name.contains($0.profileName) }
+        let key = profile.name.split(separator: " ").first.map { String($0).lowercased() } ?? profile.name.lowercased()
+        return items.filter { $0.profileName.lowercased().hasPrefix(key) || key.hasPrefix($0.profileName.lowercased()) }
     }
 
     private func progressFraction(_ progress: String) -> CGFloat {

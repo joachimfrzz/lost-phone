@@ -6,7 +6,7 @@
 ## Appetize (PC/Mac)
 
 - **Showroom** : menu → « Showroom — 14 apps Reddit » (sans PIN)
-- **J-3** : PIN **1503**
+- **J-3** : PIN **1503** — 18 apps (10 clones + WhatsApp/Signal + 8 tierces : Uber, Banque, Plans, Fichiers, Rappels, Instagram, Spotify, Netflix)
 - OS : **iOS 17.2**, Device : iPhone 14 Pro
 - Upload **`LostPhone-simulator.app.zip`** sans dézipper
 - NC / CC **désactivés** (pas de confusion avec le vrai iPhone)

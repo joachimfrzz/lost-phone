@@ -60,6 +60,10 @@ struct LpspAppIconView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 65, height: 65)
                         .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                } else if LpspBrandedAppIconContent.isBranded(appName) {
+                    LpspBrandedAppIconContent(appName: appName)
+                        .frame(width: 65, height: 65)
+                        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
                 } else {
                     RoundedRectangle(cornerRadius: 15, style: .continuous)
                         .fill(LpspAppCatalog.accentColor(for: appName).gradient)

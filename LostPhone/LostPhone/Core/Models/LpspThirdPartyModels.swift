@@ -93,6 +93,7 @@ struct LpspReminderList: Identifiable, Equatable, Hashable {
     let id: String
     let name: String
     let emoji: String
+    let colorName: String
     let items: [LpspReminderItem]
 }
 

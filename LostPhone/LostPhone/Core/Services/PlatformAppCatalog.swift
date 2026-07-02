@@ -77,7 +77,7 @@ enum PlatformAppCatalog {
         Entry(lpspKey: "Banque", template: .bank, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspBanqueView · pixel polish · solde + opérations"),
         Entry(lpspKey: "Plans", template: .maps, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspPlansView · pixel polish · carte + trajets"),
         Entry(lpspKey: "Fichiers", template: .files, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspFichiersView · pixel polish · parcourir + supprimés"),
-        Entry(lpspKey: "Rappels", template: .reminders, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspRappelsView · pixel polish · listes iOS"),
+        Entry(lpspKey: "Rappels", template: .reminders, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone azamsharp/RemindersClone + listes LPSP J-3"),
         Entry(lpspKey: "Instagram", template: .socialFeed, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone NDCSwift/InstagramRecreation2 + profil LPSP"),
         Entry(lpspKey: "Spotify", template: .streamingMusic, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspSpotifyView · pixel polish · accueil sombre"),
         Entry(lpspKey: "Netflix", template: .streamingVideo, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone debuging-life/netflix-clone + LPSP profils/Reprendre"),

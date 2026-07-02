@@ -198,6 +198,7 @@ extension LpspAdapters {
                 id: "list-\(listIndex)",
                 name: name,
                 emoji: o["icone"]?.stringValue ?? "📋",
+                colorName: o["couleur"]?.stringValue ?? "bleu",
                 items: items
             )
         }

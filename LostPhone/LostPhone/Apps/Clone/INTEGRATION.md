@@ -9,6 +9,13 @@ Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<
 - Entrée : `LpspUberView` → `UberRedditAppView`
 - LPSP : onglet **Activité** (`UberActivityTabView`)
 
+## Rappels (fait)
+
+- Dossier : `Apps/Clone/RappelsReddit/`
+- Source : https://github.com/azamsharp/RemindersClone
+- Entrée : `LpspRappelsView` → `RappelsRedditAppView`
+- Accueil liste iOS natif + cellules vendored du clone
+
 ## Apple Music (fait)
 
 - Dossier : `Apps/Clone/MyPlaylistsReddit/`
@@ -25,7 +32,7 @@ Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<
 | Banque | *(en attente)* | `BanqueReddit/` | ⏳ |
 | Plans | *(en attente)* | `PlansReddit/` | ⏳ |
 | Fichiers | *(en attente)* | `FichiersReddit/` | ⏳ |
-| Rappels | *(en attente)* | `RappelsReddit/` | ⏳ |
+| Rappels | azamsharp/RemindersClone | `RappelsReddit/` | ✅ Intégré |
 | Spotify | *(en attente)* | `SpotifyReddit/` | ⏳ |
 | Netflix | debuging-life/netflix-clone | `NetflixReddit/` | ✅ Intégré |
 | Apple Music | aisultanios/MyPlaylists | `MyPlaylistsReddit/` | ✅ Intégré |

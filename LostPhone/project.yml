@@ -22,6 +22,8 @@ targets:
         excludes:
           - "**/Info.plist"
           - "**/Resources/stories/**"
+          - "**/README.md"
+          - "**/INTEGRATION.md"
     resources:
       # Folder reference preserves stories/<id>/lpsp.json (avoids flattening duplicate lpsp.json).
       - path: LostPhone/Resources/stories

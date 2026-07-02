@@ -113,22 +113,41 @@ extension LpspAdapters {
     // MARK: - Fichiers
 
     static func fichiers(from payload: AnyCodable?) -> [LpspFileItem] {
-        guard let root = contentObject(payload),
-              let tree = root["arborescence"]?.objectValue else { return [] }
+        guard let root = contentObject(payload) else { return [] }
         var items: [LpspFileItem] = []
-        flattenFiles(node: tree, path: "", into: &items)
-        return items.sorted { $0.path < $1.path }
+        if let tree = root["arborescence"]?.objectValue {
+            flattenFiles(node: tree, path: "", into: &items)
+        }
+        if let deleted = root["fichier_recemment_supprime"]?.arrayValue {
+            for (i, raw) in deleted.enumerated() {
+                let f = raw.objectValue ?? [:]
+                items.append(LpspFileItem(
+                    id: "deleted-\(i)",
+                    name: f["nom"]?.stringValue ?? "fichier",
+                    path: "Récemment supprimés/",
+                    type: f["type"]?.stringValue ?? "PDF",
+                    size: f["taille"]?.stringValue ?? "",
+                    description: f["description"]?.stringValue ?? "",
+                    modifiedRaw: f["date_suppression"]?.stringValue ?? "",
+                    isDeleted: true
+                ))
+            }
+        }
+        return items.sorted { lhs, rhs in
+            if lhs.isDeleted != rhs.isDeleted { return !lhs.isDeleted }
+            return lhs.path < rhs.path
+        }
     }
 
     private static func flattenFiles(node: [String: AnyCodable], path: String, into items: inout [LpspFileItem]) {
         if let folders = node["iCloud Drive"]?.arrayValue {
             for folder in folders {
-                parseFolder(folder, path: path, into: &items)
+                parseFolder(folder, path: "iCloud Drive/", into: &items)
             }
         }
         for (key, value) in node where key != "iCloud Drive" {
             if let arr = value.arrayValue {
-                for folder in arr { parseFolder(folder, path: path + key + "/", into: &items) }
+                for folder in arr { parseFolder(folder, path: key + "/", into: &items) }
             }
         }
     }

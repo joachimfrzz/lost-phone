@@ -77,6 +77,7 @@ struct LpspFileItem: Identifiable, Equatable, Hashable {
     let size: String
     let description: String
     let modifiedRaw: String
+    var isDeleted: Bool = false
 }
 
 struct LpspReminderItem: Identifiable, Equatable, Hashable {

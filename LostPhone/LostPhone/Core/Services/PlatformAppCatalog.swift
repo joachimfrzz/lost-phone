@@ -73,14 +73,14 @@ enum PlatformAppCatalog {
         Entry(lpspKey: "Signal", template: .chat, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspSignalView — polish possible"),
 
         // ——— Templates tiers (file dev J-3) ———
-        Entry(lpspKey: "Uber", template: .rideHailing, status: .ready, devPriority: 0, fidelity: .high, notes: "LpspUberView · courses + détail"),
-        Entry(lpspKey: "Banque", template: .bank, status: .ready, devPriority: 0, fidelity: .high, notes: "LpspBanqueView · solde + opérations (ex Crédit Agricole)"),
-        Entry(lpspKey: "Plans", template: .maps, status: .ready, devPriority: 0, fidelity: .high, notes: "LpspPlansView · trajets + lieux (ex Google Maps)"),
-        Entry(lpspKey: "Fichiers", template: .files, status: .ready, devPriority: 0, fidelity: .high, notes: "LpspFichiersView · arborescence + preview"),
-        Entry(lpspKey: "Rappels", template: .reminders, status: .ready, devPriority: 0, fidelity: .high, notes: "LpspRappelsView · listes + cases"),
-        Entry(lpspKey: "Instagram", template: .socialFeed, status: .ready, devPriority: 0, fidelity: .high, notes: "LpspInstagramView · profil + grille"),
-        Entry(lpspKey: "Spotify", template: .streamingMusic, status: .ready, devPriority: 0, fidelity: .high, notes: "LpspSpotifyView · playlists + récent"),
-        Entry(lpspKey: "Netflix", template: .streamingVideo, status: .ready, devPriority: 0, fidelity: .medium, notes: "LpspNetflixView · profils + continue"),
+        Entry(lpspKey: "Uber", template: .rideHailing, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspUberView · pixel polish · courses + détail"),
+        Entry(lpspKey: "Banque", template: .bank, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspBanqueView · pixel polish · solde + opérations"),
+        Entry(lpspKey: "Plans", template: .maps, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspPlansView · pixel polish · carte + trajets"),
+        Entry(lpspKey: "Fichiers", template: .files, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspFichiersView · pixel polish · parcourir + supprimés"),
+        Entry(lpspKey: "Rappels", template: .reminders, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspRappelsView · pixel polish · listes iOS"),
+        Entry(lpspKey: "Instagram", template: .socialFeed, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspInstagramView · pixel polish · profil + grille"),
+        Entry(lpspKey: "Spotify", template: .streamingMusic, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspSpotifyView · pixel polish · accueil sombre"),
+        Entry(lpspKey: "Netflix", template: .streamingVideo, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspNetflixView · pixel polish · profils + continue"),
 
         // ——— Extension templates (après ancres ci-dessus) ———
         Entry(lpspKey: "Bolt", template: .rideHailing, status: .planned, devPriority: 10, fidelity: .high, notes: "Même UI qu'Uber · branding Bolt"),

@@ -306,9 +306,11 @@ extension LpspAdapters {
 
 private extension AnyCodable {
     var doubleValue: Double? {
-        if let d = value as? Double { return d }
-        if let i = value as? Int { return Double(i) }
-        if let s = stringValue { return Double(s.replacingOccurrences(of: ",", with: ".")) }
-        return nil
+        switch self {
+        case .double(let d): return d
+        case .int(let i): return Double(i)
+        case .string(let s): return Double(s.replacingOccurrences(of: ",", with: "."))
+        default: return nil
+        }
     }
 }

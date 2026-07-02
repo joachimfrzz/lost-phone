@@ -32,5 +32,7 @@
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Lost Phone affiche la carte Uber dans l'application tierce Uber.</string>
 </dict>
 </plist>

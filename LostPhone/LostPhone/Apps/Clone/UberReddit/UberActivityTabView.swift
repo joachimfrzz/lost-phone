@@ -1,62 +1,51 @@
 import SwiftUI
 
-// Clone Uber iOS — onglet Activité, détail course (read-only, LPSP).
+// MARK: - Activité (historique LPSP — complète le clone Reddit)
 
-struct LpspUberView: View {
+struct UberActivityTabView: View {
     let rides: [LpspRide]
     @State private var selected: LpspRide?
 
-    private let tabs: [TierIOSTabBar.Item] = [
-        .init(id: "home", icon: "house", label: "Accueil"),
-        .init(id: "services", icon: "square.grid.2x2", label: "Services"),
-        .init(id: "activity", icon: "clock", label: "Activité"),
-        .init(id: "account", icon: "person", label: "Compte"),
-    ]
-
     var body: some View {
-        TierCloneShell {
-            TierIOSTabBar(items: tabs, selected: "activity", accent: LpspThirdPartyBrand.uberBlack)
-        } content: {
-            NavigationStack {
-                Group {
-                    if rides.isEmpty {
-                        ContentUnavailableView("Uber", systemImage: "car.fill", description: Text("Aucune course"))
-                    } else {
-                        List {
-                            ForEach(LpspThirdPartyGrouping.byDay(rides) { $0.date }, id: \.0) { section, items in
-                                Section {
-                                    ForEach(items) { ride in
-                                        Button { selected = ride } label: {
-                                            UberActivityRow(ride: ride)
-                                        }
-                                        .buttonStyle(.plain)
-                                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+        NavigationStack {
+            Group {
+                if rides.isEmpty {
+                    ContentUnavailableView("Uber", systemImage: "car.fill", description: Text("Aucune course"))
+                } else {
+                    List {
+                        ForEach(LpspThirdPartyGrouping.byDay(rides) { $0.date }, id: \.0) { section, items in
+                            Section {
+                                ForEach(items) { ride in
+                                    Button { selected = ride } label: {
+                                        UberActivityRow(ride: ride)
                                     }
-                                } header: {
-                                    Text(section.uppercased())
-                                        .font(.footnote.weight(.semibold))
-                                        .foregroundStyle(.secondary)
+                                    .buttonStyle(.plain)
+                                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                                 }
+                            } header: {
+                                Text(section.uppercased())
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(.secondary)
                             }
                         }
-                        .listStyle(.plain)
                     }
+                    .listStyle(.plain)
                 }
-                .background(Color(uiColor: .systemBackground))
-                .navigationTitle("Activité")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {} label: {
-                            Image(systemName: "questionmark.circle")
-                                .foregroundStyle(.secondary)
-                        }
-                        .disabled(true)
+            }
+            .background(Color(uiColor: .systemBackground))
+            .navigationTitle("Activité")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {} label: {
+                        Image(systemName: "questionmark.circle")
+                            .foregroundStyle(.secondary)
                     }
+                    .disabled(true)
                 }
-                .navigationDestination(item: $selected) { ride in
-                    UberTripDetailView(ride: ride)
-                }
+            }
+            .navigationDestination(item: $selected) { ride in
+                UberTripDetailView(ride: ride)
             }
         }
     }

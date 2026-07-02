@@ -20,7 +20,7 @@ Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<
 | Fichiers | *(en attente)* | `FichiersReddit/` | ⏳ |
 | Rappels | *(en attente)* | `RappelsReddit/` | ⏳ |
 | Spotify | *(en attente)* | `SpotifyReddit/` | ⏳ |
-| Netflix | *(en attente)* | `NetflixReddit/` | ⏳ |
+| Netflix | debuging-life/netflix-clone | `NetflixReddit/` | ✅ Intégré |
 
 ## Règles d'intégration
 

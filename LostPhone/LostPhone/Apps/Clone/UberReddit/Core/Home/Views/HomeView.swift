@@ -2,7 +2,7 @@
 import Foundation
 import SwiftUI
 
-struct HomeView:View {
+struct UberRedditHomeView: View {
     @State private var mapState = MapViewState.noInput
     @EnvironmentObject var viewModel : LocationSearchViewModel
     
@@ -50,5 +50,5 @@ struct HomeView:View {
 
 
 #Preview {
-    HomeView()
+    UberRedditHomeView()
 }

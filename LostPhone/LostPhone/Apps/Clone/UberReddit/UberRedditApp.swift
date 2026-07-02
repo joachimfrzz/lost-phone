@@ -20,7 +20,7 @@ struct UberRedditAppView: View {
             Group {
                 switch selectedTab {
                 case "home":
-                    HomeView()
+                    UberRedditHomeView()
                         .environmentObject(locationViewModel)
                 case "activity":
                     UberActivityTabView(rides: rides)

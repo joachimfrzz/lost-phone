@@ -9,6 +9,13 @@ Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<
 - Entrée : `LpspUberView` → `UberRedditAppView`
 - LPSP : onglet **Activité** (`UberActivityTabView`)
 
+## Banque (fait)
+
+- Dossier : `Apps/Clone/BanqueReddit/`
+- Source : https://github.com/GeraudLuku/YT-BankingApp
+- Entrée : `LpspBanqueView` → `BanqueRedditAppView`
+- Carrousel transactions + liste opérations LPSP J-3
+
 ## Rappels (fait)
 
 - Dossier : `Apps/Clone/RappelsReddit/`
@@ -29,7 +36,7 @@ Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<
 |-----|-----------------|---------------|--------|
 | Uber | 264Gaurav/UBER-ios | `UberReddit/` | ✅ Intégré |
 | Instagram | NDCSwift/InstagramRecreation2 | `InstagramReddit/` | ✅ Intégré |
-| Banque | *(en attente)* | `BanqueReddit/` | ⏳ |
+| Banque | GeraudLuku/YT-BankingApp | `BanqueReddit/` | ✅ Intégré |
 | Plans | *(en attente)* | `PlansReddit/` | ⏳ |
 | Fichiers | *(en attente)* | `FichiersReddit/` | ⏳ |
 | Rappels | azamsharp/RemindersClone | `RappelsReddit/` | ✅ Intégré |

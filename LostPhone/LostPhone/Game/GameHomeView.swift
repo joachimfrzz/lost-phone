@@ -72,12 +72,19 @@ struct GameHomeView: View {
 
                 Spacer(minLength: 48)
 
-                Text("Explorez le téléphone. Recoupez les indices. Ne modifiez rien.")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.35))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-                    .padding(.bottom, 24)
+                VStack(spacing: 8) {
+                    Text("Explorez le téléphone. Recoupez les indices. Ne modifiez rien.")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.35))
+                        .multilineTextAlignment(.center)
+
+                    Text(Fr.fictionDisclaimer)
+                        .font(.caption2)
+                        .foregroundStyle(.white.opacity(0.28))
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.horizontal, 40)
+                .padding(.bottom, 24)
             }
         }
     }

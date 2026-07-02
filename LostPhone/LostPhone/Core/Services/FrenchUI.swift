@@ -158,6 +158,10 @@ enum Fr {
     static let brightness = "Luminosité"
     static let volume = "Volume"
 
+    // Jeu / publication
+    static let fictionDisclaimer = "100 % fictif. Personnages et situations imaginaires. Non affilié à Apple ni aux applications citées."
+    static let fictionDisclaimerShort = "100 % fictif · Non affilié aux marques citées"
+
     // Centre de notifications
     static let noNotifications = "Aucune notification"
     static let notificationHint = "Les alertes du scénario apparaîtront ici."

@@ -11,7 +11,7 @@ enum LpspAppCatalog {
     }
 
     static func displayName(_ lpspName: String) -> String {
-        lpspName
+        AppBranding.displayName(for: lpspName)
     }
 
     static func accentColor(for lpspName: String) -> Color {

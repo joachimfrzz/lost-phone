@@ -29,7 +29,7 @@ struct LpspSignalView: View {
                     .listStyle(.plain)
                 }
             }
-            .navigationTitle("Signal")
+            .navigationTitle(LpspAppCatalog.displayName("Signal"))
             .navigationBarTitleDisplayMode(.large)
             .safeAreaInset(edge: .top, spacing: 0) {
                 if !conversations.isEmpty {

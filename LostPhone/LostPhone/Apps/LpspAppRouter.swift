@@ -213,7 +213,7 @@ struct GenericLpspAppView: View {
                     )
                 }
             }
-            .navigationTitle(appName)
+            .navigationTitle(LpspAppCatalog.displayName(appName))
         }
     }
 

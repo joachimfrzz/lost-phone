@@ -2,7 +2,7 @@
 import Foundation
 import SwiftUI
 
-struct UberRedditHomeView: View {
+struct UberRedditHomeView:View {
     @State private var mapState = MapViewState.noInput
     @EnvironmentObject var viewModel : LocationSearchViewModel
     
@@ -35,14 +35,11 @@ struct UberRedditHomeView: View {
             }
         }
         .edgesIgnoringSafeArea(.bottom)
-        .onReceive(UberCloneLocationManager.shared.$userLocation) { location in
-            if let location {
+        .onReceive(LocationManager.shared.$userLocation) {
+            location in
+            if let location = location{
+                Log("Debug: User location in home view is- \(location)")
                 viewModel.userLocation = location
-            }
-        }
-        .onAppear {
-            if viewModel.userLocation == nil {
-                viewModel.userLocation = UberCloneLocationManager.shared.userLocation
             }
         }
     }
@@ -50,5 +47,5 @@ struct UberRedditHomeView: View {
 
 
 #Preview {
-    UberRedditHomeView()
+    HomeView()
 }

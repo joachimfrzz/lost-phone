@@ -1,58 +1,31 @@
 # Intégration clones tiers (Reddit / GitHub)
 
-Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<Nom>/`**, brancher via le router LPSP.
+**Règle : copier le repo à l'identique** (comme Showroom zerocode117). Seuls renommages autorisés : conflits de types (`HomeView`, `ContentView`, …). LPSP branché plus tard.
 
-## Uber (fait)
+## Clones vendored (strict)
 
-- Dossier : `Apps/Clone/UberReddit/`
-- Source : https://github.com/264Gaurav/UBER-ios
-- Entrée : `LpspUberView` → `UberRedditAppView`
-- LPSP : onglet **Activité** (`UberActivityTabView`)
+| App | Source | Dossier | Entrée |
+|-----|--------|---------|--------|
+| Uber | 264Gaurav/UBER-ios | `UberReddit/` | `UberRedditHomeView()` |
+| Instagram | NDCSwift/InstagramRecreation2 | `InstagramReddit/` | `InstagramRedditContentView()` |
+| Netflix | debuging-life/netflix-clone | `NetflixReddit/` | `NetflixRedditContentView()` |
+| Apple Music | aisultanios/MyPlaylists | `MyPlaylistsReddit/` | `TabBar()` |
+| Rappels | azamsharp/RemindersClone | `RappelsReddit/` | `MyListsScreen()` |
+| Banque | GeraudLuku/YT-BankingApp | `BanqueReddit/` | `BanqueRedditContentView()` |
 
-## Banque (fait)
+## Règles
 
-- Dossier : `Apps/Clone/BanqueReddit/`
-- Source : https://github.com/GeraudLuku/YT-BankingApp
-- Entrée : `LpspBanqueView` → `BanqueRedditAppView`
-- Carrousel transactions + liste opérations LPSP J-3
+1. **Copier les fichiers Swift + assets** du repo GitHub tel quel.
+2. **Renommer uniquement les conflits** avec le reste de Lost Phone.
+3. **Ne pas toucher au Showroom** (`showroom-clone14`).
+4. **Ne pas réécrire l'UI** — pas de version « inspirée » ou simplifiée.
+5. **LPSP** : branchement narratif dans un second temps (onglet dédié ou injection).
+6. Exclure `README.md` / `INTEGRATION.md` du bundle (`project.yml`).
 
-## Rappels (fait)
+## File d'attente
 
-- Dossier : `Apps/Clone/RappelsReddit/`
-- Source : https://github.com/azamsharp/RemindersClone
-- Entrée : `LpspRappelsView` → `RappelsRedditAppView`
-- Accueil liste iOS natif + cellules vendored du clone
-
-## Apple Music (fait)
-
-- Dossier : `Apps/Clone/MyPlaylistsReddit/`
-- Source : https://github.com/aisultanios/MyPlaylists
-- Entrée : `LpspAppleMusicView` → `MyPlaylistsRedditAppView`
-- Distinct du clone Showroom `Musique` (`MusicView`)
-
-## File d'attente J-3
-
-| App | Clone à fournir | Dossier cible | Statut |
-|-----|-----------------|---------------|--------|
-| Uber | 264Gaurav/UBER-ios | `UberReddit/` | ✅ Intégré |
-| Instagram | NDCSwift/InstagramRecreation2 | `InstagramReddit/` | ✅ Intégré |
-| Banque | GeraudLuku/YT-BankingApp | `BanqueReddit/` | ✅ Intégré |
-| Plans | *(en attente)* | `PlansReddit/` | ⏳ |
-| Fichiers | *(en attente)* | `FichiersReddit/` | ⏳ |
-| Rappels | azamsharp/RemindersClone | `RappelsReddit/` | ✅ Intégré |
-| Spotify | *(en attente)* | `SpotifyReddit/` | ⏳ |
-| Netflix | debuging-life/netflix-clone | `NetflixReddit/` | ✅ Intégré |
-| Apple Music | aisultanios/MyPlaylists | `MyPlaylistsReddit/` | ✅ Intégré |
-
-## Règles d'intégration
-
-1. **Renommer les types en conflit** — préfixe `<App>Reddit` (ex. `UberRedditHomeView`, pas `HomeView` qui existe déjà dans `MusicApp`).
-2. **Ne pas toucher au Showroom** (`showroom-clone14`).
-3. **LPSP** — garder les écrans narratifs (historique courses, opérations banque, etc.) dans un onglet ou une vue dédiée branchée sur `LpspAdapters`.
-4. **Read-only** — respecter `@Environment(\.lpspReadOnly)` sur les actions (réserver, payer, envoyer).
-5. **Assets** — copier dans `Assets.xcassets` ou sous-dossier resources du clone.
-6. **README** dans chaque dossier clone : URL source + licence + adaptations Lost Phone.
-
-## Test final
-
-Tout l'histoire **J-3** (PIN 1503) sur Appetize une fois les 8 apps intégrées.
+| App | Statut |
+|-----|--------|
+| Plans | ⏳ |
+| Fichiers | ⏳ |
+| Spotify | ⏳ |

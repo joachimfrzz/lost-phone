@@ -42,6 +42,9 @@ issues = []
 pattern = re.compile(r'(?:static\s+)?func\s+\w+[^{]+\)\s*->\s*[^{]+\{\s*\n(\s*)let\s+')
 
 for path in sorted(root.rglob("*.swift")):
+    rel = path.relative_to(root).as_posix()
+    if rel.startswith("Apps/Clone/"):
+        continue
     text = path.read_text(encoding="utf-8")
     for m in pattern.finditer(text):
         start = m.start()

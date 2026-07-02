@@ -2,11 +2,11 @@ import Foundation
 
 // MARK: - Catalogue plateforme Lost Phone
 //
-// Toutes les apps *possibles* pour les histoires. Chaque histoire choisit un sous-ensemble
-// via `manifest.apps_presentes` dans son lpsp.json — on ne met jamais tout sur l'accueil.
+// Bibliothèque complète d'apps → chaque histoire choisit un sous-ensemble via
+// `manifest.apps_presentes` dans lpsp.json.
 //
-// Implémentation : une fois par **template** (chat, VTC, banque…), pas une fois par marque
-// si l'UX est identique. `AppBranding` gère le nom affiché (plan B juridique).
+// Développement : une app / template à la fois, par ordre de `devPriority`
+// (1 = prochaine à coder). Les marques d'un même template partagent une UI.
 
 enum PlatformAppCatalog {
 
@@ -21,20 +21,27 @@ enum PlatformAppCatalog {
         case streamingMusic
         case files
         case reminders
+        case dating
+        case commerce
+        case travel
+        case wallet
         case generic
     }
 
     enum ImplementationStatus: String {
-        /// UI + injection LPSP complètes
-        case ready
-        /// Clone UI OK, données LPSP branchées
-        case lpspReady
-        /// Clone UI demo (showroom), LPSP optionnel
-        case cloneDemo
-        /// JSON LPSP possible, écran = dump ou placeholder
-        case jsonOnly
-        /// Prévu plateforme, pas encore codé
+        case ready           // UI + LPSP
+        case lpspReady       // clone Apple + LPSP
+        case cloneDemo       // clone Apple demo
+        case jsonOnly        // JSON ok, UI manquante
         case planned
+    }
+
+    /// Fidélité visuelle réaliste avec SwiftUI + captures de référence.
+    enum CloneFidelity: String {
+        case done = "✅ Livré"
+        case high = "🎯 Clone quasi identique (objectif)"
+        case medium = "📱 UX reconnaissable, détails simplifiés"
+        case low = "📋 Liste / écran minimal suffisant au récit"
     }
 
     struct Entry: Identifiable {
@@ -42,72 +49,74 @@ enum PlatformAppCatalog {
         let lpspKey: String
         let template: Template
         let status: ImplementationStatus
+        /// 0 = terminé · 1 = prochain · 2+ = file d'attente
+        let devPriority: Int
+        let fidelity: CloneFidelity
         let notes: String
+        /// Débloque les autres apps du même template une fois codée.
+        var isTemplateAnchor: Bool { devPriority >= 1 && devPriority < 90 }
     }
 
-    /// Clés LPSP canoniques — une entrée par app que le moteur peut reconnaître.
+    // MARK: - Liste complète
+
     static let all: [Entry] = [
-        // ——— Apple (clone zerocode117) ———
-        Entry(lpspKey: "Messages", template: .appleClone, status: .lpspReady, notes: "Clone + threads LPSP"),
-        Entry(lpspKey: "Telephone", template: .appleClone, status: .lpspReady, notes: "Clone + récents/contacts"),
-        Entry(lpspKey: "Photos", template: .appleClone, status: .lpspReady, notes: "Clone + galerie LPSP"),
-        Entry(lpspKey: "Safari", template: .appleClone, status: .lpspReady, notes: "Clone + onglets/historique"),
-        Entry(lpspKey: "Mail", template: .appleClone, status: .lpspReady, notes: "Clone + boîtes LPSP"),
-        Entry(lpspKey: "Notes", template: .appleClone, status: .lpspReady, notes: "Clone + notes LPSP"),
-        Entry(lpspKey: "Calendrier", template: .appleClone, status: .lpspReady, notes: "Clone + événements LPSP"),
-        Entry(lpspKey: "Contacts", template: .appleClone, status: .lpspReady, notes: "Standalone + onglet Téléphone"),
-        Entry(lpspKey: "Réglages", template: .appleClone, status: .cloneDemo, notes: "Showroom — demo"),
-        Entry(lpspKey: "Météo", template: .appleClone, status: .cloneDemo, notes: "Showroom — demo"),
-        Entry(lpspKey: "Horloge", template: .appleClone, status: .cloneDemo, notes: "Showroom — demo"),
-        Entry(lpspKey: "Calculatrice", template: .appleClone, status: .cloneDemo, notes: "Showroom — demo"),
-        Entry(lpspKey: "Appareil photo", template: .appleClone, status: .cloneDemo, notes: "Showroom — demo"),
-        Entry(lpspKey: "App Store", template: .appleClone, status: .cloneDemo, notes: "Showroom — demo"),
-        Entry(lpspKey: "Musique", template: .appleClone, status: .cloneDemo, notes: "Showroom — demo partiel"),
+        // ——— ✅ Déjà jouables ———
+        Entry(lpspKey: "Messages", template: .appleClone, status: .lpspReady, devPriority: 0, fidelity: .done, notes: "Clone + threads LPSP"),
+        Entry(lpspKey: "Telephone", template: .appleClone, status: .lpspReady, devPriority: 0, fidelity: .done, notes: "Clone + récents/contacts"),
+        Entry(lpspKey: "Photos", template: .appleClone, status: .lpspReady, devPriority: 0, fidelity: .done, notes: "Clone + galerie LPSP"),
+        Entry(lpspKey: "Safari", template: .appleClone, status: .lpspReady, devPriority: 0, fidelity: .done, notes: "Clone + onglets/historique"),
+        Entry(lpspKey: "Mail", template: .appleClone, status: .lpspReady, devPriority: 0, fidelity: .done, notes: "Clone + boîtes LPSP"),
+        Entry(lpspKey: "Notes", template: .appleClone, status: .lpspReady, devPriority: 0, fidelity: .done, notes: "Clone + notes LPSP"),
+        Entry(lpspKey: "Calendrier", template: .appleClone, status: .lpspReady, devPriority: 0, fidelity: .done, notes: "Clone + événements LPSP"),
+        Entry(lpspKey: "Contacts", template: .appleClone, status: .lpspReady, devPriority: 0, fidelity: .done, notes: "Standalone + onglet Téléphone"),
+        Entry(lpspKey: "WhatsApp", template: .chat, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspWhatsAppView — polish possible"),
+        Entry(lpspKey: "Signal", template: .chat, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspSignalView — polish possible"),
 
-        // ——— Messagerie (template chat) ———
-        Entry(lpspKey: "WhatsApp", template: .chat, status: .ready, notes: "LpspWhatsAppView"),
-        Entry(lpspKey: "Signal", template: .chat, status: .ready, notes: "LpspSignalView"),
-        Entry(lpspKey: "Telegram", template: .chat, status: .planned, notes: "Même template chat"),
-        Entry(lpspKey: "Messenger", template: .chat, status: .planned, notes: "Même template chat"),
+        // ——— File de dev (J-3 + plateforme) ———
+        Entry(lpspKey: "Uber", template: .rideHailing, status: .jsonOnly, devPriority: 1, fidelity: .high, notes: "Template VTC · J-3 JSON prêt · activité + détail course"),
+        Entry(lpspKey: "Crédit Agricole", template: .bank, status: .jsonOnly, devPriority: 2, fidelity: .high, notes: "Template banque · solde + mouvements · J-3 JSON prêt"),
+        Entry(lpspKey: "Google Maps", template: .maps, status: .jsonOnly, devPriority: 3, fidelity: .high, notes: "Template maps · trajets + lieux · J-3 JSON prêt"),
+        Entry(lpspKey: "Fichiers", template: .files, status: .jsonOnly, devPriority: 4, fidelity: .high, notes: "Arborescence + preview PDF · J-3 JSON prêt"),
+        Entry(lpspKey: "Rappels", template: .reminders, status: .jsonOnly, devPriority: 5, fidelity: .high, notes: "Listes + cases · J-3 JSON prêt"),
+        Entry(lpspKey: "Instagram", template: .socialFeed, status: .jsonOnly, devPriority: 6, fidelity: .high, notes: "Template feed · profil + grille + stories · J-3 JSON prêt"),
+        Entry(lpspKey: "Spotify", template: .streamingMusic, status: .jsonOnly, devPriority: 7, fidelity: .high, notes: "Template musique · accueil + playlists · J-3 JSON prêt"),
+        Entry(lpspKey: "Netflix", template: .streamingVideo, status: .jsonOnly, devPriority: 8, fidelity: .medium, notes: "Template VOD · profils + continue · J-3 JSON prêt"),
 
-        // ——— Cartographie ———
-        Entry(lpspKey: "Google Maps", template: .maps, status: .jsonOnly, notes: "J-3 JSON prêt — UI à coder"),
-        Entry(lpspKey: "Plans", template: .maps, status: .planned, notes: "Alias Apple Maps — même template"),
-        Entry(lpspKey: "Waze", template: .maps, status: .planned, notes: "Même template trajets"),
+        // ——— Extension templates (après ancres ci-dessus) ———
+        Entry(lpspKey: "Bolt", template: .rideHailing, status: .planned, devPriority: 10, fidelity: .high, notes: "Même UI qu'Uber · branding Bolt"),
+        Entry(lpspKey: "Uber Eats", template: .rideHailing, status: .planned, devPriority: 11, fidelity: .medium, notes: "Onglet Eats dans template Uber"),
+        Entry(lpspKey: "LCL", template: .bank, status: .planned, devPriority: 12, fidelity: .high, notes: "Même UI banque"),
+        Entry(lpspKey: "BNP Paribas", template: .bank, status: .planned, devPriority: 13, fidelity: .high, notes: "Même UI banque"),
+        Entry(lpspKey: "Revolut", template: .bank, status: .planned, devPriority: 14, fidelity: .high, notes: "Variante néobanque"),
+        Entry(lpspKey: "Plans", template: .maps, status: .planned, devPriority: 15, fidelity: .high, notes: "Skin Apple Maps"),
+        Entry(lpspKey: "Waze", template: .maps, status: .planned, devPriority: 16, fidelity: .medium, notes: "Variante navigation"),
+        Entry(lpspKey: "Telegram", template: .chat, status: .planned, devPriority: 17, fidelity: .high, notes: "Skin chat · template existant"),
+        Entry(lpspKey: "Messenger", template: .chat, status: .planned, devPriority: 18, fidelity: .high, notes: "Skin Meta · template existant"),
+        Entry(lpspKey: "TikTok", template: .socialFeed, status: .planned, devPriority: 19, fidelity: .medium, notes: "Feed vertical"),
+        Entry(lpspKey: "X", template: .socialFeed, status: .planned, devPriority: 20, fidelity: .medium, notes: "Fil + notifications"),
+        Entry(lpspKey: "Snapchat", template: .socialFeed, status: .planned, devPriority: 21, fidelity: .medium, notes: "Stories + carte simplifiée"),
+        Entry(lpspKey: "Disney+", template: .streamingVideo, status: .planned, devPriority: 22, fidelity: .medium, notes: "Même template Netflix"),
 
-        // ——— VTC / livraison (template ride) ———
-        Entry(lpspKey: "Uber", template: .rideHailing, status: .jsonOnly, notes: "J-3 JSON prêt — UI à coder"),
-        Entry(lpspKey: "Bolt", template: .rideHailing, status: .planned, notes: "Même template courses"),
-        Entry(lpspKey: "Uber Eats", template: .rideHailing, status: .planned, notes: "Onglet Eats du template Uber"),
+        // ——— Clones Apple à brancher LPSP ———
+        Entry(lpspKey: "Réglages", template: .appleClone, status: .cloneDemo, devPriority: 30, fidelity: .medium, notes: "Showroom · owner LPSP"),
+        Entry(lpspKey: "Météo", template: .appleClone, status: .cloneDemo, devPriority: 31, fidelity: .medium, notes: "Showroom · ville LPSP"),
+        Entry(lpspKey: "Musique", template: .appleClone, status: .cloneDemo, devPriority: 32, fidelity: .medium, notes: "Showroom · ≠ Spotify"),
+        Entry(lpspKey: "Horloge", template: .appleClone, status: .cloneDemo, devPriority: 33, fidelity: .low, notes: "Showroom · rare en enquête"),
+        Entry(lpspKey: "Calculatrice", template: .appleClone, status: .cloneDemo, devPriority: 34, fidelity: .low, notes: "Showroom"),
+        Entry(lpspKey: "Appareil photo", template: .appleClone, status: .cloneDemo, devPriority: 35, fidelity: .low, notes: "Showroom"),
+        Entry(lpspKey: "App Store", template: .appleClone, status: .cloneDemo, devPriority: 36, fidelity: .low, notes: "Showroom"),
 
-        // ——— Réseaux sociaux (template feed) ———
-        Entry(lpspKey: "Instagram", template: .socialFeed, status: .jsonOnly, notes: "J-3 JSON prêt — UI à coder"),
-        Entry(lpspKey: "TikTok", template: .socialFeed, status: .planned, notes: "Même template feed vertical"),
-        Entry(lpspKey: "X", template: .socialFeed, status: .planned, notes: "Fil + DMs optionnel"),
-        Entry(lpspKey: "Snapchat", template: .socialFeed, status: .planned, notes: "Stories-first"),
-
-        // ——— Banque (template bank) ———
-        Entry(lpspKey: "Crédit Agricole", template: .bank, status: .jsonOnly, notes: "J-3 JSON prêt — UI à coder"),
-        Entry(lpspKey: "LCL", template: .bank, status: .planned, notes: "Même template relevé/virements"),
-        Entry(lpspKey: "BNP Paribas", template: .bank, status: .planned, notes: "Même template"),
-        Entry(lpspKey: "Revolut", template: .bank, status: .planned, notes: "Même template néobanque"),
-
-        // ——— Streaming ———
-        Entry(lpspKey: "Netflix", template: .streamingVideo, status: .jsonOnly, notes: "J-3 JSON prêt — UI à coder"),
-        Entry(lpspKey: "Disney+", template: .streamingVideo, status: .planned, notes: "Même template VOD"),
-        Entry(lpspKey: "Spotify", template: .streamingMusic, status: .jsonOnly, notes: "J-3 JSON prêt — UI à coder"),
-        Entry(lpspKey: "Apple Music", template: .streamingMusic, status: .planned, notes: "Différencier du clone Musique demo"),
-
-        // ——— Système iOS (custom) ———
-        Entry(lpspKey: "Fichiers", template: .files, status: .jsonOnly, notes: "J-3 JSON prêt — UI à coder"),
-        Entry(lpspKey: "Rappels", template: .reminders, status: .jsonOnly, notes: "J-3 JSON prêt — UI à coder"),
-
-        // ——— Autres (stories futures) ———
-        Entry(lpspKey: "Amazon", template: .generic, status: .planned, notes: "Commandes — ou via Mail"),
-        Entry(lpspKey: "Airbnb", template: .generic, status: .planned, notes: "Réservations"),
-        Entry(lpspKey: "Tinder", template: .generic, status: .planned, notes: "Matchs / chat"),
-        Entry(lpspKey: "Wallet", template: .generic, status: .planned, notes: "Cartes / tickets"),
+        // ——— Histoires futures ———
+        Entry(lpspKey: "Amazon", template: .commerce, status: .planned, devPriority: 40, fidelity: .medium, notes: "Commandes · souvent couvert par Mail"),
+        Entry(lpspKey: "Airbnb", template: .travel, status: .planned, devPriority: 41, fidelity: .medium, notes: "Réservations + messages hôte"),
+        Entry(lpspKey: "Tinder", template: .dating, status: .planned, devPriority: 42, fidelity: .medium, notes: "Matchs + chat"),
+        Entry(lpspKey: "Bumble", template: .dating, status: .planned, devPriority: 43, fidelity: .medium, notes: "Même template dating"),
+        Entry(lpspKey: "Wallet", template: .wallet, status: .planned, devPriority: 44, fidelity: .medium, notes: "Cartes + tickets"),
+        Entry(lpspKey: "Apple Music", template: .streamingMusic, status: .planned, devPriority: 45, fidelity: .medium, notes: "Distinct du clone Musique"),
+        Entry(lpspKey: "Deliveroo", template: .rideHailing, status: .planned, devPriority: 46, fidelity: .medium, notes: "Livraison · proche Uber Eats"),
     ]
+
+    // MARK: - Helpers
 
     static func entry(for lpspKey: String) -> Entry? {
         all.first { $0.lpspKey == lpspKey }
@@ -117,18 +126,32 @@ enum PlatformAppCatalog {
         entry(for: lpspKey) != nil || CloneAppCatalog.isCloneApp(lpspKey)
     }
 
-    /// Apps d'une histoire absentes du catalogue ou sans UI jouable.
-    static func validateStoryApps(_ appNames: [String]) -> [String] {
-        appNames.filter { name in
-            guard let entry = entry(for: name) else { return true }
-            return entry.status == .jsonOnly || entry.status == .planned
-        }
+    /// Prochaines apps à développer (une par template anchor, ordre strict).
+    static var developmentQueue: [Entry] {
+        all
+            .filter { $0.devPriority > 0 && $0.status != .ready && $0.status != .lpspReady }
+            .sorted { $0.devPriority < $1.devPriority }
     }
 
-    static var templatesToImplement: [Template] {
-        let needsWork: Set<ImplementationStatus> = [.jsonOnly, .planned]
-        return Template.allCases.filter { template in
-            all.contains { $0.template == template && needsWork.contains($0.status) }
-        }
+    static var nextToBuild: Entry? {
+        developmentQueue.first
     }
+
+    /// Apps d'une histoire sans UI jouable.
+    static func missingUI(for appNames: [String]) -> [Entry] {
+        appNames.compactMap { name in
+            guard let entry = entry(for: name) else {
+                return Entry(lpspKey: name, template: .generic, status: .planned, devPriority: 99, fidelity: .low, notes: "Hors catalogue")
+            }
+            guard entry.status == .jsonOnly || entry.status == .planned else { return nil }
+            return entry
+        }
+        .sorted { $0.devPriority < $1.devPriority }
+    }
+
+    static var completedCount: Int {
+        all.filter { $0.status == .ready || $0.status == .lpspReady }.count
+    }
+
+    static var totalCount: Int { all.count }
 }

@@ -24,8 +24,7 @@ packages:
     url: https://github.com/debuging-life/toastUI
     from: 4.0.0
   SwiftUINavigation:
-    url: https://github.com/debuging-life/SwiftUINavigation
-    branch: main
+    path: Packages/SwiftUINavigation
   YouTubePlayerKit:
     url: https://github.com/SvenTiigi/YouTubePlayerKit
     from: 2.0.5

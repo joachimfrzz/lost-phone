@@ -21,6 +21,7 @@
 4. **Ne pas réécrire l'UI** — pas de version « inspirée » ou simplifiée.
 5. **LPSP** : branchement narratif dans un second temps (onglet dédié ou injection).
 6. Exclure `README.md` / `INTEGRATION.md` du bundle (`project.yml`).
+7. **SwiftUINavigation** (Netflix) : vendored localement dans `Packages/SwiftUINavigation/` (commit `34e67994b4ea`) — le Package.swift upstream exige Swift 6.2, incompatible CI Xcode 16.4.
 
 ## File d'attente
 

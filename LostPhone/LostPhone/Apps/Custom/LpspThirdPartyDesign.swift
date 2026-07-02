@@ -276,3 +276,58 @@ enum LpspThirdPartyGrouping {
         return groups.map { (LpspThirdPartyFormat.sectionTitle(for: $0.0), $0.1) }
     }
 }
+
+// MARK: - Shell clone (même discipline que MessagesApp / NotesApp)
+
+/// Enveloppe read-only calquée sur les clones Showroom : contenu + tab bar optionnelle.
+struct TierCloneShell<TabBar: View, Content: View>: View {
+    @ViewBuilder var tabBar: () -> TabBar
+    @ViewBuilder var content: () -> Content
+    var usesTabBar: Bool = true
+
+    var body: some View {
+        VStack(spacing: 0) {
+            content()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if usesTabBar {
+                tabBar()
+            }
+        }
+    }
+}
+
+/// Tab bar iOS — hauteur et safe area comme apps natives.
+struct TierIOSTabBar: View {
+    struct Item: Identifiable {
+        let id: String
+        let icon: String
+        let label: String
+    }
+
+    let items: [Item]
+    let selected: String
+    var accent: Color = .primary
+    var dark: Bool = false
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(items) { item in
+                VStack(spacing: 4) {
+                    Image(systemName: item.icon)
+                        .font(.system(size: 23))
+                        .symbolVariant(selected == item.id ? .fill : .none)
+                    Text(item.label)
+                        .font(.system(size: 10, weight: .medium))
+                }
+                .foregroundStyle(selected == item.id ? accent : (dark ? .white.opacity(0.45) : Color(uiColor: .systemGray)))
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .padding(.top, 10)
+        .padding(.bottom, 2)
+        .background(dark ? LpspThirdPartyBrand.spotifyBlack : Color(uiColor: .systemBackground))
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color(uiColor: .separator).opacity(dark ? 0.25 : 1)).frame(height: 0.33)
+        }
+    }
+}

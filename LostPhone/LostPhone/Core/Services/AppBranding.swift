@@ -14,15 +14,16 @@ enum AppBranding {
         "Signal": "Cipher",
         "Instagram": "PixFeed",
         "Uber": "GoRide",
-        "Google Maps": "Carto",
+        "Plans": "Carto",
         "Spotify": "TuneUp",
-        "Crédit Agricole": "Ma Banque",
+        "Banque": "Ma Banque",
     ]
 
     static func displayName(for lpspKey: String) -> String {
-        if useFictionalDisplayNames, let alias = fictionalNames[lpspKey] {
+        let key = LpspAppAliases.canonical(lpspKey)
+        if useFictionalDisplayNames, let alias = fictionalNames[key] {
             return alias
         }
-        return lpspKey
+        return key
     }
 }

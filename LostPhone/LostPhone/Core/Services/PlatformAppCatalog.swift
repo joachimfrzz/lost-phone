@@ -72,15 +72,15 @@ enum PlatformAppCatalog {
         Entry(lpspKey: "WhatsApp", template: .chat, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspWhatsAppView — polish possible"),
         Entry(lpspKey: "Signal", template: .chat, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspSignalView — polish possible"),
 
-        // ——— File de dev (J-3 + plateforme) ———
-        Entry(lpspKey: "Uber", template: .rideHailing, status: .jsonOnly, devPriority: 1, fidelity: .high, notes: "Template VTC · J-3 JSON prêt · activité + détail course"),
-        Entry(lpspKey: "Crédit Agricole", template: .bank, status: .jsonOnly, devPriority: 2, fidelity: .high, notes: "Template banque · solde + mouvements · J-3 JSON prêt"),
-        Entry(lpspKey: "Google Maps", template: .maps, status: .jsonOnly, devPriority: 3, fidelity: .high, notes: "Template maps · trajets + lieux · J-3 JSON prêt"),
-        Entry(lpspKey: "Fichiers", template: .files, status: .jsonOnly, devPriority: 4, fidelity: .high, notes: "Arborescence + preview PDF · J-3 JSON prêt"),
-        Entry(lpspKey: "Rappels", template: .reminders, status: .jsonOnly, devPriority: 5, fidelity: .high, notes: "Listes + cases · J-3 JSON prêt"),
-        Entry(lpspKey: "Instagram", template: .socialFeed, status: .jsonOnly, devPriority: 6, fidelity: .high, notes: "Template feed · profil + grille + stories · J-3 JSON prêt"),
-        Entry(lpspKey: "Spotify", template: .streamingMusic, status: .jsonOnly, devPriority: 7, fidelity: .high, notes: "Template musique · accueil + playlists · J-3 JSON prêt"),
-        Entry(lpspKey: "Netflix", template: .streamingVideo, status: .jsonOnly, devPriority: 8, fidelity: .medium, notes: "Template VOD · profils + continue · J-3 JSON prêt"),
+        // ——— Templates tiers (file dev J-3) ———
+        Entry(lpspKey: "Uber", template: .rideHailing, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspUberView · pixel polish · courses + détail"),
+        Entry(lpspKey: "Banque", template: .bank, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspBanqueView · pixel polish · solde + opérations"),
+        Entry(lpspKey: "Plans", template: .maps, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspPlansView · pixel polish · carte + trajets"),
+        Entry(lpspKey: "Fichiers", template: .files, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspFichiersView · pixel polish · parcourir + supprimés"),
+        Entry(lpspKey: "Rappels", template: .reminders, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspRappelsView · pixel polish · listes iOS"),
+        Entry(lpspKey: "Instagram", template: .socialFeed, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspInstagramView · pixel polish · profil + grille"),
+        Entry(lpspKey: "Spotify", template: .streamingMusic, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspSpotifyView · pixel polish · accueil sombre"),
+        Entry(lpspKey: "Netflix", template: .streamingVideo, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspNetflixView · pixel polish · profils + continue"),
 
         // ——— Extension templates (après ancres ci-dessus) ———
         Entry(lpspKey: "Bolt", template: .rideHailing, status: .planned, devPriority: 10, fidelity: .high, notes: "Même UI qu'Uber · branding Bolt"),
@@ -88,8 +88,7 @@ enum PlatformAppCatalog {
         Entry(lpspKey: "LCL", template: .bank, status: .planned, devPriority: 12, fidelity: .high, notes: "Même UI banque"),
         Entry(lpspKey: "BNP Paribas", template: .bank, status: .planned, devPriority: 13, fidelity: .high, notes: "Même UI banque"),
         Entry(lpspKey: "Revolut", template: .bank, status: .planned, devPriority: 14, fidelity: .high, notes: "Variante néobanque"),
-        Entry(lpspKey: "Plans", template: .maps, status: .planned, devPriority: 15, fidelity: .high, notes: "Skin Apple Maps"),
-        Entry(lpspKey: "Waze", template: .maps, status: .planned, devPriority: 16, fidelity: .medium, notes: "Variante navigation"),
+        Entry(lpspKey: "Waze", template: .maps, status: .planned, devPriority: 16, fidelity: .medium, notes: "Variante navigation · même UI Plans"),
         Entry(lpspKey: "Telegram", template: .chat, status: .planned, devPriority: 17, fidelity: .high, notes: "Skin chat · template existant"),
         Entry(lpspKey: "Messenger", template: .chat, status: .planned, devPriority: 18, fidelity: .high, notes: "Skin Meta · template existant"),
         Entry(lpspKey: "TikTok", template: .socialFeed, status: .planned, devPriority: 19, fidelity: .medium, notes: "Feed vertical"),

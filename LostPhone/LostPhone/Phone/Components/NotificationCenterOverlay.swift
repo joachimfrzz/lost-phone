@@ -292,12 +292,16 @@ struct IOSNotificationRow: View {
                     .scaledToFit()
                     .frame(width: IOSMetrics.ncAppIconSize * scale, height: IOSMetrics.ncAppIconSize * scale)
                     .clipShape(RoundedRectangle(cornerRadius: IOSMetrics.ncAppIconRadius * scale, style: .continuous))
+            } else if LpspBrandedAppIconContent.isBranded(notification.app) {
+                LpspBrandedAppIconContent(appName: notification.app)
+                    .frame(width: IOSMetrics.ncAppIconSize * scale, height: IOSMetrics.ncAppIconSize * scale)
+                    .clipShape(RoundedRectangle(cornerRadius: IOSMetrics.ncAppIconRadius * scale, style: .continuous))
             } else {
                 RoundedRectangle(cornerRadius: IOSMetrics.ncAppIconRadius * scale, style: .continuous)
                     .fill(LpspAppCatalog.accentColor(for: notification.app))
                     .frame(width: IOSMetrics.ncAppIconSize * scale, height: IOSMetrics.ncAppIconSize * scale)
                     .overlay {
-                        Text(String(notification.app.prefix(1)))
+                        Text(String(LpspAppCatalog.displayName(notification.app).prefix(1)))
                             .font(.system(size: 14 * scale, weight: .bold))
                             .foregroundStyle(.white)
                     }

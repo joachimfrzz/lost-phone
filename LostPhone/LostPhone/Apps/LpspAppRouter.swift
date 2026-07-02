@@ -76,17 +76,38 @@ struct LpspAppRouter: View {
                     cloneView(named: appName, payload: payload)
                 }
             } else {
-                switch appName {
-                case "WhatsApp":
-                    LpspWhatsAppView(conversations: LpspAdapters.whatsApp(from: payload))
-                case "Signal":
-                    LpspSignalView(conversations: LpspAdapters.signal(from: payload))
-                case "Contacts":
-                    ContactsView(contacts: contacts)
-                default:
-                    GenericLpspAppView(appName: appName, payload: payload)
-                }
+                thirdPartyView(named: appName, payload: payload)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func thirdPartyView(named appName: String, payload: AnyCodable?) -> some View {
+        switch LpspAppAliases.canonical(appName) {
+        case "WhatsApp":
+            LpspWhatsAppView(conversations: LpspAdapters.whatsApp(from: payload))
+        case "Signal":
+            LpspSignalView(conversations: LpspAdapters.signal(from: payload))
+        case "Contacts":
+            ContactsView(contacts: contacts)
+        case "Uber":
+            LpspUberView(rides: LpspAdapters.uber(from: payload))
+        case "Banque":
+            LpspBanqueView(data: LpspAdapters.banque(from: payload))
+        case "Plans":
+            LpspPlansView(data: LpspAdapters.plans(from: payload))
+        case "Fichiers":
+            LpspFichiersView(files: LpspAdapters.fichiers(from: payload))
+        case "Rappels":
+            LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
+        case "Instagram":
+            LpspInstagramView(profile: LpspAdapters.instagram(from: payload))
+        case "Spotify":
+            LpspSpotifyView(data: LpspAdapters.spotify(from: payload))
+        case "Netflix":
+            LpspNetflixView(data: LpspAdapters.netflix(from: payload))
+        default:
+            GenericLpspAppView(appName: appName, payload: payload)
         }
     }
 

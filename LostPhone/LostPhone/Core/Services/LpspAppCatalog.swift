@@ -1,31 +1,46 @@
 import SwiftUI
 
+enum LpspAppAliases {
+    private static let legacy: [String: String] = [
+        "Google Maps": "Plans",
+        "Crédit Agricole": "Banque",
+    ]
+
+    static func canonical(_ name: String) -> String {
+        legacy[name] ?? name
+    }
+}
+
 enum LpspAppCatalog {
     static func cloneType(for lpspName: String) -> AppType? {
-        CloneAppCatalog.appType(for: lpspName)
+        CloneAppCatalog.appType(for: LpspAppAliases.canonical(lpspName))
     }
 
     static func iconAsset(for lpspName: String) -> String? {
-        if lpspName == "Contacts" { return "contacts" }
-        return cloneType(for: lpspName)?.assetName
+        let name = LpspAppAliases.canonical(lpspName)
+        if name == "Contacts" { return "contacts" }
+        return cloneType(for: name)?.assetName
     }
 
     static func displayName(_ lpspName: String) -> String {
-        AppBranding.displayName(for: lpspName)
+        AppBranding.displayName(for: LpspAppAliases.canonical(lpspName))
     }
 
     static func accentColor(for lpspName: String) -> Color {
-        if let clone = cloneType(for: lpspName) { return clone.color }
-        switch lpspName {
+        let name = LpspAppAliases.canonical(lpspName)
+        if let clone = cloneType(for: name) { return clone.color }
+        switch name {
         case "WhatsApp": return Color(red: 0.15, green: 0.78, blue: 0.45)
         case "Signal": return .indigo
         case "Instagram": return .purple
         case "Uber": return .black
-        case "Google Maps": return .green
-        case "Crédit Agricole": return Color(red: 0.0, green: 0.45, blue: 0.25)
+        case "Plans": return .green
+        case "Banque": return Color(red: 0.0, green: 0.45, blue: 0.25)
         case "Contacts": return .gray
         case "Fichiers": return .blue
         case "Rappels": return .orange
+        case "Spotify": return Color(red: 0.11, green: 0.73, blue: 0.33)
+        case "Netflix": return .red
         default: return .blue
         }
     }
@@ -43,6 +58,10 @@ struct LpspAppIconView: View {
                     Image(asset)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                        .frame(width: 65, height: 65)
+                        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                } else if LpspBrandedAppIconContent.isBranded(appName) {
+                    LpspBrandedAppIconContent(appName: appName)
                         .frame(width: 65, height: 65)
                         .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
                 } else {

@@ -149,7 +149,8 @@ enum LpspNormalize {
     }
 
     static func appPayload(from apps: [String: AnyCodable], name: String) -> AnyCodable? {
-        guard let raw = apps[name] else { return nil }
+        let canonical = LpspAppAliases.canonical(name)
+        guard let raw = apps[canonical] ?? apps[name] else { return nil }
         guard let obj = raw.objectValue else { return raw }
         if obj["contenu"] != nil && (obj["app"] != nil || obj["profondeur"] != nil) {
             return obj["contenu"]

@@ -29,6 +29,10 @@ if [[ ! -d "$ROOT/public/stories" ]]; then
   failed=1
 fi
 
+if ! python3 "$ROOT/LostPhone/scripts/validate-lpsp-json.py"; then
+  failed=1
+fi
+
 if python3 - "$SWIFT_ROOT" <<'PY'
 import re, sys
 from pathlib import Path

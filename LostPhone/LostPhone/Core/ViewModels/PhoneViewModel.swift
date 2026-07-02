@@ -105,8 +105,9 @@ final class PhoneViewModel: ObservableObject {
     }
 
     func openApp(_ name: String) {
-        activeApp = name
-        phase = .app(name)
+        let resolved = LpspAppAliases.canonical(name)
+        activeApp = resolved
+        phase = .app(resolved)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 

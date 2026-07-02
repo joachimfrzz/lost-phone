@@ -1,57 +1,35 @@
 import SwiftUI
 
-// Clone Instagram — profil + grille + bottom tabs.
+// Profil LPSP — complète le clone Reddit (onglet personne).
 
-struct LpspInstagramView: View {
-    let profile: LpspInstagramProfile?
-    @State private var selected: LpspInstagramPost?
-
-    private let tabs: [TierIOSTabBar.Item] = [
-        .init(id: "home", icon: "house", label: ""),
-        .init(id: "search", icon: "magnifyingglass", label: ""),
-        .init(id: "reels", icon: "play.rectangle", label: ""),
-        .init(id: "shop", icon: "bag", label: ""),
-        .init(id: "profile", icon: "person.crop.circle", label: ""),
-    ]
+struct InstagramProfileTabView: View {
+    let profile: LpspInstagramProfile
+    @Binding var selected: LpspInstagramPost?
 
     var body: some View {
-        TierCloneShell {
-            TierIOSTabBar(items: tabs, selected: "profile", accent: .primary)
-        } content: {
-            NavigationStack {
-                Group {
-                    if let profile {
-                        ScrollView {
-                            VStack(spacing: 0) {
-                                profileHeader(profile)
-                                postGrid(profile.posts)
-                            }
-                        }
-                    } else {
-                        ContentUnavailableView("Instagram", systemImage: "camera.fill")
-                    }
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 0) {
+                    profileHeader
+                    postGrid
                 }
-                .background(Color(uiColor: .systemBackground))
-                .navigationTitle(LpspAppCatalog.displayName("Instagram"))
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        HStack(spacing: 18) {
-                            Button {} label: { Image(systemName: "plus.app") }
-                            Button {} label: { Image(systemName: "line.3.horizontal") }
-                        }
-                        .disabled(true)
+            }
+            .background(Color(uiColor: .systemBackground))
+            .navigationTitle(profile.username)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    HStack(spacing: 18) {
+                        Button {} label: { Image(systemName: "plus.app") }
+                        Button {} label: { Image(systemName: "line.3.horizontal") }
                     }
-                }
-                .sheet(item: $selected) { post in
-                    InstagramPostSheet(post: post, username: profile?.username ?? "")
+                    .disabled(true)
                 }
             }
         }
     }
 
-    @ViewBuilder
-    private func profileHeader(_ profile: LpspInstagramProfile) -> some View {
+    private var profileHeader: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 22) {
                 Circle()
@@ -106,6 +84,20 @@ struct LpspInstagramView: View {
         .padding(.vertical, 12)
     }
 
+    private var postGrid: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 1), count: 3), spacing: 1) {
+            ForEach(profile.posts) { post in
+                Button { selected = post } label: {
+                    Rectangle()
+                        .fill(Color(uiColor: .secondarySystemBackground))
+                        .aspectRatio(1, contentMode: .fit)
+                        .overlay { Image("post").resizable().scaledToFill().clipped() }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
     private func stat(_ n: String, _ label: String) -> some View {
         VStack(spacing: 2) {
             Text(n).font(.subheadline.weight(.bold))
@@ -127,23 +119,9 @@ struct LpspInstagramView: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 8))
     }
-
-    private func postGrid(_ posts: [LpspInstagramPost]) -> some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 1), count: 3), spacing: 1) {
-            ForEach(posts) { post in
-                Button { selected = post } label: {
-                    Rectangle()
-                        .fill(Color(uiColor: .secondarySystemBackground))
-                        .aspectRatio(1, contentMode: .fit)
-                        .overlay { Image(systemName: "photo").foregroundStyle(.secondary) }
-                }
-                .buttonStyle(.plain)
-            }
-        }
-    }
 }
 
-private struct InstagramPostSheet: View {
+struct InstagramPostDetailSheet: View {
     let post: LpspInstagramPost
     let username: String
 
@@ -154,7 +132,8 @@ private struct InstagramPostSheet: View {
                     Rectangle()
                         .fill(Color(uiColor: .secondarySystemBackground))
                         .aspectRatio(1, contentMode: .fit)
-                        .overlay { Image(systemName: "photo.artframe").font(.largeTitle).foregroundStyle(.secondary) }
+                        .overlay { Image("post").resizable().scaledToFill() }
+                        .clipped()
 
                     HStack(spacing: 18) {
                         Image(systemName: "heart")

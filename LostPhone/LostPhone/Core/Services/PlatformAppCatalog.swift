@@ -78,7 +78,7 @@ enum PlatformAppCatalog {
         Entry(lpspKey: "Plans", template: .maps, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspPlansView · pixel polish · carte + trajets"),
         Entry(lpspKey: "Fichiers", template: .files, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspFichiersView · pixel polish · parcourir + supprimés"),
         Entry(lpspKey: "Rappels", template: .reminders, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspRappelsView · pixel polish · listes iOS"),
-        Entry(lpspKey: "Instagram", template: .socialFeed, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspInstagramView · pixel polish · profil + grille"),
+        Entry(lpspKey: "Instagram", template: .socialFeed, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone NDCSwift/InstagramRecreation2 + profil LPSP"),
         Entry(lpspKey: "Spotify", template: .streamingMusic, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspSpotifyView · pixel polish · accueil sombre"),
         Entry(lpspKey: "Netflix", template: .streamingVideo, status: .ready, devPriority: 0, fidelity: .done, notes: "LpspNetflixView · pixel polish · profils + continue"),
 

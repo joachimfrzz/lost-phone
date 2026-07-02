@@ -14,11 +14,11 @@ Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<
 | App | Clone à fournir | Dossier cible | Statut |
 |-----|-----------------|---------------|--------|
 | Uber | 264Gaurav/UBER-ios | `UberReddit/` | ✅ Intégré |
+| Instagram | NDCSwift/InstagramRecreation2 | `InstagramReddit/` | ✅ Intégré |
 | Banque | *(en attente)* | `BanqueReddit/` | ⏳ |
 | Plans | *(en attente)* | `PlansReddit/` | ⏳ |
 | Fichiers | *(en attente)* | `FichiersReddit/` | ⏳ |
 | Rappels | *(en attente)* | `RappelsReddit/` | ⏳ |
-| Instagram | *(en attente)* | `InstagramReddit/` | ⏳ |
 | Spotify | *(en attente)* | `SpotifyReddit/` | ⏳ |
 | Netflix | *(en attente)* | `NetflixReddit/` | ⏳ |
 

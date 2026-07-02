@@ -9,6 +9,13 @@ Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<
 - Entrée : `LpspUberView` → `UberRedditAppView`
 - LPSP : onglet **Activité** (`UberActivityTabView`)
 
+## Apple Music (fait)
+
+- Dossier : `Apps/Clone/MyPlaylistsReddit/`
+- Source : https://github.com/aisultanios/MyPlaylists
+- Entrée : `LpspAppleMusicView` → `MyPlaylistsRedditAppView`
+- Distinct du clone Showroom `Musique` (`MusicView`)
+
 ## File d'attente J-3
 
 | App | Clone à fournir | Dossier cible | Statut |
@@ -21,6 +28,7 @@ Même workflow que le Showroom zerocode117 : **copier le repo dans `Apps/Clone/<
 | Rappels | *(en attente)* | `RappelsReddit/` | ⏳ |
 | Spotify | *(en attente)* | `SpotifyReddit/` | ⏳ |
 | Netflix | debuging-life/netflix-clone | `NetflixReddit/` | ✅ Intégré |
+| Apple Music | aisultanios/MyPlaylists | `MyPlaylistsReddit/` | ✅ Intégré |
 
 ## Règles d'intégration
 

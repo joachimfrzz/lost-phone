@@ -106,6 +106,8 @@ struct LpspAppRouter: View {
             LpspSpotifyView(data: LpspAdapters.spotify(from: payload))
         case "Netflix":
             LpspNetflixView(data: LpspAdapters.netflix(from: payload))
+        case "Apple Music":
+            LpspAppleMusicView(data: LpspAdapters.appleMusic(from: payload))
         default:
             GenericLpspAppView(appName: appName, payload: payload)
         }

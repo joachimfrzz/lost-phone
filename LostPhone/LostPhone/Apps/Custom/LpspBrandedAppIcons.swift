@@ -16,6 +16,7 @@ struct LpspBrandedAppIconContent: View {
         case "Instagram": instagramIcon
         case "Spotify": spotifyIcon
         case "Netflix": netflixIcon
+        case "Apple Music": appleMusicIcon
         default: fallbackIcon
         }
     }
@@ -204,10 +205,26 @@ struct LpspBrandedAppIconContent: View {
             }
     }
 
+    private var appleMusicIcon: some View {
+        RoundedRectangle(cornerRadius: 15, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [Color(red: 0.98, green: 0.25, blue: 0.45), Color(red: 0.92, green: 0.12, blue: 0.35)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay {
+                Image(systemName: "music.note")
+                    .font(.system(size: 30, weight: .semibold))
+                    .foregroundStyle(.white)
+            }
+    }
+
     static func isBranded(_ appName: String) -> Bool {
         switch LpspAppAliases.canonical(appName) {
         case "WhatsApp", "Signal", "Uber", "Banque", "Plans", "Fichiers", "Rappels",
-             "Instagram", "Spotify", "Netflix":
+             "Instagram", "Spotify", "Netflix", "Apple Music":
             return true
         default:
             return false

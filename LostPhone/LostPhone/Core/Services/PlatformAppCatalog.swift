@@ -111,7 +111,7 @@ enum PlatformAppCatalog {
         Entry(lpspKey: "Tinder", template: .dating, status: .planned, devPriority: 42, fidelity: .medium, notes: "Matchs + chat"),
         Entry(lpspKey: "Bumble", template: .dating, status: .planned, devPriority: 43, fidelity: .medium, notes: "Même template dating"),
         Entry(lpspKey: "Wallet", template: .wallet, status: .planned, devPriority: 44, fidelity: .medium, notes: "Cartes + tickets"),
-        Entry(lpspKey: "Apple Music", template: .streamingMusic, status: .planned, devPriority: 45, fidelity: .medium, notes: "Distinct du clone Musique"),
+        Entry(lpspKey: "Apple Music", template: .streamingMusic, status: .ready, devPriority: 0, fidelity: .done, notes: "Clone aisultanios/MyPlaylists · distinct Musique Showroom"),
         Entry(lpspKey: "Deliveroo", template: .rideHailing, status: .planned, devPriority: 46, fidelity: .medium, notes: "Livraison · proche Uber Eats"),
     ]
 

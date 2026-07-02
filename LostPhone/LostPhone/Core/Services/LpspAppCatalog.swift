@@ -41,6 +41,7 @@ enum LpspAppCatalog {
         case "Rappels": return .orange
         case "Spotify": return Color(red: 0.11, green: 0.73, blue: 0.33)
         case "Netflix": return .red
+        case "Apple Music": return .pink
         default: return .blue
         }
     }

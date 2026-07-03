@@ -11,16 +11,16 @@ struct LpspAwesomeAppleTVView: View {
 
 // MARK: - Composants spec (préfixés)
 private enum LpspAppleTVTokens {
-    static let atvCanvas    = LpspAppleTVTokens.black                                     // #000000
+    static let atvCanvas    = Color.black                                     // #000000
     static let atvSurface1  = Color(red: 0.110, green: 0.110, blue: 0.118)   // #1C1C1E
     static let atvSurface2  = Color(red: 0.173, green: 0.173, blue: 0.180)   // #2C2C2E
     static let atvDivider   = Color(red: 0.220, green: 0.220, blue: 0.227)   // #38383A
-    static let atvTextPrimary   = LpspAppleTVTokens.white                                 // #FFFFFF
+    static let atvTextPrimary   = Color.white                                 // #FFFFFF
     static let atvTextSecondary = Color(red: 0.596, green: 0.596, blue: 0.624) // #98989F
     static let atvTextTertiary  = Color(red: 0.388, green: 0.388, blue: 0.400) // #636366
-    static let atvCTA        = LpspAppleTVTokens.white                                    // #FFFFFF
+    static let atvCTA        = Color.white                                    // #FFFFFF
     static let atvCTAPressed = Color(red: 0.898, green: 0.898, blue: 0.918)   // #E5E5EA
-    static let atvCTALabel   = LpspAppleTVTokens.black                                    // #000000
+    static let atvCTALabel   = Color.black                                    // #000000
     static let atvBlue        = Color(red: 0.039, green: 0.518, blue: 1.000)  // #0A84FF
     static let atvBluePressed = Color(red: 0.000, green: 0.376, blue: 0.875)  // #0060DF
     static let atvMLS     = Color(red: 0.929, green: 0.102, blue: 0.435)      // #ED1A6F (MLS only)
@@ -65,7 +65,7 @@ private enum LpspAppleTVFonts {
 }
 
 // Eyebrow modifier — 11pt uppercase tracked, secondary
-private struct LpspAppleTVATVEyebrow: ViewModifier {
+fileprivate struct LpspAppleTVATVEyebrow: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(LpspAppleTVFonts.atvEyebrow)
@@ -74,9 +74,9 @@ private struct LpspAppleTVATVEyebrow: ViewModifier {
             .foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
     }
 }
-extension View { func atvEyebrow() -> some View { modifier(LpspAppleTVATVEyebrow()) } }
+fileprivate extension View { func atvEyebrow() -> some View { modifier(LpspAppleTVATVEyebrow()) } }
 
-private struct LpspAppleTVHeroCard: View {
+fileprivate struct LpspAppleTVHeroCard: View {
     let artURL: URL?
     let eyebrow: String        // "Apple TV+ · New Episode"
     let title: String
@@ -126,7 +126,7 @@ private struct LpspAppleTVHeroCard: View {
     }
 }
 
-private struct LpspAppleTVUpNextThumb: View {
+fileprivate struct LpspAppleTVUpNextThumb: View {
     let artURL: URL?
     let title: String
     let subhead: String       // "S3 E8 · 24 min left"
@@ -153,8 +153,8 @@ private struct LpspAppleTVUpNextThumb: View {
                 if progress > 0 {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(LpspAppleTVTokens.white.opacity(0.28))
-                            Rectangle().fill(LpspAppleTVTokens.white).frame(width: geo.size.width * progress)
+                            Rectangle().fill(Color.white.opacity(0.28))
+                            Rectangle().fill(Color.white).frame(width: geo.size.width * progress)
                         }
                         .frame(height: 4)
                         .frame(maxHeight: .infinity, alignment: .bottom)
@@ -172,7 +172,7 @@ private struct LpspAppleTVUpNextThumb: View {
     }
 }
 
-private struct LpspAppleTVLiveBadge: View {
+fileprivate struct LpspAppleTVLiveBadge: View {
     @State private var dim = false
     var body: some View {
         HStack(spacing: 6) {
@@ -187,7 +187,7 @@ private struct LpspAppleTVLiveBadge: View {
     }
 }
 
-private struct LpspAppleTVMLSChip: View {
+fileprivate struct LpspAppleTVMLSChip: View {
     let title: String   // "MLS Season Pass"
     var body: some View {
         Text(title)
@@ -198,7 +198,7 @@ private struct LpspAppleTVMLSChip: View {
     }
 }
 
-private struct LpspAppleTVShelfHeader: View {
+fileprivate struct LpspAppleTVShelfHeader: View {
     let title: String
     var accessory: AnyView? = nil
     var body: some View {
@@ -215,7 +215,7 @@ private struct LpspAppleTVShelfHeader: View {
     }
 }
 
-private struct LpspAppleTVAppleTVTabView: View {
+fileprivate struct LpspAppleTVAppleTVTabView: View {
     init() {
         let a = UITabBarAppearance()
         a.configureWithDefaultBackground()             // translucent blur material
@@ -236,7 +236,7 @@ private struct LpspAppleTVAppleTVTabView: View {
     }
 }
 
-private struct LpspAppleTVAppleTVTheme: ViewModifier {
+fileprivate struct LpspAppleTVAppleTVTheme: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(LpspAppleTVTokens.atvCanvas)            // pure #000000
@@ -244,7 +244,7 @@ private struct LpspAppleTVAppleTVTheme: ViewModifier {
             .preferredColorScheme(.dark)            // browse is always true-black
     }
 }
-extension View { func appleTVTheme() -> some View { modifier(LpspAppleTVAppleTVTheme()) } }
+fileprivate extension View { func appleTVTheme() -> some View { modifier(LpspAppleTVAppleTVTheme()) } }
 
 // MARK: - Écrans showroom
 

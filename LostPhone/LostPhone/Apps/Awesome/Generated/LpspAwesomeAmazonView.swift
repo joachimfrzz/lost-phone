@@ -12,7 +12,7 @@ struct LpspAwesomeAmazonView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspAmazonTokens {
     // MARK: - Canvas
-    static let amzCanvas        = LpspAmazonTokens.white                                   // #FFFFFF
+    static let amzCanvas        = Color.white                                   // #FFFFFF
     static let amzSurfaceMuted  = Color(red: 0.953, green: 0.953, blue: 0.953) // #F3F3F3
     static let amzSurfaceTint   = Color(red: 0.969, green: 0.973, blue: 0.973) // #F7F8F8
     static let amzDivider       = Color(red: 0.867, green: 0.867, blue: 0.867) // #DDDDDD
@@ -67,7 +67,7 @@ private enum LpspAmazonFonts {
     static let amzPromoBadge   = Font.system(size: 11, weight: .regular)
 }
 
-private struct LpspAmazonAmazonTopNav: View {
+fileprivate struct LpspAmazonAmazonTopNav: View {
     @State private var query = ""
     let onSearch: () -> Void
     let onMicOrScan: () -> Void
@@ -113,7 +113,7 @@ private struct LpspAmazonAmazonTopNav: View {
     }
 }
 
-private struct LpspAmazonRoundedCorner: Shape {
+fileprivate struct LpspAmazonRoundedCorner: Shape {
     var radius: CGFloat
     var corners: UIRectCorner
     func path(in rect: CGRect) -> Path {
@@ -122,7 +122,7 @@ private struct LpspAmazonRoundedCorner: Shape {
     }
 }
 
-private struct LpspAmazonAmazonAddToCartButton: View {
+fileprivate struct LpspAmazonAmazonAddToCartButton: View {
     let action: () -> Void
     @State private var pressed = false
 
@@ -158,7 +158,7 @@ private struct LpspAmazonAmazonAddToCartButton: View {
     }
 }
 
-private struct LpspAmazonAmazonBuyNowButton: View {
+fileprivate struct LpspAmazonAmazonBuyNowButton: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -172,7 +172,7 @@ private struct LpspAmazonAmazonBuyNowButton: View {
     }
 }
 
-private struct LpspAmazonAmazonProductCard: View {
+fileprivate struct LpspAmazonAmazonProductCard: View {
     let title: String
     let rating: Double
     let reviewCount: Int
@@ -237,7 +237,7 @@ private struct LpspAmazonAmazonProductCard: View {
     }
 }
 
-private struct LpspAmazonAmazonPDPPriceBlock: View {
+fileprivate struct LpspAmazonAmazonPDPPriceBlock: View {
     let dollars: Int
     let cents: Int
     let originalPrice: String?
@@ -282,7 +282,7 @@ private struct LpspAmazonAmazonPDPPriceBlock: View {
     }
 }
 
-private struct LpspAmazonAmazonLightningDealBanner: View {
+fileprivate struct LpspAmazonAmazonLightningDealBanner: View {
     let countdown: String  // "02h 45m 10s"
     var body: some View {
         HStack(spacing: 10) {
@@ -309,7 +309,7 @@ private struct LpspAmazonAmazonLightningDealBanner: View {
     }
 }
 
-private struct LpspAmazonAmazonQuantityStepper: View {
+fileprivate struct LpspAmazonAmazonQuantityStepper: View {
     @Binding var count: Int
     var body: some View {
         HStack(spacing: 0) {
@@ -335,7 +335,7 @@ private struct LpspAmazonAmazonQuantityStepper: View {
     }
 }
 
-private struct LpspAmazonAmazonRootTabView: View {
+fileprivate struct LpspAmazonAmazonRootTabView: View {
     @State private var cartCount = 2
     init() {
         let appearance = UITabBarAppearance()
@@ -358,7 +358,7 @@ private struct LpspAmazonAmazonRootTabView: View {
     }
 }
 
-private struct LpspAmazonAddToCartToast: View {
+fileprivate struct LpspAmazonAddToCartToast: View {
     @Binding var visible: Bool
     var body: some View {
         HStack {

@@ -20,13 +20,13 @@ private enum LpspTelegramTokens {
     static let tgBubbleOutgoing     = Color(red: 0.169, green: 0.525, blue: 0.992) // #2B86FD
     static let tgBubbleOutgoingTop  = Color(red: 0.169, green: 0.525, blue: 0.992) // #2B86FD (gradient top)
     static let tgBubbleOutgoingBot  = Color(red: 0.380, green: 0.702, blue: 1.000) // #61B3FF (gradient bottom)
-    static let tgBubbleIncomingLight = LpspTelegramTokens.white
+    static let tgBubbleIncomingLight = Color.white
     static let tgBubbleIncomingDark  = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
 
     // MARK: - Canvas
-    static let tgCanvasLight   = LpspTelegramTokens.white                                    // #FFFFFF
+    static let tgCanvasLight   = Color.white                                    // #FFFFFF
     static let tgCanvasDark    = Color(red: 0.129, green: 0.129, blue: 0.129)   // #212121
-    static let tgCanvasOLED    = LpspTelegramTokens.black                                     // #000000
+    static let tgCanvasOLED    = Color.black                                     // #000000
     static let tgChatBGBlue    = Color(red: 0.859, green: 0.906, blue: 0.957)   // #DBE7F4 (default blue wallpaper)
     static let tgSurface1Light = Color(red: 0.969, green: 0.969, blue: 0.969)   // #F7F7F7
     static let tgSurface1Dark  = Color(red: 0.110, green: 0.110, blue: 0.110)   // #1C1C1C
@@ -35,10 +35,10 @@ private enum LpspTelegramTokens {
     static let tgDividerDark   = Color(red: 0.220, green: 0.220, blue: 0.220)   // #383838
 
     // MARK: - Text
-    static let tgTextPrimary       = LpspTelegramTokens.black
+    static let tgTextPrimary       = Color.black
     static let tgTextSecondary     = Color(red: 0.439, green: 0.459, blue: 0.475) // #707579
     static let tgTextTertiary      = Color(red: 0.627, green: 0.651, blue: 0.678) // #A0A6AD
-    static let tgTextPrimaryDark   = LpspTelegramTokens.white
+    static let tgTextPrimaryDark   = Color.white
     static let tgTextSecondaryDark = Color(red: 0.553, green: 0.557, blue: 0.576) // #8D8E93
 
     // MARK: - Semantic
@@ -50,7 +50,7 @@ private enum LpspTelegramTokens {
 }
 
 // Sender color palette (for group chats)
-private enum LpspTelegramTgSenderColor: Int, CaseIterable {
+fileprivate enum LpspTelegramTgSenderColor: Int, CaseIterable {
     case red, orange, purple, green, teal, blue, pink
     var color: Color {
         switch self {
@@ -68,7 +68,7 @@ private enum LpspTelegramTgSenderColor: Int, CaseIterable {
     }
 }
 
-private struct LpspTelegramTelegramTheme {
+fileprivate struct LpspTelegramTelegramTheme {
     var accent: Color = LpspTelegramTokens.tgAccent
     var outgoingBubble: Color = LpspTelegramTokens.tgBubbleOutgoing
     var useGradientBubbles: Bool = false
@@ -102,7 +102,7 @@ private enum LpspTelegramFonts {
     static let tgCode           = Font.system(size: 15, weight: .regular)
 }
 
-private struct LpspTelegramTgComposeBar: View {
+fileprivate struct LpspTelegramTgComposeBar: View {
     @State private var text: String = ""
     @State private var showSilentMenu = false
     @Environment(\.telegramTheme) private var theme
@@ -160,7 +160,7 @@ private struct LpspTelegramTgComposeBar: View {
     private func sendWhenOnline() { }
 }
 
-private struct LpspTelegramTgOutgoingBubble: View {
+fileprivate struct LpspTelegramTgOutgoingBubble: View {
     let text: String
     let timestamp: String
     let isRead: Bool
@@ -205,7 +205,7 @@ private struct LpspTelegramTgOutgoingBubble: View {
     }
 }
 
-private struct LpspTelegramTgIncomingBubble: View {
+fileprivate struct LpspTelegramTgIncomingBubble: View {
     let text: String
     let senderName: String?
     let senderId: Int?
@@ -229,7 +229,7 @@ private struct LpspTelegramTgIncomingBubble: View {
                     bottomTrailingRadius: 17,
                     topTrailingRadius: 17
                 )
-                .fill(LpspTelegramTokens.white)
+                .fill(Color.white)
             )
             Spacer(minLength: UIScreen.main.bounds.width * 0.2)
         }
@@ -237,7 +237,7 @@ private struct LpspTelegramTgIncomingBubble: View {
     }
 }
 
-private struct LpspTelegramTgVoiceMiniPlayer: View {
+fileprivate struct LpspTelegramTgVoiceMiniPlayer: View {
     let title: String
     let progress: Double
     var onClose: () -> Void = {}
@@ -268,14 +268,14 @@ private struct LpspTelegramTgVoiceMiniPlayer: View {
         .frame(height: 40)
         .background(
             Capsule()
-                .fill(LpspTelegramTokens.white)
+                .fill(Color.white)
                 .shadow(color: .black.opacity(0.16), radius: 16, y: 4)
         )
         .padding(.horizontal, 16)
     }
 }
 
-private struct LpspTelegramTgSwipeToReply<Content: View>: View {
+fileprivate struct LpspTelegramTgSwipeToReply<Content: View>: View {
     @ViewBuilder let content: Content
     @State private var offset: CGFloat = 0
     @State private var hasTicked = false
@@ -308,7 +308,7 @@ private struct LpspTelegramTgSwipeToReply<Content: View>: View {
     }
 }
 
-private struct LpspTelegramTgChatListRow: View {
+fileprivate struct LpspTelegramTgChatListRow: View {
     let avatar: Image
     let name: String
     let preview: String
@@ -368,12 +368,12 @@ private struct LpspTelegramTgChatListRow: View {
         }
         .padding(.horizontal, 16)
         .frame(height: 76)
-        .background(isPinned ? LpspTelegramTokens.tgSurface1Light : LpspTelegramTokens.clear)
+        .background(isPinned ? LpspTelegramTokens.tgSurface1Light : Color.clear)
         .contentShape(Rectangle())
     }
 }
 
-private struct LpspTelegramTgRootTabView: View {
+fileprivate struct LpspTelegramTgRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()

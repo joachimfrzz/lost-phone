@@ -12,7 +12,7 @@ struct LpspAwesomeExpediaView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspExpediaTokens {
     // MARK: - Canvas & Surfaces (Light)
-    static let expCanvas        = LpspExpediaTokens.white                                    // #FFFFFF
+    static let expCanvas        = Color.white                                    // #FFFFFF
     static let expSurfaceGray   = Color(red: 0.961, green: 0.969, blue: 0.980)  // #F5F7FA
     static let expSurfacePressed = Color(red: 0.925, green: 0.937, blue: 0.957) // #ECEFF4
     static let expDivider       = Color(red: 0.890, green: 0.906, blue: 0.929)  // #E3E7ED
@@ -80,7 +80,7 @@ private enum LpspExpediaFonts {
     static let expScoreNum   = Font.system(size: 15, weight: .heavy)
 }
 
-private struct LpspExpediaPropertyCard: View {
+fileprivate struct LpspExpediaPropertyCard: View {
     let imageName: String
     let dealFlag: String?         // "−24% Bundle" / "Member price"
     let title: String
@@ -113,7 +113,7 @@ private struct LpspExpediaPropertyCard: View {
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(saved ? LpspExpediaTokens.expActionBlue : .white)
                         .padding(7)
-                        .background(Circle().fill(LpspExpediaTokens.black.opacity(0.4)))
+                        .background(Circle().fill(Color.black.opacity(0.4)))
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(10)
@@ -164,7 +164,7 @@ private struct LpspExpediaPropertyCard: View {
     }
 }
 
-private struct LpspExpediaModeSwitch: View {
+fileprivate struct LpspExpediaModeSwitch: View {
     @Binding var selection: Int
     let modes = ["Stays", "Flights", "Cars", "Bundle"]
 
@@ -183,7 +183,7 @@ private struct LpspExpediaModeSwitch: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(active ? LpspExpediaTokens.clear : LpspExpediaTokens.expDivider, lineWidth: 0.5)
+                            .strokeBorder(active ? Color.clear : LpspExpediaTokens.expDivider, lineWidth: 0.5)
                     )
                     .onTapGesture {
                         withAnimation(.easeOut(duration: 0.2)) { selection = i }
@@ -194,7 +194,7 @@ private struct LpspExpediaModeSwitch: View {
     }
 }
 
-private struct LpspExpediaOneKeyStrip: View {
+fileprivate struct LpspExpediaOneKeyStrip: View {
     let balance: String   // "$124.80"
 
     var body: some View {
@@ -222,7 +222,7 @@ private struct LpspExpediaOneKeyStrip: View {
     }
 }
 
-private struct LpspExpediaSearchPill: View {
+fileprivate struct LpspExpediaSearchPill: View {
     let destination: String
     let detail: String
 
@@ -246,7 +246,7 @@ private struct LpspExpediaSearchPill: View {
     }
 }
 
-private struct LpspExpediaReserveButton: View {
+fileprivate struct LpspExpediaReserveButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
@@ -259,7 +259,7 @@ private struct LpspExpediaReserveButton: View {
     }
 }
 
-private struct LpspExpediaBundleButton: View {
+fileprivate struct LpspExpediaBundleButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
@@ -272,7 +272,7 @@ private struct LpspExpediaBundleButton: View {
     }
 }
 
-private struct LpspExpediaExpediaTabView: View {
+fileprivate struct LpspExpediaExpediaTabView: View {
     var body: some View {
         TabView {
             SearchScreen().tabItem { Label("Search", systemImage: "magnifyingglass") }
@@ -285,7 +285,7 @@ private struct LpspExpediaExpediaTabView: View {
     }
 }
 
-private struct LpspExpediaExpediaTheme: ViewModifier {
+fileprivate struct LpspExpediaExpediaTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme
     func body(content: Content) -> some View {
         content
@@ -293,7 +293,7 @@ private struct LpspExpediaExpediaTheme: ViewModifier {
             .foregroundStyle(scheme == .dark ? LpspExpediaTokens.expDarkTextPrimary : LpspExpediaTokens.expTextPrimary)
     }
 }
-extension View { func expediaTheme() -> some View { modifier(LpspExpediaExpediaTheme()) } }
+fileprivate extension View { func expediaTheme() -> some View { modifier(LpspExpediaExpediaTheme()) } }
 
 // MARK: - Écrans showroom
 

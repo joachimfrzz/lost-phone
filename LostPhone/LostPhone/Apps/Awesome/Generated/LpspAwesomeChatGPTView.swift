@@ -12,7 +12,7 @@ struct LpspAwesomeChatGPTView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspChatGPTTokens {
     // MARK: - Canvas
-    static let gptCanvas          = LpspChatGPTTokens.white                                    // #FFFFFF
+    static let gptCanvas          = Color.white                                    // #FFFFFF
     static let gptDarkCanvas      = Color(red: 0.129, green: 0.129, blue: 0.129)  // #212121
 
     // MARK: - Sidebar
@@ -42,7 +42,7 @@ private enum LpspChatGPTTokens {
 
     // MARK: - Send Button
     static let gptSendLight       = Color(red: 0.051, green: 0.051, blue: 0.051) // #0D0D0D
-    static let gptSendDark        = LpspChatGPTTokens.white                                    // #FFFFFF
+    static let gptSendDark        = Color.white                                    // #FFFFFF
     static let gptSendDisabled    = Color(red: 0.800, green: 0.800, blue: 0.800) // #CCCCCC
 
     // MARK: - Semantic
@@ -84,7 +84,7 @@ private enum LpspChatGPTFonts {
     }
 }
 
-private struct LpspChatGPTSendButton: View {
+fileprivate struct LpspChatGPTSendButton: View {
     let isEnabled: Bool
     let isGenerating: Bool
     let action: () -> Void
@@ -113,7 +113,7 @@ private struct LpspChatGPTSendButton: View {
     }
 }
 
-private struct LpspChatGPTSendPressStyle: ButtonStyle {
+fileprivate struct LpspChatGPTSendPressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
@@ -121,7 +121,7 @@ private struct LpspChatGPTSendPressStyle: ButtonStyle {
     }
 }
 
-private struct LpspChatGPTUserMessageBubble: View {
+fileprivate struct LpspChatGPTUserMessageBubble: View {
     let text: String
     let attachmentUrl: String?
 
@@ -151,7 +151,7 @@ private struct LpspChatGPTUserMessageBubble: View {
     }
 }
 
-private struct LpspChatGPTAttachmentTile: View {
+fileprivate struct LpspChatGPTAttachmentTile: View {
     let url: String
 
     var body: some View {
@@ -170,7 +170,7 @@ private struct LpspChatGPTAttachmentTile: View {
     }
 }
 
-private struct LpspChatGPTAssistantMessage: View {
+fileprivate struct LpspChatGPTAssistantMessage: View {
     let content: String  // markdown-rendered
     let onRegenerate: () -> Void
     let onCopy: () -> Void
@@ -216,7 +216,7 @@ private struct LpspChatGPTAssistantMessage: View {
     }
 }
 
-private struct LpspChatGPTFeedbackIconButton: View {
+fileprivate struct LpspChatGPTFeedbackIconButton: View {
     let icon: String
     let action: () -> Void
 
@@ -226,14 +226,14 @@ private struct LpspChatGPTFeedbackIconButton: View {
                 .font(.system(size: 16))
                 .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
                 .frame(width: 32, height: 32)
-                .background(Circle().fill(LpspChatGPTTokens.clear))
+                .background(Circle().fill(Color.clear))
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
     }
 }
 
-private struct LpspChatGPTCodeBlockView: View {
+fileprivate struct LpspChatGPTCodeBlockView: View {
     let language: String
     let code: String
     @State private var showCopied = false
@@ -280,7 +280,7 @@ private struct LpspChatGPTCodeBlockView: View {
     }
 }
 
-private struct LpspChatGPTModelSelectorChip: View {
+fileprivate struct LpspChatGPTModelSelectorChip: View {
     let modelName: String
     let onTap: () -> Void
 
@@ -299,13 +299,13 @@ private struct LpspChatGPTModelSelectorChip: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(Capsule().fill(LpspChatGPTTokens.clear))
+            .background(Capsule().fill(Color.clear))
             .overlay(Capsule().strokeBorder(LpspChatGPTTokens.gptDivider, lineWidth: 1))
         }
     }
 }
 
-private struct LpspChatGPTComposer: View {
+fileprivate struct LpspChatGPTComposer: View {
     @Binding var text: String
     let onSend: () -> Void
     let onVoice: () -> Void
@@ -361,13 +361,13 @@ private struct LpspChatGPTComposer: View {
     }
 }
 
-private struct LpspChatGPTVoiceModeView: View {
+fileprivate struct LpspChatGPTVoiceModeView: View {
     @Binding var isShown: Bool
     @State private var pulseScale: CGFloat = 1.0
 
     var body: some View {
         ZStack {
-            LpspChatGPTTokens.black.ignoresSafeArea()
+            Color.black.ignoresSafeArea()
 
             Circle()
                 .fill(
@@ -417,7 +417,7 @@ private struct LpspChatGPTVoiceModeView: View {
     }
 }
 
-private struct LpspChatGPTGPTSidebar: View {
+fileprivate struct LpspChatGPTGPTSidebar: View {
     let sections: [LpspChatGPTConversationSection]
 
     struct LpspChatGPTConversationSection: Identifiable {
@@ -478,7 +478,7 @@ private struct LpspChatGPTGPTSidebar: View {
     }
 }
 
-private struct LpspChatGPTChatSidebarRow: View {
+fileprivate struct LpspChatGPTChatSidebarRow: View {
     let title: String
     let isActive: Bool
 
@@ -492,11 +492,11 @@ private struct LpspChatGPTChatSidebarRow: View {
         }
         .padding(.horizontal, 12)
         .frame(height: 40)
-        .background(isActive ? LpspChatGPTTokens.gptSidebarActive : LpspChatGPTTokens.clear)
+        .background(isActive ? LpspChatGPTTokens.gptSidebarActive : Color.clear)
     }
 }
 
-private struct LpspChatGPTTypingIndicator: View {
+fileprivate struct LpspChatGPTTypingIndicator: View {
     @State private var dot1: CGFloat = 0.3
     @State private var dot2: CGFloat = 0.3
     @State private var dot3: CGFloat = 0.3
@@ -517,7 +517,7 @@ private struct LpspChatGPTTypingIndicator: View {
     }
 }
 
-private struct LpspChatGPTGPTTheme: ViewModifier {
+fileprivate struct LpspChatGPTGPTTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme
 
     func body(content: Content) -> some View {
@@ -527,7 +527,7 @@ private struct LpspChatGPTGPTTheme: ViewModifier {
     }
 }
 
-extension View {
+fileprivate extension View {
     func gptTheme() -> some View { modifier(LpspChatGPTGPTTheme()) }
 }
 

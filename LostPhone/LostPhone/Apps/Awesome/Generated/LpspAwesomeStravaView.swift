@@ -86,7 +86,7 @@ private enum LpspStravaFonts {
     static let stravaRank       = Font.system(size: 13, weight: .black)
 }
 
-private struct LpspStravaStatCell: View {
+fileprivate struct LpspStravaStatCell: View {
     let label: String
     let value: String
 
@@ -105,7 +105,7 @@ private struct LpspStravaStatCell: View {
     }
 }
 
-private struct LpspStravaStatGrid: View {
+fileprivate struct LpspStravaStatGrid: View {
     let stats: [(String, String)]   // up to 3
     var body: some View {
         HStack(spacing: 0) {
@@ -121,7 +121,7 @@ private struct LpspStravaStatGrid: View {
 
 import MapKit
 
-private struct LpspStravaRouteMapSnapshot: View {
+fileprivate struct LpspStravaRouteMapSnapshot: View {
     let coordinates: [CLLocationCoordinate2D]
 
     var body: some View {
@@ -153,7 +153,7 @@ private struct LpspStravaRouteMapSnapshot: View {
     }
 }
 
-private struct LpspStravaKudosButton: View {
+fileprivate struct LpspStravaKudosButton: View {
     @Binding var kudosCount: Int
     @State private var hasGivenKudos = false
     @State private var emitConfetti = false
@@ -186,7 +186,7 @@ private struct LpspStravaKudosButton: View {
     }
 }
 
-private struct LpspStravaConfettiBurst: View {
+fileprivate struct LpspStravaConfettiBurst: View {
     @State private var rise = false
     var body: some View {
         ZStack {
@@ -204,7 +204,7 @@ private struct LpspStravaConfettiBurst: View {
     }
 }
 
-private struct LpspStravaActivityCard: View {
+fileprivate struct LpspStravaActivityCard: View {
     let athleteAvatar: Image
     let athleteName: String
     let timestamp: String
@@ -271,7 +271,7 @@ private struct LpspStravaActivityCard: View {
     }
 }
 
-private struct LpspStravaRecordButton: View {
+fileprivate struct LpspStravaRecordButton: View {
     var onRecord: () -> Void
     var body: some View {
         Button {
@@ -289,7 +289,7 @@ private struct LpspStravaRecordButton: View {
     }
 }
 
-private struct LpspStravaLeaderboardRow: View {
+fileprivate struct LpspStravaLeaderboardRow: View {
     let rank: Int
     let avatar: Image
     let name: String
@@ -334,7 +334,7 @@ private struct LpspStravaLeaderboardRow: View {
     }
 }
 
-private struct LpspStravaAchievementBadge: View {
+fileprivate struct LpspStravaAchievementBadge: View {
     let icon: String     // e.g. "trophy.fill" / "figure.run.circle.fill"
     let text: String     // e.g. "1 PR"
     var body: some View {
@@ -347,14 +347,14 @@ private struct LpspStravaAchievementBadge: View {
     }
 }
 
-private struct LpspStravaRootTabView: View {
+fileprivate struct LpspStravaRootTabView: View {
     @State private var tab = 0
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $tab) {
                 FeedView()    .tabItem { Label("Home", systemImage: "house") }.tag(0)
                 MapsView()    .tabItem { Label("Maps", systemImage: "map") }.tag(1)
-                LpspStravaTokens.clear   .tabItem { Label("",     systemImage: "") }.tag(2) // placeholder for Record
+                Color.clear   .tabItem { Label("",     systemImage: "") }.tag(2) // placeholder for Record
                 GroupsView()  .tabItem { Label("Groups", systemImage: "person.3") }.tag(3)
                 ProfileView() .tabItem { Label("You",  systemImage: "person.crop.circle") }.tag(4)
             }

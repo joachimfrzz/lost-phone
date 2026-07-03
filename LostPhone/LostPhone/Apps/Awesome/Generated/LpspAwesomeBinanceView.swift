@@ -16,7 +16,7 @@ private enum LpspBinanceTokens {
     static let bnSurface2  = Color(red: 0.118, green: 0.125, blue: 0.149) // #1E2026
     static let bnSurface3  = Color(red: 0.169, green: 0.192, blue: 0.224) // #2B3139
     static let bnDivider   = Color(red: 0.169, green: 0.192, blue: 0.224) // #2B3139
-    static let bnCanvasLight   = LpspBinanceTokens.white                                  // #FFFFFF
+    static let bnCanvasLight   = Color.white                                  // #FFFFFF
     static let bnSurface1Light = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let bnDividerLight  = Color(red: 0.918, green: 0.925, blue: 0.937) // #EAECEF
     static let bnYellow        = Color(red: 0.941, green: 0.725, blue: 0.043) // #F0B90B
@@ -62,11 +62,11 @@ private enum LpspBinanceFonts {
 }
 
 // Apply tabular figures to every numeric Text
-extension View {
+fileprivate extension View {
     func bnTabular() -> some View { self.monospacedDigit() }
 }
 
-private struct LpspBinanceMarketRow: View {
+fileprivate struct LpspBinanceMarketRow: View {
     let symbol: String          // "BTC"
     let quote: String           // "USDT"
     let volume: String          // "1.42B"
@@ -112,7 +112,7 @@ private struct LpspBinanceMarketRow: View {
     }
 }
 
-private struct LpspBinanceOrderBookRow: View {
+fileprivate struct LpspBinanceOrderBookRow: View {
     let price: String
     let qty: String
     let depthRatio: CGFloat   // 0...1 cumulative size / max
@@ -139,7 +139,7 @@ private struct LpspBinanceOrderBookRow: View {
     }
 }
 
-private struct LpspBinanceSpreadRow: View {
+fileprivate struct LpspBinanceSpreadRow: View {
     let last: String
     let up: Bool
     var body: some View {
@@ -155,7 +155,7 @@ private struct LpspBinanceSpreadRow: View {
     }
 }
 
-private struct LpspBinanceBalanceHero: View {
+fileprivate struct LpspBinanceBalanceHero: View {
     let value: String      // "12,840.57"
     let currency: String   // "USDT"
     let pnl: String        // "+$214.86 (+1.70%)"
@@ -178,7 +178,7 @@ private struct LpspBinanceBalanceHero: View {
     }
 }
 
-private struct LpspBinanceTradeTicket: View {
+fileprivate struct LpspBinanceTradeTicket: View {
     @State private var isBuy = true
     @State private var pct: Int = 0
 
@@ -222,7 +222,7 @@ private struct LpspBinanceTradeTicket: View {
     }
 }
 
-private struct LpspBinanceBinancePrimaryButton: View {
+fileprivate struct LpspBinanceBinancePrimaryButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
@@ -236,7 +236,7 @@ private struct LpspBinanceBinancePrimaryButton: View {
     }
 }
 
-private struct LpspBinanceConvertCard: View {
+fileprivate struct LpspBinanceConvertCard: View {
     var body: some View {
         ZStack {
             VStack(spacing: 8) {
@@ -250,7 +250,7 @@ private struct LpspBinanceConvertCard: View {
     }
 }
 
-private struct LpspBinanceConvertTile: View {
+fileprivate struct LpspBinanceConvertTile: View {
     let role: String; let coin: String; let avail: String
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -272,7 +272,7 @@ private struct LpspBinanceConvertTile: View {
     }
 }
 
-private struct LpspBinanceBinanceTabView: View {
+fileprivate struct LpspBinanceBinanceTabView: View {
     var body: some View {
         TabView {
             HomeView().tabItem { Label("Home", systemImage: "house.fill") }
@@ -293,7 +293,7 @@ private struct LpspBinanceBinanceTabView: View {
     }
 }
 
-private struct LpspBinanceBinanceTheme: ViewModifier {
+fileprivate struct LpspBinanceBinanceTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme
     func body(content: Content) -> some View {
         content
@@ -301,7 +301,7 @@ private struct LpspBinanceBinanceTheme: ViewModifier {
             .foregroundStyle(scheme == .dark ? LpspBinanceTokens.bnTextPrimary : LpspBinanceTokens.bnTextPrimaryLt)
     }
 }
-extension View { func binanceTheme() -> some View { modifier(LpspBinanceBinanceTheme()) } }
+fileprivate extension View { func binanceTheme() -> some View { modifier(LpspBinanceBinanceTheme()) } }
 
 // MARK: - Écrans showroom
 

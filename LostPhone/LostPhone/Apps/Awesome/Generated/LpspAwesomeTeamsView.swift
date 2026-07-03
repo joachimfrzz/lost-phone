@@ -35,7 +35,7 @@ private enum LpspTeamsTokens {
 
     // MARK: - Canvas & Surfaces (light)
     static let teamsLightCanvas   = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
-    static let teamsLightSurface1 = LpspTeamsTokens.white                                  // #FFFFFF
+    static let teamsLightSurface1 = Color.white                                  // #FFFFFF
     static let teamsLightSurface2 = Color(red: 0.941, green: 0.941, blue: 0.941) // #F0F0F0
     static let teamsLightDivider  = Color(red: 0.882, green: 0.882, blue: 0.882) // #E1E1E1
     static let teamsLightText1    = Color(red: 0.145, green: 0.141, blue: 0.137) // #252423
@@ -46,7 +46,7 @@ private enum LpspTeamsTokens {
     static let teamsDarkSurface1 = Color(red: 0.176, green: 0.173, blue: 0.173)  // #2D2C2C
     static let teamsDarkSurface2 = Color(red: 0.239, green: 0.235, blue: 0.235)  // #3D3C3C
     static let teamsDarkDivider  = Color(red: 0.239, green: 0.235, blue: 0.235)  // #3D3C3C
-    static let teamsDarkText1    = LpspTeamsTokens.white                                   // #FFFFFF
+    static let teamsDarkText1    = Color.white                                   // #FFFFFF
     static let teamsDarkText2    = Color(red: 0.678, green: 0.678, blue: 0.678)  // #ADADAD
 
     // MARK: - Brand
@@ -65,9 +65,9 @@ private enum LpspTeamsTokens {
 
 
 
-private enum LpspTeamsPresence { case available, busy, dnd, away, offline }
+fileprivate enum LpspTeamsPresence { case available, busy, dnd, away, offline }
 
-private struct LpspTeamsPresenceDot: View {
+fileprivate struct LpspTeamsPresenceDot: View {
     let presence: LpspTeamsPresence
     var size: CGFloat = 10
 
@@ -89,7 +89,7 @@ private struct LpspTeamsPresenceDot: View {
     }
 }
 
-private struct LpspTeamsAvatarWithPresence: View {
+fileprivate struct LpspTeamsAvatarWithPresence: View {
     let initials: String
     let presence: LpspTeamsPresence
     var size: CGFloat = 32
@@ -104,10 +104,10 @@ private struct LpspTeamsAvatarWithPresence: View {
     }
 }
 
-private struct LpspTeamsTeam: Identifiable { let id = UUID(); let name: String; let channels: [LpspTeamsChannel] }
-private struct LpspTeamsChannel: Identifiable { let id = UUID(); let name: String; var unread: Bool }
+fileprivate struct LpspTeamsTeam: Identifiable { let id = UUID(); let name: String; let channels: [LpspTeamsChannel] }
+fileprivate struct LpspTeamsChannel: Identifiable { let id = UUID(); let name: String; var unread: Bool }
 
-private struct LpspTeamsTeamTreeRow: View {
+fileprivate struct LpspTeamsTeamTreeRow: View {
     let team: LpspTeamsTeam
     @State private var expanded = true
     @Binding var activeChannel: UUID?
@@ -143,7 +143,7 @@ private struct LpspTeamsTeamTreeRow: View {
     }
 }
 
-private struct LpspTeamsChannelRow: View {
+fileprivate struct LpspTeamsChannelRow: View {
     let channel: LpspTeamsChannel
     let isActive: Bool
     @Environment(\.colorScheme) private var scheme
@@ -172,12 +172,12 @@ private struct LpspTeamsChannelRow: View {
     }
 }
 
-private struct LpspTeamsMessageCard: View {
+fileprivate struct LpspTeamsMessageCard: View {
     let author: String
     let initials: String
     let presence: LpspTeamsPresence
     let timestamp: String
-    let body: String
+    let postText: String
     let replyCount: Int
     @Environment(\.colorScheme) private var scheme
 
@@ -191,7 +191,7 @@ private struct LpspTeamsMessageCard: View {
                     Text(timestamp).font(LpspTeamsFonts.teamsMetadata)
                         .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme))
                 }
-                Text(body).font(LpspTeamsFonts.teamsBody)
+                Text(postText).font(LpspTeamsFonts.teamsBody)
                     .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
 
                 HStack(spacing: 6) {
@@ -212,7 +212,7 @@ private struct LpspTeamsMessageCard: View {
     }
 }
 
-private struct LpspTeamsReactionChip: View {
+fileprivate struct LpspTeamsReactionChip: View {
     let emoji: String; let count: Int; let mine: Bool
     @Environment(\.colorScheme) private var scheme
     var body: some View {
@@ -228,7 +228,7 @@ private struct LpspTeamsReactionChip: View {
     }
 }
 
-private struct LpspTeamsMeetingJoinBar: View {
+fileprivate struct LpspTeamsMeetingJoinBar: View {
     let title: String
     let onJoin: () -> Void
     @Environment(\.colorScheme) private var scheme
@@ -259,7 +259,7 @@ private struct LpspTeamsMeetingJoinBar: View {
     }
 }
 
-private struct LpspTeamsTeamsPrimaryButton: View {
+fileprivate struct LpspTeamsTeamsPrimaryButton: View {
     let title: String
     let action: () -> Void
     @Environment(\.colorScheme) private var scheme
@@ -279,7 +279,7 @@ private struct LpspTeamsTeamsPrimaryButton: View {
     }
 }
 
-private struct LpspTeamsTeamsPressable: ButtonStyle {
+fileprivate struct LpspTeamsTeamsPressable: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
@@ -289,7 +289,7 @@ private struct LpspTeamsTeamsPressable: ButtonStyle {
     }
 }
 
-private struct LpspTeamsRootTabView: View {
+fileprivate struct LpspTeamsRootTabView: View {
     @Environment(\.colorScheme) private var scheme
     var body: some View {
         TabView {

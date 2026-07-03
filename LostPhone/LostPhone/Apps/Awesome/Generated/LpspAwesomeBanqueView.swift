@@ -39,7 +39,7 @@ private enum LpspBanqueTokens {
     static let revBorder   = Color(red: 0.200, green: 0.200, blue: 0.290) // #33334A
 
     // MARK: - Text
-    static let revTextPrimary   = LpspBanqueTokens.white                                  // #FFFFFF
+    static let revTextPrimary   = Color.white                                  // #FFFFFF
     static let revTextSecondary = Color(red: 0.604, green: 0.604, blue: 0.667) // #9A9AAA
     static let revTextTertiary  = Color(red: 0.416, green: 0.416, blue: 0.494) // #6A6A7E
 
@@ -68,7 +68,7 @@ private enum LpspBanqueGradients {
 
 
 
-private struct LpspBanqueRevPrimaryButton: View {
+fileprivate struct LpspBanqueRevPrimaryButton: View {
     let title: String
     let action: () -> Void
 
@@ -79,14 +79,14 @@ private struct LpspBanqueRevPrimaryButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(LpspBanqueGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
+                .shadow(color: LpspBanqueGradients.revBrand.opacity(0.30), radius: 14, y: 8)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: UUID())
         .buttonStyle(LpspBanqueRevPressableStyle())
     }
 }
 
-private struct LpspBanqueRevPressableStyle: ButtonStyle {
+fileprivate struct LpspBanqueRevPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.85 : 1)
@@ -95,7 +95,7 @@ private struct LpspBanqueRevPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspBanqueRevSecondaryButton: View {
+fileprivate struct LpspBanqueRevSecondaryButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
@@ -110,7 +110,7 @@ private struct LpspBanqueRevSecondaryButton: View {
     }
 }
 
-private struct LpspBanqueCurrencyTile: View {
+fileprivate struct LpspBanqueCurrencyTile: View {
     let flag: String      // emoji or asset
     let code: String
     let name: String
@@ -142,7 +142,7 @@ private struct LpspBanqueCurrencyTile: View {
     }
 }
 
-private struct LpspBanqueTransactionRow: View {
+fileprivate struct LpspBanqueTransactionRow: View {
     let merchant: String
     let meta: String
     let amount: String
@@ -171,7 +171,7 @@ private struct LpspBanqueTransactionRow: View {
     }
 }
 
-private struct LpspBanqueSpendDonut: View {
+fileprivate struct LpspBanqueSpendDonut: View {
     let total: String
     let progress: Double // 0...1
     @State private var animated: Double = 0
@@ -202,7 +202,7 @@ private struct LpspBanqueSpendDonut: View {
     }
 }
 
-private struct LpspBanqueMetalCardHero: View {
+fileprivate struct LpspBanqueMetalCardHero: View {
     @State private var flipped = false
     @State private var sheen: CGFloat = -1
 
@@ -216,7 +216,7 @@ private struct LpspBanqueMetalCardHero: View {
             // diagonal sheen band
             RoundedRectangle(cornerRadius: 16)
                 .fill(
-                    LinearGradient(colors: [.clear, LpspBanqueTokens.white.opacity(0.18), .clear],
+                    LinearGradient(colors: [.clear, Color.white.opacity(0.18), .clear],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
                 .offset(x: sheen * 260)
@@ -244,7 +244,7 @@ private struct LpspBanqueMetalCardHero: View {
     }
 }
 
-extension View {
+fileprivate extension View {
     /// Apply the brand gradient as a foreground (e.g., active icon tint).
     func revGradientForeground() -> some View {
         self.overlay(LpspBanqueGradients.revBrand).mask(self)
@@ -252,13 +252,13 @@ extension View {
 }
 
 // Glow modifier for active / primary elements
-private struct LpspBanqueRevGlow: ViewModifier {
+fileprivate struct LpspBanqueRevGlow: ViewModifier {
     func body(content: Content) -> some View {
-        content.shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
+        content.shadow(color: LpspBanqueGradients.revBrand.opacity(0.30), radius: 14, y: 8)
     }
 }
 
-private struct LpspBanqueRootTabView: View {
+fileprivate struct LpspBanqueRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
@@ -275,11 +275,11 @@ private struct LpspBanqueRootTabView: View {
             LifestyleView().tabItem { Label("Lifestyle", systemImage: "sparkles") }
             CardsView().tabItem { Label("Cards", systemImage: "creditcard.fill") }
         }
-        .tint(LpspBanqueTokens.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
+        .tint(LpspBanqueGradients.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
     }
 }
 
-private struct LpspBanqueBalanceReveal: ViewModifier {
+fileprivate struct LpspBanqueBalanceReveal: ViewModifier {
     let hidden: Bool
     func body(content: Content) -> some View {
         content.blur(radius: hidden ? 12 : 0)

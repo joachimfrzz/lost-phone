@@ -36,12 +36,12 @@ private enum LpspZoomTokens {
     static let zoomDivider   = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
 
     // MARK: - Light surfaces (outside call)
-    static let zoomLightCanvas  = LpspZoomTokens.white                                // #FFFFFF
+    static let zoomLightCanvas  = Color.white                                // #FFFFFF
     static let zoomLightSurface = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let zoomLightDivider = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
 
     // MARK: - Text (dark)
-    static let zoomTextPrimary   = LpspZoomTokens.white                                // #FFFFFF
+    static let zoomTextPrimary   = Color.white                                // #FFFFFF
     static let zoomTextSecondary = Color(red: 0.690, green: 0.690, blue: 0.690) // #B0B0B0
     static let zoomTextTertiary  = Color(red: 0.478, green: 0.478, blue: 0.478) // #7A7A7A
 
@@ -59,11 +59,11 @@ private enum LpspZoomTokens {
 // System fallback if Lato is unavailable
 
 
-extension View {
+fileprivate extension View {
     func zoomTabular() -> some View { self.monospacedDigit() }
 }
 
-private struct LpspZoomGalleryTile: View {
+fileprivate struct LpspZoomGalleryTile: View {
     let name: String
     let isMuted: Bool
     let isActiveSpeaker: Bool
@@ -96,7 +96,7 @@ private struct LpspZoomGalleryTile: View {
                         .font(LpspZoomFonts.zoomTileName)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 6).padding(.vertical, 3)
-                        .background(RoundedRectangle(cornerRadius: 4).fill(LpspZoomTokens.black.opacity(0.45)))
+                        .background(RoundedRectangle(cornerRadius: 4).fill(Color.black.opacity(0.45)))
                     Spacer()
                 }
                 .padding(8)
@@ -115,7 +115,7 @@ private struct LpspZoomGalleryTile: View {
     }
 }
 
-private struct LpspZoomJoinButton: View {
+fileprivate struct LpspZoomJoinButton: View {
     var title: String = "Join"
     let action: () -> Void
 
@@ -133,7 +133,7 @@ private struct LpspZoomJoinButton: View {
     }
 }
 
-private struct LpspZoomZoomPressable: ButtonStyle {
+fileprivate struct LpspZoomZoomPressable: ButtonStyle {
     var pressedColor: Color
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -145,7 +145,7 @@ private struct LpspZoomZoomPressable: ButtonStyle {
     }
 }
 
-private struct LpspZoomControlBar: View {
+fileprivate struct LpspZoomControlBar: View {
     @Binding var micOn: Bool
     @Binding var videoOn: Bool
     let onLeave: () -> Void
@@ -179,7 +179,7 @@ private struct LpspZoomControlBar: View {
     }
 }
 
-private struct LpspZoomControlButton: View {
+fileprivate struct LpspZoomControlButton: View {
     let icon: String; let label: String; let tint: Color; let action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -192,7 +192,7 @@ private struct LpspZoomControlButton: View {
     }
 }
 
-private struct LpspZoomMeetingRow: View {
+fileprivate struct LpspZoomMeetingRow: View {
     let time: String
     let topic: String
     let subtitle: String
@@ -228,7 +228,7 @@ private struct LpspZoomMeetingRow: View {
     }
 }
 
-private struct LpspZoomRecordingIndicator: View {
+fileprivate struct LpspZoomRecordingIndicator: View {
     @State private var pulse = false
     var body: some View {
         HStack(spacing: 6) {
@@ -243,12 +243,12 @@ private struct LpspZoomRecordingIndicator: View {
                 .tracking(0.4)
         }
         .padding(.horizontal, 10).padding(.vertical, 6)
-        .background(Capsule().fill(LpspZoomTokens.black.opacity(0.45)))
+        .background(Capsule().fill(Color.black.opacity(0.45)))
         .onAppear { pulse = true }
     }
 }
 
-private struct LpspZoomGalleryGrid: View {
+fileprivate struct LpspZoomGalleryGrid: View {
     let participants: [LpspZoomParticipant]
     var body: some View {
         let columns = gridColumns(for: participants.count)
@@ -268,9 +268,9 @@ private struct LpspZoomGalleryGrid: View {
     }
 }
 
-private struct LpspZoomParticipant: Identifiable { let id = UUID(); let name: String; let isMuted: Bool; let isSpeaking: Bool }
+fileprivate struct LpspZoomParticipant: Identifiable { let id = UUID(); let name: String; let isMuted: Bool; let isSpeaking: Bool }
 
-private struct LpspZoomRootTabView: View {
+fileprivate struct LpspZoomRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

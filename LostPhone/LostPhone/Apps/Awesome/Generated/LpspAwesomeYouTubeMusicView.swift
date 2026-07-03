@@ -22,10 +22,10 @@ private enum LpspYouTubeMusicTokens {
     // MARK: - Brand
     static let ytmRed         = Color(red: 1.0,   green: 0.0,   blue: 0.0)   // #FF0000
     static let ytmRedPressed  = Color(red: 0.8,   green: 0.0,   blue: 0.0)   // #CC0000
-    static let ytmActionWhite = LpspYouTubeMusicTokens.white                                    // #FFFFFF
+    static let ytmActionWhite = Color.white                                    // #FFFFFF
 
     // MARK: - Text
-    static let ytmTextPrimary   = LpspYouTubeMusicTokens.white                                  // #FFFFFF
+    static let ytmTextPrimary   = Color.white                                  // #FFFFFF
     static let ytmTextSecondary = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let ytmTextTertiary  = Color(red: 0.443, green: 0.443, blue: 0.443) // #717171
 
@@ -63,7 +63,7 @@ private enum LpspYouTubeMusicFonts {
     static let ytmButton      = Font.system(size: 15, weight: .regular)
 }
 
-private struct LpspYouTubeMusicNowPlayingView: View {
+fileprivate struct LpspYouTubeMusicNowPlayingView: View {
     let artworkURL: String
     let track: String
     let artist: String
@@ -132,7 +132,7 @@ private struct LpspYouTubeMusicNowPlayingView: View {
     }
 }
 
-private struct LpspYouTubeMusicSongVideoToggle: View {
+fileprivate struct LpspYouTubeMusicSongVideoToggle: View {
     @Binding var mode: LpspYouTubeMusicNowPlayingView.LpspYouTubeMusicPlayMode
 
     var body: some View {
@@ -141,7 +141,7 @@ private struct LpspYouTubeMusicSongVideoToggle: View {
             segment("Video", active: mode == .video) { mode = .video }
         }
         .padding(4)
-        .background(LpspYouTubeMusicTokens.white.opacity(0.08))
+        .background(Color.white.opacity(0.08))
         .clipShape(Capsule())
     }
 
@@ -151,7 +151,7 @@ private struct LpspYouTubeMusicSongVideoToggle: View {
             .tracking(0.2)
             .foregroundStyle(active ? LpspYouTubeMusicTokens.ytmCanvas : LpspYouTubeMusicTokens.ytmTextSecondary)
             .padding(.vertical, 7).padding(.horizontal, 18)
-            .background(active ? LpspYouTubeMusicTokens.ytmActionWhite : LpspYouTubeMusicTokens.clear)
+            .background(active ? LpspYouTubeMusicTokens.ytmActionWhite : Color.clear)
             .clipShape(Capsule())
             .contentShape(Rectangle())
             .onTapGesture {
@@ -161,7 +161,7 @@ private struct LpspYouTubeMusicSongVideoToggle: View {
     }
 }
 
-private struct LpspYouTubeMusicScrubber: View {
+fileprivate struct LpspYouTubeMusicScrubber: View {
     @Binding var progress: Double
     @Binding var scrubbing: Bool
 
@@ -170,7 +170,7 @@ private struct LpspYouTubeMusicScrubber: View {
             GeometryReader { geo in
                 let w = geo.size.width
                 ZStack(alignment: .leading) {
-                    Capsule().fill(LpspYouTubeMusicTokens.white.opacity(0.22)).frame(height: 3)
+                    Capsule().fill(Color.white.opacity(0.22)).frame(height: 3)
                     Capsule()
                         .fill(scrubbing ? LpspYouTubeMusicTokens.ytmRed : LpspYouTubeMusicTokens.ytmActionWhite)
                         .frame(width: max(0, w * progress), height: 3)
@@ -210,7 +210,7 @@ private struct LpspYouTubeMusicScrubber: View {
     }
 }
 
-private struct LpspYouTubeMusicTransportControls: View {
+fileprivate struct LpspYouTubeMusicTransportControls: View {
     @State private var playing = true
 
     var body: some View {
@@ -240,7 +240,7 @@ private struct LpspYouTubeMusicTransportControls: View {
     }
 }
 
-private struct LpspYouTubeMusicUpNextShelf: View {
+fileprivate struct LpspYouTubeMusicUpNextShelf: View {
     struct LpspYouTubeMusicQueueItem: Identifiable { let id = UUID(); let title: String; let artist: String }
     let items: [LpspYouTubeMusicQueueItem]
 
@@ -275,11 +275,11 @@ private struct LpspYouTubeMusicUpNextShelf: View {
             }
         }
         .background(LpspYouTubeMusicTokens.ytmCanvas)
-        .overlay(Rectangle().fill(LpspYouTubeMusicTokens.white.opacity(0.12)).frame(height: 0.5), alignment: .top)
+        .overlay(Rectangle().fill(Color.white.opacity(0.12)).frame(height: 0.5), alignment: .top)
     }
 }
 
-private struct LpspYouTubeMusicMiniPlayer: View {
+fileprivate struct LpspYouTubeMusicMiniPlayer: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
@@ -302,7 +302,7 @@ private struct LpspYouTubeMusicMiniPlayer: View {
     }
 }
 
-private struct LpspYouTubeMusicYTMTabView: View {
+fileprivate struct LpspYouTubeMusicYTMTabView: View {
     var body: some View {
         TabView {
             HomeView().tabItem { Label("Home", systemImage: "house.fill") }
@@ -316,7 +316,7 @@ private struct LpspYouTubeMusicYTMTabView: View {
     }
 }
 
-private struct LpspYouTubeMusicYTMTheme: ViewModifier {
+fileprivate struct LpspYouTubeMusicYTMTheme: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(LpspYouTubeMusicTokens.ytmCanvas)
@@ -325,7 +325,7 @@ private struct LpspYouTubeMusicYTMTheme: ViewModifier {
     }
 }
 
-extension View {
+fileprivate extension View {
     func ytmTheme() -> some View { modifier(LpspYouTubeMusicYTMTheme()) }
 }
 

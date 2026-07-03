@@ -85,7 +85,7 @@ private enum LpspClaudeTokens {
 // Fallback when Tiempos isn't bundled — Source Serif Pro / SF Pro is the closest pairing
 
 
-private struct LpspClaudeClaudeMark: Shape {
+fileprivate struct LpspClaudeClaudeMark: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         let center = CGPoint(x: rect.midX, y: rect.midY)
@@ -119,7 +119,7 @@ private struct LpspClaudeClaudeMark: Shape {
     }
 }
 
-private struct LpspClaudeClaudeAvatar: View {
+fileprivate struct LpspClaudeClaudeAvatar: View {
     var size: CGFloat = 18
     var color: Color = LpspClaudeTokens.claudeOrange
 
@@ -130,7 +130,7 @@ private struct LpspClaudeClaudeAvatar: View {
     }
 }
 
-private struct LpspClaudeAssistantMessage: View {
+fileprivate struct LpspClaudeAssistantMessage: View {
     let modelName: String          // "Claude Opus 4.5"
     let content: AttributedString  // Pre-rendered markdown
     let isStreaming: Bool
@@ -168,7 +168,7 @@ private struct LpspClaudeAssistantMessage: View {
     }
 }
 
-private struct LpspClaudeStreamingCursor: View {
+fileprivate struct LpspClaudeStreamingCursor: View {
     @State private var visible = true
 
     var body: some View {
@@ -186,7 +186,7 @@ private struct LpspClaudeStreamingCursor: View {
     }
 }
 
-private struct LpspClaudeUserMessage: View {
+fileprivate struct LpspClaudeUserMessage: View {
     let text: String
 
     var body: some View {
@@ -207,7 +207,7 @@ private struct LpspClaudeUserMessage: View {
     }
 }
 
-private struct LpspClaudeChatInput: View {
+fileprivate struct LpspClaudeChatInput: View {
     @Binding var text: String
     @FocusState private var focused: Bool
     var onSend: () -> Void
@@ -272,7 +272,7 @@ private struct LpspClaudeChatInput: View {
     }
 }
 
-private struct LpspClaudeModelPickerChip: View {
+fileprivate struct LpspClaudeModelPickerChip: View {
     let modelName: String
     var onTap: () -> Void
 
@@ -298,7 +298,7 @@ private struct LpspClaudeModelPickerChip: View {
     }
 }
 
-private struct LpspClaudeModelPickerSheet: View {
+fileprivate struct LpspClaudeModelPickerSheet: View {
     @Binding var selectedModel: String
     let models: [LpspClaudeModelOption]
     var onClose: () -> Void
@@ -357,7 +357,7 @@ private struct LpspClaudeModelPickerSheet: View {
     }
 }
 
-private struct LpspClaudeCodeBlock: View {
+fileprivate struct LpspClaudeCodeBlock: View {
     let language: String
     let code: String                  // Pre-syntax-highlighted via AttributedString
     @State private var copied = false
@@ -379,7 +379,7 @@ private struct LpspClaudeCodeBlock: View {
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(LpspClaudeTokens.claudeCodeFg)
                         .frame(width: 32, height: 32)
-                        .background(LpspClaudeTokens.white.opacity(0.05).clipShape(Circle()))
+                        .background(Color.white.opacity(0.05).clipShape(Circle()))
                 }
                 .sensoryFeedback(.impact(weight: .light), trigger: copied)
             }
@@ -403,7 +403,7 @@ private struct LpspClaudeCodeBlock: View {
     }
 }
 
-private struct LpspClaudeThinkingIndicator: View {
+fileprivate struct LpspClaudeThinkingIndicator: View {
     let elapsedSeconds: Int?
     @State private var pulse = false
 
@@ -423,7 +423,7 @@ private struct LpspClaudeThinkingIndicator: View {
     }
 }
 
-private struct LpspClaudeArtifactCard: View {
+fileprivate struct LpspClaudeArtifactCard: View {
     let title: String
     let kind: LpspClaudeArtifactKind             // .document / .code / .chart
     let preview: String
@@ -468,13 +468,13 @@ private struct LpspClaudeArtifactCard: View {
                         RoundedRectangle(cornerRadius: 12).strokeBorder(LpspClaudeTokens.claudeSand, lineWidth: 1)
                     )
             )
-            .shadow(color: LpspClaudeTokens.black.opacity(0.06), radius: 8, y: 2)
+            .shadow(color: Color.black.opacity(0.06), radius: 8, y: 2)
         }
         .buttonStyle(.plain)
     }
 }
 
-private struct LpspClaudeConversationView: View {
+fileprivate struct LpspClaudeConversationView: View {
     @State private var input = ""
     @State private var modelName = "Claude Opus 4.5"
     @State private var showingModelPicker = false

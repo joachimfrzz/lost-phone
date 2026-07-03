@@ -52,7 +52,7 @@ private enum LpspBumbleTokens {
 // Fallback when Brando isn't bundled — SF Pro is the warmest system substitute
 
 
-private struct LpspBumbleBumblePrimaryButton: View {
+fileprivate struct LpspBumbleBumblePrimaryButton: View {
     let label: String
     var hasGlow: Bool = false
     var action: () -> Void
@@ -61,7 +61,7 @@ private struct LpspBumbleBumblePrimaryButton: View {
         Button(action: action) {
             Text(label)
                 .font(LpspBumbleFonts.bumbleButton)
-                .foregroundStyle(LpspBumbleTokens.black) // Pure black on yellow — WCAG AA requires it
+                .foregroundStyle(Color.black) // Pure black on yellow — WCAG AA requires it
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
                 .background(Capsule().fill(LpspBumbleTokens.bumbleYellow))
@@ -75,7 +75,7 @@ private struct LpspBumbleBumblePrimaryButton: View {
     }
 }
 
-private struct LpspBumbleSwipeActionRow: View {
+fileprivate struct LpspBumbleSwipeActionRow: View {
     var onRewind: () -> Void
     var onPass:   () -> Void
     var onLike:   () -> Void
@@ -105,7 +105,7 @@ private struct LpspBumbleSwipeActionRow: View {
                     .shadow(color: LpspBumbleTokens.bumbleYellow.opacity(0.5), radius: 16, y: 6)
                 Image(systemName: "heart.fill")
                     .font(.system(size: 28, weight: .heavy))
-                    .foregroundStyle(LpspBumbleTokens.black)
+                    .foregroundStyle(Color.black)
             }
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -114,7 +114,7 @@ private struct LpspBumbleSwipeActionRow: View {
 
             // Star SuperSwipe — medium yellow
             LpspBumbleActionCircle(diameter: 56, fill: LpspBumbleTokens.bumbleYellow, stroke: nil) {
-                Image(systemName: "star.fill").font(.system(size: 22, weight: .heavy)).foregroundStyle(LpspBumbleTokens.black)
+                Image(systemName: "star.fill").font(.system(size: 22, weight: .heavy)).foregroundStyle(Color.black)
             } action: {
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 onSuper()
@@ -172,7 +172,7 @@ private struct LpspBumbleActionCircle<Content: View>: View {
     }
 }
 
-private struct LpspBumbleSwipeCard: View {
+fileprivate struct LpspBumbleSwipeCard: View {
     let photos: [Image]
     let name: String
     let age: Int
@@ -193,7 +193,7 @@ private struct LpspBumbleSwipeCard: View {
                 HStack(spacing: 4) {
                     ForEach(0..<photos.count, id: \.self) { idx in
                         Capsule()
-                            .fill(idx == currentPhoto ? LpspBumbleTokens.white : LpspBumbleTokens.white.opacity(0.4))
+                            .fill(idx == currentPhoto ? Color.white : Color.white.opacity(0.4))
                             .frame(height: 3)
                     }
                 }
@@ -246,7 +246,7 @@ private struct LpspBumbleSwipeCard: View {
     }
 }
 
-private struct LpspBumbleCountdownChip: View {
+fileprivate struct LpspBumbleCountdownChip: View {
     let remaining: TimeInterval        // seconds
     @State private var pulse = false
 
@@ -263,7 +263,7 @@ private struct LpspBumbleCountdownChip: View {
         Text(formatted)
             .font(LpspBumbleFonts.bumbleMeta)
             .fontWeight(.bold)
-            .foregroundStyle(LpspBumbleTokens.black)
+            .foregroundStyle(Color.black)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity)
@@ -279,7 +279,7 @@ private struct LpspBumbleCountdownChip: View {
     }
 }
 
-private struct LpspBumbleMatchCelebration: View {
+fileprivate struct LpspBumbleMatchCelebration: View {
     let myAvatar: Image
     let theirAvatar: Image
     let theirName: String
@@ -330,7 +330,7 @@ private struct LpspBumbleMatchCelebration: View {
                             .foregroundStyle(LpspBumbleTokens.bumbleBlack)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
-                            .background(Capsule().fill(LpspBumbleTokens.white))
+                            .background(Capsule().fill(Color.white))
                     }
                     .buttonStyle(.plain)
 
@@ -351,7 +351,7 @@ private struct LpspBumbleMatchCelebration: View {
     }
 }
 
-private struct LpspBumbleHexAvatar: View {
+fileprivate struct LpspBumbleHexAvatar: View {
     let image: Image
     var size: CGFloat = 120
     var stroke: Color = .white
@@ -366,7 +366,7 @@ private struct LpspBumbleHexAvatar: View {
     }
 }
 
-private struct LpspBumbleHexagon: Shape {
+fileprivate struct LpspBumbleHexagon: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         let center = CGPoint(x: rect.midX, y: rect.midY)
@@ -384,7 +384,7 @@ private struct LpspBumbleHexagon: Shape {
     }
 }
 
-private struct LpspBumbleBumbleChatInput: View {
+fileprivate struct LpspBumbleBumbleChatInput: View {
     @Binding var text: String
     var onSend: () -> Void
 
@@ -404,7 +404,7 @@ private struct LpspBumbleBumbleChatInput: View {
             } label: {
                 Image(systemName: "arrow.up")
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(canSend ? LpspBumbleTokens.black : LpspBumbleTokens.bumbleMist)
+                    .foregroundStyle(canSend ? Color.black : LpspBumbleTokens.bumbleMist)
                     .frame(width: 40, height: 40)
                     .background(Circle().fill(canSend ? LpspBumbleTokens.bumbleYellow : LpspBumbleTokens.bumbleSurface1))
             }
@@ -415,7 +415,7 @@ private struct LpspBumbleBumbleChatInput: View {
     }
 }
 
-private struct LpspBumbleRootTabView: View {
+fileprivate struct LpspBumbleRootTabView: View {
     @State private var selected: Int = 0
 
     init() {

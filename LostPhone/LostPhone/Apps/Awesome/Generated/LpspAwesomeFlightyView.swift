@@ -16,7 +16,7 @@ private enum LpspFlightyTokens {
     static let fltSurface2 = Color(red: 0.133, green: 0.133, blue: 0.157)  // #222228
     static let fltSurface3 = Color(red: 0.173, green: 0.173, blue: 0.204)  // #2C2C34
     static let fltDivider  = Color(red: 0.180, green: 0.180, blue: 0.212)  // #2E2E36
-    static let fltTextPrimary   = LpspFlightyTokens.white                              // #FFFFFF
+    static let fltTextPrimary   = Color.white                              // #FFFFFF
     static let fltTextSecondary = Color(red: 0.557, green: 0.557, blue: 0.588) // #8E8E96
     static let fltTextTertiary  = Color(red: 0.353, green: 0.353, blue: 0.384) // #5A5A62
     static let fltBlue        = Color(red: 0.039, green: 0.518, blue: 1.000) // #0A84FF
@@ -49,7 +49,7 @@ private enum LpspFlightyFonts {
     static let fltTimestamp = Font.system(size: 11, weight: .semibold)
 }
 
-private struct LpspFlightyStatusChip: View {
+fileprivate struct LpspFlightyStatusChip: View {
     enum LpspFlightyStatus { case onTime, delayed(Int), cancelled }
     let status: LpspFlightyStatus
 
@@ -81,7 +81,7 @@ private struct LpspFlightyStatusChip: View {
 
 import MapKit
 
-private struct LpspFlightyFlightArc: Shape {
+fileprivate struct LpspFlightyFlightArc: Shape {
     let origin: CGPoint        // normalized 0...1 in the view
     let destination: CGPoint
     let progress: CGFloat      // 0...1 flown fraction
@@ -97,7 +97,7 @@ private struct LpspFlightyFlightArc: Shape {
     }
 }
 
-private struct LpspFlightyLiveFlightMap: View {
+fileprivate struct LpspFlightyLiveFlightMap: View {
     let origin: CGPoint
     let destination: CGPoint
     @State private var drawn: CGFloat = 0
@@ -144,7 +144,7 @@ private struct LpspFlightyLiveFlightMap: View {
     }
 }
 
-private struct LpspFlightyFlightCard: View {
+fileprivate struct LpspFlightyFlightCard: View {
     let airline: String
     let flightNo: String
     let originCode: String
@@ -191,7 +191,7 @@ private struct LpspFlightyFlightCard: View {
     }
 }
 
-private struct LpspFlightyOnTimeRing: View {
+fileprivate struct LpspFlightyOnTimeRing: View {
     let percent: Int   // 0...100
     var body: some View {
         ZStack {
@@ -209,7 +209,7 @@ private struct LpspFlightyOnTimeRing: View {
     }
 }
 
-private struct LpspFlightyFltPrimaryButton: View {
+fileprivate struct LpspFlightyFltPrimaryButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
@@ -226,7 +226,7 @@ private struct LpspFlightyFltPrimaryButton: View {
     }
 }
 
-private struct LpspFlightyFltPressableStyle: ButtonStyle {
+fileprivate struct LpspFlightyFltPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
@@ -234,7 +234,7 @@ private struct LpspFlightyFltPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspFlightyRootTabView: View {
+fileprivate struct LpspFlightyRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()

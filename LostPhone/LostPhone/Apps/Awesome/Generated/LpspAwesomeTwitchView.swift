@@ -34,7 +34,7 @@ private enum LpspTwitchFonts {
 private enum LpspTwitchTokens {
     // MARK: - Canvas & Surfaces
     static let twitchCanvas    = Color(red: 0.055, green: 0.055, blue: 0.063) // #0E0E10
-    static let twitchDeepBlack = LpspTwitchTokens.black                                  // #000000
+    static let twitchDeepBlack = Color.black                                  // #000000
     static let twitchSurface1  = Color(red: 0.094, green: 0.094, blue: 0.106) // #18181B
     static let twitchSurface2  = Color(red: 0.122, green: 0.122, blue: 0.137) // #1F1F23
     static let twitchSurface3  = Color(red: 0.165, green: 0.165, blue: 0.176) // #2A2A2D
@@ -57,7 +57,7 @@ private enum LpspTwitchTokens {
 
 
 
-private struct LpspTwitchTwitchFollowButton: View {
+fileprivate struct LpspTwitchTwitchFollowButton: View {
     @Binding var isFollowing: Bool
     var subscribe: Bool = false   // true = Subscribe styling
 
@@ -87,7 +87,7 @@ private struct LpspTwitchTwitchFollowButton: View {
     }
 }
 
-private struct LpspTwitchTwitchPressableStyle: ButtonStyle {
+fileprivate struct LpspTwitchTwitchPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -96,7 +96,7 @@ private struct LpspTwitchTwitchPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspTwitchTwitchLivePill: View {
+fileprivate struct LpspTwitchTwitchLivePill: View {
     @State private var pulse = false
     var body: some View {
         HStack(spacing: 5) {
@@ -114,7 +114,7 @@ private struct LpspTwitchTwitchLivePill: View {
     }
 }
 
-private struct LpspTwitchTwitchViewerPill: View {
+fileprivate struct LpspTwitchTwitchViewerPill: View {
     let count: String   // e.g. "12.4K"
     var body: some View {
         HStack(spacing: 4) {
@@ -128,7 +128,7 @@ private struct LpspTwitchTwitchViewerPill: View {
     }
 }
 
-private struct LpspTwitchTwitchLiveCard: View {
+fileprivate struct LpspTwitchTwitchLiveCard: View {
     let title: String
     let channel: String
     let game: String
@@ -163,7 +163,7 @@ private struct LpspTwitchTwitchLiveCard: View {
     }
 }
 
-private struct LpspTwitchTwitchChatRow: View {
+fileprivate struct LpspTwitchTwitchChatRow: View {
     let username: String
     let userColor: Color
     let message: String
@@ -187,7 +187,7 @@ private struct LpspTwitchTwitchChatRow: View {
     }
 }
 
-private struct LpspTwitchTwitchAvatarRing: View {
+fileprivate struct LpspTwitchTwitchAvatarRing: View {
     let avatar: Image
     let isLive: Bool
     var size: CGFloat = 44
@@ -201,8 +201,8 @@ private struct LpspTwitchTwitchAvatarRing: View {
     }
 }
 
-private struct LpspTwitchTwitchTheaterChatOverlay: View {
-    let messages: [ChatLine]
+fileprivate struct LpspTwitchTwitchTheaterChatOverlay: View {
+    let messages: [LpspTwitchChatLine]
     @Binding var chatHidden: Bool
 
     var body: some View {
@@ -226,7 +226,7 @@ private struct LpspTwitchTwitchTheaterChatOverlay: View {
     }
 }
 
-private struct LpspTwitchRootTabView: View {
+fileprivate struct LpspTwitchRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
@@ -246,6 +246,14 @@ private struct LpspTwitchRootTabView: View {
         .tint(LpspTwitchTokens.twitchPurple) // active = purple, purple is the indicator
     }
 }
+
+fileprivate struct LpspTwitchChatLine: Identifiable {
+    let id = UUID()
+    let username: String
+    let message: String
+    let color: Color
+}
+
 
 // MARK: - Écrans showroom
 

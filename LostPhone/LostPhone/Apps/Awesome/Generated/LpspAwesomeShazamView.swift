@@ -35,14 +35,14 @@ private enum LpspShazamTokens {
     static let shazamBluePressed = Color(red: 0.0, green: 0.435, blue: 0.878) // #006FE0
 
     // MARK: - Text
-    static let shazamTextPrimary   = LpspShazamTokens.white                                 // #FFFFFF
+    static let shazamTextPrimary   = Color.white                                 // #FFFFFF
     static let shazamTextSecondary = Color(red: 0.722, green: 0.769, blue: 1.0)   // #B8C4FF periwinkle
     static let shazamTextTertiary  = Color(red: 0.722, green: 0.769, blue: 1.0).opacity(0.55)
 
     // MARK: - Glass
-    static let shazamGlass        = LpspShazamTokens.white.opacity(0.08)
-    static let shazamGlassStrong  = LpspShazamTokens.white.opacity(0.14)
-    static let shazamDivider      = LpspShazamTokens.white.opacity(0.12)
+    static let shazamGlass        = Color.white.opacity(0.08)
+    static let shazamGlassStrong  = Color.white.opacity(0.14)
+    static let shazamDivider      = Color.white.opacity(0.12)
 
     // MARK: - Semantic
     static let appleMusicPink = Color(red: 0.980, green: 0.141, blue: 0.235) // #FA243C
@@ -65,7 +65,7 @@ extension ShapeStyle where Self == RadialGradient {
 
 
 
-private struct LpspShazamShazamButton: View {
+fileprivate struct LpspShazamShazamButton: View {
     @Binding var isListening: Bool
     let onTap: () -> Void
 
@@ -99,7 +99,7 @@ private struct LpspShazamShazamButton: View {
                                 startRadius: 0, endRadius: size * 0.7
                             )
                         )
-                        .overlay(Circle().strokeBorder(LpspShazamTokens.white.opacity(0.4), lineWidth: 1))
+                        .overlay(Circle().strokeBorder(Color.white.opacity(0.4), lineWidth: 1))
                     LpspShazamShazamGlyph()
                         .fill(LpspShazamTokens.shazamBlue)
                         .frame(width: size * 0.4, height: size * 0.4)
@@ -117,14 +117,14 @@ private struct LpspShazamShazamButton: View {
     }
 }
 
-private struct LpspShazamPulseRing: View {
+fileprivate struct LpspShazamPulseRing: View {
     let delay: Double
     let base: CGFloat
     @State private var animate = false
 
     var body: some View {
         Circle()
-            .strokeBorder(LpspShazamTokens.white.opacity(0.22), lineWidth: 2)
+            .strokeBorder(Color.white.opacity(0.22), lineWidth: 2)
             .frame(width: base, height: base)
             .scaleEffect(animate ? 2.6 : 1.0)
             .opacity(animate ? 0 : 0.22)
@@ -136,7 +136,7 @@ private struct LpspShazamPulseRing: View {
     }
 }
 
-private struct LpspShazamShazamPressable: ButtonStyle {
+fileprivate struct LpspShazamShazamPressable: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.94 : 1)
@@ -145,7 +145,7 @@ private struct LpspShazamShazamPressable: ButtonStyle {
 }
 
 // Stylized Shazam mark — replace with the licensed glyph asset in production
-private struct LpspShazamShazamGlyph: Shape {
+fileprivate struct LpspShazamShazamGlyph: Shape {
     func path(in r: CGRect) -> Path {
         var p = Path()
         let w = r.width, h = r.height
@@ -163,7 +163,7 @@ private struct LpspShazamShazamGlyph: Shape {
     }
 }
 
-private struct LpspShazamShazamHome: View {
+fileprivate struct LpspShazamShazamHome: View {
     @State private var isListening = false
 
     var body: some View {
@@ -197,7 +197,7 @@ private struct LpspShazamShazamHome: View {
     }
 }
 
-private struct LpspShazamShazamResultCard: View {
+fileprivate struct LpspShazamShazamResultCard: View {
     let title: String
     let artist: String
     let artwork: Image
@@ -244,7 +244,7 @@ private struct LpspShazamShazamResultCard: View {
     }
 }
 
-private struct LpspShazamGlassAction: View {
+fileprivate struct LpspShazamGlassAction: View {
     let icon: String
     let label: String
     var body: some View {
@@ -255,16 +255,16 @@ private struct LpspShazamGlassAction: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
         .background(Capsule().fill(LpspShazamTokens.shazamGlass))
-        .overlay(Capsule().strokeBorder(LpspShazamTokens.white.opacity(0.16), lineWidth: 1))
+        .overlay(Capsule().strokeBorder(Color.white.opacity(0.16), lineWidth: 1))
     }
 }
 
-private struct LpspShazamRecentShazamsSheet: View {
+fileprivate struct LpspShazamRecentShazamsSheet: View {
     let items: [(title: String, artist: String, time: String, art: Image)]
 
     var body: some View {
         VStack(spacing: 0) {
-            Capsule().fill(LpspShazamTokens.white.opacity(0.4)).frame(width: 36, height: 4).padding(.vertical, 12)
+            Capsule().fill(Color.white.opacity(0.4)).frame(width: 36, height: 4).padding(.vertical, 12)
             Text("Your Shazams").font(LpspShazamFonts.shazamSection).foregroundStyle(.white)
                 .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 16).padding(.bottom, 8)
 
@@ -293,9 +293,9 @@ private struct LpspShazamRecentShazamsSheet: View {
     }
 }
 
-private enum LpspShazamShazamState { case idle, listening, matched(track: String), noMatch }
+fileprivate enum LpspShazamShazamState { case idle, listening, matched(track: String), noMatch }
 
-@Observable final class LpspShazamShazamModel {
+@Observable fileprivate final class LpspShazamShazamModel {
     var state: LpspShazamShazamState = .idle
     func tap() {
         state = .listening
@@ -305,7 +305,7 @@ private enum LpspShazamShazamState { case idle, listening, matched(track: String
     }
 }
 
-private struct LpspShazamRootView: View {
+fileprivate struct LpspShazamRootView: View {
     @State private var showLibrary = false
     var body: some View {
         LpspShazamShazamHome()

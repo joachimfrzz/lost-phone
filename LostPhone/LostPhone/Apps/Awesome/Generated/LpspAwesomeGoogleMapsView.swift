@@ -12,7 +12,7 @@ struct LpspAwesomeGoogleMapsView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspGoogleMapsTokens {
     // MARK: - Canvas & Surfaces (Light)
-    static let gmCanvas        = LpspGoogleMapsTokens.white                                   // #FFFFFF
+    static let gmCanvas        = Color.white                                   // #FFFFFF
     static let gmSurfaceMuted  = Color(red: 0.945, green: 0.953, blue: 0.957) // #F1F3F4
     static let gmDivider       = Color(red: 0.855, green: 0.863, blue: 0.878) // #DADCE0
 
@@ -31,7 +31,7 @@ private enum LpspGoogleMapsTokens {
     static let gmOrange        = Color(red: 0.984, green: 0.549, blue: 0.000) // #FB8C00
 
     // MARK: - Map Tiles (Light)
-    static let gmRoadWhite     = LpspGoogleMapsTokens.white                                   // #FFFFFF
+    static let gmRoadWhite     = Color.white                                   // #FFFFFF
     static let gmHighwayYellow = Color(red: 0.992, green: 0.965, blue: 0.890) // #FDF6E3
     static let gmWaterBlue     = Color(red: 0.667, green: 0.855, blue: 1.000) // #AADAFF
     static let gmParkGreen     = Color(red: 0.784, green: 0.902, blue: 0.788) // #C8E6C9
@@ -70,13 +70,13 @@ private enum LpspGoogleMapsFonts {
 }
 
 // Tabular numerals modifier for distances, ETAs, speeds
-extension View {
+fileprivate extension View {
     func gmTabularFigures() -> some View {
         self.monospacedDigit()
     }
 }
 
-private struct LpspGoogleMapsGMSearchBar: View {
+fileprivate struct LpspGoogleMapsGMSearchBar: View {
     let onTap: () -> Void
     let onMic: () -> Void
     var body: some View {
@@ -106,7 +106,7 @@ private struct LpspGoogleMapsGMSearchBar: View {
     }
 }
 
-private struct LpspGoogleMapsGMDirectionsFAB: View {
+fileprivate struct LpspGoogleMapsGMDirectionsFAB: View {
     let action: () -> Void
     @State private var pressed = false
     var body: some View {
@@ -129,7 +129,7 @@ private struct LpspGoogleMapsGMDirectionsFAB: View {
     }
 }
 
-private struct LpspGoogleMapsGMLocationDot: View {
+fileprivate struct LpspGoogleMapsGMLocationDot: View {
     @State private var pulse = false
     var headingDegrees: Double?  // if non-nil, draw a cone in that direction
 
@@ -167,7 +167,7 @@ private struct LpspGoogleMapsGMLocationDot: View {
     }
 }
 
-private struct LpspGoogleMapsTriangle: Shape {
+fileprivate struct LpspGoogleMapsTriangle: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
         p.move(to: CGPoint(x: rect.midX, y: rect.minY))
@@ -178,7 +178,7 @@ private struct LpspGoogleMapsTriangle: Shape {
     }
 }
 
-private struct LpspGoogleMapsGMMapPin: View {
+fileprivate struct LpspGoogleMapsGMMapPin: View {
     enum LpspGoogleMapsKind { case `default`, saved, homeWork, category(String) }
     let kind: LpspGoogleMapsKind
     var fillColor: Color {
@@ -211,7 +211,7 @@ private struct LpspGoogleMapsGMMapPin: View {
     }
 }
 
-private struct LpspGoogleMapsTeardropShape: Shape {
+fileprivate struct LpspGoogleMapsTeardropShape: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
         let circleD = rect.width
@@ -228,7 +228,7 @@ private struct LpspGoogleMapsTeardropShape: Shape {
     }
 }
 
-private struct LpspGoogleMapsGMPlaceCard: View {
+fileprivate struct LpspGoogleMapsGMPlaceCard: View {
     let title: String
     let rating: Double
     let reviewCount: Int
@@ -275,7 +275,7 @@ private struct LpspGoogleMapsGMPlaceCard: View {
     }
 }
 
-private struct LpspGoogleMapsGMActionRow: View {
+fileprivate struct LpspGoogleMapsGMActionRow: View {
     var body: some View {
         HStack(spacing: 12) {
             LpspGoogleMapsGMPillButton(icon: "arrow.triangle.turn.up.right.diamond.fill", title: "Directions", filled: true)
@@ -286,7 +286,7 @@ private struct LpspGoogleMapsGMActionRow: View {
     }
 }
 
-private struct LpspGoogleMapsGMPillButton: View {
+fileprivate struct LpspGoogleMapsGMPillButton: View {
     let icon: String
     let title: String
     let filled: Bool
@@ -299,13 +299,13 @@ private struct LpspGoogleMapsGMPillButton: View {
         .padding(.horizontal, 16)
         .frame(height: 36)
         .background(
-            Capsule().fill(filled ? LpspGoogleMapsTokens.gmBlue : LpspGoogleMapsTokens.clear)
-                .overlay(Capsule().stroke(filled ? LpspGoogleMapsTokens.clear : LpspGoogleMapsTokens.gmDivider, lineWidth: 1))
+            Capsule().fill(filled ? LpspGoogleMapsTokens.gmBlue : Color.clear)
+                .overlay(Capsule().stroke(filled ? Color.clear : LpspGoogleMapsTokens.gmDivider, lineWidth: 1))
         )
     }
 }
 
-private struct LpspGoogleMapsGMTurnCard: View {
+fileprivate struct LpspGoogleMapsGMTurnCard: View {
     let instruction: String
     let distance: String
     let nextInstruction: String?
@@ -372,7 +372,7 @@ final class LpspGoogleMapsGMRouteRenderer: MKOverlayRenderer {
     }
 }
 
-private struct LpspGoogleMapsGMRootTabView: View {
+fileprivate struct LpspGoogleMapsGMRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

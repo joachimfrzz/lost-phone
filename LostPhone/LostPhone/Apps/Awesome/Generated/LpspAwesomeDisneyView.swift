@@ -37,7 +37,7 @@ private enum LpspDisneyTokens {
     static let dpDivider  = Color(red: 0.165, green: 0.188, blue: 0.314) // #2A3050
 
     // MARK: - Text
-    static let dpTextPrimary   = LpspDisneyTokens.white                                 // #FFFFFF
+    static let dpTextPrimary   = Color.white                                 // #FFFFFF
     static let dpTextSecondary = Color(red: 0.627, green: 0.651, blue: 0.753) // #A0A6C0
     static let dpTextTertiary  = Color(red: 0.353, green: 0.376, blue: 0.502) // #5A6080
 
@@ -56,7 +56,7 @@ extension ShapeStyle where Self == Color {
 
 
 
-private struct LpspDisneyDPPlayButton: View {
+fileprivate struct LpspDisneyDPPlayButton: View {
     let label: String
     let action: () -> Void
     var body: some View {
@@ -75,7 +75,7 @@ private struct LpspDisneyDPPlayButton: View {
     }
 }
 
-private struct LpspDisneyDPSecondaryButton: View {
+fileprivate struct LpspDisneyDPSecondaryButton: View {
     let icon: String
     let label: String
     let action: () -> Void
@@ -88,14 +88,14 @@ private struct LpspDisneyDPSecondaryButton: View {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 48)
-            .background(RoundedRectangle(cornerRadius: 8).fill(LpspDisneyTokens.white.opacity(0.12)))
-            .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(LpspDisneyTokens.white.opacity(0.24), lineWidth: 1))
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.12)))
+            .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.white.opacity(0.24), lineWidth: 1))
         }
         .buttonStyle(LpspDisneyDPPressable())
     }
 }
 
-private struct LpspDisneyDPPressable: ButtonStyle {
+fileprivate struct LpspDisneyDPPressable: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
@@ -103,7 +103,7 @@ private struct LpspDisneyDPPressable: ButtonStyle {
     }
 }
 
-private struct LpspDisneyBrandPortalTile: View {
+fileprivate struct LpspDisneyBrandPortalTile: View {
     let logo: Image
     let gradient: [Color]          // brand-tinted
     @State private var focused = false
@@ -131,7 +131,7 @@ private struct LpspDisneyBrandPortalTile: View {
 }
 
 // Reusable focus modifier — the unified Disney+ selection language
-private struct LpspDisneyDPFocusable: ViewModifier {
+fileprivate struct LpspDisneyDPFocusable: ViewModifier {
     @State private var focused = false
     func body(content: Content) -> some View {
         content
@@ -145,9 +145,9 @@ private struct LpspDisneyDPFocusable: ViewModifier {
             .onLongPressGesture(minimumDuration: 0, pressing: { focused = $0 }, perform: {})
     }
 }
-extension View { func dpFocusable() -> some View { modifier(LpspDisneyDPFocusable()) } }
+fileprivate extension View { func dpFocusable() -> some View { modifier(LpspDisneyDPFocusable()) } }
 
-private struct LpspDisneyContentCard16x9: View {
+fileprivate struct LpspDisneyContentCard16x9: View {
     let keyArt: Image
     var progress: Double? = nil    // continue-watching
 
@@ -163,7 +163,7 @@ private struct LpspDisneyContentCard16x9: View {
                     Spacer()
                     GeometryReader { g in
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(LpspDisneyTokens.white.opacity(0.25))
+                            Rectangle().fill(Color.white.opacity(0.25))
                             Rectangle().fill(LpspDisneyTokens.dpBlue).frame(width: g.size.width * p)
                         }
                     }
@@ -179,7 +179,7 @@ private struct LpspDisneyContentCard16x9: View {
     }
 }
 
-private struct LpspDisneyEpisodeRow: View {
+fileprivate struct LpspDisneyEpisodeRow: View {
     let thumb: Image
     let title: String              // "E4 · The Siege"
     let synopsis: String
@@ -196,7 +196,7 @@ private struct LpspDisneyEpisodeRow: View {
                     VStack { Spacer()
                         GeometryReader { g in
                             ZStack(alignment: .leading) {
-                                Rectangle().fill(LpspDisneyTokens.white.opacity(0.25))
+                                Rectangle().fill(Color.white.opacity(0.25))
                                 Rectangle().fill(LpspDisneyTokens.dpBlue).frame(width: g.size.width * p)
                             }
                         }.frame(height: 3)
@@ -216,7 +216,7 @@ private struct LpspDisneyEpisodeRow: View {
     }
 }
 
-private struct LpspDisneyRootTabView: View {
+fileprivate struct LpspDisneyRootTabView: View {
     init() {
         let a = UITabBarAppearance()
         a.configureWithTransparentBackground()

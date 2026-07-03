@@ -18,7 +18,7 @@ private enum LpspNetflixTokens {
 
     // MARK: - Canvas & Surfaces
     static let netflixCanvas    = Color(red: 0.078, green: 0.078, blue: 0.078) // #141414
-    static let netflixDeepBlack = LpspNetflixTokens.black                                   // #000000
+    static let netflixDeepBlack = Color.black                                   // #000000
     static let netflixSurface1  = Color(red: 0.122, green: 0.122, blue: 0.122) // #1F1F1F
     static let netflixSurface2  = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
     static let netflixSurface3  = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
@@ -26,7 +26,7 @@ private enum LpspNetflixTokens {
     static let netflixInput     = Color(red: 0.2,   green: 0.2,   blue: 0.2)   // #333333
 
     // MARK: - Text
-    static let netflixTextPrimary   = LpspNetflixTokens.white                                // #FFFFFF
+    static let netflixTextPrimary   = Color.white                                // #FFFFFF
     static let netflixTextSecondary = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let netflixTextTertiary  = Color(red: 0.467, green: 0.467, blue: 0.467) // #777777
 
@@ -65,7 +65,7 @@ private enum LpspNetflixFonts {
     }
 }
 
-private struct LpspNetflixNetflixPlayButton: View {
+fileprivate struct LpspNetflixNetflixPlayButton: View {
     let title: String   // "Play" or "Resume"
     let action: () -> Void
 
@@ -88,7 +88,7 @@ private struct LpspNetflixNetflixPlayButton: View {
     }
 }
 
-private struct LpspNetflixNetflixPressableStyle: ButtonStyle {
+fileprivate struct LpspNetflixNetflixPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -98,7 +98,7 @@ private struct LpspNetflixNetflixPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspNetflixNetflixSecondaryButton: View {
+fileprivate struct LpspNetflixNetflixSecondaryButton: View {
     let systemIcon: String
     let title: String
     let action: () -> Void
@@ -117,14 +117,14 @@ private struct LpspNetflixNetflixSecondaryButton: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(LpspNetflixTokens.white.opacity(0.15))
+                    .fill(Color.white.opacity(0.15))
             )
         }
         .buttonStyle(LpspNetflixNetflixPressableStyle())
     }
 }
 
-private struct LpspNetflixPosterTile: View {
+fileprivate struct LpspNetflixPosterTile: View {
     let imageURL: URL
     let width: CGFloat
     var progress: Double? = nil   // 0.0–1.0 — pass for Continue Watching
@@ -144,7 +144,7 @@ private struct LpspNetflixPosterTile: View {
                 if let progress {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(LpspNetflixTokens.white.opacity(0.3)).frame(height: 2)
+                            Rectangle().fill(Color.white.opacity(0.3)).frame(height: 2)
                             Rectangle().fill(LpspNetflixTokens.netflixRed)
                                 .frame(width: geo.size.width * progress, height: 2)
                         }
@@ -159,7 +159,7 @@ private struct LpspNetflixPosterTile: View {
     }
 }
 
-private struct LpspNetflixPosterRow: View {
+fileprivate struct LpspNetflixPosterRow: View {
     let title: String
     let posters: [URL]
     let tileWidth: CGFloat = 130
@@ -183,7 +183,7 @@ private struct LpspNetflixPosterRow: View {
     }
 }
 
-private struct LpspNetflixTop10Row: View {
+fileprivate struct LpspNetflixTop10Row: View {
     let posters: [URL]   // exactly 10
 
     var body: some View {
@@ -205,7 +205,7 @@ private struct LpspNetflixTop10Row: View {
     }
 }
 
-private struct LpspNetflixTop10Item: View {
+fileprivate struct LpspNetflixTop10Item: View {
     let index: Int
     let posterURL: URL
     let tileWidth: CGFloat = 120
@@ -221,7 +221,7 @@ private struct LpspNetflixTop10Item: View {
                         .font(.custom("NetflixSans-Black", size: 160).weight(.black))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [LpspNetflixTokens.white.opacity(0.1), LpspNetflixTokens.clear],
+                                colors: [Color.white.opacity(0.1), Color.clear],
                                 startPoint: .top, endPoint: .bottom
                             )
                         )
@@ -234,7 +234,7 @@ private struct LpspNetflixTop10Item: View {
     }
 }
 
-private struct LpspNetflixProfilePicker: View {
+fileprivate struct LpspNetflixProfilePicker: View {
     let profiles: [Profile]
     let onSelect: (Profile) -> Void
 
@@ -288,7 +288,7 @@ private struct LpspNetflixProfilePicker: View {
     }
 }
 
-private struct LpspNetflixNetflixHeader: View {
+fileprivate struct LpspNetflixNetflixHeader: View {
     let categoryChips: [String]   // e.g. ["TV Shows", "Movies", "My List"]
     @State private var selectedChip: String? = nil
 
@@ -313,7 +313,7 @@ private struct LpspNetflixNetflixHeader: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 6)
                                 .overlay(
-                                    Capsule().stroke(LpspNetflixTokens.white.opacity(0.4), lineWidth: 1)
+                                    Capsule().stroke(Color.white.opacity(0.4), lineWidth: 1)
                                 )
                         }
                     }
@@ -325,7 +325,7 @@ private struct LpspNetflixNetflixHeader: View {
     }
 }
 
-private struct LpspNetflixNetflixTabView: View {
+fileprivate struct LpspNetflixNetflixTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()

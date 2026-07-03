@@ -17,7 +17,7 @@ private enum LpspPinterestTokens {
     static let pinterestRedHover   = Color(red: 0.8,   green: 0.0,   blue: 0.125)  // #CC0020
 
     // MARK: - Canvas (Light)
-    static let pinterestCanvasLight   = LpspPinterestTokens.white                                 // #FFFFFF
+    static let pinterestCanvasLight   = Color.white                                 // #FFFFFF
     static let pinterestSurface1Light = Color(red: 0.973, green: 0.973, blue: 0.973) // #F8F8F8
     static let pinterestInputLight    = Color(red: 0.937, green: 0.937, blue: 0.937) // #EFEFEF
     static let pinterestDividerLight  = Color(red: 0.914, green: 0.914, blue: 0.914) // #E9E9E9
@@ -32,7 +32,7 @@ private enum LpspPinterestTokens {
     static let pinterestTextPrimaryLight   = Color(red: 0.067, green: 0.067, blue: 0.067) // #111111
     static let pinterestTextSecondaryLight = Color(red: 0.463, green: 0.463, blue: 0.463) // #767676
     static let pinterestTextTertiaryLight  = Color(red: 0.710, green: 0.710, blue: 0.710) // #B5B5B5
-    static let pinterestTextPrimaryDark    = LpspPinterestTokens.white                                   // #FFFFFF
+    static let pinterestTextPrimaryDark    = Color.white                                   // #FFFFFF
     static let pinterestTextSecondaryDark  = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
 
     // MARK: - Semantic
@@ -61,7 +61,7 @@ private enum LpspPinterestFonts {
     }
 }
 
-private struct LpspPinterestPinterestSaveButton: View {
+fileprivate struct LpspPinterestPinterestSaveButton: View {
     @Binding var isSaved: Bool
     var onTap: () -> Void = {}
 
@@ -86,7 +86,7 @@ private struct LpspPinterestPinterestSaveButton: View {
     }
 }
 
-private struct LpspPinterestPinterestPressableStyle: ButtonStyle {
+fileprivate struct LpspPinterestPinterestPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -96,7 +96,7 @@ private struct LpspPinterestPinterestPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspPinterestPinterestPillButton: View {
+fileprivate struct LpspPinterestPinterestPillButton: View {
     let title: String
     var style: LpspPinterestStyle = .primary
     let action: () -> Void
@@ -118,7 +118,7 @@ private struct LpspPinterestPinterestPillButton: View {
     }
 }
 
-private struct LpspPinterestPinTile: View {
+fileprivate struct LpspPinterestPinTile: View {
     let imageURL: URL
     let title: String
     let creatorName: String
@@ -166,7 +166,7 @@ private struct LpspPinterestPinTile: View {
     }
 }
 
-private struct LpspPinterestPin: Identifiable {
+fileprivate struct LpspPinterestPin: Identifiable {
     let id = UUID()
     let imageURL: URL
     let aspectRatio: CGFloat
@@ -175,7 +175,7 @@ private struct LpspPinterestPin: Identifiable {
     let creatorAvatarURL: URL
 }
 
-private struct LpspPinterestMasonryGrid: View {
+fileprivate struct LpspPinterestMasonryGrid: View {
     let pins: [LpspPinterestPin]
     let columnGap: CGFloat = 8
     let horizontalMargin: CGFloat = 16
@@ -227,7 +227,7 @@ private struct LpspPinterestMasonryGrid: View {
     }
 }
 
-private struct LpspPinterestFloatingSearchBar: View {
+fileprivate struct LpspPinterestFloatingSearchBar: View {
     @Binding var query: String
     @State private var isVisible = true
 
@@ -243,14 +243,14 @@ private struct LpspPinterestFloatingSearchBar: View {
         .padding(.horizontal, 18)
         .frame(height: 48)
         .background(
-            Capsule().fill(LpspPinterestTokens.white)
+            Capsule().fill(Color.white)
                 .shadow(color: .black.opacity(0.08), radius: 8, y: 2)
         )
         .padding(.horizontal, 16)
     }
 }
 
-private struct LpspPinterestPinDetailHero: View {
+fileprivate struct LpspPinterestPinDetailHero: View {
     let imageURL: URL
     let aspectRatio: CGFloat
     let title: String
@@ -303,7 +303,7 @@ private struct LpspPinterestPinDetailHero: View {
     }
 }
 
-private struct LpspPinterestPinterestTabBar: View {
+fileprivate struct LpspPinterestPinterestTabBar: View {
     @Binding var selected: LpspPinterestTab
 
     enum LpspPinterestTab { case home, search, create, notifications, profile }
@@ -351,7 +351,7 @@ private struct LpspPinterestPinterestTabBar: View {
     }
 }
 
-private struct LpspPinterestPinterestRefreshSpinner: View {
+fileprivate struct LpspPinterestPinterestRefreshSpinner: View {
     @State private var rotation: Double = 0
 
     var body: some View {
@@ -368,7 +368,7 @@ private struct LpspPinterestPinterestRefreshSpinner: View {
     }
 }
 
-private struct LpspPinterestSharedPinImage: View {
+fileprivate struct LpspPinterestSharedPinImage: View {
     let imageURL: URL
     let namespace: Namespace.ID
     let id: UUID

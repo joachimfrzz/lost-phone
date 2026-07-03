@@ -33,14 +33,14 @@ private enum LpspPrimeVideoFonts {
 private enum LpspPrimeVideoTokens {
     // MARK: - Canvas & Surfaces
     static let primeCanvas    = Color(red: 0.059, green: 0.090, blue: 0.118) // #0F171E
-    static let primeDeepBlack = LpspPrimeVideoTokens.black                                  // #000000
+    static let primeDeepBlack = Color.black                                  // #000000
     static let primeSurface1  = Color(red: 0.102, green: 0.141, blue: 0.184) // #1A242F
     static let primeSurface2  = Color(red: 0.137, green: 0.184, blue: 0.243) // #232F3E
     static let primeSurface3  = Color(red: 0.180, green: 0.231, blue: 0.278) // #2E3B47
     static let primeDivider   = Color(red: 0.180, green: 0.231, blue: 0.278) // #2E3B47
 
     // MARK: - Text
-    static let primeTextPrimary   = LpspPrimeVideoTokens.white                                // #FFFFFF
+    static let primeTextPrimary   = Color.white                                // #FFFFFF
     static let primeTextSecondary = Color(red: 0.667, green: 0.718, blue: 0.769) // #AAB7C4
     static let primeTextTertiary  = Color(red: 0.431, green: 0.482, blue: 0.537) // #6E7B89
 
@@ -55,7 +55,7 @@ private enum LpspPrimeVideoTokens {
 
 
 
-private struct LpspPrimeVideoPrimePlayButton: View {
+fileprivate struct LpspPrimeVideoPrimePlayButton: View {
     var title: String = "Play"
     let action: () -> Void
 
@@ -76,7 +76,7 @@ private struct LpspPrimeVideoPrimePlayButton: View {
     }
 }
 
-private struct LpspPrimeVideoPrimePressableStyle: ButtonStyle {
+fileprivate struct LpspPrimeVideoPrimePressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -85,7 +85,7 @@ private struct LpspPrimeVideoPrimePressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspPrimeVideoPrimeWatchlistButton: View {
+fileprivate struct LpspPrimeVideoPrimeWatchlistButton: View {
     @Binding var added: Bool
     @State private var bump = false
 
@@ -102,7 +102,7 @@ private struct LpspPrimeVideoPrimeWatchlistButton: View {
             .foregroundStyle(added ? LpspPrimeVideoTokens.primeBlue : .white)
             .frame(maxWidth: .infinity)
             .frame(height: 52)
-            .background(RoundedRectangle(cornerRadius: 8).fill(LpspPrimeVideoTokens.white.opacity(0.14)))
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.14)))
             .scaleEffect(bump ? 1.15 : 1)
             .animation(.spring(response: 0.25, dampingFraction: 0.6), value: bump)
         }
@@ -112,7 +112,7 @@ private struct LpspPrimeVideoPrimeWatchlistButton: View {
     }
 }
 
-private struct LpspPrimeVideoPrimeContentTile: View {
+fileprivate struct LpspPrimeVideoPrimeContentTile: View {
     let title: String
     let artwork: Image
     var includedWithPrime: Bool = false
@@ -131,7 +131,7 @@ private struct LpspPrimeVideoPrimeContentTile: View {
                 if let progress {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(LpspPrimeVideoTokens.white.opacity(0.25))
+                            Rectangle().fill(Color.white.opacity(0.25))
                             Rectangle().fill(LpspPrimeVideoTokens.primeBlue).frame(width: geo.size.width * progress)
                         }
                     }
@@ -149,7 +149,7 @@ private struct LpspPrimeVideoPrimeContentTile: View {
     }
 }
 
-private struct LpspPrimeVideoPrimeBillboard: View {
+fileprivate struct LpspPrimeVideoPrimeBillboard: View {
     let title: String
     let metaLeading: String   // "2024 · 16+ · 1 Season · "
     let imdb: String          // "★ 8.4 IMDb"
@@ -183,8 +183,8 @@ private struct LpspPrimeVideoPrimeBillboard: View {
     }
 }
 
-private struct LpspPrimeVideoPrimeXRayOverlay: View {
-    let cast: [CastMember]   // headshot + name + role
+fileprivate struct LpspPrimeVideoPrimeXRayOverlay: View {
+    let cast: [LpspPrimeVideoCastMember]   // headshot + name + role
     let nowPlaying: String?
     @Binding var shown: Bool
 
@@ -231,7 +231,7 @@ private struct LpspPrimeVideoPrimeXRayOverlay: View {
     }
 }
 
-private struct LpspPrimeVideoRootTabView: View {
+fileprivate struct LpspPrimeVideoRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
@@ -251,6 +251,14 @@ private struct LpspPrimeVideoRootTabView: View {
         .tint(LpspPrimeVideoTokens.primeBlue) // active = blue, blue is the indicator
     }
 }
+
+fileprivate struct LpspPrimeVideoCastMember: Identifiable {
+    let id = UUID()
+    let name: String
+    let role: String
+    var headshot: Image { Image(systemName: "person.circle.fill") }
+}
+
 
 // MARK: - Écrans showroom
 

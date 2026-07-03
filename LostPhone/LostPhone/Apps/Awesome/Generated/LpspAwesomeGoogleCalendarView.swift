@@ -93,7 +93,7 @@ private enum LpspGoogleCalendarFonts {
     static let gcalCaption       = Font.system(size: 12, weight: .regular)
 }
 
-private struct LpspGoogleCalendarEventCard: View {
+fileprivate struct LpspGoogleCalendarEventCard: View {
     let title: String
     let timeRange: String       // "9:00 – 9:30 AM"
     let location: String?
@@ -147,7 +147,7 @@ private struct LpspGoogleCalendarEventCard: View {
     }
 }
 
-private struct LpspGoogleCalendarDayBanner: View {
+fileprivate struct LpspGoogleCalendarDayBanner: View {
     let dayNumber: String       // "14"
     let dayLabel: String        // "THU · MAY"
     let weatherSymbol: String?  // "sun.max.fill"
@@ -197,7 +197,7 @@ private struct LpspGoogleCalendarDayBanner: View {
     }
 }
 
-private struct LpspGoogleCalendarGcalFAB: View {
+fileprivate struct LpspGoogleCalendarGcalFAB: View {
     var action: () -> Void
     @State private var pressed = false
 
@@ -224,7 +224,7 @@ private struct LpspGoogleCalendarGcalFAB: View {
     }
 }
 
-extension View {
+fileprivate extension View {
     func pressEvents(onPress: @escaping () -> Void, onRelease: @escaping () -> Void) -> some View {
         simultaneousGesture(
             DragGesture(minimumDistance: 0)
@@ -234,7 +234,7 @@ extension View {
     }
 }
 
-private struct LpspGoogleCalendarMonthCell: View {
+fileprivate struct LpspGoogleCalendarMonthCell: View {
     let day: Int
     let isToday: Bool
     let isCurrentMonth: Bool
@@ -282,7 +282,7 @@ private struct LpspGoogleCalendarMonthCell: View {
     }
 }
 
-private struct LpspGoogleCalendarTintedEventBlock: View {
+fileprivate struct LpspGoogleCalendarTintedEventBlock: View {
     let title: String
     let timeRange: String
     let calendarColor: Color
@@ -317,7 +317,7 @@ private struct LpspGoogleCalendarTintedEventBlock: View {
     }
 }
 
-private struct LpspGoogleCalendarDrawerSection: View {
+fileprivate struct LpspGoogleCalendarDrawerSection: View {
     let title: String?
     let items: [LpspGoogleCalendarDrawerItem]
     @Binding var selected: String
@@ -348,7 +348,7 @@ private struct LpspGoogleCalendarDrawerSection: View {
     }
 }
 
-private struct LpspGoogleCalendarDrawerRow: View {
+fileprivate struct LpspGoogleCalendarDrawerRow: View {
     let item: LpspGoogleCalendarDrawerSection.LpspGoogleCalendarDrawerItem
     let isSelected: Bool
     var onTap: () -> Void
@@ -373,13 +373,13 @@ private struct LpspGoogleCalendarDrawerRow: View {
             }
             .padding(.horizontal, 16)
             .frame(height: 48)
-            .background(isSelected ? LpspGoogleCalendarTokens.gcalBlueTint : LpspGoogleCalendarTokens.clear)
+            .background(isSelected ? LpspGoogleCalendarTokens.gcalBlueTint : Color.clear)
         }
         .buttonStyle(.plain)
     }
 }
 
-private struct LpspGoogleCalendarMaterialTextButton: View {
+fileprivate struct LpspGoogleCalendarMaterialTextButton: View {
     let title: String
     var action: () -> Void
 
@@ -397,7 +397,7 @@ private struct LpspGoogleCalendarMaterialTextButton: View {
     }
 }
 
-private struct LpspGoogleCalendarMaterialFilledButton: View {
+fileprivate struct LpspGoogleCalendarMaterialFilledButton: View {
     let title: String
     var systemImage: String? = nil
     var action: () -> Void
@@ -422,7 +422,7 @@ private struct LpspGoogleCalendarMaterialFilledButton: View {
     }
 }
 
-private struct LpspGoogleCalendarRSVPPills: View {
+fileprivate struct LpspGoogleCalendarRSVPPills: View {
     @State private var selection: LpspGoogleCalendarRSVPOption = .yes
     enum LpspGoogleCalendarRSVPOption: String, CaseIterable { case yes = "Yes", no = "No", maybe = "Maybe" }
 
@@ -440,11 +440,11 @@ private struct LpspGoogleCalendarRSVPPills: View {
                         .frame(height: 40)
                         .background(
                             RoundedRectangle(cornerRadius: 500)
-                                .fill(isSelected ? LpspGoogleCalendarTokens.gcalBlue : LpspGoogleCalendarTokens.clear)
+                                .fill(isSelected ? LpspGoogleCalendarTokens.gcalBlue : Color.clear)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 500)
-                                .strokeBorder(isSelected ? LpspGoogleCalendarTokens.clear : LpspGoogleCalendarTokens.gcalDivider, lineWidth: 1)
+                                .strokeBorder(isSelected ? Color.clear : LpspGoogleCalendarTokens.gcalDivider, lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)
@@ -453,7 +453,7 @@ private struct LpspGoogleCalendarRSVPPills: View {
     }
 }
 
-private struct LpspGoogleCalendarCurrentTimeIndicator: View {
+fileprivate struct LpspGoogleCalendarCurrentTimeIndicator: View {
     let yOffset: CGFloat // computed from current time
 
     var body: some View {
@@ -466,7 +466,7 @@ private struct LpspGoogleCalendarCurrentTimeIndicator: View {
     }
 }
 
-private struct LpspGoogleCalendarRootTabView: View {
+fileprivate struct LpspGoogleCalendarRootTabView: View {
     var body: some View {
         TabView {
             ScheduleView() .tabItem { Label("Schedule", systemImage: "list.bullet") }

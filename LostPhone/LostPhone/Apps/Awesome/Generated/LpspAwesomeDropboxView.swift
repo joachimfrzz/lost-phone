@@ -29,7 +29,7 @@ private enum LpspDropboxFonts {
 
 private enum LpspDropboxTokens {
     // MARK: - Canvas & Surfaces (Light)
-    static let dbxCanvas     = LpspDropboxTokens.white                                   // #FFFFFF
+    static let dbxCanvas     = Color.white                                   // #FFFFFF
     static let dbxSurface    = Color(red: 0.969, green: 0.961, blue: 0.949)   // #F7F5F2
     static let dbxDivider    = Color(red: 0.902, green: 0.882, blue: 0.855)   // #E6E1DA
 
@@ -67,11 +67,11 @@ private enum LpspDropboxTokens {
 
 
 // Tabular figures for file sizes / dates / counts
-extension View {
+fileprivate extension View {
     func dbxTabularNumbers() -> some View { self.monospacedDigit() }
 }
 
-private struct LpspDropboxDbxPrimaryButton: View {
+fileprivate struct LpspDropboxDbxPrimaryButton: View {
     let title: String
     var enabled: Bool = true
     let action: () -> Void
@@ -93,7 +93,7 @@ private struct LpspDropboxDbxPrimaryButton: View {
     }
 }
 
-private struct LpspDropboxDbxPressableStyle: ButtonStyle {
+fileprivate struct LpspDropboxDbxPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -102,7 +102,7 @@ private struct LpspDropboxDbxPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspDropboxDbxUploadFAB: View {
+fileprivate struct LpspDropboxDbxUploadFAB: View {
     let action: () -> Void
 
     var body: some View {
@@ -121,9 +121,9 @@ private struct LpspDropboxDbxUploadFAB: View {
     }
 }
 
-private enum LpspDropboxDbxFileKind { case pdf, doc, sheet, image, folder }
+fileprivate enum LpspDropboxDbxFileKind { case pdf, doc, sheet, image, folder }
 
-private struct LpspDropboxDbxFileRow: View {
+fileprivate struct LpspDropboxDbxFileRow: View {
     let name: String
     let meta: String
     let kind: LpspDropboxDbxFileKind
@@ -195,7 +195,7 @@ private struct LpspDropboxDbxFileRow: View {
     }
 }
 
-private struct LpspDropboxDbxRecentCard: View {
+fileprivate struct LpspDropboxDbxRecentCard: View {
     let name: String
     let meta: String
     let thumbnail: Image?
@@ -231,7 +231,7 @@ private struct LpspDropboxDbxRecentCard: View {
     }
 }
 
-private struct LpspDropboxDbxUploadBar: View {
+fileprivate struct LpspDropboxDbxUploadBar: View {
     let label: String
     let progress: Double // 0...1, real byte ratio
     var done: Bool = false
@@ -263,7 +263,7 @@ private struct LpspDropboxDbxUploadBar: View {
     }
 }
 
-private struct LpspDropboxDbxRootTabView: View {
+fileprivate struct LpspDropboxDbxRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
@@ -283,7 +283,7 @@ private struct LpspDropboxDbxRootTabView: View {
     }
 }
 
-private struct LpspDropboxDbxPhotoGrid: View {
+fileprivate struct LpspDropboxDbxPhotoGrid: View {
     let photos: [Image]
     @State private var selected: Set<Int> = []
 

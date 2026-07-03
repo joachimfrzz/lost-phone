@@ -32,14 +32,14 @@ private enum LpspUberEatsFonts {
 }
 
 private enum LpspUberEatsTokens {
-    static let ueCanvas    = LpspUberEatsTokens.white                                       // #FFFFFF
+    static let ueCanvas    = Color.white                                       // #FFFFFF
     static let ueSurface   = Color(red: 0.953, green: 0.953, blue: 0.953)      // #F3F3F3
     static let ueSurface2  = Color(red: 0.933, green: 0.933, blue: 0.933)      // #EEEEEE
     static let ueDivider   = Color(red: 0.910, green: 0.910, blue: 0.910)      // #E8E8E8
-    static let ueTextPrimary   = LpspUberEatsTokens.black                                   // #000000
+    static let ueTextPrimary   = Color.black                                   // #000000
     static let ueTextSecondary = Color(red: 0.420, green: 0.420, blue: 0.420)  // #6B6B6B
     static let ueTextTertiary  = Color(red: 0.651, green: 0.651, blue: 0.651)  // #A6A6A6
-    static let ueDarkCanvas    = LpspUberEatsTokens.black                                   // #000000
+    static let ueDarkCanvas    = Color.black                                   // #000000
     static let ueDarkSurface   = Color(red: 0.110, green: 0.110, blue: 0.118)  // #1C1C1E
     static let ueDarkSurface2  = Color(red: 0.173, green: 0.173, blue: 0.180)  // #2C2C2E
     static let ueGreen        = Color(red: 0.024, green: 0.757, blue: 0.404)   // #06C167
@@ -61,7 +61,7 @@ private enum LpspUberEatsTokens {
 
 
 
-private struct LpspUberEatsUEPrimaryButton: View {
+fileprivate struct LpspUberEatsUEPrimaryButton: View {
     let title: String
     var trailing: String? = nil   // e.g. price "$12.49"
     let action: () -> Void
@@ -83,7 +83,7 @@ private struct LpspUberEatsUEPrimaryButton: View {
     }
 }
 
-private struct LpspUberEatsUEPressableStyle: ButtonStyle {
+fileprivate struct LpspUberEatsUEPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -92,7 +92,7 @@ private struct LpspUberEatsUEPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspUberEatsUERestaurantCard: View {
+fileprivate struct LpspUberEatsUERestaurantCard: View {
     let name: String
     let rating: String   // "4.8"
     let eta: String      // "25 min"
@@ -143,7 +143,7 @@ private struct LpspUberEatsUERestaurantCard: View {
     }
 }
 
-private struct LpspUberEatsUEStickyCartBar: View {
+fileprivate struct LpspUberEatsUEStickyCartBar: View {
     let count: Int
     let total: String
     let onView: () -> Void
@@ -172,7 +172,7 @@ private struct LpspUberEatsUEStickyCartBar: View {
     }
 }
 
-private struct LpspUberEatsUEMenuItemRow: View {
+fileprivate struct LpspUberEatsUEMenuItemRow: View {
     let name: String
     let desc: String
     let price: String
@@ -209,7 +209,7 @@ private struct LpspUberEatsUEMenuItemRow: View {
 }
 
 // Reusable cart-count "bump"
-private struct LpspUberEatsCartCountBadge: View {
+fileprivate struct LpspUberEatsCartCountBadge: View {
     let count: Int
     @State private var bump = false
     var body: some View {
@@ -229,7 +229,7 @@ private struct LpspUberEatsCartCountBadge: View {
 
 import MapKit
 
-private struct LpspUberEatsUEOrderTrackingView: View {
+fileprivate struct LpspUberEatsUEOrderTrackingView: View {
     @State private var courier = CLLocationCoordinate2D(latitude: 37.78, longitude: -122.41)
     let route: [CLLocationCoordinate2D]
     let etaText: String
@@ -272,7 +272,7 @@ private struct LpspUberEatsUEOrderTrackingView: View {
     }
 }
 
-private struct LpspUberEatsUEProgressStepper: View {
+fileprivate struct LpspUberEatsUEProgressStepper: View {
     let steps: [String]
     let current: Int
     var body: some View {
@@ -286,7 +286,7 @@ private struct LpspUberEatsUEProgressStepper: View {
     }
 }
 
-private struct LpspUberEatsRootTabView: View {
+fileprivate struct LpspUberEatsRootTabView: View {
     @Environment(\.colorScheme) private var scheme
     init() {
         let appearance = UITabBarAppearance()

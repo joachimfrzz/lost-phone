@@ -17,8 +17,8 @@ private enum LpspAppleMusicTokens {
     static let amRedPressed  = Color(red: 0.831, green: 0.129, blue: 0.231) // #D4213B
 
     // MARK: - Canvas
-    static let amCanvasLight   = LpspAppleMusicTokens.white                                  // #FFFFFF
-    static let amCanvasDark    = LpspAppleMusicTokens.black                                  // #000000
+    static let amCanvasLight   = Color.white                                  // #FFFFFF
+    static let amCanvasDark    = Color.black                                  // #000000
     static let amSurface1Light = Color(red: 0.949, green: 0.949, blue: 0.969) // #F2F2F7
     static let amSurface1Dark  = Color(red: 0.110, green: 0.110, blue: 0.118) // #1C1C1E
     static let amSurface2Dark  = Color(red: 0.173, green: 0.173, blue: 0.180) // #2C2C2E
@@ -61,7 +61,7 @@ private enum LpspAppleMusicFonts {
     static let amLyricsOther   = Font.system(size: 22, weight: .semibold)
 }
 
-private struct LpspAppleMusicApplePlayButton: View {
+fileprivate struct LpspAppleMusicApplePlayButton: View {
     let isPlaying: Bool
     var size: CGFloat = 64
     let action: () -> Void
@@ -79,7 +79,7 @@ private struct LpspAppleMusicApplePlayButton: View {
     }
 }
 
-private struct LpspAppleMusicAMPressableStyle: ButtonStyle {
+fileprivate struct LpspAppleMusicAMPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -88,7 +88,7 @@ private struct LpspAppleMusicAMPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspAppleMusicAMPillButton: View {
+fileprivate struct LpspAppleMusicAMPillButton: View {
     let title: String
     let systemIcon: String
     var tint: Color = LpspAppleMusicTokens.amRed
@@ -112,7 +112,7 @@ private struct LpspAppleMusicAMPillButton: View {
     }
 }
 
-private struct LpspAppleMusicAlbumTile: View {
+fileprivate struct LpspAppleMusicAlbumTile: View {
     let artworkURL: URL
     let title: String
     let subtitle: String   // artist or description
@@ -133,13 +133,13 @@ private struct LpspAppleMusicAlbumTile: View {
 
                 Text(title)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(LpspAppleMusicTokens.primary)
+                    .foregroundStyle(Color.primary)
                     .lineLimit(2)
                     .frame(width: width, alignment: .leading)
 
                 Text(subtitle)
                     .font(.system(size: 13, weight: .regular))
-                    .foregroundStyle(LpspAppleMusicTokens.secondary)
+                    .foregroundStyle(Color.secondary)
                     .lineLimit(1)
             }
         }
@@ -148,7 +148,7 @@ private struct LpspAppleMusicAlbumTile: View {
     }
 }
 
-private struct LpspAppleMusicTrackRow: View {
+fileprivate struct LpspAppleMusicTrackRow: View {
     let title: String
     let artist: String
     let artwork: Image
@@ -167,7 +167,7 @@ private struct LpspAppleMusicTrackRow: View {
                 if isPlaying {
                     LpspAppleMusicEqualizerBars(color: LpspAppleMusicTokens.amRed)
                         .frame(width: 18, height: 18)
-                        .background(LpspAppleMusicTokens.black.opacity(0.5))
+                        .background(Color.black.opacity(0.5))
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                 }
             }
@@ -183,7 +183,7 @@ private struct LpspAppleMusicTrackRow: View {
                     }
                     Text(title)
                         .font(.system(size: 17))
-                        .foregroundStyle(LpspAppleMusicTokens.primary)
+                        .foregroundStyle(Color.primary)
                         .lineLimit(1)
                     if hasAtmos {
                         LpspAppleMusicAtmosBadge()
@@ -191,7 +191,7 @@ private struct LpspAppleMusicTrackRow: View {
                 }
                 Text(artist)
                     .font(.system(size: 15))
-                    .foregroundStyle(LpspAppleMusicTokens.secondary)
+                    .foregroundStyle(Color.secondary)
                     .lineLimit(1)
             }
 
@@ -200,7 +200,7 @@ private struct LpspAppleMusicTrackRow: View {
             Button {} label: {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 20))
-                    .foregroundStyle(LpspAppleMusicTokens.secondary)
+                    .foregroundStyle(Color.secondary)
             }
         }
         .padding(.horizontal, 16)
@@ -209,7 +209,7 @@ private struct LpspAppleMusicTrackRow: View {
     }
 }
 
-private struct LpspAppleMusicAtmosBadge: View {
+fileprivate struct LpspAppleMusicAtmosBadge: View {
     var body: some View {
         Text("Dolby Atmos")
             .font(.system(size: 11, weight: .semibold))
@@ -225,7 +225,7 @@ private struct LpspAppleMusicAtmosBadge: View {
     }
 }
 
-private struct LpspAppleMusicEqualizerBars: View {
+fileprivate struct LpspAppleMusicEqualizerBars: View {
     let color: Color
     @State private var phase: CGFloat = 0
     let bars: [CGFloat] = [0.3, 0.6, 0.4, 0.8]
@@ -247,7 +247,7 @@ private struct LpspAppleMusicEqualizerBars: View {
     }
 }
 
-private struct LpspAppleMusicNowPlayingScreen: View {
+fileprivate struct LpspAppleMusicNowPlayingScreen: View {
     let trackTitle: String
     let artist: String
     let artwork: Image
@@ -300,13 +300,13 @@ private struct LpspAppleMusicNowPlayingScreen: View {
     }
 }
 
-private struct LpspAppleMusicAMScrubber: View {
+fileprivate struct LpspAppleMusicAMScrubber: View {
     @Binding var progress: Double
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Capsule().fill(LpspAppleMusicTokens.white.opacity(0.2)).frame(height: 4)
+                Capsule().fill(Color.white.opacity(0.2)).frame(height: 4)
                 Capsule().fill(LpspAppleMusicTokens.amRed).frame(width: geo.size.width * progress, height: 4)
                 Circle()
                     .fill(.white)
@@ -319,7 +319,7 @@ private struct LpspAppleMusicAMScrubber: View {
     }
 }
 
-private struct LpspAppleMusicMiniPlayer: View {
+fileprivate struct LpspAppleMusicMiniPlayer: View {
     let trackTitle: String
     let artist: String
     let artwork: Image
@@ -337,11 +337,11 @@ private struct LpspAppleMusicMiniPlayer: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(trackTitle)
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(LpspAppleMusicTokens.primary)
+                    .foregroundStyle(Color.primary)
                     .lineLimit(1)
                 Text(artist)
                     .font(.system(size: 13))
-                    .foregroundStyle(LpspAppleMusicTokens.secondary)
+                    .foregroundStyle(Color.secondary)
                     .lineLimit(1)
             }
 
@@ -350,13 +350,13 @@ private struct LpspAppleMusicMiniPlayer: View {
             Button { isPlaying.toggle() } label: {
                 Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                     .font(.system(size: 22))
-                    .foregroundStyle(LpspAppleMusicTokens.primary)
+                    .foregroundStyle(Color.primary)
             }
 
             Button {} label: {
                 Image(systemName: "forward.fill")
                     .font(.system(size: 22))
-                    .foregroundStyle(LpspAppleMusicTokens.primary)
+                    .foregroundStyle(Color.primary)
             }
             .padding(.trailing, 12)
         }
@@ -367,7 +367,7 @@ private struct LpspAppleMusicMiniPlayer: View {
     }
 }
 
-private struct LpspAppleMusicLyricsView: View {
+fileprivate struct LpspAppleMusicLyricsView: View {
     struct LpspAppleMusicLine: Identifiable {
         let id = UUID()
         let start: TimeInterval
@@ -417,7 +417,7 @@ private struct LpspAppleMusicLyricsView: View {
 import UIKit
 import CoreImage
 
-private enum LpspAppleMusicAMColorExtractor {
+fileprivate enum LpspAppleMusicAMColorExtractor {
     /// Returns (dominant, complementary) colors derived from an album image
     static func extractColors(from image: UIImage) -> (Color, Color) {
         guard let ciImage = CIImage(image: image) else { return (.black, .black) }
@@ -444,7 +444,7 @@ private enum LpspAppleMusicAMColorExtractor {
     }
 }
 
-private struct LpspAppleMusicAppleMusicTabView: View {
+fileprivate struct LpspAppleMusicAppleMusicTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground() // Uses .regularMaterial

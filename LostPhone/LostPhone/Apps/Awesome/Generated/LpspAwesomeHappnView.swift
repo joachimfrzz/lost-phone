@@ -19,7 +19,7 @@ private enum LpspHappnTokens {
     static let happnDivider  = Color(red: 0.165, green: 0.165, blue: 0.200) // #2A2A33  (also timeline spine)
 
     // MARK: - Canvas & Surfaces (Light)
-    static let happnCanvasLight  = LpspHappnTokens.white                                   // #FFFFFF
+    static let happnCanvasLight  = Color.white                                   // #FFFFFF
     static let happnSurface1Light = Color(red: 0.965, green: 0.965, blue: 0.973) // #F6F6F8
 
     // MARK: - Brand
@@ -33,7 +33,7 @@ private enum LpspHappnTokens {
     static let happnTextPrimary   = Color(red: 0.957, green: 0.957, blue: 0.965) // #F4F4F6
     static let happnTextSecondary = Color(red: 0.627, green: 0.627, blue: 0.682) // #A0A0AE
     static let happnTextTertiary  = Color(red: 0.424, green: 0.424, blue: 0.478) // #6C6C7A
-    static let happnOnPink        = LpspHappnTokens.white                                  // #FFFFFF
+    static let happnOnPink        = Color.white                                  // #FFFFFF
     static let happnOnGold        = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
 
     // MARK: - Semantic
@@ -67,7 +67,7 @@ private enum LpspHappnFonts {
     static let happnCaption  = Font.system(size: 12, weight: .regular)
 }
 
-private struct LpspHappnCrossing: Identifiable {
+fileprivate struct LpspHappnCrossing: Identifiable {
     let id = UUID()
     let avatar: LinearGradient
     let name: String          // "Camille, 27"
@@ -77,7 +77,7 @@ private struct LpspHappnCrossing: Identifiable {
     var charmed: Bool
 }
 
-private struct LpspHappnCrossingsTimeline: View {
+fileprivate struct LpspHappnCrossingsTimeline: View {
     @State var crossings: [LpspHappnCrossing]
 
     var body: some View {
@@ -94,7 +94,7 @@ private struct LpspHappnCrossingsTimeline: View {
     }
 }
 
-private struct LpspHappnCrossingRow: View {
+fileprivate struct LpspHappnCrossingRow: View {
     @Binding var crossing: LpspHappnCrossing
 
     var body: some View {
@@ -145,7 +145,7 @@ private struct LpspHappnCrossingRow: View {
     }
 }
 
-private struct LpspHappnCharmButton: View {
+fileprivate struct LpspHappnCharmButton: View {
     @Binding var charmed: Bool
     var size: CGFloat = 40
     @State private var scale: CGFloat = 1.0
@@ -165,7 +165,7 @@ private struct LpspHappnCharmButton: View {
                     Circle().fill(charmed ? LpspHappnTokens.happnPink : LpspHappnTokens.happnSurface2)
                 )
                 .overlay(
-                    Circle().strokeBorder(charmed ? LpspHappnTokens.clear : LpspHappnTokens.happnDivider, lineWidth: 1)
+                    Circle().strokeBorder(charmed ? Color.clear : LpspHappnTokens.happnDivider, lineWidth: 1)
                 )
                 .shadow(color: charmed ? LpspHappnTokens.happnPink.opacity(0.5) : .clear, radius: 8, x: 0, y: 6)
                 .scaleEffect(scale)
@@ -174,7 +174,7 @@ private struct LpspHappnCharmButton: View {
     }
 }
 
-private struct LpspHappnCrushCelebration: View {
+fileprivate struct LpspHappnCrushCelebration: View {
     let leftAvatar: LinearGradient
     let rightAvatar: LinearGradient
     let onStartChat: () -> Void
@@ -182,7 +182,7 @@ private struct LpspHappnCrushCelebration: View {
 
     var body: some View {
         ZStack {
-            LpspHappnTokens.black.opacity(0.92).ignoresSafeArea()
+            Color.black.opacity(0.92).ignoresSafeArea()
             VStack(spacing: 28) {
                 ZStack {
                     Circle().fill(leftAvatar).frame(width: 96, height: 96)
@@ -209,7 +209,7 @@ private struct LpspHappnCrushCelebration: View {
     }
 }
 
-private struct LpspHappnCrossingPin: View {
+fileprivate struct LpspHappnCrossingPin: View {
     enum LpspHappnKind { case standard, mutual, ghost }
     let kind: LpspHappnKind
 
@@ -220,7 +220,7 @@ private struct LpspHappnCrossingPin: View {
                 .frame(width: 44, height: 44)
                 .clipShape(LpspHappnTeardropShape())
             Circle()
-                .fill(kind == .ghost ? LpspHappnTokens.happnTextTertiary : LpspHappnTokens.white)
+                .fill(kind == .ghost ? LpspHappnTokens.happnTextTertiary : Color.white)
                 .frame(width: 30, height: 30)
         }
         .overlay(kind == .ghost ? AnyView(LpspHappnTeardropShape().stroke(LpspHappnTokens.happnDivider, lineWidth: 1)) : AnyView(EmptyView()))
@@ -235,7 +235,7 @@ private struct LpspHappnCrossingPin: View {
     }
 }
 
-private struct LpspHappnTeardropShape: Shape {
+fileprivate struct LpspHappnTeardropShape: Shape {
     func path(in r: CGRect) -> Path {
         // 50% 50% 50% 6px rotated 45° — classic map teardrop
         var p = Path(roundedRect: r, cornerRadii: .init(topLeading: r.width/2, bottomLeading: 6, bottomTrailing: r.width/2, topTrailing: r.width/2))
@@ -244,7 +244,7 @@ private struct LpspHappnTeardropShape: Shape {
     }
 }
 
-private struct LpspHappnHappnPrimaryButton: View {
+fileprivate struct LpspHappnHappnPrimaryButton: View {
     let title: String; let action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -256,7 +256,7 @@ private struct LpspHappnHappnPrimaryButton: View {
     }
 }
 
-private struct LpspHappnHappnGradientButton: View {
+fileprivate struct LpspHappnHappnGradientButton: View {
     let title: String; let action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -268,14 +268,14 @@ private struct LpspHappnHappnGradientButton: View {
     }
 }
 
-private struct LpspHappnPressScale: ButtonStyle {
+fileprivate struct LpspHappnPressScale: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.scaleEffect(configuration.isPressed ? 0.98 : 1.0)
             .animation(.easeOut(duration: 0.08), value: configuration.isPressed)
     }
 }
 
-private struct LpspHappnHappnTabView: View {
+fileprivate struct LpspHappnHappnTabView: View {
     var body: some View {
         TabView {
             TimelineScreen().tabItem { Label("Timeline", systemImage: "heart.text.square") }
@@ -295,7 +295,7 @@ private struct LpspHappnHappnTabView: View {
     }
 }
 
-private struct LpspHappnHappnTheme: ViewModifier {
+fileprivate struct LpspHappnHappnTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme
     func body(content: Content) -> some View {
         content
@@ -305,7 +305,7 @@ private struct LpspHappnHappnTheme: ViewModifier {
     }
 }
 
-extension View { func happnTheme() -> some View { modifier(LpspHappnHappnTheme()) } }
+fileprivate extension View { func happnTheme() -> some View { modifier(LpspHappnHappnTheme()) } }
 
 // MARK: - Écrans showroom
 

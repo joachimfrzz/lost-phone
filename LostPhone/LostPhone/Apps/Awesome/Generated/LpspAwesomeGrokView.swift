@@ -31,7 +31,7 @@ private enum LpspGrokFonts {
 
 private enum LpspGrokTokens {
     // MARK: - Canvas & Surfaces
-    static let grokCanvas    = LpspGrokTokens.black                                  // #000000
+    static let grokCanvas    = Color.black                                  // #000000
     static let grokSurface1  = Color(red: 0.086, green: 0.094, blue: 0.110) // #16181C
     static let grokSurface2  = Color(red: 0.118, green: 0.129, blue: 0.149) // #1E2126
     static let grokSurface3  = Color(red: 0.153, green: 0.165, blue: 0.180) // #272A2E
@@ -43,7 +43,7 @@ private enum LpspGrokTokens {
     static let grokTextTertiary  = Color(red: 0.302, green: 0.318, blue: 0.337) // #4D5156
 
     // MARK: - Functional / Brand
-    static let grokAccentWhite   = LpspGrokTokens.white                                  // #FFFFFF
+    static let grokAccentWhite   = Color.white                                  // #FFFFFF
     static let grokPressedWhite  = Color(red: 0.843, green: 0.859, blue: 0.863) // #D7DBDC
     static let grokLinkBlue      = Color(red: 0.114, green: 0.608, blue: 0.941) // #1D9BF0
     static let grokLinkPressed   = Color(red: 0.102, green: 0.549, blue: 0.847) // #1A8CD8
@@ -54,7 +54,7 @@ private enum LpspGrokTokens {
 
 
 // Enable the slashed zero on numeral-bearing Text (technical identity)
-extension View {
+fileprivate extension View {
     func grokSlashedZero() -> some View {
         self.font(LpspGrokFonts.grokBody).fontFeature("zero")
     }
@@ -63,7 +63,7 @@ extension View {
 // Convenience until Inter is registered:
 
 
-private struct LpspGrokGrokUserBubble: View {
+fileprivate struct LpspGrokGrokUserBubble: View {
     let text: String
 
     var body: some View {
@@ -86,7 +86,7 @@ private struct LpspGrokGrokUserBubble: View {
     }
 }
 
-private struct LpspGrokGrokAssistantResponse: View {
+fileprivate struct LpspGrokGrokAssistantResponse: View {
     let text: String
     let isStreaming: Bool
     @State private var cursorVisible = true
@@ -121,7 +121,7 @@ private struct LpspGrokGrokAssistantResponse: View {
     }
 }
 
-private struct LpspGrokXCitationCard: View {
+fileprivate struct LpspGrokXCitationCard: View {
     let author: String
     let handle: String
     let timeAgo: String
@@ -178,7 +178,7 @@ private struct LpspGrokXCitationCard: View {
     }
 }
 
-private struct LpspGrokGrokSendButton: View {
+fileprivate struct LpspGrokGrokSendButton: View {
     enum State { case disabled, enabled, streaming }
     let state: State
     let action: () -> Void
@@ -192,7 +192,7 @@ private struct LpspGrokGrokSendButton: View {
                         .foregroundStyle(LpspGrokTokens.grokTextPrimary)
                 default:
                     Image(systemName: "arrow.up")
-                        .foregroundStyle(state == .enabled ? LpspGrokTokens.black : LpspGrokTokens.grokTextSecondary)
+                        .foregroundStyle(state == .enabled ? Color.black : LpspGrokTokens.grokTextSecondary)
                 }
             }
             .font(.system(size: 16, weight: .semibold))
@@ -213,7 +213,7 @@ private struct LpspGrokGrokSendButton: View {
     }
 }
 
-private struct LpspGrokGrokPressableStyle: ButtonStyle {
+fileprivate struct LpspGrokGrokPressableStyle: ButtonStyle {
     var scale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -222,7 +222,7 @@ private struct LpspGrokGrokPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspGrokGrokModeToggle: View {
+fileprivate struct LpspGrokGrokModeToggle: View {
     @Binding var isFun: Bool
     @Namespace private var ns
 
@@ -255,7 +255,7 @@ private struct LpspGrokGrokModeToggle: View {
     }
 }
 
-private struct LpspGrokGrokPromptBar: View {
+fileprivate struct LpspGrokGrokPromptBar: View {
     @Binding var text: String
     @FocusState private var focused: Bool
     let sendState: LpspGrokGrokSendButton.State
@@ -282,7 +282,7 @@ private struct LpspGrokGrokPromptBar: View {
     }
 }
 
-private struct LpspGrokGrokRoot: View {
+fileprivate struct LpspGrokGrokRoot: View {
     @State private var isFun = false
     @State private var showHistory = false
 

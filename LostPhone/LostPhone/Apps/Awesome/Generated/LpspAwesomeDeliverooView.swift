@@ -21,7 +21,7 @@ private enum LpspDeliverooTokens {
     static let rooPromoGold   = Color(red: 1.000, green: 0.757, blue: 0.000) // #FFC100
 
     // MARK: - Canvas & Surfaces (Light)
-    static let rooCanvas        = LpspDeliverooTokens.white                                   // #FFFFFF
+    static let rooCanvas        = Color.white                                   // #FFFFFF
     static let rooSurface1      = Color(red: 0.957, green: 0.957, blue: 0.949) // #F4F4F2
     static let rooSurface2      = Color(red: 0.918, green: 0.918, blue: 0.910) // #EAEAE8
     static let rooDivider       = Color(red: 0.910, green: 0.910, blue: 0.902) // #E8E8E6
@@ -59,11 +59,11 @@ private enum LpspDeliverooFonts {
     static let rooCaption        = Font.system(size: 12, weight: .regular)
 }
 
-extension View {
+fileprivate extension View {
     func rooTabular() -> some View { self.monospacedDigit() }
 }
 
-private struct LpspDeliverooRestaurantCard: View {
+fileprivate struct LpspDeliverooRestaurantCard: View {
     let name: String
     let meta: String
     let rating: Double
@@ -97,7 +97,7 @@ private struct LpspDeliverooRestaurantCard: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(saved ? LpspDeliverooTokens.rooTeal : .white)
                         .frame(width: 32, height: 32)
-                        .background(LpspDeliverooTokens.black.opacity(0.4), in: Circle())
+                        .background(Color.black.opacity(0.4), in: Circle())
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(10)
@@ -121,7 +121,7 @@ private struct LpspDeliverooRestaurantCard: View {
     }
 }
 
-private struct LpspDeliverooFeePill: View {
+fileprivate struct LpspDeliverooFeePill: View {
     let text: String
     var body: some View {
         HStack(spacing: 5) {
@@ -133,7 +133,7 @@ private struct LpspDeliverooFeePill: View {
     }
 }
 
-private struct LpspDeliverooMenuItemRow: View {
+fileprivate struct LpspDeliverooMenuItemRow: View {
     let name: String
     let desc: String
     let price: String
@@ -172,7 +172,7 @@ private struct LpspDeliverooMenuItemRow: View {
     }
 }
 
-private struct LpspDeliverooQuantityStepper: View {
+fileprivate struct LpspDeliverooQuantityStepper: View {
     @Binding var quantity: Int
 
     var body: some View {
@@ -199,7 +199,7 @@ private struct LpspDeliverooQuantityStepper: View {
     }
 }
 
-private struct LpspDeliverooBasketBar: View {
+fileprivate struct LpspDeliverooBasketBar: View {
     let itemCount: Int
     let total: String
     let onTap: () -> Void
@@ -223,7 +223,7 @@ private struct LpspDeliverooBasketBar: View {
     }
 }
 
-private struct LpspDeliverooCategoryRow: View {
+fileprivate struct LpspDeliverooCategoryRow: View {
     struct LpspDeliverooCat: Identifiable { let id = UUID(); let symbol: String; let label: String }
     let cats: [LpspDeliverooCat]
     @State private var selected = 0
@@ -251,7 +251,7 @@ private struct LpspDeliverooCategoryRow: View {
     }
 }
 
-private struct LpspDeliverooRooButton: View {
+fileprivate struct LpspDeliverooRooButton: View {
     let title: String
     let action: () -> Void
     var style: LpspDeliverooStyle = .teal
@@ -270,7 +270,7 @@ private struct LpspDeliverooRooButton: View {
 }
 // Checkout: LpspDeliverooRooButton(title: "Checkout · £24.50", action: {}, style: .dark)
 
-private struct LpspDeliverooDeliverooTabView: View {
+fileprivate struct LpspDeliverooDeliverooTabView: View {
     var body: some View {
         TabView {
             HomeView().tabItem      { Label("Home",       systemImage: "house.fill") }
@@ -283,7 +283,7 @@ private struct LpspDeliverooDeliverooTabView: View {
     }
 }
 
-private struct LpspDeliverooDeliverooTheme: ViewModifier {
+fileprivate struct LpspDeliverooDeliverooTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme
 
     func body(content: Content) -> some View {
@@ -293,7 +293,7 @@ private struct LpspDeliverooDeliverooTheme: ViewModifier {
     }
 }
 
-extension View {
+fileprivate extension View {
     func deliverooTheme() -> some View { modifier(LpspDeliverooDeliverooTheme()) }
 }
 

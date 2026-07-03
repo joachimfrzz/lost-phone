@@ -42,17 +42,17 @@ private enum LpspTikTokTokens {
     static let tiktokCyan        = Color(red: 0.145, green: 0.957, blue: 0.933) // #25F4EE
 
     // MARK: - Text
-    static let tiktokTextPrimary   = LpspTikTokTokens.white                                  // #FFFFFF
+    static let tiktokTextPrimary   = Color.white                                  // #FFFFFF
     static let tiktokTextSecondary = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5 — hashtag counts
-    static let tiktokTextTertiary  = LpspTikTokTokens.white.opacity(0.6)                     // placeholder, meta
-    static let tiktokTextDisabled  = LpspTikTokTokens.white.opacity(0.3)
+    static let tiktokTextTertiary  = Color.white.opacity(0.6)                     // placeholder, meta
+    static let tiktokTextDisabled  = Color.white.opacity(0.3)
 
     // MARK: - Overlays
-    static let tiktokFollowerGray  = LpspTikTokTokens.white.opacity(0.15)                    // "Following" pill bg
-    static let tiktokScrimLight    = LpspTikTokTokens.black.opacity(0.25)                    // icon shadow
-    static let tiktokScrimMedium   = LpspTikTokTokens.black.opacity(0.4)                     // text shadow
-    static let tiktokScrimHeavy    = LpspTikTokTokens.black.opacity(0.6)                     // sheet dim
-    static let tiktokScrubberTrack = LpspTikTokTokens.white.opacity(0.3)
+    static let tiktokFollowerGray  = Color.white.opacity(0.15)                    // "Following" pill bg
+    static let tiktokScrimLight    = Color.black.opacity(0.25)                    // icon shadow
+    static let tiktokScrimMedium   = Color.black.opacity(0.4)                     // text shadow
+    static let tiktokScrimHeavy    = Color.black.opacity(0.6)                     // sheet dim
+    static let tiktokScrubberTrack = Color.white.opacity(0.3)
 }
 
 
@@ -60,17 +60,17 @@ private enum LpspTikTokTokens {
 // Fallback if Proxima Nova isn't bundled:
 
 
-private struct LpspTikTokTikTokTextShadow: ViewModifier {
+fileprivate struct LpspTikTokTikTokTextShadow: ViewModifier {
     func body(content: Content) -> some View {
         content.shadow(color: LpspTikTokTokens.tiktokScrimMedium, radius: 4, x: 0, y: 1)
     }
 }
 
-extension View {
+fileprivate extension View {
     func tiktokTextOnVideo() -> some View { modifier(LpspTikTokTikTokTextShadow()) }
 }
 
-private struct LpspTikTokChromaticAberration: ViewModifier {
+fileprivate struct LpspTikTokChromaticAberration: ViewModifier {
     var offset: CGFloat = 3
 
     func body(content: Content) -> some View {
@@ -87,7 +87,7 @@ private struct LpspTikTokChromaticAberration: ViewModifier {
     }
 }
 
-extension View {
+fileprivate extension View {
     func chromaticAberration(offset: CGFloat = 3) -> some View {
         modifier(LpspTikTokChromaticAberration(offset: offset))
     }
@@ -96,7 +96,7 @@ extension View {
 // Usage:
 // Text("d").font(.system(size: 96, weight: .bold)).chromaticAberration(offset: 6)
 
-private struct LpspTikTokTikTokFollowButton: View {
+fileprivate struct LpspTikTokTikTokFollowButton: View {
     @Binding var isFollowing: Bool
 
     var body: some View {
@@ -120,7 +120,7 @@ private struct LpspTikTokTikTokFollowButton: View {
     }
 }
 
-private struct LpspTikTokTikTokPressableStyle: ButtonStyle {
+fileprivate struct LpspTikTokTikTokPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -129,7 +129,7 @@ private struct LpspTikTokTikTokPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspTikTokTikTokCreateButton: View {
+fileprivate struct LpspTikTokTikTokCreateButton: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
@@ -155,7 +155,7 @@ private struct LpspTikTokTikTokCreateButton: View {
     }
 }
 
-private struct LpspTikTokActionRail: View {
+fileprivate struct LpspTikTokActionRail: View {
     let avatarURL: URL?
     @Binding var isFollowed: Bool
     @Binding var likeCount: Int
@@ -203,7 +203,7 @@ private struct LpspTikTokActionRail: View {
     }
 }
 
-private struct LpspTikTokActionIcon: View {
+fileprivate struct LpspTikTokActionIcon: View {
     let systemName: String
     let count: Int
     let tint: Color
@@ -226,7 +226,7 @@ private struct LpspTikTokActionIcon: View {
     }
 }
 
-private enum LpspTikTokTikTokCount {
+fileprivate enum LpspTikTokTikTokCount {
     static func format(_ n: Int) -> String {
         switch n {
         case ..<1_000: return "\(n)"
@@ -236,7 +236,7 @@ private enum LpspTikTokTikTokCount {
     }
 }
 
-private struct LpspTikTokSpinningMusicDisc: View {
+fileprivate struct LpspTikTokSpinningMusicDisc: View {
     let artwork: URL?
     @State private var rotation: Double = 0
 
@@ -258,7 +258,7 @@ private struct LpspTikTokSpinningMusicDisc: View {
     }
 }
 
-private struct LpspTikTokCaptionOverlay: View {
+fileprivate struct LpspTikTokCaptionOverlay: View {
     let username: String
     let caption: String       // "Check out #fyp #dance at sunset"
     let musicTitle: String
@@ -302,7 +302,7 @@ private struct LpspTikTokCaptionOverlay: View {
     }
 }
 
-private struct LpspTikTokDoubleTapLike: ViewModifier {
+fileprivate struct LpspTikTokDoubleTapLike: ViewModifier {
     @State private var hearts: [LpspTikTokHeartBurst] = []
 
     func body(content: Content) -> some View {
@@ -347,14 +347,14 @@ private struct LpspTikTokDoubleTapLike: ViewModifier {
     }
 }
 
-private struct LpspTikTokHeartBurst: Identifiable {
+fileprivate struct LpspTikTokHeartBurst: Identifiable {
     let id: UUID
     var position: CGPoint
     var scale: CGFloat
     var opacity: Double
 }
 
-private struct LpspTikTokVideoScrubber: View {
+fileprivate struct LpspTikTokVideoScrubber: View {
     let progress: Double     // 0.0 ... 1.0
     @State private var isScrubbing = false
 
@@ -370,7 +370,7 @@ private struct LpspTikTokVideoScrubber: View {
     }
 }
 
-private struct LpspTikTokTikTokLoadingSpinner: View {
+fileprivate struct LpspTikTokTikTokLoadingSpinner: View {
     @State private var rotation: Double = 0
     var body: some View {
         ZStack {
@@ -388,7 +388,7 @@ private struct LpspTikTokTikTokLoadingSpinner: View {
     }
 }
 
-private struct LpspTikTokRootTabBar: View {
+fileprivate struct LpspTikTokRootTabBar: View {
     @Binding var selected: LpspTikTokTab
     let onCreateTapped: () -> Void
     var isOnFeed: Bool = true
@@ -408,7 +408,7 @@ private struct LpspTikTokRootTabBar: View {
         .background(
             Group {
                 if isOnFeed {
-                    LpspTikTokTokens.clear
+                    Color.clear
                 } else {
                     LpspTikTokTokens.tiktokCanvas.opacity(0.92)
                         .background(.regularMaterial)

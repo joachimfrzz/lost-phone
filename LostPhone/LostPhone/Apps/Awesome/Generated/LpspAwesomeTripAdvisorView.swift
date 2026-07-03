@@ -30,20 +30,20 @@ private enum LpspTripAdvisorFonts {
 
 private enum LpspTripAdvisorTokens {
     // MARK: - Canvas & Surfaces
-    static let taCanvas        = LpspTripAdvisorTokens.white                                    // #FFFFFF
+    static let taCanvas        = Color.white                                    // #FFFFFF
     static let taSurface       = Color(red: 0.949, green: 0.949, blue: 0.949)   // #F2F2F2
     static let taDivider       = Color(red: 0.878, green: 0.878, blue: 0.878)   // #E0E0E0
     static let taSurfacePressed = Color(red: 0.910, green: 0.910, blue: 0.910)  // #E8E8E8
 
     // MARK: - Text
-    static let taTextPrimary   = LpspTripAdvisorTokens.black                                    // #000000
+    static let taTextPrimary   = Color.black                                    // #000000
     static let taTextSecondary = Color(red: 0.420, green: 0.420, blue: 0.420)   // #6B6B6B
     static let taTextTertiary  = Color(red: 0.608, green: 0.608, blue: 0.608)   // #9B9B9B
 
     // MARK: - Brand
     static let taGreen         = Color(red: 0.204, green: 0.878, blue: 0.631)   // #34E0A1
     static let taGreenPressed  = Color(red: 0.129, green: 0.773, blue: 0.537)   // #21C589
-    static let taOwlBlack      = LpspTripAdvisorTokens.black                                    // #000000
+    static let taOwlBlack      = Color.black                                    // #000000
 
     // MARK: - Semantic
     static let taEmptyBubble   = Color(red: 0.851, green: 0.851, blue: 0.851)   // #D9D9D9
@@ -54,7 +54,7 @@ private enum LpspTripAdvisorTokens {
 
 
 
-private struct LpspTripAdvisorBubbleRating: View {
+fileprivate struct LpspTripAdvisorBubbleRating: View {
     let value: Double          // 0.0 ... 5.0
     var size: CGFloat = 16
     var reviewCount: Int? = nil
@@ -91,7 +91,7 @@ private struct LpspTripAdvisorBubbleRating: View {
     }
 }
 
-private struct LpspTripAdvisorBubbleRatingPicker: View {
+fileprivate struct LpspTripAdvisorBubbleRatingPicker: View {
     @Binding var rating: Int   // 1 ... 5
     var size: CGFloat = 32
 
@@ -110,7 +110,7 @@ private struct LpspTripAdvisorBubbleRatingPicker: View {
     }
 }
 
-private struct LpspTripAdvisorTAPillButton: View {
+fileprivate struct LpspTripAdvisorTAPillButton: View {
     let title: String
     var style: LpspTripAdvisorStyle = .filled
     let action: () -> Void
@@ -129,14 +129,14 @@ private struct LpspTripAdvisorTAPillButton: View {
                     Capsule().fill(style == .filled ? LpspTripAdvisorTokens.taGreen : .clear)
                 )
                 .overlay(
-                    Capsule().strokeBorder(style == .outline ? LpspTripAdvisorTokens.black : .clear, lineWidth: 1)
+                    Capsule().strokeBorder(style == .outline ? Color.black : .clear, lineWidth: 1)
                 )
         }
         .buttonStyle(LpspTripAdvisorTAPressableStyle())
     }
 }
 
-private struct LpspTripAdvisorTAPressableStyle: ButtonStyle {
+fileprivate struct LpspTripAdvisorTAPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -145,7 +145,7 @@ private struct LpspTripAdvisorTAPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspTripAdvisorPlaceCard: View {
+fileprivate struct LpspTripAdvisorPlaceCard: View {
     let name: String
     let photo: Image
     let rating: Double
@@ -197,7 +197,7 @@ private struct LpspTripAdvisorPlaceCard: View {
     }
 }
 
-private struct LpspTripAdvisorPlaceHero: View {
+fileprivate struct LpspTripAdvisorPlaceHero: View {
     let name: String
     let photo: Image
     let rating: Double
@@ -231,7 +231,7 @@ private struct LpspTripAdvisorPlaceHero: View {
     }
 }
 
-private struct LpspTripAdvisorRootTabView: View {
+fileprivate struct LpspTripAdvisorRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()

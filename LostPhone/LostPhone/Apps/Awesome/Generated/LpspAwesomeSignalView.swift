@@ -40,8 +40,8 @@ private enum LpspSignalTokens {
     static let sigDividerDark  = Color(red: 0.227, green: 0.227, blue: 0.227)    // #3A3A3A
 
     // MARK: - Text
-    static let sigTextPrimary   = LpspSignalTokens.black                                    // #000000
-    static let sigTextPrimaryD  = LpspSignalTokens.white                                    // #FFFFFF
+    static let sigTextPrimary   = Color.black                                    // #000000
+    static let sigTextPrimaryD  = Color.white                                    // #FFFFFF
     static let sigTextSecondary = Color(red: 0.420, green: 0.420, blue: 0.420)   // #6B6B6B
     static let sigTextTertiary  = Color(red: 0.604, green: 0.604, blue: 0.604)   // #9A9A9A
 
@@ -64,7 +64,7 @@ private enum LpspSignalTokens {
 
 
 
-private struct LpspSignalMessageBubble: View {
+fileprivate struct LpspSignalMessageBubble: View {
     let text: String
     let time: String
     let isOutgoing: Bool
@@ -103,7 +103,7 @@ private struct LpspSignalMessageBubble: View {
 }
 
 // Per-corner radius shape for the same-sender tail
-private struct LpspSignalRoundedCorner: Shape {
+fileprivate struct LpspSignalRoundedCorner: Shape {
     var radius: CGFloat
     var tightCorner: UIRectCorner
     var tightRadius: CGFloat
@@ -124,7 +124,7 @@ private struct LpspSignalRoundedCorner: Shape {
     }
 }
 
-private struct LpspSignalComposerBar: View {
+fileprivate struct LpspSignalComposerBar: View {
     @State private var text = ""
 
     private var hasText: Bool { !text.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -155,7 +155,7 @@ private struct LpspSignalComposerBar: View {
     }
 }
 
-private struct LpspSignalSendCircle: View {
+fileprivate struct LpspSignalSendCircle: View {
     let showSend: Bool
     let action: () -> Void
     @State private var pressed = false
@@ -182,7 +182,7 @@ private struct LpspSignalSendCircle: View {
     }
 }
 
-private struct LpspSignalConversationRow: View {
+fileprivate struct LpspSignalConversationRow: View {
     let name: String
     let preview: String
     let time: String
@@ -221,7 +221,7 @@ private struct LpspSignalConversationRow: View {
     }
 }
 
-private struct LpspSignalTimerChip: View {
+fileprivate struct LpspSignalTimerChip: View {
     let duration: String  // "1w", "8h", "Off"
     var body: some View {
         HStack(spacing: 4) {
@@ -232,7 +232,7 @@ private struct LpspSignalTimerChip: View {
     }
 }
 
-private struct LpspSignalEncryptionNote: View {
+fileprivate struct LpspSignalEncryptionNote: View {
     var body: some View {
         HStack(spacing: 5) {
             Image(systemName: "lock.fill").font(.system(size: 11))
@@ -245,7 +245,7 @@ private struct LpspSignalEncryptionNote: View {
     }
 }
 
-private struct LpspSignalRootTabView: View {
+fileprivate struct LpspSignalRootTabView: View {
     init() {
         let a = UITabBarAppearance()
         a.configureWithOpaqueBackground()

@@ -10,6 +10,7 @@ import ToastUI
 import Supabase
 import SwiftUINavigation
 
+@MainActor
 @Observable
 class AuthVM {
     var service: AuthServiceProtocol

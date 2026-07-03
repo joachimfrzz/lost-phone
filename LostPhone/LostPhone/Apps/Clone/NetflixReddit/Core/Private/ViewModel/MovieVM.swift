@@ -8,6 +8,7 @@
 import Foundation
 import ToastUI
 
+@MainActor
 @Observable
 class MovieVM {
     var movieService: MovieService

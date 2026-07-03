@@ -97,6 +97,7 @@ private struct LpspAudibleAudiblePlayButton: View {
                 .background(Circle().fill(LpspAudibleTokens.audOrange))
                 .shadow(color: .audOrangeGlow, radius: 22, y: 6)
         }
+        .sensoryFeedback(.impact(weight: .medium), trigger: isPlaying)
         .buttonStyle(LpspAudibleAudPressable(pressedScale: 0.93))
     }
 }
@@ -118,6 +119,7 @@ private struct LpspAudibleSkipButton: View {
                 .foregroundStyle(flash ? LpspAudibleTokens.audOrange : .white)
                 .frame(width: 44, height: 44)
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: flash)
         .buttonStyle(LpspAudibleAudPressable(pressedScale: 0.9))
     }
 }
@@ -126,6 +128,8 @@ private struct LpspAudibleAudPressable: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.72), value: configuration.isPressed)
     }
 }
 
@@ -295,6 +299,7 @@ private struct LpspAudibleCaptionsPanel: View {
                 Text(words[i])
                     .font(LpspAudibleFonts.audCaptions)
                     .foregroundStyle(i == activeWordIndex ? .white : LpspAudibleTokens.audTextSecondary)
+                    .animation(.easeOut(duration: 0.18), value: activeWordIndex)
             }
         }
         .padding(16)

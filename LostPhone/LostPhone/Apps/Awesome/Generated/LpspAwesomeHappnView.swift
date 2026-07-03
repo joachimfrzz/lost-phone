@@ -168,6 +168,7 @@ private struct LpspHappnCharmButton: View {
                     Circle().strokeBorder(charmed ? Color.clear : LpspHappnTokens.happnDivider, lineWidth: 1)
                 )
                 .shadow(color: charmed ? LpspHappnTokens.happnPink.opacity(0.5) : .clear, radius: 8, x: 0, y: 6)
+                .scaleEffect(scale)
         }
         .buttonStyle(.plain)
     }
@@ -270,6 +271,7 @@ private struct LpspHappnHappnGradientButton: View {
 private struct LpspHappnPressScale: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .animation(.easeOut(duration: 0.08), value: configuration.isPressed)
     }
 }
 

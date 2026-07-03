@@ -120,12 +120,15 @@ private struct LpspRedditRDVoteColumn: View {
                 Image(systemName: state == .up ? "arrow.up.square.fill" : "arrow.up")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(state == .up ? LpspRedditTokens.rdUpvote : LpspRedditTokens.rdVoteInactive)
+                    .scaleEffect(upScale)
             }
+            .sensoryFeedback(.selection, trigger: state == .up)
 
             Text("\(displayedKarma)")
                 .font(LpspRedditFonts.rdKarma)
                 .foregroundStyle(karmaColor)
                 .contentTransition(.numericText())
+                .animation(.spring(response: 0.2, dampingFraction: 0.6), value: displayedKarma)
 
             Button {
                 state = (state == .down) ? .none : .down
@@ -134,7 +137,9 @@ private struct LpspRedditRDVoteColumn: View {
                 Image(systemName: state == .down ? "arrow.down.square.fill" : "arrow.down")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(state == .down ? LpspRedditTokens.rdDownvote : LpspRedditTokens.rdVoteInactive)
+                    .scaleEffect(downScale)
             }
+            .sensoryFeedback(.selection, trigger: state == .down)
         }
         .frame(width: 44)
     }
@@ -370,6 +375,7 @@ private struct LpspRedditRDSubredditBanner: View {
                         .overlay(Capsule().stroke(accentColor, lineWidth: joined ? 1.5 : 0))
                 }
                 .padding(16)
+                .sensoryFeedback(.success, trigger: joined)
             }
 
             VStack(alignment: .leading, spacing: 4) {

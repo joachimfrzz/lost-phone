@@ -147,6 +147,9 @@ private struct LpspAmazonAmazonAddToCartButton: View {
                 .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
         }
         .buttonStyle(.plain)
+        .scaleEffect(pressed ? 0.98 : 1)
+        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: pressed)
+        .sensoryFeedback(.success, trigger: pressed)
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in pressed = true }
@@ -355,7 +358,11 @@ private struct LpspAmazonAmazonRootTabView: View {
     }
 }
 
+// Cart badge bump
+.scaleEffect(bumping ? 1.3 : 1.0)
+.animation(.spring(response: 0.25, dampingFraction: 0.55), value: bumping)
 
+// Add-to-cart toast
 private struct LpspAmazonAddToCartToast: View {
     @Binding var visible: Bool
     var body: some View {
@@ -368,6 +375,7 @@ private struct LpspAmazonAddToCartToast: View {
         .background(LpspAmazonTokens.amzCanvas)
         .shadow(color: .black.opacity(0.15), radius: 12, y: -4)
         .offset(y: visible ? 0 : 60)
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: visible)
     }
 }
 

@@ -76,8 +76,12 @@ SWIFT_KEYWORDS = frozenset(
 def extract_swift_blocks(md: str) -> list[str]:
     blocks: list[str] = []
     in_swift = False
+    in_motion = False
     buf: list[str] = []
     for line in md.splitlines():
+        if line.startswith("## "):
+            low = line.lower()
+            in_motion = "motion" in low or "haptic" in low
         if line.strip().startswith("```swift"):
             in_swift = True
             buf = []
@@ -85,7 +89,13 @@ def extract_swift_blocks(md: str) -> list[str]:
         if in_swift and line.strip() == "```":
             in_swift = False
             if buf:
-                blocks.append("\n".join(buf))
+                code = "\n".join(buf)
+                if in_motion and not re.search(r"\bstruct\b", code):
+                    pass  # skip pure motion snippets
+                else:
+                    if in_motion:
+                        code = strip_leading_orphan_modifiers(code)
+                    blocks.append(code)
             continue
         if in_swift:
             buf.append(line)
@@ -258,7 +268,13 @@ def strip_orphan_motion_lines(code: str) -> str:
     out: list[str] = []
     for line in code.splitlines():
         s = line.strip()
-        if re.match(r"^\.(sensoryFeedback|scaleEffect|animation)\(", s):
+        if re.match(r"^\.sensoryFeedback\(", s):
+            continue
+        if re.match(r"^\.scaleEffect\(", s):
+            continue
+        if re.match(r"^\.animation\(", s):
+            continue
+        if re.match(r"^\.delay\(", s):
             continue
         if re.match(r"^// (Add to cart|Cart badge|Add-to-cart|Mic record|Read receipt)", s, re.I):
             continue
@@ -305,7 +321,7 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     if "UIFont" in code and "import UIKit" not in code:
         code = "import UIKit\n" + code
 
-    return strip_orphan_motion_lines(code)
+    return code
 
 
 def _replace_braced_block(code: str, start: int, open_repl: str, close_marker: str) -> tuple[str, str]:

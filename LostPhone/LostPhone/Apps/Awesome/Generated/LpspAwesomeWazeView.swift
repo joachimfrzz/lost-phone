@@ -186,6 +186,7 @@ private struct LpspWazeHazardSpeechBubble: View {
                 .frame(width: 12, height: 8)
         }
         .shadow(color: .black.opacity(0.20), radius: 12, y: 4)
+        .scaleEffect(appearScale)
         .onAppear {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.55)) {
                 appearScale = 1
@@ -221,8 +222,10 @@ private struct LpspWazeWazeFAB: View {
                     Circle().fill(pressed ? LpspWazeTokens.wazePurpleDeep : LpspWazeTokens.wazePurple)
                 )
                 .shadow(color: LpspWazeTokens.wazePurple.opacity(0.40), radius: 16, y: 6)
+                .scaleEffect(pressed ? 0.94 : 1)
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.impact(weight: .medium), trigger: pressed)
         .pressEvents(onPress: { pressed = true }, onRelease: { pressed = false })
     }
 }
@@ -247,6 +250,8 @@ private struct LpspWazeWazeLocationPuck: View {
             Circle()
                 .fill(LpspWazeTokens.wazeCyan.opacity(pulse ? 0 : 0.15))
                 .frame(width: 60, height: 60)
+                .scaleEffect(pulse ? 1.5 : 1.0)
+                .animation(.easeOut(duration: 2.0).repeatForever(autoreverses: false), value: pulse)
 
             // Arrow body
             LpspWazeWazeArrowShape()
@@ -430,8 +435,10 @@ private struct LpspWazeWazeGoButton: View {
                     Capsule().fill(pressed ? LpspWazeTokens.wazePurpleDeep : LpspWazeTokens.wazePurple)
                 )
                 .shadow(color: LpspWazeTokens.wazePurple.opacity(0.30), radius: 12, y: 4)
+                .scaleEffect(pressed ? 0.97 : 1)
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.impact(weight: .heavy), trigger: pressed)
         .pressEvents(onPress: { pressed = true }, onRelease: { pressed = false })
     }
 }
@@ -472,6 +479,7 @@ private struct LpspWazeWazerAvatar: View {
             .frame(width: 24, height: 24)
             .background(Circle().fill(Color.white))
             .overlay(Circle().strokeBorder(Color.white, lineWidth: 2))
+            .scaleEffect(pop)
             .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
             .onTapGesture {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.5)) {

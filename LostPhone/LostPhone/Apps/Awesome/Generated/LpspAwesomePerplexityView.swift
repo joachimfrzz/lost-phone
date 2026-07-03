@@ -162,6 +162,7 @@ private struct LpspPerplexitySearchInput: View {
             }
             .disabled(!canSend)
             .padding(.bottom, 10)
+            .sensoryFeedback(.impact(weight: .medium), trigger: canSend)
         }
         .padding(.horizontal, 18)
         .background(
@@ -261,6 +262,7 @@ private struct LpspPerplexityCitationChip: View {
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle().inset(by: -8)) // 32pt tap target
+        .sensoryFeedback(.impact(weight: .soft), trigger: focused)
     }
 }
 
@@ -357,6 +359,7 @@ private struct LpspPerplexityProSearchToggle: View {
             )
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.selection, trigger: isOn)
     }
 }
 
@@ -370,6 +373,8 @@ private struct LpspPerplexitySearchingIndicator: View {
                     Circle()
                         .fill(LpspPerplexityTokens.pplxTeal)
                         .frame(width: 6, height: 6)
+                        .scaleEffect(phase == i ? 1.3 : 1.0)
+                        .animation(.easeInOut(duration: 0.4).delay(Double(i) * 0.15), value: phase)
                 }
             }
             Text("Searching the web…")
@@ -449,6 +454,7 @@ private struct LpspPerplexityRelatedQuestionsCard: View {
                     .padding(.horizontal, 16)
                 }
                 .buttonStyle(.plain)
+                .sensoryFeedback(.selection, trigger: idx)
 
                 if idx < questions.count - 1 {
                     Rectangle().fill(LpspPerplexityTokens.pplxSurface3).frame(height: 1).padding(.horizontal, 16)

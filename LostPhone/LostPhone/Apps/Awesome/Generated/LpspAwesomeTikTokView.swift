@@ -120,6 +120,8 @@ private struct LpspTikTokTikTokFollowButton: View {
                         .fill(isFollowing ? LpspTikTokTokens.tiktokFollowerGray : LpspTikTokTokens.tiktokRose)
                 )
         }
+        .sensoryFeedback(.success, trigger: isFollowing) { old, new in !old && new }
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: isFollowing) { old, new in old && !new }
         .buttonStyle(LpspTikTokTikTokPressableStyle(pressedScale: 0.95))
     }
 }
@@ -128,6 +130,8 @@ private struct LpspTikTokTikTokPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -152,6 +156,7 @@ private struct LpspTikTokTikTokCreateButton: View {
             .compositingGroup()
             .clipShape(RoundedRectangle(cornerRadius: 8))
         }
+        .sensoryFeedback(.impact(weight: .heavy), trigger: UUID())
         .buttonStyle(LpspTikTokTikTokPressableStyle(pressedScale: 0.94))
     }
 }
@@ -198,6 +203,7 @@ private struct LpspTikTokActionRail: View {
                         .background(Circle().fill(LpspTikTokTokens.tiktokRose))
                 }
                 .offset(y: 9)
+                .sensoryFeedback(.success, trigger: isFollowed)
             }
         }
     }
@@ -314,6 +320,7 @@ private struct LpspTikTokDoubleTapLike: ViewModifier {
                             Image(systemName: "heart.fill")
                                 .font(.system(size: 120, weight: .bold))
                                 .foregroundStyle(LpspTikTokTokens.tiktokRose)
+                                .scaleEffect(heart.scale)
                                 .opacity(heart.opacity)
                                 .position(heart.position)
                         }
@@ -365,6 +372,7 @@ private struct LpspTikTokVideoScrubber: View {
             }
         }
         .frame(height: isScrubbing ? 4 : 2)
+        .animation(.easeInOut(duration: 0.15), value: isScrubbing)
     }
 }
 

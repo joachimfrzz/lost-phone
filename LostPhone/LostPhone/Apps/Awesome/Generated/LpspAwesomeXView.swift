@@ -165,6 +165,7 @@ private struct LpspXXActionIcon: View {
             Image(systemName: systemName)
                 .font(.system(size: 18.75, weight: active ? .semibold : .regular))
                 .foregroundStyle(color)
+                .scaleEffect(active ? 1.0 : 1.0)
             if count > 0 {
                 Text(formatted(count))
                     .font(LpspXFonts.xActionCount)
@@ -195,6 +196,7 @@ private struct LpspXXPostFAB: View {
                 .background(Circle().fill(Color.white))
                 .shadow(color: .black.opacity(0.4), radius: 12, y: 4)
         }
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
         .buttonStyle(LpspXXPressableStyle(pressedScale: 0.95))
         .padding(.trailing, 16)
         .padding(.bottom, 16)
@@ -205,6 +207,8 @@ private struct LpspXXPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -274,6 +278,8 @@ private struct LpspXLikeBurstModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .scaleEffect(isLiked ? 1.0 : 1.0)
+            .animation(.spring(response: 0.35, dampingFraction: 0.55), value: isLiked)
             .overlay {
                 ForEach(Array(particles.enumerated()), id: \.offset) { _, p in
                     Circle()
@@ -281,6 +287,7 @@ private struct LpspXLikeBurstModifier: ViewModifier {
                         .frame(width: 4, height: 4)
                         .offset(x: p.x, y: p.y)
                         .opacity(0)
+                        .animation(.easeOut(duration: 0.4), value: particles.count)
                 }
             }
             .onChange(of: isLiked) { _, newValue in

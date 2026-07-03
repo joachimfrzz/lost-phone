@@ -83,6 +83,7 @@ private struct LpspNetflixNetflixPlayButton: View {
             .padding(.vertical, 14)
             .background(RoundedRectangle(cornerRadius: 4).fill(LpspNetflixTokens.netflixRed))
         }
+        .sensoryFeedback(.impact(flexibility: .rigid), trigger: title)
         .buttonStyle(LpspNetflixNetflixPressableStyle())
     }
 }
@@ -91,7 +92,9 @@ private struct LpspNetflixNetflixPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
             .brightness(configuration.isPressed ? -0.1 : 0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 

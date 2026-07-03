@@ -139,6 +139,7 @@ private struct LpspDiscordDCServerIcon: View {
             Rectangle()
                 .fill(LpspDiscordTokens.dcTextPrimary)
                 .frame(width: 4, height: isActive ? 40 : (server.unreadCount > 0 ? 8 : 0))
+                .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isActive)
 
             Button(action: action) {
                 ZStack(alignment: .bottomTrailing) {
@@ -161,6 +162,7 @@ private struct LpspDiscordDCServerIcon: View {
                     }
                     .frame(width: 48, height: 48)
                     .clipShape(RoundedRectangle(cornerRadius: isActive ? 12 : 16))
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isActive)
 
                     if server.mentionCount > 0 {
                         Text("\(min(server.mentionCount, 99))")
@@ -328,6 +330,7 @@ private struct LpspDiscordDCComposeBar: View {
                         .frame(width: 32, height: 32)
                         .background(Circle().fill(LpspDiscordTokens.dcBlurple))
                 }
+                .sensoryFeedback(.impact(flexibility: .soft), trigger: text)
             }
         }
         .padding(.horizontal, 12)
@@ -417,6 +420,7 @@ private struct LpspDiscordDCSpeakingRing<Avatar: View>: View {
             .overlay(
                 Circle()
                     .stroke(LpspDiscordTokens.dcOnlineGreen, lineWidth: isActiveSpeaker ? 2.5 : 0)
+                    .scaleEffect(pulseScale)
                     .opacity(isActiveSpeaker ? 1 : 0)
             )
             .onChange(of: isActiveSpeaker) { _, active in
@@ -456,6 +460,7 @@ private struct LpspDiscordDCReactionChip: View {
                     .stroke(didYouReact ? LpspDiscordTokens.dcBlurple : LpspDiscordTokens.dcDivider, lineWidth: 1)
             )
         }
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: didYouReact)
     }
 }
 
@@ -493,6 +498,7 @@ private struct LpspDiscordDCMobileShell: View {
                 DCChatView()
                     .frame(width: geo.size.width, height: geo.size.height)
                     .offset(x: drawerOpen ? drawerWidth : 0)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.85), value: drawerOpen)
                     .disabled(drawerOpen)
 
                 HStack(spacing: 0) {
@@ -501,6 +507,7 @@ private struct LpspDiscordDCMobileShell: View {
                 }
                 .frame(width: drawerWidth, height: geo.size.height)
                 .offset(x: drawerOpen ? 0 : -drawerWidth)
+                .animation(.spring(response: 0.3, dampingFraction: 0.85), value: drawerOpen)
             }
             .gesture(
                 DragGesture()

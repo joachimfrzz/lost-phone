@@ -176,6 +176,8 @@ private struct LpspGeminiGemThinking: View {
                 Circle()
                     .fill(LpspGeminiGradients.gemini)
                     .frame(width: 7, height: 7)
+                    .scaleEffect(t ? 1 : 0.5)
+                    .animation(.easeInOut(duration: 0.5).repeatForever().delay(Double(i) * 0.15), value: t)
             }
         }
         .onAppear { t = true }
@@ -212,6 +214,7 @@ private struct LpspGeminiGemPromptBar: View {
         .overlay(
             Capsule(style: .continuous)
                 .strokeBorder(LpspGeminiGradients.gemini, lineWidth: focused ? 1.5 : 0)
+                .animation(.easeOut(duration: 0.18), value: focused)
         )
         .padding(.horizontal, 16)
     }
@@ -235,6 +238,7 @@ private struct LpspGeminiGemPromptBar: View {
                     .background(Circle().fill(active ? LpspGeminiTokens.gemBlue : .clear))
             }
             .disabled(!active)
+            .sensoryFeedback(.impact(flexibility: .soft), trigger: active)
         }
     }
 }
@@ -267,6 +271,8 @@ private struct LpspGeminiGemSuggestionChip: View {
 private struct LpspGeminiGemPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -331,6 +337,7 @@ private struct LpspGeminiGemRoot: View {
                     .transition(.move(edge: .leading))
             }
         }
+        .animation(.easeOut(duration: 0.28), value: drawerOpen)
     }
 }
 

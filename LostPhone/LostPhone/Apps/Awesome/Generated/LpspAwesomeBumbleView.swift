@@ -96,6 +96,7 @@ private struct LpspBumbleBumblePrimaryButton: View {
                 )
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
     }
 }
 
@@ -277,6 +278,7 @@ private struct LpspBumbleCountdownChip: View {
                     .overlay(Capsule().strokeBorder(LpspBumbleTokens.bumbleHoneyDeep, lineWidth: 1))
             )
             .opacity(pulse ? 1.0 : 0.95)
+            .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: pulse)
             .onAppear { pulse = true }
     }
 }
@@ -305,6 +307,7 @@ private struct LpspBumbleMatchCelebration: View {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 48, weight: .heavy))
                         .foregroundStyle(LpspBumbleTokens.bumbleMatchPink)
+                        .scaleEffect(heartScale)
                         .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
                 }
 
@@ -410,6 +413,7 @@ private struct LpspBumbleBumbleChatInput: View {
                     .background(Circle().fill(canSend ? LpspBumbleTokens.bumbleYellow : LpspBumbleTokens.bumbleSurface1))
             }
             .disabled(!canSend)
+            .sensoryFeedback(.impact(weight: .medium), trigger: canSend == false)
         }
         .padding(.horizontal, 16)
     }

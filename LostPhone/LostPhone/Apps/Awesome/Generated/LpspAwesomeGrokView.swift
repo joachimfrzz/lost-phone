@@ -198,6 +198,7 @@ private struct LpspGrokGrokSendButton: View {
             .frame(width: 32, height: 32)
             .background(Circle().fill(fill))
         }
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: state)
         .buttonStyle(LpspGrokGrokPressableStyle(scale: 0.92))
         .disabled(state == .disabled)
     }
@@ -215,6 +216,8 @@ private struct LpspGrokGrokPressableStyle: ButtonStyle {
     var scale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? scale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -230,6 +233,7 @@ private struct LpspGrokGrokModeToggle: View {
         .padding(3)
         .background(Capsule().fill(LpspGrokTokens.grokSurface1))
         .overlay(Capsule().strokeBorder(LpspGrokTokens.grokDivider, lineWidth: 1))
+        .sensoryFeedback(.selection, trigger: isFun)
     }
 
     private func segment(_ label: String, active: Bool, tap: @escaping () -> Void) -> some View {

@@ -259,6 +259,7 @@ private struct LpspClaudeChatInput: View {
                 }
                 .disabled(!canSend)
                 .padding(.bottom, 6)
+                .sensoryFeedback(.impact(weight: .medium), trigger: canSend)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 6)
@@ -360,6 +361,7 @@ private struct LpspClaudeModelPickerSheet: View {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(LpspClaudeTokens.claudePaper)
         )
+        .sensoryFeedback(.selection, trigger: selectedModel)
     }
 }
 
@@ -387,6 +389,7 @@ private struct LpspClaudeCodeBlock: View {
                         .frame(width: 32, height: 32)
                         .background(Color.white.opacity(0.05).clipShape(Circle()))
                 }
+                .sensoryFeedback(.impact(weight: .light), trigger: copied)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -415,6 +418,8 @@ private struct LpspClaudeThinkingIndicator: View {
     var body: some View {
         HStack(spacing: 8) {
             LpspClaudeClaudeAvatar(size: 14)
+                .scaleEffect(pulse ? 1.15 : 1.0)
+                .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: pulse)
             Text(elapsedSeconds.map { "Thought for \($0)s" } ?? "Thinking…")
                 .font(LpspClaudeFonts.claudeChip)
                 .foregroundStyle(LpspClaudeTokens.claudeGraphite)

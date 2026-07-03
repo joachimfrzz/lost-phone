@@ -185,6 +185,7 @@ private struct LpspDeliverooQuantityStepper: View {
                 .contentTransition(.numericText())
             control("plus") { quantity += 1 }
         }
+        .sensoryFeedback(.selection, trigger: quantity)
     }
 
     private func control(_ symbol: String, _ action: @escaping () -> Void) -> some View {
@@ -213,6 +214,7 @@ private struct LpspDeliverooBasketBar: View {
                 .background(LpspDeliverooTokens.rooTeal, in: Capsule())
         }
         .buttonStyle(.plain)
+        .scaleEffect(pulse ? 1.03 : 1.0)
         .padding(.horizontal, 16)
         .onChange(of: itemCount) { _, _ in
             withAnimation(.easeOut(duration: 0.1)) { pulse = true }

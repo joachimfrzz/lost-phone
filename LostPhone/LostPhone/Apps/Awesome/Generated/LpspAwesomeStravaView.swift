@@ -170,6 +170,7 @@ private struct LpspStravaKudosButton: View {
                 Image(systemName: hasGivenKudos ? "hand.thumbsup.fill" : "hand.thumbsup")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(hasGivenKudos ? LpspStravaTokens.stravaOrange : LpspStravaTokens.stravaInkSecondary)
+                    .scaleEffect(hasGivenKudos ? 1.0 : 1.0)
                 Text("\(kudosCount)")
                     .font(LpspStravaFonts.stravaKudosCount)
                     .foregroundStyle(LpspStravaTokens.stravaInkPrimary)
@@ -178,6 +179,7 @@ private struct LpspStravaKudosButton: View {
             .padding(.vertical, 8)
             .contentShape(Rectangle())
         }
+        .sensoryFeedback(.impact(weight: .medium), trigger: hasGivenKudos)
         .overlay {
             if emitConfetti { LpspStravaConfettiBurst().allowsHitTesting(false) }
         }
@@ -282,6 +284,7 @@ private struct LpspStravaRecordButton: View {
                 .background(Circle().fill(LpspStravaTokens.stravaOrange))
                 .shadow(color: LpspStravaTokens.stravaOrange.opacity(0.4), radius: 8, y: 8)
         }
+        .sensoryFeedback(.impact(weight: .heavy), trigger: UUID())
         .offset(y: -8)  // protrudes 8pt above the tab bar
     }
 }
@@ -356,6 +359,7 @@ private struct LpspStravaRootTabView: View {
                 ProfileView() .tabItem { Label("You",  systemImage: "person.crop.circle") }.tag(4)
             }
             .tint(LpspStravaTokens.stravaOrange)
+            .sensoryFeedback(.selection, trigger: tab)
 
             LpspStravaRecordButton(onRecord: { /* present record sheet */ })
         }

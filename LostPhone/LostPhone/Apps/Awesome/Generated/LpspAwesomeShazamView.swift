@@ -85,6 +85,7 @@ private struct LpspShazamShazamButton: View {
                 .fill(LpspShazamTokens.shazamBlue.opacity(isListening ? 0.5 : 0))
                 .frame(width: size * 1.4, height: size * 1.4)
                 .blur(radius: 60)
+                .animation(.easeInOut(duration: 0.5), value: isListening)
 
             // The button
             Button(action: onTap) {
@@ -103,9 +104,11 @@ private struct LpspShazamShazamButton: View {
                         .frame(width: size * 0.4, height: size * 0.4)
                 }
                 .frame(width: size, height: size)
+                .scaleEffect(breathe && !isListening ? 1.04 : 1.0)
                 .shadow(color: LpspShazamTokens.shazamCore.opacity(0.45), radius: 48, y: 16)
             }
             .buttonStyle(LpspShazamShazamPressable())
+            .sensoryFeedback(.impact(weight: .heavy), trigger: isListening)
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) { breathe = true }
@@ -122,6 +125,7 @@ private struct LpspShazamPulseRing: View {
         Circle()
             .strokeBorder(Color.white.opacity(0.22), lineWidth: 2)
             .frame(width: base, height: base)
+            .scaleEffect(animate ? 2.6 : 1.0)
             .opacity(animate ? 0 : 0.22)
             .onAppear {
                 withAnimation(.easeOut(duration: 1.8).repeatForever(autoreverses: false).delay(delay)) {
@@ -134,6 +138,8 @@ private struct LpspShazamPulseRing: View {
 private struct LpspShazamShazamPressable: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? 0.94 : 1)
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 

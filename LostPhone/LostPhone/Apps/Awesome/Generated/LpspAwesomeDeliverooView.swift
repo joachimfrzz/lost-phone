@@ -40,7 +40,7 @@ private enum DeliverooTokens {
     static let rooTealInk = Color(red: 0.000, green: 0.216, blue: 0.200) // #003733  (on-teal content)
     static let rooPlusMint = Color(red: 0.769, green: 0.957, blue: 0.937) // #C4F4EF
     static let rooPromoGold = Color(red: 1.000, green: 0.757, blue: 0.000) // #FFC100
-    static let rooCanvas = Color.white                                   // #FFFFFF
+    static let rooCanvas = white                                   // #FFFFFF
     static let rooSurface1 = Color(red: 0.957, green: 0.957, blue: 0.949) // #F4F4F2
     static let rooSurface2 = Color(red: 0.918, green: 0.918, blue: 0.910) // #EAEAE8
     static let rooDivider = Color(red: 0.910, green: 0.910, blue: 0.902) // #E8E8E6

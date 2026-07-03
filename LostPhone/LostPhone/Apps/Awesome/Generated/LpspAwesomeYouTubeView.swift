@@ -44,7 +44,7 @@ private enum YouTubeTokens {
     static let ytRed = Color(red: 1.0,   green: 0.0,   blue: 0.0)   // #FF0000
     static let ytRedPressed = Color(red: 0.8,   green: 0.0,   blue: 0.0)   // #CC0000
     static let ytRedHover = Color(red: 0.902, green: 0.0,   blue: 0.0)   // #E60000
-    static let ytCanvasLight = Color.white                                  // #FFFFFF
+    static let ytCanvasLight = white                                  // #FFFFFF
     static let ytSurface1Light = Color(red: 0.976, green: 0.976, blue: 0.976) // #F9F9F9
     static let ytSurface2Light = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
     static let ytDividerLight = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
@@ -56,7 +56,7 @@ private enum YouTubeTokens {
     static let ytTextPrimaryLight = Color(red: 0.059, green: 0.059, blue: 0.059) // #0F0F0F
     static let ytTextSecondaryLight = Color(red: 0.376, green: 0.376, blue: 0.376) // #606060
     static let ytTextTertiaryLight = Color(red: 0.565, green: 0.565, blue: 0.565) // #909090
-    static let ytTextPrimaryDark = Color.white
+    static let ytTextPrimaryDark = white
     static let ytTextSecondaryDark = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let ytTextTertiaryDark = Color(red: 0.443, green: 0.443, blue: 0.443) // #717171
     static let ytInfoBlue = Color(red: 0.243, green: 0.651, blue: 1.0) // #3EA6FF

@@ -37,9 +37,9 @@ struct DictaphoneBottomSheetHelper<Content: View>: UIViewControllerRepresentable
     
     class Coordinator: NSObject, UISheetPresentationControllerDelegate {
         
-        var parent: BottomSheetHelper
+        var parent: DictaphoneBottomSheetHelper
         
-        init(parent: BottomSheetHelper) {
+        init(parent: DictaphoneBottomSheetHelper) {
             self.parent = parent
         }
         

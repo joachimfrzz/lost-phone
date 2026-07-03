@@ -48,7 +48,7 @@ private enum BinanceTokens {
     static let bnSurface2 = Color(red: 0.118, green: 0.125, blue: 0.149) // #1E2026
     static let bnSurface3 = Color(red: 0.169, green: 0.192, blue: 0.224) // #2B3139
     static let bnDivider = Color(red: 0.169, green: 0.192, blue: 0.224) // #2B3139
-    static let bnCanvasLight = Color.white                                  // #FFFFFF
+    static let bnCanvasLight = white                                  // #FFFFFF
     static let bnSurface1Light = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let bnDividerLight = Color(red: 0.918, green: 0.925, blue: 0.937) // #EAECEF
     static let bnYellow = Color(red: 0.941, green: 0.725, blue: 0.043) // #F0B90B
@@ -62,9 +62,9 @@ private enum BinanceTokens {
     static let bnTextTertiary = Color(red: 0.369, green: 0.400, blue: 0.451) // #5E6673
     static let bnTextPrimaryLt = Color(red: 0.118, green: 0.137, blue: 0.161) // #1E2329
     static let bnInfo = Color(red: 0.200, green: 0.459, blue: 0.733) // #3375BB
-    static let bnYellowTint = Color.bnYellow.opacity(0.12)
-    static let bnAskFill = Color.bnDown.opacity(0.14)
-    static let bnBidFill = Color.bnUp.opacity(0.14)
+    static let bnYellowTint = bnYellow.opacity(0.12)
+    static let bnAskFill = bnDown.opacity(0.14)
+    static let bnBidFill = bnUp.opacity(0.14)
 }
 
 private enum BinanceFonts {

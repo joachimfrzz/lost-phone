@@ -33,7 +33,7 @@ private enum PlansScreenFactory {
     }
 }
 private enum PlansTokens {
-    static let gmCanvas = Color.white                                   // #FFFFFF
+    static let gmCanvas = white                                   // #FFFFFF
     static let gmSurfaceMuted = Color(red: 0.945, green: 0.953, blue: 0.957) // #F1F3F4
     static let gmDivider = Color(red: 0.855, green: 0.863, blue: 0.878) // #DADCE0
     static let gmTextPrimary = Color(red: 0.125, green: 0.133, blue: 0.141) // #202124
@@ -46,7 +46,7 @@ private enum PlansTokens {
     static let gmYellow = Color(red: 0.984, green: 0.737, blue: 0.016) // #FBBC04
     static let gmGreen = Color(red: 0.204, green: 0.659, blue: 0.325) // #34A853
     static let gmOrange = Color(red: 0.984, green: 0.549, blue: 0.000) // #FB8C00
-    static let gmRoadWhite = Color.white                                   // #FFFFFF
+    static let gmRoadWhite = white                                   // #FFFFFF
     static let gmHighwayYellow = Color(red: 0.992, green: 0.965, blue: 0.890) // #FDF6E3
     static let gmWaterBlue = Color(red: 0.667, green: 0.855, blue: 1.000) // #AADAFF
     static let gmParkGreen = Color(red: 0.784, green: 0.902, blue: 0.788) // #C8E6C9

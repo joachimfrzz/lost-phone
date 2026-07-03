@@ -43,18 +43,18 @@ private enum ThreadsScreenFactory {
     }
 }
 private enum ThreadsTokens {
-    static let threadsCanvas = Color.black                                   // #000000
+    static let threadsCanvas = black                                   // #000000
     static let threadsSurface1 = Color(red: 0.063, green: 0.063, blue: 0.063) // #101010
     static let threadsSurface2 = Color(red: 0.094, green: 0.094, blue: 0.094) // #181818
     static let threadsDivider = Color(red: 0.133, green: 0.133, blue: 0.133) // #222222
     static let threadsLine = Color(red: 0.200, green: 0.200, blue: 0.200) // #333333
-    static let threadsLightCanvas = Color.white                                   // #FFFFFF
+    static let threadsLightCanvas = white                                   // #FFFFFF
     static let threadsLightSurface1 = Color(red: 0.980, green: 0.980, blue: 0.980) // #FAFAFA
     static let threadsLightSurface2 = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let threadsLightDivider = Color(red: 0.859, green: 0.859, blue: 0.859) // #DBDBDB
     static let threadsLightLine = Color(red: 0.851, green: 0.851, blue: 0.851) // #D9D9D9
     static let threadsTextPrimaryDark = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
-    static let threadsTextPrimaryLight = Color.black                                   // #000000
+    static let threadsTextPrimaryLight = black                                   // #000000
     static let threadsTextSecondary = Color(red: 0.467, green: 0.467, blue: 0.467) // #777777
     static let threadsTextTertiaryDark = Color(red: 0.302, green: 0.302, blue: 0.302) // #4D4D4D
     static let threadsTextTertiaryLight = Color(red: 0.600, green: 0.600, blue: 0.600) // #999999

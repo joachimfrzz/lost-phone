@@ -35,7 +35,7 @@ private enum BookingScreenFactory {
     }
 }
 private enum BookingTokens {
-    static let bkCanvas = Color.white                                  // #FFFFFF
+    static let bkCanvas = white                                  // #FFFFFF
     static let bkSurface = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
     static let bkSurfaceDeep = Color(red: 0.902, green: 0.902, blue: 0.902) // #E6E6E6
     static let bkDivider = Color(red: 0.878, green: 0.878, blue: 0.878) // #E0E0E0

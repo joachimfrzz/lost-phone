@@ -37,10 +37,10 @@ private enum ZoomTokens {
     static let zoomSurface1 = Color(red: 0.176, green: 0.176, blue: 0.176) // #2D2D2D
     static let zoomSurface2 = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
     static let zoomDivider = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
-    static let zoomLightCanvas = Color.white                                // #FFFFFF
+    static let zoomLightCanvas = white                                // #FFFFFF
     static let zoomLightSurface = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let zoomLightDivider = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
-    static let zoomTextPrimary = Color.white                                // #FFFFFF
+    static let zoomTextPrimary = white                                // #FFFFFF
     static let zoomTextSecondary = Color(red: 0.690, green: 0.690, blue: 0.690) // #B0B0B0
     static let zoomTextTertiary = Color(red: 0.478, green: 0.478, blue: 0.478) // #7A7A7A
     static let zoomBlue = Color(red: 0.176, green: 0.549, blue: 1.0)   // #2D8CFF

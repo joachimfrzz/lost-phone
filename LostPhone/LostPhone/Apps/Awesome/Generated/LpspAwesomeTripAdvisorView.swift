@@ -43,16 +43,16 @@ private enum TripAdvisorScreenFactory {
     }
 }
 private enum TripAdvisorTokens {
-    static let taCanvas = Color.white                                    // #FFFFFF
+    static let taCanvas = white                                    // #FFFFFF
     static let taSurface = Color(red: 0.949, green: 0.949, blue: 0.949)   // #F2F2F2
     static let taDivider = Color(red: 0.878, green: 0.878, blue: 0.878)   // #E0E0E0
     static let taSurfacePressed = Color(red: 0.910, green: 0.910, blue: 0.910)  // #E8E8E8
-    static let taTextPrimary = Color.black                                    // #000000
+    static let taTextPrimary = black                                    // #000000
     static let taTextSecondary = Color(red: 0.420, green: 0.420, blue: 0.420)   // #6B6B6B
     static let taTextTertiary = Color(red: 0.608, green: 0.608, blue: 0.608)   // #9B9B9B
     static let taGreen = Color(red: 0.204, green: 0.878, blue: 0.631)   // #34E0A1
     static let taGreenPressed = Color(red: 0.129, green: 0.773, blue: 0.537)   // #21C589
-    static let taOwlBlack = Color.black                                    // #000000
+    static let taOwlBlack = black                                    // #000000
     static let taEmptyBubble = Color(red: 0.851, green: 0.851, blue: 0.851)   // #D9D9D9
     static let taErrorRed = Color(red: 0.839, green: 0.071, blue: 0.180)   // #D6122E
 }

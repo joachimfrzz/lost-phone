@@ -48,15 +48,15 @@ private enum TikTokTokens {
     static let tiktokInputField = Color(red: 0.184, green: 0.184, blue: 0.184) // #2F2F2F — comment compose
     static let tiktokRose = Color(red: 0.996, green: 0.173, blue: 0.333) // #FE2C55
     static let tiktokCyan = Color(red: 0.145, green: 0.957, blue: 0.933) // #25F4EE
-    static let tiktokTextPrimary = Color.white                                  // #FFFFFF
+    static let tiktokTextPrimary = white                                  // #FFFFFF
     static let tiktokTextSecondary = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5 — hashtag counts
-    static let tiktokTextTertiary = Color.white.opacity(0.6)                     // placeholder, meta
-    static let tiktokTextDisabled = Color.white.opacity(0.3)
-    static let tiktokFollowerGray = Color.white.opacity(0.15)                    // "Following" pill bg
-    static let tiktokScrimLight = Color.black.opacity(0.25)                    // icon shadow
-    static let tiktokScrimMedium = Color.black.opacity(0.4)                     // text shadow
-    static let tiktokScrimHeavy = Color.black.opacity(0.6)                     // sheet dim
-    static let tiktokScrubberTrack = Color.white.opacity(0.3)
+    static let tiktokTextTertiary = white.opacity(0.6)                     // placeholder, meta
+    static let tiktokTextDisabled = white.opacity(0.3)
+    static let tiktokFollowerGray = white.opacity(0.15)                    // "Following" pill bg
+    static let tiktokScrimLight = black.opacity(0.25)                    // icon shadow
+    static let tiktokScrimMedium = black.opacity(0.4)                     // text shadow
+    static let tiktokScrimHeavy = black.opacity(0.6)                     // sheet dim
+    static let tiktokScrubberTrack = white.opacity(0.3)
 }
 
 private enum TikTokFonts {

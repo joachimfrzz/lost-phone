@@ -47,7 +47,7 @@ private enum DisneyTokens {
     static let dpSurface1 = Color(red: 0.071, green: 0.082, blue: 0.180) // #12152E
     static let dpSurface2 = Color(red: 0.102, green: 0.122, blue: 0.239) // #1A1F3D
     static let dpDivider = Color(red: 0.165, green: 0.188, blue: 0.314) // #2A3050
-    static let dpTextPrimary = Color.white                                 // #FFFFFF
+    static let dpTextPrimary = white                                 // #FFFFFF
     static let dpTextSecondary = Color(red: 0.627, green: 0.651, blue: 0.753) // #A0A6C0
     static let dpTextTertiary = Color(red: 0.353, green: 0.376, blue: 0.502) // #5A6080
     static let dpBlue = Color(red: 0.0,   green: 0.388, blue: 0.898) // #0063E5

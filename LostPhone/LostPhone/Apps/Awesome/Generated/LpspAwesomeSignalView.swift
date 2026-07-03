@@ -47,8 +47,8 @@ private enum SignalTokens {
     static let sigSurfaceDark = Color(red: 0.165, green: 0.165, blue: 0.165)    // #2A2A2A
     static let sigDivider = Color(red: 0.898, green: 0.898, blue: 0.898)    // #E5E5E5
     static let sigDividerDark = Color(red: 0.227, green: 0.227, blue: 0.227)    // #3A3A3A
-    static let sigTextPrimary = Color.black                                    // #000000
-    static let sigTextPrimaryD = Color.white                                    // #FFFFFF
+    static let sigTextPrimary = black                                    // #000000
+    static let sigTextPrimaryD = white                                    // #FFFFFF
     static let sigTextSecondary = Color(red: 0.420, green: 0.420, blue: 0.420)   // #6B6B6B
     static let sigTextTertiary = Color(red: 0.604, green: 0.604, blue: 0.604)   // #9A9A9A
     static let sigBlue = Color(red: 0.227, green: 0.463, blue: 0.941)     // #3A76F0

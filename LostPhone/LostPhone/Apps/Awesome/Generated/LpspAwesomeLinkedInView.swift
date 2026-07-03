@@ -46,13 +46,13 @@ private enum LinkedInScreenFactory {
 }
 private enum LinkedInTokens {
     static let liCanvas = Color(red: 0.953, green: 0.949, blue: 0.937)  // #F3F2EF
-    static let liCardSurface = Color.white                                    // #FFFFFF
+    static let liCardSurface = white                                    // #FFFFFF
     static let liElevated = Color(red: 0.976, green: 0.976, blue: 0.976)  // #F9F9F9
     static let liDivider = Color(red: 0.878, green: 0.875, blue: 0.863)  // #E0DFDC
     static let liDividerSubtle = Color(red: 0.929, green: 0.929, blue: 0.929)  // #EDEDED
-    static let liTextPrimary = Color.black.opacity(0.9)                      // #000000E6
-    static let liTextSecondary = Color.black.opacity(0.6)                      // #00000099
-    static let liTextTertiary = Color.black.opacity(0.4)                      // #00000066
+    static let liTextPrimary = black.opacity(0.9)                      // #000000E6
+    static let liTextSecondary = black.opacity(0.6)                      // #00000099
+    static let liTextTertiary = black.opacity(0.4)                      // #00000066
     static let liBlue = Color(red: 0.039, green: 0.400, blue: 0.761)  // #0A66C2
     static let liBluePressed = Color(red: 0.000, green: 0.255, blue: 0.510)  // #004182
     static let liBlueSubtle = Color(red: 0.906, green: 0.953, blue: 1.000)  // #E7F3FF

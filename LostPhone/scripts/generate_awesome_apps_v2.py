@@ -1487,7 +1487,9 @@ struct AwesomeShowroomFallbackView: View {
     router_path.write_text(registry, encoding="utf-8")
     print(f"updated {router_path}")
 
-    tier_list = "\n".join(f'        "{name}",' for name in APP_PATHS.keys())
+    # Plans is canonical LPSP name; Google Maps is legacy alias only (not on showroom grid).
+    tier_names = [name for name in APP_PATHS if name != "Google Maps"]
+    tier_list = "\n".join(f'        "{name}",' for name in tier_names)
     catalog = f'''import Foundation
 
 enum AwesomeShowroomCatalog {{

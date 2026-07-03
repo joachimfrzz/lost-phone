@@ -39,7 +39,7 @@ private enum TinderScreenFactory {
     }
 }
 private enum TinderTokens {
-    static let tdrCanvas = Color.white                                    // #FFFFFF
+    static let tdrCanvas = white                                    // #FFFFFF
     static let tdrSurfaceMuted = Color(red: 0.961, green: 0.961, blue: 0.961)  // #F5F5F5
     static let tdrSurfaceTint = Color(red: 0.980, green: 0.980, blue: 0.980)  // #FAFAFA
     static let tdrDivider = Color(red: 0.898, green: 0.898, blue: 0.898)  // #E5E5E5

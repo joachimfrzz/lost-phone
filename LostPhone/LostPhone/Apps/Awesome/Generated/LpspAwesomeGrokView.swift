@@ -33,7 +33,7 @@ private enum GrokScreenFactory {
     }
 }
 private enum GrokTokens {
-    static let grokCanvas = Color.black                                  // #000000
+    static let grokCanvas = black                                  // #000000
     static let grokSurface1 = Color(red: 0.086, green: 0.094, blue: 0.110) // #16181C
     static let grokSurface2 = Color(red: 0.118, green: 0.129, blue: 0.149) // #1E2126
     static let grokSurface3 = Color(red: 0.153, green: 0.165, blue: 0.180) // #272A2E
@@ -41,7 +41,7 @@ private enum GrokTokens {
     static let grokTextPrimary = Color(red: 0.906, green: 0.914, blue: 0.918) // #E7E9EA
     static let grokTextSecondary = Color(red: 0.443, green: 0.463, blue: 0.482) // #71767B
     static let grokTextTertiary = Color(red: 0.302, green: 0.318, blue: 0.337) // #4D5156
-    static let grokAccentWhite = Color.white                                  // #FFFFFF
+    static let grokAccentWhite = white                                  // #FFFFFF
     static let grokPressedWhite = Color(red: 0.843, green: 0.859, blue: 0.863) // #D7DBDC
     static let grokLinkBlue = Color(red: 0.114, green: 0.608, blue: 0.941) // #1D9BF0
     static let grokLinkPressed = Color(red: 0.102, green: 0.549, blue: 0.847) // #1A8CD8

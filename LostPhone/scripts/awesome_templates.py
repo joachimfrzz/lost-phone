@@ -108,8 +108,19 @@ def category_from_path(rel: str) -> str:
     return top
 
 
+def normalize_token_expr(expr: str) -> str:
+    """Design specs use Color.token — in our private enum, reference sibling static lets."""
+    m = re.match(r"Color\.(\w+)(.*)$", expr.strip())
+    if m:
+        return m.group(1) + m.group(2)
+    return expr
+
+
 def tokens_block(slug_name: str, colors: list[tuple[str, str]], fonts: list[tuple[str, str]]) -> str:
-    cl = "\n".join(f"    static let {n} = {e}" for n, e in colors[:32]) or "    static let accent = Color.accentColor"
+    clines = []
+    for n, e in colors[:32]:
+        clines.append(f"    static let {n} = {normalize_token_expr(e)}")
+    cl = "\n".join(clines) or "    static let accent = Color.accentColor"
     fl = "\n".join(f"    static let {n} = {e}" for n, e in fonts[:16]) or "    static let body = Font.system(size: 17)"
     return f"""private enum {slug_name}Tokens {{
 {cl}

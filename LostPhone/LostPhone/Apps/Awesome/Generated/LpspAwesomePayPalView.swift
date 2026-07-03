@@ -55,15 +55,15 @@ private enum PayPalTokens {
     static let ppErrorBg = Color(red: 0.988, green: 0.898, blue: 0.910) // #FCE5E8
     static let ppWarning = Color(red: 1.00, green: 0.722, blue: 0.110)  // #FFB81C
     static let ppWarningBg = Color(red: 1.00, green: 0.965, blue: 0.878)  // #FFF6E0
-    static let ppIconSent = Color.payPalBlue       // #003087
-    static let ppIconReceived = Color.ppSuccess        // #1C8B43
-    static let ppIconCard = Color.payPalSky        // #0070BA
-    static let ppIconReward = Color.ppWarning        // #FFB81C
+    static let ppIconSent = payPalBlue       // #003087
+    static let ppIconReceived = ppSuccess        // #1C8B43
+    static let ppIconCard = payPalSky        // #0070BA
+    static let ppIconReward = ppWarning        // #FFB81C
     static let ppDarkCanvas = Color(red: 0.039, green: 0.055, blue: 0.102) // #0A0E1A
     static let ppDarkSurface1 = Color(red: 0.078, green: 0.102, blue: 0.165) // #141A2A
     static let ppDarkSurface2 = Color(red: 0.122, green: 0.153, blue: 0.251) // #1F2740
     static let ppDarkDivider = Color(red: 0.165, green: 0.192, blue: 0.259) // #2A3142
-    static let ppDarkTextPri = Color.white
+    static let ppDarkTextPri = white
     static let ppDarkTextSec = Color(red: 0.659, green: 0.682, blue: 0.769) // #A8AEC4
 }
 

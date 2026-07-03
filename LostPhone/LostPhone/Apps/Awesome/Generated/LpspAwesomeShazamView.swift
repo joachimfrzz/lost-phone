@@ -35,12 +35,12 @@ private enum ShazamTokens {
     static let shazamBlue = Color(red: 0.0,   green: 0.533, blue: 1.0)   // #0088FF
     static let shazamSpace = Color(red: 0.031, green: 0.035, blue: 0.055) // #08090E
     static let shazamBluePressed = Color(red: 0.0, green: 0.435, blue: 0.878) // #006FE0
-    static let shazamTextPrimary = Color.white                                 // #FFFFFF
+    static let shazamTextPrimary = white                                 // #FFFFFF
     static let shazamTextSecondary = Color(red: 0.722, green: 0.769, blue: 1.0)   // #B8C4FF periwinkle
     static let shazamTextTertiary = Color(red: 0.722, green: 0.769, blue: 1.0).opacity(0.55)
-    static let shazamGlass = Color.white.opacity(0.08)
-    static let shazamGlassStrong = Color.white.opacity(0.14)
-    static let shazamDivider = Color.white.opacity(0.12)
+    static let shazamGlass = white.opacity(0.08)
+    static let shazamGlassStrong = white.opacity(0.14)
+    static let shazamDivider = white.opacity(0.12)
     static let appleMusicPink = Color(red: 0.980, green: 0.141, blue: 0.235) // #FA243C
     static let shazamErrorRed = Color(red: 1.0,   green: 0.271, blue: 0.227) // #FF453A
 }

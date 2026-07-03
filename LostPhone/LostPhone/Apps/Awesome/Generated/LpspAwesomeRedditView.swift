@@ -56,7 +56,7 @@ private enum RedditTokens {
     static let rdVoteInactiveDark = Color(red: 0.506, green: 0.514, blue: 0.518) // #818384
     static let rdCanvasLight = Color(red: 0.965, green: 0.969, blue: 0.973) // #F6F7F8
     static let rdCanvasClassicLight = Color(red: 0.855, green: 0.878, blue: 0.902) // #DAE0E6
-    static let rdCardLight = Color.white                                    // #FFFFFF
+    static let rdCardLight = white                                    // #FFFFFF
     static let rdSurface2Light = Color(red: 0.949, green: 0.953, blue: 0.961)  // #F2F3F5
     static let rdDividerLight = Color(red: 0.929, green: 0.937, blue: 0.945)  // #EDEFF1
     static let rdCanvasDark = Color(red: 0.102, green: 0.102, blue: 0.106) // #1A1A1B

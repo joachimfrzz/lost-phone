@@ -42,12 +42,12 @@ private enum SpotifyScreenFactory {
 }
 private enum SpotifyTokens {
     static let spotifyCanvas = Color(red: 0.07, green: 0.07, blue: 0.07)   // #121212
-    static let spotifyDeepBlack = Color.black                                 // #000000
+    static let spotifyDeepBlack = black                                 // #000000
     static let spotifySurface1 = Color(red: 0.094, green: 0.094, blue: 0.094) // #181818
     static let spotifySurface2 = Color(red: 0.157, green: 0.157, blue: 0.157) // #282828
     static let spotifySurface3 = Color(red: 0.243, green: 0.243, blue: 0.243) // #3E3E3E
     static let spotifyDivider = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
-    static let spotifyTextPrimary = Color.white                                // #FFFFFF
+    static let spotifyTextPrimary = white                                // #FFFFFF
     static let spotifyTextSecondary = Color(red: 0.702, green: 0.702, blue: 0.702) // #B3B3B3
     static let spotifyTextTertiary = Color(red: 0.416, green: 0.416, blue: 0.416) // #6A6A6A
     static let spotifyGreen = Color(red: 0.114, green: 0.725, blue: 0.329) // #1DB954

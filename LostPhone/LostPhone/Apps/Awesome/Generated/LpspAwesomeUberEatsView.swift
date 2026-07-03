@@ -35,14 +35,14 @@ private enum UberEatsScreenFactory {
     }
 }
 private enum UberEatsTokens {
-    static let ueCanvas = Color.white                                       // #FFFFFF
+    static let ueCanvas = white                                       // #FFFFFF
     static let ueSurface = Color(red: 0.953, green: 0.953, blue: 0.953)      // #F3F3F3
     static let ueSurface2 = Color(red: 0.933, green: 0.933, blue: 0.933)      // #EEEEEE
     static let ueDivider = Color(red: 0.910, green: 0.910, blue: 0.910)      // #E8E8E8
-    static let ueTextPrimary = Color.black                                   // #000000
+    static let ueTextPrimary = black                                   // #000000
     static let ueTextSecondary = Color(red: 0.420, green: 0.420, blue: 0.420)  // #6B6B6B
     static let ueTextTertiary = Color(red: 0.651, green: 0.651, blue: 0.651)  // #A6A6A6
-    static let ueDarkCanvas = Color.black                                   // #000000
+    static let ueDarkCanvas = black                                   // #000000
     static let ueDarkSurface = Color(red: 0.110, green: 0.110, blue: 0.118)  // #1C1C1E
     static let ueDarkSurface2 = Color(red: 0.173, green: 0.173, blue: 0.180)  // #2C2C2E
     static let ueGreen = Color(red: 0.024, green: 0.757, blue: 0.404)   // #06C167

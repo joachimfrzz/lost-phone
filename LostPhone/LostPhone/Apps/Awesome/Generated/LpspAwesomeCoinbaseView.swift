@@ -55,7 +55,7 @@ private enum CoinbaseTokens {
     static let cbSurfaceGray = Color(red: 0.969, green: 0.973, blue: 0.980) // #F7F8FA
     static let cbSurfaceGray2 = Color(red: 0.933, green: 0.941, blue: 0.953) // #EEF0F3
     static let cbDivider = Color(red: 0.882, green: 0.894, blue: 0.910) // #E1E4E8
-    static let cbTextPrimary = Color.cbBlack
+    static let cbTextPrimary = cbBlack
     static let cbTextSecondary = Color(red: 0.357, green: 0.380, blue: 0.431) // #5B616E
     static let cbTextTertiary = Color(red: 0.502, green: 0.525, blue: 0.561) // #80868F
     static let cbTextMuted = Color(red: 0.627, green: 0.643, blue: 0.667) // #A0A4AA
@@ -64,11 +64,11 @@ private enum CoinbaseTokens {
     static let cbLoss = Color(red: 0.812, green: 0.125, blue: 0.184) // #CF202F
     static let cbLossTint = Color(red: 0.988, green: 0.906, blue: 0.914) // #FCE7E9
     static let cbWarning = Color(red: 0.961, green: 0.651, blue: 0.137) // #F5A623
-    static let cbDarkCanvas = Color.cbBlack
+    static let cbDarkCanvas = cbBlack
     static let cbDarkSurface1 = Color(red: 0.075, green: 0.082, blue: 0.102) // #13151A
     static let cbDarkSurface2 = Color(red: 0.118, green: 0.125, blue: 0.149) // #1E2026
     static let cbDarkDivider = Color(red: 0.165, green: 0.180, blue: 0.212) // #2A2E36
-    static let cbDarkTextPri = Color.white
+    static let cbDarkTextPri = white
     static let cbDarkTextSec = Color(red: 0.627, green: 0.643, blue: 0.667) // #A0A4AA
 }
 

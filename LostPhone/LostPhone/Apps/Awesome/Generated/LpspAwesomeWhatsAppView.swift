@@ -50,11 +50,11 @@ private enum WhatsAppTokens {
     static let waDarkTeal = Color(red: 0.020, green: 0.302, blue: 0.267) // #054D44
     static let waOutgoingLight = Color(red: 0.851, green: 0.992, blue: 0.827) // #D9FDD3
     static let waOutgoingDark = Color(red: 0.000, green: 0.361, blue: 0.294) // #005C4B
-    static let waIncomingLight = Color.white
+    static let waIncomingLight = white
     static let waIncomingDark = Color(red: 0.122, green: 0.173, blue: 0.204) // #1F2C34
     static let waWallpaperLight = Color(red: 0.925, green: 0.898, blue: 0.867) // #ECE5DD
     static let waWallpaperDark = Color(red: 0.043, green: 0.078, blue: 0.102) // #0B141A
-    static let waCanvasLight = Color.white                                   // #FFFFFF
+    static let waCanvasLight = white                                   // #FFFFFF
     static let waCanvasDark = Color(red: 0.067, green: 0.106, blue: 0.129) // #111B21
     static let waSurface1Light = Color(red: 0.969, green: 0.973, blue: 0.980) // #F7F8FA
     static let waSurface1Dark = Color(red: 0.125, green: 0.173, blue: 0.200) // #202C33

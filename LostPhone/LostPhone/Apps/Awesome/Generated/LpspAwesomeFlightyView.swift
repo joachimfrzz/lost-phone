@@ -46,7 +46,7 @@ private enum FlightyTokens {
     static let fltSurface2 = Color(red: 0.133, green: 0.133, blue: 0.157)  // #222228
     static let fltSurface3 = Color(red: 0.173, green: 0.173, blue: 0.204)  // #2C2C34
     static let fltDivider = Color(red: 0.180, green: 0.180, blue: 0.212)  // #2E2E36
-    static let fltTextPrimary = Color.white                              // #FFFFFF
+    static let fltTextPrimary = white                              // #FFFFFF
     static let fltTextSecondary = Color(red: 0.557, green: 0.557, blue: 0.588) // #8E8E96
     static let fltTextTertiary = Color(red: 0.353, green: 0.353, blue: 0.384) // #5A5A62
     static let fltBlue = Color(red: 0.039, green: 0.518, blue: 1.000) // #0A84FF
@@ -56,7 +56,7 @@ private enum FlightyTokens {
     static let fltCancelled = Color(red: 1.000, green: 0.271, blue: 0.227)  // #FF453A
     static let fltMapLand = Color(red: 0.086, green: 0.086, blue: 0.106) // #16161B
     static let fltMapGraticule = Color(red: 0.122, green: 0.122, blue: 0.149) // #1F1F26
-    static let fltBlueGlow = Color.fltBlue.opacity(0.45)
+    static let fltBlueGlow = fltBlue.opacity(0.45)
 }
 
 private enum FlightyFonts {

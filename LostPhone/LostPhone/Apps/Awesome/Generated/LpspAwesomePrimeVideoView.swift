@@ -36,12 +36,12 @@ private enum PrimeVideoScreenFactory {
 }
 private enum PrimeVideoTokens {
     static let primeCanvas = Color(red: 0.059, green: 0.090, blue: 0.118) // #0F171E
-    static let primeDeepBlack = Color.black                                  // #000000
+    static let primeDeepBlack = black                                  // #000000
     static let primeSurface1 = Color(red: 0.102, green: 0.141, blue: 0.184) // #1A242F
     static let primeSurface2 = Color(red: 0.137, green: 0.184, blue: 0.243) // #232F3E
     static let primeSurface3 = Color(red: 0.180, green: 0.231, blue: 0.278) // #2E3B47
     static let primeDivider = Color(red: 0.180, green: 0.231, blue: 0.278) // #2E3B47
-    static let primeTextPrimary = Color.white                                // #FFFFFF
+    static let primeTextPrimary = white                                // #FFFFFF
     static let primeTextSecondary = Color(red: 0.667, green: 0.718, blue: 0.769) // #AAB7C4
     static let primeTextTertiary = Color(red: 0.431, green: 0.482, blue: 0.537) // #6E7B89
     static let primeBlue = Color(red: 0.000, green: 0.659, blue: 0.882) // #00A8E1

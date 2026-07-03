@@ -36,7 +36,7 @@ private enum TeamsScreenFactory {
 }
 private enum TeamsTokens {
     static let teamsLightCanvas = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
-    static let teamsLightSurface1 = Color.white                                  // #FFFFFF
+    static let teamsLightSurface1 = white                                  // #FFFFFF
     static let teamsLightSurface2 = Color(red: 0.941, green: 0.941, blue: 0.941) // #F0F0F0
     static let teamsLightDivider = Color(red: 0.882, green: 0.882, blue: 0.882) // #E1E1E1
     static let teamsLightText1 = Color(red: 0.145, green: 0.141, blue: 0.137) // #252423
@@ -45,7 +45,7 @@ private enum TeamsTokens {
     static let teamsDarkSurface1 = Color(red: 0.176, green: 0.173, blue: 0.173)  // #2D2C2C
     static let teamsDarkSurface2 = Color(red: 0.239, green: 0.235, blue: 0.235)  // #3D3C3C
     static let teamsDarkDivider = Color(red: 0.239, green: 0.235, blue: 0.235)  // #3D3C3C
-    static let teamsDarkText1 = Color.white                                   // #FFFFFF
+    static let teamsDarkText1 = white                                   // #FFFFFF
     static let teamsDarkText2 = Color(red: 0.678, green: 0.678, blue: 0.678)  // #ADADAD
     static let teamsPurpleLight = Color(red: 0.384, green: 0.392, blue: 0.655)   // #6264A7
     static let teamsPurpleDark = Color(red: 0.357, green: 0.373, blue: 0.780)   // #5B5FC7

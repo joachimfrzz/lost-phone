@@ -28,7 +28,7 @@ struct RecordingExpandedView: View {
                     onClose()
                 })
             } .padding(EdgeInsets.init(top: 30, leading: 0, bottom: 20, trailing: 0))
-                .background(DictaphoneAppTheme.dictaphoneBottomSheetBackground.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+                .background(DictaphoneAppTheme.bottomSheetBackground.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         }
 
     }

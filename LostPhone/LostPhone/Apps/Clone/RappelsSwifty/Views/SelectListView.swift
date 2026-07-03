@@ -35,9 +35,11 @@ struct SelectListView: View {
     }
 }
 
+/*
 struct SelectListView_Previews: PreviewProvider {
     static var previews: some View {
         SelectListView(selectedList: .constant(PreviewData.myList))
             .environment(\.managedObjectContext, SwiftyRappelsCoreDataProvider.shared.persistentContainer.viewContext)
     }
 }
+*/

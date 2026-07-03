@@ -24,8 +24,10 @@ struct MyListCellView: View {
     }
 }
 
+/*
 struct MyListCellView_Previews: PreviewProvider {
     static var previews: some View {
         MyListCellView(myList: PreviewData.myList)
     }
 }
+*/

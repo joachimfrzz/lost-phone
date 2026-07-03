@@ -78,12 +78,7 @@ struct ReminderDetailView: View {
                         do {
                             let updated = try ReminderService.updateReminder(reminder: reminder, editConfig: editConfig)
                                 
-                            if updated {
-                                if reminder.reminderDate != nil || reminder.reminderTime != nil {
-                                    let userData = UserData(title: reminder.title, body: reminder.notes, time: reminder.reminderTime, date: reminder.reminderDate)
-                                    NotificationManager.scheduleNotification(userData: userData)
-                                }
-                            }
+                            _ = updated
                         } catch {
                             print(error)
                         }
@@ -101,8 +96,10 @@ struct ReminderDetailView: View {
     }
 }
 
+/*
 struct ReminderDetailView_Previews: PreviewProvider {
     static var previews: some View {
         ReminderDetailView(reminder: .constant(PreviewData.reminder))
     }
 }
+*/

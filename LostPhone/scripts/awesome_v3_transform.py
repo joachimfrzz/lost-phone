@@ -357,13 +357,14 @@ def add_missing_stub_types(code: str, prefix: str) -> str:
 
 
 def privatize_file_scoped_extensions(code: str) -> str:
-    """Extensions View/Text/Font scoped au fichier (évite collisions Banque/Revolut, etc.)."""
-    return re.sub(
-        r"^extension (View|Text|Font|Image)\b",
+    """Extensions scoped au fichier (évite collisions inter-apps et visibilité Swift)."""
+    code = re.sub(
+        r"^extension (View|Text|Font|Image|EnvironmentValues)\b",
         r"fileprivate extension \1",
         code,
         flags=re.MULTILINE,
     )
+    return code
 
 
 def strip_orphan_motion_lines(code: str) -> str:

@@ -80,7 +80,7 @@ private struct LpspTelegramThemeKey: EnvironmentKey {
     static let defaultValue = LpspTelegramTelegramTheme()
 }
 
-extension EnvironmentValues {
+fileprivate extension EnvironmentValues {
     var telegramTheme: LpspTelegramTelegramTheme {
         get { self[LpspTelegramThemeKey.self] }
         set { self[LpspTelegramThemeKey.self] = newValue }

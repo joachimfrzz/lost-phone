@@ -6,12 +6,101 @@ import re
 from typing import Sequence
 
 SYSTEM_COLOR_MEMBERS = frozenset(
-    {"white", "black", "clear", "primary", "secondary", "accentColor", "red", "blue", "green"}
+    {
+        "white",
+        "black",
+        "clear",
+        "primary",
+        "secondary",
+        "accentColor",
+        "red",
+        "blue",
+        "green",
+        "gray",
+        "orange",
+        "yellow",
+        "pink",
+        "purple",
+    }
 )
 
 
 def is_system_color_ref(name: str) -> bool:
     return name in SYSTEM_COLOR_MEMBERS
+
+
+def enum_static_names(code: str, enum_name: str) -> list[str]:
+    marker = f"private enum {enum_name}"
+    if marker not in code:
+        return []
+    block = code.split(marker, 1)[1].split("\nprivate ", 1)[0]
+    return list(dict.fromkeys(re.findall(r"static let (\w+)\s*=", block)))
+
+
+def grad_static_names(code: str, grad_enum: str) -> list[str]:
+    return enum_static_names(code, grad_enum) if grad_enum in code else []
+
+
+def fix_font_shorthand_refs(code: str, font_names: Sequence[str], fonts_enum: str) -> str:
+    for f in sorted(set(font_names), key=len, reverse=True):
+        code = re.sub(rf"(?<!\w)\.{re.escape(f)}\b(?!\()", f"{fonts_enum}.{f}", code)
+    return code
+
+
+def fix_shadow_gradient_colors(code: str, grad_enum: str, tokens_enum: str) -> str:
+    """`.shadow(color: Gradients.brand.opacity` → Tokens.brand quand les deux existent."""
+    token_names = set(enum_static_names(code, tokens_enum))
+    for g in grad_static_names(code, grad_enum):
+        if g in token_names:
+            code = re.sub(
+                rf"\b{re.escape(grad_enum)}\.{re.escape(g)}\.opacity",
+                f"{tokens_enum}.{g}.opacity",
+                code,
+            )
+    return code
+
+
+def strip_spec_shell_views(code: str, prefix: str) -> str:
+    """Supprime coquilles TabView spec avec écrans placeholder (ExploreView, ListenNowView…)."""
+    shell_suffixes = ("RootTabView", "RootView", "MainTabView")
+    placeholder_view = re.compile(r"\b([A-Z][A-Za-z0-9]*View)\(\)")
+    skip_views = {"ContentView", "EmptyView", "AnyView", "Group"}
+
+    def block_is_shell(block: str, struct_name: str) -> bool:
+        if any(struct_name.endswith(s) for s in shell_suffixes):
+            return True
+        if "TabView" not in block:
+            return False
+        for m in placeholder_view.finditer(block):
+            name = m.group(1)
+            if name.startswith(prefix) or name in skip_views:
+                continue
+            return True
+        return False
+
+    out: list[str] = []
+    i = 0
+    lines = code.splitlines(keepends=True)
+    while i < len(lines):
+        line = lines[i]
+        m = re.match(r"(private |fileprivate )?struct (\w+)", line.strip())
+        if m:
+            struct_name = m.group(2)
+            block = [line]
+            i += 1
+            depth = line.count("{") - line.count("}")
+            while i < len(lines) and depth > 0:
+                block.append(lines[i])
+                depth += lines[i].count("{") - lines[i].count("}")
+                i += 1
+            block_text = "".join(block)
+            if block_is_shell(block_text, struct_name):
+                continue
+            out.append(block_text)
+            continue
+        out.append(line)
+        i += 1
+    return "".join(out)
 
 
 SWIFT_KEYWORDS = frozenset(
@@ -256,10 +345,10 @@ def apply_token_and_font_refs(
     return code
 
 
-def fix_gradient_token_refs(code: str, token_names: Sequence[str], tokens_enum: str, font_names: Sequence[str]) -> str:
-    skip = set(font_names)
+def fix_gradient_token_refs(code: str, token_names: Sequence[str], tokens_enum: str, font_names: Sequence[str], grad_names: Sequence[str] | None = None) -> str:
+    skip = set(font_names) | set(grad_names or ())
     for t in sorted(set(token_names), key=len, reverse=True):
-        if t in skip:
+        if t in skip or is_system_color_ref(t):
             continue
         code = re.sub(rf"(?<!\w)\.{re.escape(t)}\b(?!\()", f"{tokens_enum}.{t}", code)
     return code
@@ -349,6 +438,23 @@ def add_missing_stub_types(code: str, prefix: str) -> str:
             f"    let username: String\n"
             f"    let message: String\n"
             f"    let color: Color\n"
+            f"}}"
+        )
+    if re.search(r"\bFlowLayout\b", code) and not re.search(rf"\bstruct\s+{re.escape(prefix)}FlowLayout\b", code):
+        code = re.sub(r"\bFlowLayout\b", f"{prefix}FlowLayout", code)
+        stubs.append(
+            f"fileprivate struct {prefix}FlowLayout: Layout {{\n"
+            f"    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {{\n"
+            f"        proposal.replacingUnspecifiedDimensions(by: CGSize(width: 300, height: 40))\n"
+            f"    }}\n"
+            f"    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {{\n"
+            f"        var x = bounds.minX\n"
+            f"        for subview in subviews {{\n"
+            f"            let size = subview.sizeThatFits(.unspecified)\n"
+            f"            subview.place(at: CGPoint(x: x, y: bounds.minY), proposal: .unspecified)\n"
+            f"            x += size.width + 8\n"
+            f"        }}\n"
+            f"    }}\n"
             f"}}"
         )
     if stubs:
@@ -530,26 +636,25 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     code = merge_duplicate_private_enums(code, grad_enum)
     code = dedupe_extension_view(code)
 
-    token_names = re.findall(rf"{re.escape(tokens_enum)}\.(\w+)", code) + re.findall(
-        r"static let (\w+)\s*=", code
-    )
-    token_names = list(dict.fromkeys(token_names))
-    font_names = re.findall(r"static let (\w+)\s*=", code.split(f"private enum {fonts_enum}", 1)[-1] if fonts_enum in code else "")
+    token_names = enum_static_names(code, tokens_enum)
+    font_names = enum_static_names(code, fonts_enum)
+    grad_names = grad_static_names(code, grad_enum)
 
     code = apply_token_and_font_refs(code, token_names, font_names, tokens_enum, fonts_enum)
-    code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names)
+    code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names, grad_names)
     code = fix_linear_gradient_refs(code, grad_enum)
+    code = fix_font_shorthand_refs(code, font_names, fonts_enum)
 
     # Second passe après fusion des enums
-    token_names = re.findall(r"static let (\w+)\s*=", code.split(f"private enum {tokens_enum}", 1)[1].split("\nprivate enum", 1)[0] if f"private enum {tokens_enum}" in code else "")
-    token_names = list(dict.fromkeys(token_names))
-    if f"private enum {fonts_enum}" in code:
-        fb = code.split(f"private enum {fonts_enum}", 1)[1].split("\nprivate enum", 1)[0]
-        font_names = list(dict.fromkeys(re.findall(r"static let (\w+)\s*=", fb)))
+    token_names = enum_static_names(code, tokens_enum)
+    font_names = enum_static_names(code, fonts_enum)
+    grad_names = grad_static_names(code, grad_enum)
     code = apply_token_and_font_refs(code, token_names, font_names, tokens_enum, fonts_enum)
-    code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names)
+    code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names, grad_names)
     code = fix_misplaced_gradient_token_refs(code, grad_enum, tokens_enum)
     code = fix_self_referential_tokens(code, tokens_enum)
+    code = fix_shadow_gradient_colors(code, grad_enum, tokens_enum)
+    code = fix_font_shorthand_refs(code, font_names, fonts_enum)
 
     def _color_to_token(m: re.Match[str]) -> str:
         name = m.group(1)
@@ -560,6 +665,7 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     code = re.sub(rf"\bColor\.(\w+)\b", _color_to_token, code)
 
     code = dedupe_extension_view(code)
+    code = strip_spec_shell_views(code, prefix)
     code = fix_view_body_property_conflict(code)
     code = add_missing_stub_types(code, prefix)
     code = privatize_file_scoped_extensions(code)
@@ -624,17 +730,17 @@ def transform_blocks(
     merged = "\n\n".join(parts)
     merged = finalize_component_swift(merged, prefix)
 
-    token_names = re.findall(r"static let (\w+)\s*=", merged)
-    token_names = list(dict.fromkeys(token_names))
-    all_fonts: list[str] = []
-    if f"private enum {fonts_enum}" in merged:
-        font_block = merged.split(f"private enum {fonts_enum}", 1)[1].split("\nprivate ", 1)[0]
-        all_fonts = re.findall(r"static let (\w+)\s*=", font_block)
+    token_names = enum_static_names(merged, tokens_enum)
+    all_fonts = enum_static_names(merged, fonts_enum)
 
     components = {
         m.group(1)
         for m in re.finditer(rf"\b(?:private|fileprivate) struct\s+({re.escape(prefix)}\w+)", merged)
-        if not m.group(1).endswith("Style") and "ShowroomRoot" not in m.group(1) and "TabScreen" not in m.group(1) and "Demo" not in m.group(1)
+        if not m.group(1).endswith("Style")
+        and "ShowroomRoot" not in m.group(1)
+        and "TabScreen" not in m.group(1)
+        and "Demo" not in m.group(1)
+        and not any(m.group(1).endswith(s) for s in ("RootTabView", "RootView", "MainTabView"))
     }
 
     return merged, token_names, all_fonts, components

@@ -120,7 +120,7 @@ fileprivate struct LpspTripAdvisorTAPillButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(style == .filled ? .taButton : .taButtonSec)
+                .font(style == .filled ? LpspTripAdvisorFonts.taButton : LpspTripAdvisorFonts.taButtonSec)
                 .foregroundStyle(.black)
                 .padding(.vertical, style == .filled ? 14 : 12)
                 .padding(.horizontal, style == .filled ? 28 : 24)
@@ -231,25 +231,7 @@ fileprivate struct LpspTripAdvisorPlaceHero: View {
     }
 }
 
-fileprivate struct LpspTripAdvisorRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = UIColor.white.withAlphaComponent(0.96)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            ExploreView().tabItem { Label("Explore", systemImage: "safari.fill") }
-            SearchView().tabItem { Label("Search", systemImage: "magnifyingglass") }
-            TripsView().tabItem { Label("Trips", systemImage: "suitcase.fill") }
-            ReviewView().tabItem { Label("Review", systemImage: "square.and.pencil") }
-            MoreView().tabItem { Label("More", systemImage: "ellipsis") }
-        }
-        .tint(LpspTripAdvisorTokens.taGreen) // active = Tripadvisor Green
-    }
-}
+
 
 // MARK: - Écrans showroom
 
@@ -273,7 +255,7 @@ private struct LpspTripAdvisorShowroomRoot: View {
                 .tabItem { Label("More", systemImage: "ellipsis") }
                 .tag(4)
         }
-        .tint(LpspTripAdvisorTokens.taGreen)
+        .tint(LpspTripAdvisorTokens.taErrorRed)
         
     }
 }
@@ -287,9 +269,9 @@ private struct LpspTripAdvisorGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTripAdvisorTokens.taGreen.opacity(0.15))
+                        .fill(LpspTripAdvisorTokens.taErrorRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTripAdvisorTokens.taGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTripAdvisorTokens.taErrorRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

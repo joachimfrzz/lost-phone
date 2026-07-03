@@ -292,7 +292,7 @@ fileprivate struct LpspAudibleCaptionsPanel: View {
     let activeWordIndex: Int
     var body: some View {
         let words = line.split(separator: " ").map(String.init)
-        FlowLayout(spacing: 4) {
+        LpspAudibleFlowLayout(spacing: 4) {
             ForEach(words.indices, id: \.self) { i in
                 Text(words[i])
                     .font(LpspAudibleFonts.audCaptions)
@@ -304,27 +304,22 @@ fileprivate struct LpspAudibleCaptionsPanel: View {
         .background(RoundedRectangle(cornerRadius: 12).fill(LpspAudibleTokens.audSurface1))
     }
 }
-// FlowLayout: a simple wrapping Layout (omitted for brevity).
+// LpspAudibleFlowLayout: a simple wrapping Layout (omitted for brevity).
 
-fileprivate struct LpspAudibleRootTabView: View {
-    init() {
-        let a = UITabBarAppearance()
-        a.configureWithTransparentBackground()
-        a.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        a.backgroundColor = UIColor(LpspAudibleTokens.audCanvas).withAlphaComponent(0.96)
-        UITabBar.appearance().standardAppearance = a
-        UITabBar.appearance().scrollEdgeAppearance = a
+fileprivate struct LpspAudibleFlowLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        proposal.replacingUnspecifiedDimensions(by: CGSize(width: 300, height: 40))
     }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            LibraryView().tabItem { Label("Library", systemImage: "books.vertical.fill") }
-            DiscoverView().tabItem { Label("Discover", systemImage: "magnifyingglass") }
-            ProfileView().tabItem { Label("Profile", systemImage: "person.crop.circle") }
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var x = bounds.minX
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            subview.place(at: CGPoint(x: x, y: bounds.minY), proposal: .unspecified)
+            x += size.width + 8
         }
-        .tint(LpspAudibleTokens.audOrange)
     }
 }
+
 
 // MARK: - Écrans showroom
 

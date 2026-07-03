@@ -362,26 +362,7 @@ fileprivate struct LpspUberDriverBeacon: View {
     }
 }
 
-fileprivate struct LpspUberRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = UIColor.systemBackground
-        appearance.shadowColor = UIColor(LpspUberTokens.uberDivider)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            ServicesView().tabItem { Label("Services", systemImage: "square.grid.2x2.fill") }
-            ActivityView().tabItem { Label("Activity", systemImage: "clock.fill") }
-            AccountView().tabItem { Label("Account", systemImage: "person.fill") }
-        }
-        .tint(LpspUberTokens.uberBlack)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -402,7 +383,7 @@ private struct LpspUberShowroomRoot: View {
                 .tabItem { Label("Account", systemImage: "person.fill") }
                 .tag(3)
         }
-        .tint(LpspUberTokens.uberGreen)
+        .tint(LpspUberTokens.uberRed)
         
     }
 }
@@ -416,9 +397,9 @@ private struct LpspUberGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspUberTokens.uberGreen.opacity(0.15))
+                        .fill(LpspUberTokens.uberRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspUberTokens.uberGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspUberTokens.uberRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

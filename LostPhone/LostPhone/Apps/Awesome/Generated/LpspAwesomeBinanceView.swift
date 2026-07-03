@@ -272,26 +272,6 @@ fileprivate struct LpspBinanceConvertTile: View {
     }
 }
 
-fileprivate struct LpspBinanceBinanceTabView: View {
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            MarketsView().tabItem { Label("Markets", systemImage: "chart.bar.fill") }
-            TradeView().tabItem { Label("Trade", systemImage: "arrow.left.arrow.right") }
-            FuturesView().tabItem { Label("Futures", systemImage: "chart.xyaxis.line") }
-            WalletsView().tabItem { Label("Wallets", systemImage: "creditcard.fill") }
-        }
-        .tint(LpspBinanceTokens.bnYellow)
-        .onAppear {
-            let a = UITabBarAppearance()
-            a.configureWithOpaqueBackground()
-            a.backgroundColor = UIColor(LpspBinanceTokens.bnCanvas)
-            a.shadowColor = UIColor(LpspBinanceTokens.bnDivider)
-            UITabBar.appearance().standardAppearance = a
-            UITabBar.appearance().scrollEdgeAppearance = a
-        }
-    }
-}
 
 fileprivate struct LpspBinanceBinanceTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme
@@ -325,7 +305,7 @@ private struct LpspBinanceShowroomRoot: View {
                 .tabItem { Label("Wallets", systemImage: "creditcard.fill") }
                 .tag(4)
         }
-        .tint(LpspBinanceTokens.bnTextPrimary)
+        .tint(LpspBinanceTokens.bnYellow)
         
     }
 }
@@ -339,9 +319,9 @@ private struct LpspBinanceGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspBinanceTokens.bnTextPrimary.opacity(0.15))
+                        .fill(LpspBinanceTokens.bnYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspBinanceTokens.bnTextPrimary))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspBinanceTokens.bnYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -365,7 +345,7 @@ private struct LpspBinanceFinanceHomeTabScreen: View {
                     }
                     .padding(.horizontal)
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [LpspBinanceTokens.bnTextPrimary, LpspBinanceTokens.bnTextPrimary.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .fill(LinearGradient(colors: [LpspBinanceTokens.bnYellow, LpspBinanceTokens.bnYellow.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(height: 180)
                         .overlay(alignment: .bottomLeading) {
                             Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
@@ -374,7 +354,7 @@ private struct LpspBinanceFinanceHomeTabScreen: View {
                     Text("Transactions").font(.headline).padding(.horizontal)
                     ForEach(LpspBinanceDemoTx.items) { tx in
                         HStack {
-                            Circle().fill(LpspBinanceTokens.bnTextPrimary.opacity(0.15)).frame(width: 40, height: 40)
+                            Circle().fill(LpspBinanceTokens.bnYellow.opacity(0.15)).frame(width: 40, height: 40)
                             VStack(alignment: .leading) { Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }
                             Spacer()
                             Text(tx.amount).font(.system(size: 16, weight: .semibold))

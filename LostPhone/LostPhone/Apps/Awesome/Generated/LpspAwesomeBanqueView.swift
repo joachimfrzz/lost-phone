@@ -79,7 +79,7 @@ fileprivate struct LpspBanqueRevPrimaryButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(LpspBanqueGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: LpspBanqueGradients.revBrand.opacity(0.30), radius: 14, y: 8)
+                .shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: UUID())
         .buttonStyle(LpspBanqueRevPressableStyle())
@@ -254,30 +254,10 @@ fileprivate extension View {
 // Glow modifier for active / primary elements
 fileprivate struct LpspBanqueRevGlow: ViewModifier {
     func body(content: Content) -> some View {
-        content.shadow(color: LpspBanqueGradients.revBrand.opacity(0.30), radius: 14, y: 8)
+        content.shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
     }
 }
 
-fileprivate struct LpspBanqueRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspBanqueTokens.revCanvas).withAlphaComponent(0.92)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            InvestView().tabItem { Label("Invest", systemImage: "chart.line.uptrend.xyaxis") }
-            CryptoView().tabItem { Label("Crypto", systemImage: "bitcoinsign.circle.fill") }
-            LifestyleView().tabItem { Label("Lifestyle", systemImage: "sparkles") }
-            CardsView().tabItem { Label("Cards", systemImage: "creditcard.fill") }
-        }
-        .tint(LpspBanqueGradients.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
-    }
-}
 
 fileprivate struct LpspBanqueBalanceReveal: ViewModifier {
     let hidden: Bool

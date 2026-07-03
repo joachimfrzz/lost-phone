@@ -234,25 +234,7 @@ fileprivate struct LpspFlightyFltPressableStyle: ButtonStyle {
     }
 }
 
-fileprivate struct LpspFlightyRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspFlightyTokens.fltCanvas).withAlphaComponent(0.92)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            FlightsView().tabItem { Label("Flights", systemImage: "airplane") }
-            SearchView().tabItem { Label("Search", systemImage: "magnifyingglass") }
-            AirportView().tabItem { Label("Airport", systemImage: "building.2.fill") }
-            ProfileView().tabItem { Label("Profile", systemImage: "person.fill") }
-        }
-        .tint(LpspFlightyTokens.fltBlue) // active = Flighty Blue
-    }
-}
+
 
 // MARK: - Écrans showroom
 

@@ -302,26 +302,6 @@ fileprivate struct LpspDeezerPrimaryButton: View {
     }
 }
 
-fileprivate struct LpspDeezerDZTabView: View {
-    var body: some View {
-        TabView {
-            HomeView().tabItem    { Label("Home",    systemImage: "house.fill") }
-            SearchView().tabItem  { Label("Search",  systemImage: "magnifyingglass") }
-            MusicView().tabItem   { Label("Music",   systemImage: "music.note.list") }
-            ProfileView().tabItem { Label("Profile", systemImage: "person.fill") }
-        }
-        .tint(LpspDeezerTokens.dzPurple)   // active = Deezer purple; inactive defaults to secondary
-        .onAppear {
-            let a = UITabBarAppearance()
-            a.configureWithOpaqueBackground()
-            a.backgroundColor = UIColor(LpspDeezerTokens.dzCanvas).withAlphaComponent(0.94)
-            a.shadowColor = UIColor(LpspDeezerTokens.dzDivider)
-            UITabBar.appearance().standardAppearance = a
-            UITabBar.appearance().scrollEdgeAppearance = a
-            UITabBar.appearance().unselectedItemTintColor = UIColor(LpspDeezerTokens.dzTextTertiary)
-        }
-    }
-}
 
 fileprivate struct LpspDeezerDZTheme: ViewModifier {
     func body(content: Content) -> some View {
@@ -343,7 +323,7 @@ private struct LpspDeezerShowroomRoot: View {
                 .tabItem { Label("Profile", systemImage: "person.fill") }
                 .tag(0)
         }
-        .tint(LpspDeezerTokens.brand)
+        .tint(LpspDeezerTokens.dzTextPrimary)
         .preferredColorScheme(.dark)
     }
 }
@@ -357,9 +337,9 @@ private struct LpspDeezerGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspDeezerTokens.brand.opacity(0.15))
+                        .fill(LpspDeezerTokens.dzTextPrimary.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDeezerTokens.brand))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDeezerTokens.dzTextPrimary))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -380,7 +360,7 @@ private struct LpspDeezerMusicHomeTabScreen: View {
                     Text("Bonsoir").font(.system(size: 28, weight: .bold)).padding(.horizontal)
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         ForEach(0..<4, id: \.self) { i in
-                            RoundedRectangle(cornerRadius: 8).fill(LpspDeezerTokens.brand.opacity(0.15 + Double(i) * 0.05))
+                            RoundedRectangle(cornerRadius: 8).fill(LpspDeezerTokens.dzTextPrimary.opacity(0.15 + Double(i) * 0.05))
                                 .frame(height: 100)
                                 .overlay(alignment: .bottomLeading) {
                                     Text("Playlist \(i + 1)").font(.subheadline.bold()).padding(8)
@@ -420,7 +400,7 @@ private struct LpspDeezerMusicLibraryTabScreen: View {
         NavigationStack {
             List(["Titres likés", "Playlists", "Albums", "Artistes"], id: \.self) { item in
                 HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(LpspDeezerTokens.brand.opacity(0.2)).frame(width: 48, height: 48)
+                    RoundedRectangle(cornerRadius: 4).fill(LpspDeezerTokens.dzTextPrimary.opacity(0.2)).frame(width: 48, height: 48)
                     Text(item).font(.body)
                 }
             }

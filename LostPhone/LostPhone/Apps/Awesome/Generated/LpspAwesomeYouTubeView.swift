@@ -315,7 +315,7 @@ fileprivate struct LpspYouTubeShortsActionRail: View {
             ZStack(alignment: .bottomTrailing) {
                 AsyncImage(url: creatorAvatarURL) { img in
                     img.resizable().scaledToFill()
-                } placeholder: { LpspYouTubeTokens.gray }
+                } placeholder: { Color.gray }
                     .frame(width: 44, height: 44)
                     .clipShape(Circle())
                     .overlay(Circle().stroke(.white, lineWidth: 2))
@@ -367,32 +367,7 @@ fileprivate struct LpspYouTubeShortsActionRail: View {
     }
 }
 
-fileprivate struct LpspYouTubeYouTubeTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.systemBackground
-        appearance.shadowColor = UIColor(LpspYouTubeTokens.ytDividerLight)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            HomeView()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-            ShortsView()
-                .tabItem { Label("Shorts", systemImage: "play.rectangle.fill") }
-            CreateSheet()
-                .tabItem { Label("", systemImage: "plus.circle.fill") }
-            SubscriptionsView()
-                .tabItem { Label("Subscriptions", systemImage: "play.square.stack.fill") }
-            YouView()
-                .tabItem { Label("You", systemImage: "person.crop.circle.fill") }
-        }
-        .tint(LpspYouTubeTokens.ytTextPrimaryLight)
-    }
-}
 
 // MARK: - Écrans showroom
 

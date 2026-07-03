@@ -82,7 +82,7 @@ fileprivate struct LpspLinkedInLinkedInPillButton: View {
                         .font(.system(size: 16, weight: .semibold))
                 }
                 Text(title)
-                    .font(variant == .filled ? .liButtonPrimary : .liButtonSecondary)
+                    .font(variant == .filled ? LpspLinkedInFonts.liButtonPrimary : LpspLinkedInFonts.liButtonSecondary)
             }
             .foregroundStyle(variant == .filled ? Color.white : LpspLinkedInTokens.liBlue)
             .padding(.vertical, 8)
@@ -330,26 +330,6 @@ fileprivate struct LpspLinkedInActionBar: View {
     }
 }
 
-fileprivate struct LpspLinkedInRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
-        appearance.shadowColor = UIColor(LpspLinkedInTokens.liDivider)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            NetworkView().tabItem { Label("My Network", systemImage: "person.2.fill") }
-            PostView().tabItem { Label("Post", systemImage: "plus.app.fill") }
-            NotificationsView().tabItem { Label("Notifications", systemImage: "bell.fill") }
-            JobsView().tabItem { Label("Jobs", systemImage: "briefcase.fill") }
-        }
-        .tint(LpspLinkedInTokens.liTextPrimary)  // active is near-black, not blue
-    }
-}
 
 fileprivate struct LpspLinkedInLinkedInTopNav: View {
     @State private var searchText = ""
@@ -404,7 +384,7 @@ private struct LpspLinkedInShowroomRoot: View {
                 .tabItem { Label("Jobs", systemImage: "briefcase.fill") }
                 .tag(4)
         }
-        .tint(LpspLinkedInTokens.liActionBar)
+        .tint(LpspLinkedInTokens.liTextPrimary)
         
     }
 }
@@ -418,9 +398,9 @@ private struct LpspLinkedInGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspLinkedInTokens.liActionBar.opacity(0.15))
+                        .fill(LpspLinkedInTokens.liTextPrimary.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspLinkedInTokens.liActionBar))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspLinkedInTokens.liTextPrimary))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -472,8 +452,8 @@ private struct LpspLinkedInFeedTabScreen: View {
                         HStack(spacing: 14) {
                             ForEach(LpspLinkedInDemoStories.items) { s in
                                 VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspLinkedInTokens.liActionBar, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspLinkedInTokens.liActionBar.opacity(0.2)).frame(width: 58, height: 58))
+                                    Circle().strokeBorder(LpspLinkedInTokens.liTextPrimary, lineWidth: 2).frame(width: 66, height: 66)
+                                        .overlay(Circle().fill(LpspLinkedInTokens.liTextPrimary.opacity(0.2)).frame(width: 58, height: 58))
                                     Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
                                 }
                             }
@@ -511,7 +491,7 @@ private struct LpspLinkedInExploreTabScreen: View {
                 LazyVGrid(columns: cols, spacing: 2) {
                     ForEach(0..<15, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspLinkedInTokens.liActionBar.opacity(0.08 + Double(i) * 0.04))
+                            .fill(LpspLinkedInTokens.liTextPrimary.opacity(0.08 + Double(i) * 0.04))
                             .aspectRatio(1, contentMode: .fit)
                     }
                 }
@@ -540,7 +520,7 @@ private struct LpspLinkedInProfileTabScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspLinkedInTokens.liActionBar.gradient).frame(width: 88, height: 88)
+                    Circle().fill(LpspLinkedInTokens.liTextPrimary.gradient).frame(width: 88, height: 88)
                         .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
                     Text("lost.phone").font(.system(size: 20, weight: .bold))
                     Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)

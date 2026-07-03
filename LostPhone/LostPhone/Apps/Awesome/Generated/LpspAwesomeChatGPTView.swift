@@ -544,7 +544,7 @@ private struct LpspChatGPTShowroomRoot: View {
                 .tabItem { Label("Historique", systemImage: "clock") }
                 .tag(1)
         }
-        .tint(LpspChatGPTTokens.gptLegacyGreen)
+        .tint(LpspChatGPTTokens.gptErrorRed)
         
     }
 }
@@ -558,9 +558,9 @@ private struct LpspChatGPTGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspChatGPTTokens.gptLegacyGreen.opacity(0.15))
+                        .fill(LpspChatGPTTokens.gptErrorRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspChatGPTTokens.gptLegacyGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspChatGPTTokens.gptErrorRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

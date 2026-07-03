@@ -82,7 +82,7 @@ fileprivate struct LpspGoogleMapsGMSearchBar: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(LpspGoogleMapsTokens.gray.opacity(0.3))
+                .fill(Color.gray.opacity(0.3))
                 .frame(width: 28, height: 28)
                 .overlay(Image(systemName: "person.fill").foregroundStyle(.white).font(.system(size: 14)))
             Text("Search here")
@@ -263,7 +263,7 @@ fileprivate struct LpspGoogleMapsGMPlaceCard: View {
                         .foregroundStyle(LpspGoogleMapsTokens.gmTextSecondary)
                     if isOpen {
                         Text("Open now")
-                            .font(.gmMeta.weight(.medium))
+                            .font(LpspGoogleMapsFonts.gmMeta.weight(.medium))
                             .foregroundStyle(LpspGoogleMapsTokens.gmGreen)
                     }
                 }
@@ -372,26 +372,7 @@ final class LpspGoogleMapsGMRouteRenderer: MKOverlayRenderer {
     }
 }
 
-fileprivate struct LpspGoogleMapsGMRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-        appearance.shadowColor = UIColor(red: 0.855, green: 0.863, blue: 0.878, alpha: 1)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            ExploreView().tabItem  { Label("Explore",    systemImage: "safari.fill") }
-            GoView().tabItem       { Label("Go",         systemImage: "location.north.circle.fill") }
-            SavedView().tabItem    { Label("Saved",      systemImage: "bookmark.fill") }
-            ContribView().tabItem  { Label("Contribute", systemImage: "plus.circle.fill") }
-            UpdatesView().tabItem  { Label("Updates",    systemImage: "newspaper.fill") }
-        }
-        .tint(LpspGoogleMapsTokens.gmBlue) // active tab = Google Blue
-    }
-}
+
 
 // MARK: - Écrans showroom
 
@@ -403,7 +384,7 @@ private struct LpspGoogleMapsShowroomRoot: View {
                 .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
                 .tag(0)
         }
-        .tint(LpspGoogleMapsTokens.gmGreen)
+        .tint(LpspGoogleMapsTokens.gmYellow)
         
     }
 }
@@ -417,9 +398,9 @@ private struct LpspGoogleMapsGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspGoogleMapsTokens.gmGreen.opacity(0.15))
+                        .fill(LpspGoogleMapsTokens.gmYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGoogleMapsTokens.gmGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGoogleMapsTokens.gmYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

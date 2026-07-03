@@ -70,7 +70,7 @@ fileprivate struct LpspTwitchTwitchFollowButton: View {
                     .font(.system(size: 14, weight: .bold))
                 Text(isFollowing ? (subscribe ? "Subscribed" : "Following")
                                   : (subscribe ? "Subscribe" : "Follow"))
-                    .font(isFollowing ? .twitchButtonSecondary : .twitchButton)
+                    .font(isFollowing ? LpspTwitchFonts.twitchButtonSecondary : LpspTwitchFonts.twitchButton)
                     .tracking(isFollowing ? 0 : 0.2)
             }
             .foregroundStyle(isFollowing ? LpspTwitchTokens.twitchTextPrimary : .white)
@@ -226,27 +226,6 @@ fileprivate struct LpspTwitchTwitchTheaterChatOverlay: View {
     }
 }
 
-fileprivate struct LpspTwitchRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspTwitchTokens.twitchCanvas).withAlphaComponent(0.94)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            FollowingView().tabItem     { Label("Following",     systemImage: "heart.fill") }
-            BrowseView().tabItem        { Label("Browse",        systemImage: "play.square.stack.fill") }
-            SearchView().tabItem        { Label("Search",        systemImage: "magnifyingglass") }
-            NotificationsView().tabItem { Label("Notifications", systemImage: "bell.fill") }
-            ProfileView().tabItem       { Label("Profile",       systemImage: "person.crop.circle.fill") }
-        }
-        .tint(LpspTwitchTokens.twitchPurple) // active = purple, purple is the indicator
-    }
-}
-
 fileprivate struct LpspTwitchChatLine: Identifiable {
     let id = UUID()
     let username: String
@@ -265,7 +244,7 @@ private struct LpspTwitchShowroomRoot: View {
                 .tabItem { Label("Notifications", systemImage: "bell.fill") }
                 .tag(0)
         }
-        .tint(LpspTwitchTokens.twitchOnlineGreen)
+        .tint(LpspTwitchTokens.twitchLiveRed)
         .preferredColorScheme(.dark)
     }
 }
@@ -279,9 +258,9 @@ private struct LpspTwitchGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTwitchTokens.twitchOnlineGreen.opacity(0.15))
+                        .fill(LpspTwitchTokens.twitchLiveRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTwitchTokens.twitchOnlineGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTwitchTokens.twitchLiveRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

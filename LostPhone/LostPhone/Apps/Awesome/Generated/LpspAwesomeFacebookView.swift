@@ -339,27 +339,7 @@ fileprivate extension View {
     }
 }
 
-fileprivate struct LpspFacebookRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(LpspFacebookTokens.fbCard)
-        appearance.shadowColor = UIColor(LpspFacebookTokens.fbDivider)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            HomeView()         .tabItem { Label("Home",          systemImage: "house.fill") }
-            VideoView()        .tabItem { Label("Video",         systemImage: "play.rectangle.fill") }
-            MarketplaceView()  .tabItem { Label("Marketplace",   systemImage: "cart.fill") }
-            NotificationsView().tabItem { Label("Notifications", systemImage: "bell.fill") }.badge(3)
-            MenuView()         .tabItem { Label("Menu",          systemImage: "line.3.horizontal") }
-        }
-        .tint(LpspFacebookTokens.fbBlue)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -371,7 +351,7 @@ private struct LpspFacebookShowroomRoot: View {
                 .tabItem { Label("Notifications", systemImage: "bell.fill") }
                 .tag(0)
         }
-        .tint(LpspFacebookTokens.fbReactionCount)
+        .tint(LpspFacebookTokens.fbCareYellow)
         
     }
 }
@@ -385,9 +365,9 @@ private struct LpspFacebookGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspFacebookTokens.fbReactionCount.opacity(0.15))
+                        .fill(LpspFacebookTokens.fbCareYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspFacebookTokens.fbReactionCount))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspFacebookTokens.fbCareYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -424,8 +404,8 @@ private struct LpspFacebookFeedTabScreen: View {
                         HStack(spacing: 14) {
                             ForEach(LpspFacebookDemoStories.items) { s in
                                 VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspFacebookTokens.fbReactionCount, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspFacebookTokens.fbReactionCount.opacity(0.2)).frame(width: 58, height: 58))
+                                    Circle().strokeBorder(LpspFacebookTokens.fbCareYellow, lineWidth: 2).frame(width: 66, height: 66)
+                                        .overlay(Circle().fill(LpspFacebookTokens.fbCareYellow.opacity(0.2)).frame(width: 58, height: 58))
                                     Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
                                 }
                             }
@@ -435,7 +415,7 @@ private struct LpspFacebookFeedTabScreen: View {
 
 
                     ForEach(0..<3, id: \.self) { i in
-                        LpspFacebookGenericFeedCard(index: i, accent: LpspFacebookTokens.fbReactionCount)
+                        LpspFacebookGenericFeedCard(index: i, accent: LpspFacebookTokens.fbCareYellow)
                     }
 
                 }
@@ -455,7 +435,7 @@ private struct LpspFacebookExploreTabScreen: View {
                 LazyVGrid(columns: cols, spacing: 2) {
                     ForEach(0..<15, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspFacebookTokens.fbReactionCount.opacity(0.08 + Double(i) * 0.04))
+                            .fill(LpspFacebookTokens.fbCareYellow.opacity(0.08 + Double(i) * 0.04))
                             .aspectRatio(1, contentMode: .fit)
                     }
                 }
@@ -484,7 +464,7 @@ private struct LpspFacebookProfileTabScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspFacebookTokens.fbReactionCount.gradient).frame(width: 88, height: 88)
+                    Circle().fill(LpspFacebookTokens.fbCareYellow.gradient).frame(width: 88, height: 88)
                         .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
                     Text("lost.phone").font(.system(size: 20, weight: .bold))
                     Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)

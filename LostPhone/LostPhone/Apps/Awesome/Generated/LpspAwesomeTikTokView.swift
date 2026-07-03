@@ -104,7 +104,7 @@ fileprivate struct LpspTikTokTikTokFollowButton: View {
             isFollowing.toggle()
         } label: {
             Text(isFollowing ? "Following" : "Follow")
-                .font(isFollowing ? .tiktokButtonSecondary : .tiktokFollow)
+                .font(isFollowing ? LpspTikTokFonts.tiktokButtonSecondary : LpspTikTokFonts.tiktokFollow)
                 .foregroundStyle(.white)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 16)
@@ -453,7 +453,7 @@ private struct LpspTikTokShowroomRoot: View {
                 .tabItem { Label("Profil", systemImage: "person.circle") }
                 .tag(2)
         }
-        .tint(LpspTikTokTokens.tiktokActionCount)
+        .tint(LpspTikTokTokens.tiktokTextPrimary)
         
     }
 }
@@ -467,9 +467,9 @@ private struct LpspTikTokGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTikTokTokens.tiktokActionCount.opacity(0.15))
+                        .fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTikTokTokens.tiktokActionCount))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTikTokTokens.tiktokTextPrimary))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -506,8 +506,8 @@ private struct LpspTikTokFeedTabScreen: View {
                         HStack(spacing: 14) {
                             ForEach(LpspTikTokDemoStories.items) { s in
                                 VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspTikTokTokens.tiktokActionCount, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspTikTokTokens.tiktokActionCount.opacity(0.2)).frame(width: 58, height: 58))
+                                    Circle().strokeBorder(LpspTikTokTokens.tiktokTextPrimary, lineWidth: 2).frame(width: 66, height: 66)
+                                        .overlay(Circle().fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.2)).frame(width: 58, height: 58))
                                     Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
                                 }
                             }
@@ -517,7 +517,7 @@ private struct LpspTikTokFeedTabScreen: View {
 
 
                     ForEach(0..<3, id: \.self) { i in
-                        LpspTikTokGenericFeedCard(index: i, accent: LpspTikTokTokens.tiktokActionCount)
+                        LpspTikTokGenericFeedCard(index: i, accent: LpspTikTokTokens.tiktokTextPrimary)
                     }
 
                 }
@@ -537,7 +537,7 @@ private struct LpspTikTokExploreTabScreen: View {
                 LazyVGrid(columns: cols, spacing: 2) {
                     ForEach(0..<15, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspTikTokTokens.tiktokActionCount.opacity(0.08 + Double(i) * 0.04))
+                            .fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.08 + Double(i) * 0.04))
                             .aspectRatio(1, contentMode: .fit)
                     }
                 }
@@ -566,7 +566,7 @@ private struct LpspTikTokProfileTabScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspTikTokTokens.tiktokActionCount.gradient).frame(width: 88, height: 88)
+                    Circle().fill(LpspTikTokTokens.tiktokTextPrimary.gradient).frame(width: 88, height: 88)
                         .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
                     Text("lost.phone").font(.system(size: 20, weight: .bold))
                     Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)

@@ -167,11 +167,11 @@ fileprivate struct LpspWiseFeeBreakdownCard: View {
             ForEach(Array(lines.enumerated()), id: \.element.id) { idx, line in
                 HStack {
                     Text(line.label)
-                        .font(line.emphasized ? .wiseTitle : .wiseBody)
+                        .font(line.emphasized ? LpspWiseFonts.wiseTitle : LpspWiseFonts.wiseBody)
                         .foregroundStyle(line.emphasized ? LpspWiseTokens.wiseForest : LpspWiseTokens.wiseTextSecondary)
                     Spacer()
                     Text(line.value)
-                        .font(line.emphasized ? .wiseSubsection : .wiseAmount)
+                        .font(line.emphasized ? LpspWiseFonts.wiseSubsection : LpspWiseFonts.wiseAmount)
                         .monospacedDigit()
                         .foregroundStyle(line.emphasized ? LpspWiseTokens.wiseForest : LpspWiseTokens.wiseTextPrimary)
                 }
@@ -241,26 +241,6 @@ fileprivate struct LpspWiseRollingBalance: View {
     }
 }
 
-fileprivate struct LpspWiseRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-        appearance.shadowColor = UIColor(LpspWiseTokens.wiseDivider)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            CardView().tabItem { Label("Card", systemImage: "creditcard.fill") }
-            RecipientsView().tabItem { Label("Recipients", systemImage: "person.2.fill") }
-            PaymentsView().tabItem { Label("Payments", systemImage: "arrow.left.arrow.right") }
-            AccountView().tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
-        }
-        .tint(LpspWiseTokens.wiseForest) // active = forest; pair with a bright-green active marker if desired
-    }
-}
 
 fileprivate struct LpspWiseLiveDot: View {
     @State private var on = false

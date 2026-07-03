@@ -79,7 +79,7 @@ fileprivate struct LpspRevolutRevPrimaryButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(LpspRevolutGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: LpspRevolutGradients.revBrand.opacity(0.30), radius: 14, y: 8)
+                .shadow(color: LpspRevolutTokens.revBrand.opacity(0.30), radius: 14, y: 8)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: UUID())
         .buttonStyle(LpspRevolutRevPressableStyle())
@@ -254,30 +254,10 @@ fileprivate extension View {
 // Glow modifier for active / primary elements
 fileprivate struct LpspRevolutRevGlow: ViewModifier {
     func body(content: Content) -> some View {
-        content.shadow(color: LpspRevolutGradients.revBrand.opacity(0.30), radius: 14, y: 8)
+        content.shadow(color: LpspRevolutTokens.revBrand.opacity(0.30), radius: 14, y: 8)
     }
 }
 
-fileprivate struct LpspRevolutRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspRevolutTokens.revCanvas).withAlphaComponent(0.92)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            InvestView().tabItem { Label("Invest", systemImage: "chart.line.uptrend.xyaxis") }
-            CryptoView().tabItem { Label("Crypto", systemImage: "bitcoinsign.circle.fill") }
-            LifestyleView().tabItem { Label("Lifestyle", systemImage: "sparkles") }
-            CardsView().tabItem { Label("Cards", systemImage: "creditcard.fill") }
-        }
-        .tint(LpspRevolutGradients.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
-    }
-}
 
 fileprivate struct LpspRevolutBalanceReveal: ViewModifier {
     let hidden: Bool

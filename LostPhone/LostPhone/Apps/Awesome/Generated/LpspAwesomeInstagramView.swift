@@ -245,28 +245,7 @@ fileprivate struct LpspInstagramFeedPost: View {
     }
 }
 
-fileprivate struct LpspInstagramIGRootTabView: View {
-    @State private var selection = 0
 
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-
-    var body: some View {
-        TabView(selection: $selection) {
-            HomeFeed()    .tabItem { Image(systemName: selection == 0 ? "house.fill" : "house") }.tag(0)
-            ExploreView() .tabItem { Image(systemName: "magnifyingglass") }.tag(1)
-            ReelsView()   .tabItem { Image(systemName: "play.rectangle") }.tag(2)
-            CreateView()  .tabItem { Image(systemName: "plus.app") }.tag(3)
-            ProfileView() .tabItem { Image(systemName: "person.circle") }.tag(4)
-        }
-        .tint(.primary)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -284,7 +263,7 @@ private struct LpspInstagramShowroomRoot: View {
                 .tabItem { Label("Profil", systemImage: "person.circle") }
                 .tag(2)
         }
-        .tint(LpspInstagramTokens.instagramBrand)
+        .tint(LpspInstagramTokens.igActionBlue)
         
     }
 }
@@ -298,9 +277,9 @@ private struct LpspInstagramGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspInstagramTokens.instagramBrand.opacity(0.15))
+                        .fill(LpspInstagramTokens.igActionBlue.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspInstagramTokens.instagramBrand))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspInstagramTokens.igActionBlue))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -390,7 +369,7 @@ private struct LpspInstagramExploreTabScreen: View {
                 LazyVGrid(columns: cols, spacing: 2) {
                     ForEach(0..<15, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspInstagramTokens.instagramBrand.opacity(0.08 + Double(i) * 0.04))
+                            .fill(LpspInstagramTokens.igActionBlue.opacity(0.08 + Double(i) * 0.04))
                             .aspectRatio(1, contentMode: .fit)
                     }
                 }
@@ -419,7 +398,7 @@ private struct LpspInstagramProfileTabScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspInstagramTokens.instagramBrand.gradient).frame(width: 88, height: 88)
+                    Circle().fill(LpspInstagramTokens.igActionBlue.gradient).frame(width: 88, height: 88)
                         .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
                     Text("lost.phone").font(.system(size: 20, weight: .bold))
                     Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)

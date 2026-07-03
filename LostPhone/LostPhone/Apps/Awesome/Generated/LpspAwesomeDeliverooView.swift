@@ -145,7 +145,7 @@ fileprivate struct LpspDeliverooMenuItemRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(name).font(LpspDeliverooFonts.rooMenuName).foregroundStyle(LpspDeliverooTokens.rooTextPrimary)
                 Text(desc)
-                    .font(.rooBody.weight(.regular))
+                    .font(LpspDeliverooFonts.rooBody.weight(.regular))
                     .foregroundStyle(LpspDeliverooTokens.rooTextSecondary)
                     .lineLimit(2)
                 Text(price).font(LpspDeliverooFonts.rooPrice).foregroundStyle(LpspDeliverooTokens.rooTextPrimary).padding(.top, 4)
@@ -240,7 +240,7 @@ fileprivate struct LpspDeliverooCategoryRow: View {
                             .background(i == selected ? LpspDeliverooTokens.rooTeal : LpspDeliverooTokens.rooSurface1,
                                         in: RoundedRectangle(cornerRadius: 16))
                         Text(c.label)
-                            .font(.rooCaption.weight(.semibold))
+                            .font(LpspDeliverooFonts.rooCaption.weight(.semibold))
                             .foregroundStyle(i == selected ? LpspDeliverooTokens.rooTextPrimary : LpspDeliverooTokens.rooTextSecondary)
                     }
                     .onTapGesture { withAnimation(.easeOut(duration: 0.15)) { selected = i } }
@@ -260,7 +260,7 @@ fileprivate struct LpspDeliverooRooButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(style == .teal ? .rooButton : .rooButton)
+                .font(style == .teal ? LpspDeliverooFonts.rooButton : LpspDeliverooFonts.rooButton)
                 .foregroundStyle(style == .teal ? LpspDeliverooTokens.rooTealInk : .white)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(style == .teal ? LpspDeliverooTokens.rooTeal : LpspDeliverooTokens.rooTextPrimary, in: Capsule())
@@ -270,18 +270,6 @@ fileprivate struct LpspDeliverooRooButton: View {
 }
 // Checkout: LpspDeliverooRooButton(title: "Checkout · £24.50", action: {}, style: .dark)
 
-fileprivate struct LpspDeliverooDeliverooTabView: View {
-    var body: some View {
-        TabView {
-            HomeView().tabItem      { Label("Home",       systemImage: "house.fill") }
-            SearchView().tabItem    { Label("Search",     systemImage: "magnifyingglass") }
-            OrdersView().tabItem    { Label("Orders",     systemImage: "list.bullet.rectangle") }
-            FavouritesView().tabItem{ Label("Favourites", systemImage: "heart") }
-            AccountView().tabItem   { Label("Account",    systemImage: "person.crop.circle") }
-        }
-        .tint(LpspDeliverooTokens.rooTeal)   // active tab is Deliveroo Teal
-    }
-}
 
 fileprivate struct LpspDeliverooDeliverooTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme

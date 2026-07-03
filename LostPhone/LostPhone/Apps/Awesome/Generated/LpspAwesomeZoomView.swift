@@ -270,26 +270,7 @@ fileprivate struct LpspZoomGalleryGrid: View {
 
 fileprivate struct LpspZoomParticipant: Identifiable { let id = UUID(); let name: String; let isMuted: Bool; let isSpeaking: Bool }
 
-fileprivate struct LpspZoomRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor { $0.userInterfaceStyle == .dark
-            ? UIColor(LpspZoomTokens.zoomSurface1) : UIColor.white }
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            MeetingsView().tabItem  { Label("Meetings",  systemImage: "video.fill") }
-            ChatView().tabItem      { Label("Team Chat", systemImage: "bubble.left.and.bubble.right.fill") }
-            MailView().tabItem      { Label("Mail",      systemImage: "envelope.fill") }
-            PhoneView().tabItem     { Label("Phone",     systemImage: "phone.fill") }
-            MoreView().tabItem      { Label("More",      systemImage: "ellipsis") }
-        }
-        .tint(LpspZoomTokens.zoomBlue)
-    }
-}
+
 
 // MARK: - Écrans showroom
 
@@ -301,7 +282,7 @@ private struct LpspZoomShowroomRoot: View {
                 .tabItem { Label("Team Chat", systemImage: "bubble.left.and.bubble.right.fill") }
                 .tag(0)
         }
-        .tint(LpspZoomTokens.zoomRed)
+        .tint(LpspZoomTokens.zoomHandYellow)
         
     }
 }
@@ -315,9 +296,9 @@ private struct LpspZoomGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspZoomTokens.zoomRed.opacity(0.15))
+                        .fill(LpspZoomTokens.zoomHandYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspZoomTokens.zoomRed))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspZoomTokens.zoomHandYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

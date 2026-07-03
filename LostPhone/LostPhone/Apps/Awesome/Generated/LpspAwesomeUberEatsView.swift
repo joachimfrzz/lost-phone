@@ -114,7 +114,7 @@ fileprivate struct LpspUberEatsUERestaurantCard: View {
                     .scaleEffect(pressed ? 0.98 : 1)
                 if freeDelivery {
                     Text("$0 Delivery Fee")
-                        .font(.ueCaption.weight(.bold))
+                        .font(LpspUberEatsFonts.ueCaption.weight(.bold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(Capsule().fill(LpspUberEatsTokens.ueGreen))
@@ -286,26 +286,7 @@ fileprivate struct LpspUberEatsUEProgressStepper: View {
     }
 }
 
-fileprivate struct LpspUberEatsRootTabView: View {
-    @Environment(\.colorScheme) private var scheme
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem    { Label("Home",    systemImage: "house.fill") }
-            BrowseView().tabItem  { Label("Browse",  systemImage: "square.grid.2x2.fill") }
-            SearchView().tabItem  { Label("Search",  systemImage: "magnifyingglass") }
-            CartView().tabItem    { Label("Cart",    systemImage: "cart.fill") }
-                .badge(3) // green badge styling applied via tint where shown
-            AccountView().tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
-        }
-        .tint(scheme == .dark ? .white : .black) // active = near-black/white, NOT green
-    }
-}
+
 
 // MARK: - Écrans showroom
 
@@ -317,7 +298,7 @@ private struct LpspUberEatsShowroomRoot: View {
                 .tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
                 .tag(0)
         }
-        .tint(LpspUberEatsTokens.ueGreen)
+        .tint(LpspUberEatsTokens.ueErrorRed)
         
     }
 }
@@ -331,9 +312,9 @@ private struct LpspUberEatsGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspUberEatsTokens.ueGreen.opacity(0.15))
+                        .fill(LpspUberEatsTokens.ueErrorRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspUberEatsTokens.ueGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspUberEatsTokens.ueErrorRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

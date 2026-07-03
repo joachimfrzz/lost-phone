@@ -179,7 +179,7 @@ fileprivate struct LpspAppleMusicTrackRow: View {
                             .font(.system(size: 11, weight: .bold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 4)
-                            .background(RoundedRectangle(cornerRadius: 3).fill(LpspAppleMusicTokens.gray))
+                            .background(RoundedRectangle(cornerRadius: 3).fill(Color.gray))
                     }
                     Text(title)
                         .font(.system(size: 17))
@@ -384,7 +384,7 @@ fileprivate struct LpspAppleMusicLyricsView: View {
                 LazyVStack(alignment: .leading, spacing: 24) {
                     ForEach(lines) { line in
                         Text(line.text)
-                            .font(isCurrent(line) ? .amLyricsCurrent : .amLyricsOther)
+                            .font(isCurrent(line) ? LpspAppleMusicFonts.amLyricsCurrent : LpspAppleMusicFonts.amLyricsOther)
                             .foregroundStyle(.white.opacity(opacity(for: line)))
                             .id(line.id)
                             .animation(.spring(response: 0.3, dampingFraction: 0.85), value: isCurrent(line))
@@ -444,30 +444,7 @@ fileprivate enum LpspAppleMusicAMColorExtractor {
     }
 }
 
-fileprivate struct LpspAppleMusicAppleMusicTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground() // Uses .regularMaterial
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            ListenNowView()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-            BrowseView()
-                .tabItem { Label("New", systemImage: "music.note.list") }
-            RadioView()
-                .tabItem { Label("Radio", systemImage: "dot.radiowaves.left.and.right") }
-            LibraryView()
-                .tabItem { Label("Library", systemImage: "square.stack.fill") }
-            SearchView()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-        }
-        .tint(LpspAppleMusicTokens.amRed)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -491,7 +468,7 @@ private struct LpspAppleMusicShowroomRoot: View {
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(4)
         }
-        .tint(LpspAppleMusicTokens.amSystemGreen)
+        .tint(LpspAppleMusicTokens.amCoral)
         .preferredColorScheme(.dark)
     }
 }
@@ -505,9 +482,9 @@ private struct LpspAppleMusicGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspAppleMusicTokens.amSystemGreen.opacity(0.15))
+                        .fill(LpspAppleMusicTokens.amCoral.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAppleMusicTokens.amSystemGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAppleMusicTokens.amCoral))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -528,7 +505,7 @@ private struct LpspAppleMusicMusicHomeTabScreen: View {
                     Text("Bonsoir").font(.system(size: 28, weight: .bold)).padding(.horizontal)
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         ForEach(0..<4, id: \.self) { i in
-                            RoundedRectangle(cornerRadius: 8).fill(LpspAppleMusicTokens.amSystemGreen.opacity(0.15 + Double(i) * 0.05))
+                            RoundedRectangle(cornerRadius: 8).fill(LpspAppleMusicTokens.amCoral.opacity(0.15 + Double(i) * 0.05))
                                 .frame(height: 100)
                                 .overlay(alignment: .bottomLeading) {
                                     Text("Playlist \(i + 1)").font(.subheadline.bold()).padding(8)
@@ -568,7 +545,7 @@ private struct LpspAppleMusicMusicLibraryTabScreen: View {
         NavigationStack {
             List(["Titres likés", "Playlists", "Albums", "Artistes"], id: \.self) { item in
                 HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(LpspAppleMusicTokens.amSystemGreen.opacity(0.2)).frame(width: 48, height: 48)
+                    RoundedRectangle(cornerRadius: 4).fill(LpspAppleMusicTokens.amCoral.opacity(0.2)).frame(width: 48, height: 48)
                     Text(item).font(.body)
                 }
             }

@@ -69,7 +69,13 @@ def pick_color(colors: Sequence[tuple[str, str]], *keywords: str, default_idx: i
         for name, _ in colors:
             if kw.lower() in name.lower():
                 return name
-    return colors[default_idx][0] if colors else "accent"
+    non_surface = [
+        (n, e)
+        for n, e in colors
+        if not any(x in n.lower() for x in ("canvas", "background", "surface", "divider", "border", "text", "sheet"))
+    ]
+    pool = non_surface or list(colors)
+    return pool[default_idx][0] if pool else "accent"
 
 
 def pick_font(fonts: Sequence[tuple[str, str]], *keywords: str, default_idx: int = 0) -> str:

@@ -365,28 +365,7 @@ fileprivate struct LpspTinderTinderChatBubble: View {
     }
 }
 
-fileprivate struct LpspTinderTinderRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-        appearance.shadowColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
-        // Hide labels
-        appearance.stackedLayoutAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 1000)
-        appearance.stackedLayoutAppearance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 1000)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            SwipeView().tabItem    { Image(systemName: "flame.fill") }
-            TopPicksView().tabItem { Image(systemName: "star.fill") }
-            ChatsView().tabItem    { Image(systemName: "bubble.left.fill") }
-            ProfileView().tabItem  { Image(systemName: "person.fill") }
-        }
-        .tint(LpspTinderTokens.tdrPink) // Active = pink (gradient fill requires custom tab icons via AnyView)
-    }
-}
+
 
 // MARK: - Écrans showroom
 
@@ -404,7 +383,7 @@ private struct LpspTinderShowroomRoot: View {
                 .tabItem { Label("Profil", systemImage: "person.fill") }
                 .tag(2)
         }
-        .tint(LpspTinderTokens.tdrBrand)
+        .tint(LpspTinderTokens.tdrNopeRed)
         
     }
 }
@@ -418,9 +397,9 @@ private struct LpspTinderGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTinderTokens.tdrBrand.opacity(0.15))
+                        .fill(LpspTinderTokens.tdrNopeRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTinderTokens.tdrBrand))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTinderTokens.tdrNopeRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

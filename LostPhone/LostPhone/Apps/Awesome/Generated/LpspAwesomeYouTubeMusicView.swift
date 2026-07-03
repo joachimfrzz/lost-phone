@@ -302,19 +302,6 @@ fileprivate struct LpspYouTubeMusicMiniPlayer: View {
     }
 }
 
-fileprivate struct LpspYouTubeMusicYTMTabView: View {
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            SamplesView().tabItem { Label("Samples", systemImage: "rectangle.stack.fill") }
-            ExploreView().tabItem { Label("Explore", systemImage: "magnifyingglass") }
-            LibraryView().tabItem { Label("Library", systemImage: "books.vertical.fill") }
-        }
-        .tint(LpspYouTubeMusicTokens.ytmActionWhite) // active is pure white, no red, no pill
-        .toolbarBackground(LpspYouTubeMusicTokens.ytmTabBar, for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
-    }
-}
 
 fileprivate struct LpspYouTubeMusicYTMTheme: ViewModifier {
     func body(content: Content) -> some View {

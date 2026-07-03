@@ -231,27 +231,6 @@ fileprivate struct LpspPrimeVideoPrimeXRayOverlay: View {
     }
 }
 
-fileprivate struct LpspPrimeVideoRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspPrimeVideoTokens.primeCanvas).withAlphaComponent(0.94)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem      { Label("Home",      systemImage: "house.fill") }
-            StoreView().tabItem     { Label("Store",     systemImage: "bag.fill") }
-            LiveView().tabItem      { Label("Live",      systemImage: "dot.radiowaves.left.and.right") }
-            FindView().tabItem      { Label("Find",      systemImage: "magnifyingglass") }
-            DownloadsView().tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
-        }
-        .tint(LpspPrimeVideoTokens.primeBlue) // active = blue, blue is the indicator
-    }
-}
-
 fileprivate struct LpspPrimeVideoCastMember: Identifiable {
     let id = UUID()
     let name: String
@@ -270,7 +249,7 @@ private struct LpspPrimeVideoShowroomRoot: View {
                 .tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
                 .tag(0)
         }
-        .tint(LpspPrimeVideoTokens.primeLiveRed)
+        .tint(LpspPrimeVideoTokens.primeImdbYellow)
         .preferredColorScheme(.dark)
     }
 }
@@ -284,9 +263,9 @@ private struct LpspPrimeVideoGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspPrimeVideoTokens.primeLiveRed.opacity(0.15))
+                        .fill(LpspPrimeVideoTokens.primeImdbYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspPrimeVideoTokens.primeLiveRed))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspPrimeVideoTokens.primeImdbYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

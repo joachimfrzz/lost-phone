@@ -373,26 +373,7 @@ fileprivate struct LpspTelegramTgChatListRow: View {
     }
 }
 
-fileprivate struct LpspTelegramTgRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            ContactsView().tabItem { Label("Contacts", systemImage: "person.2.fill") }
-            CallsView().tabItem { Label("Calls", systemImage: "phone.fill") }
-            ChatsView().tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right.fill") }
-                .badge(12)
-            SettingsView().tabItem { Label("Settings", systemImage: "gearshape.fill") }
-        }
-        .tint(LpspTelegramTokens.tgAccent)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -413,7 +394,7 @@ private struct LpspTelegramShowroomRoot: View {
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(3)
         }
-        .tint(LpspTelegramTokens.tgOnlineGreen)
+        .tint(LpspTelegramTokens.tgAccent)
         
     }
 }
@@ -427,9 +408,9 @@ private struct LpspTelegramGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTelegramTokens.tgOnlineGreen.opacity(0.15))
+                        .fill(LpspTelegramTokens.tgAccent.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTelegramTokens.tgOnlineGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTelegramTokens.tgAccent))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -505,8 +486,8 @@ private struct LpspTelegramCallsTabScreen: View {
         NavigationStack {
             List(LpspTelegramDemoChats.chats) { chat in
                 HStack {
-                    Circle().fill(LpspTelegramTokens.tgOnlineGreen.opacity(0.15)).frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspTelegramTokens.tgOnlineGreen))
+                    Circle().fill(LpspTelegramTokens.tgAccent.opacity(0.15)).frame(width: 40, height: 40)
+                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspTelegramTokens.tgAccent))
                     VStack(alignment: .leading) {
                         Text(chat.name).font(.system(size: 17, weight: .semibold))
                         Text("Appel vocal · Hier").font(.subheadline).foregroundStyle(.secondary)
@@ -535,7 +516,7 @@ private struct LpspTelegramDemoBubble: View {
                 .font(.system(size: 17))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspTelegramTokens.tgOnlineGreen.opacity(0.2) : Color(.systemGray5)))
+                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspTelegramTokens.tgAccent.opacity(0.2) : Color(.systemGray5)))
             if !outgoing { Spacer(minLength: 60) }
         }
         .padding(.horizontal, 8)
@@ -550,7 +531,7 @@ private struct LpspTelegramDemoComposeBar: View {
                 .padding(10)
                 .background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
             Image(systemName: "paperplane.fill")
-                .foregroundStyle(LpspTelegramTokens.tgOnlineGreen)
+                .foregroundStyle(LpspTelegramTokens.tgAccent)
                 .font(.title2)
         }
         .padding(8)

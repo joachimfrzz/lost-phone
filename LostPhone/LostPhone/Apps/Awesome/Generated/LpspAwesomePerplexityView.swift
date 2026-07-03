@@ -454,26 +454,7 @@ fileprivate struct LpspPerplexityRelatedQuestionsCard: View {
     }
 }
 
-fileprivate struct LpspPerplexityRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = UIColor(LpspPerplexityTokens.pplxCanvas)
-        appearance.shadowColor = UIColor(LpspPerplexityTokens.pplxSurface3)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            HomeView()     .tabItem { Label("Home",     systemImage: "magnifyingglass") }
-            DiscoverView() .tabItem { Label("Discover", systemImage: "safari") }
-            LibraryView()  .tabItem { Label("Library",  systemImage: "books.vertical") }
-            SpacesView()   .tabItem { Label("Spaces",   systemImage: "square.stack.3d.down.right") }
-        }
-        .tint(LpspPerplexityTokens.pplxTextPrimary)
-    }
-}
 
 // MARK: - Écrans showroom
 

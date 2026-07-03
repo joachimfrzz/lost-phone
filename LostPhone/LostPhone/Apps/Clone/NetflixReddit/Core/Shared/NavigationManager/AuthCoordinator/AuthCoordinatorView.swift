@@ -21,7 +21,7 @@ struct AuthCoordinatorView: View {
 //                        ToolbarItem(placement: .topBarLeading) {
 //                            BackButton()
 //                        }
-//                        .sharedBackgroundVisibility(.hidden)
+//                        .netflixHideSharedBackground()
 //                        
                         ToolbarItem(placement: .principal) {
                             NetflixLogoView()
@@ -30,7 +30,7 @@ struct AuthCoordinatorView: View {
                         ToolbarItem(placement: .topBarTrailing) {
                             InformationLinks(textColor: .white, isPrivacy: false)
                         }
-                        .sharedBackgroundVisibility(.hidden)
+                        .netflixHideSharedBackground()
                     }
             } destinationBuilder: { destination in
                 switch destination {
@@ -41,7 +41,7 @@ struct AuthCoordinatorView: View {
 //                            ToolbarItem(placement: .topBarLeading) {
 //                                BackButton()
 //                            }
-//                            .sharedBackgroundVisibility(.hidden)
+//                            .netflixHideSharedBackground()
                             
                             ToolbarItem(placement: .principal) {
                                 NetflixLogoView()
@@ -50,7 +50,7 @@ struct AuthCoordinatorView: View {
                             ToolbarItem(placement: .topBarTrailing) {
                                 InformationLinks(textColor: .white, isPrivacy: false)
                             }
-                            .sharedBackgroundVisibility(.hidden)
+                            .netflixHideSharedBackground()
                         }
                 case .signup:
                     Signup(authVM: authVM)
@@ -62,7 +62,7 @@ struct AuthCoordinatorView: View {
                             ToolbarItem(placement: .topBarTrailing) {
                                 InformationLinks(textColor: .white, isPrivacy: false)
                             }
-                            .sharedBackgroundVisibility(.hidden)
+                            .netflixHideSharedBackground()
                         }
                     
                 case .verifyEmail(let email):
@@ -75,7 +75,7 @@ struct AuthCoordinatorView: View {
                             ToolbarItem(placement: .topBarTrailing) {
                                 InformationLinks(textColor: .white, isPrivacy: false)
                             }
-                            .sharedBackgroundVisibility(.hidden)
+                            .netflixHideSharedBackground()
                         }
                 }
             }

@@ -119,6 +119,7 @@ private struct LpspCoinbasePortfolioHero: View {
                 .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
                 .monospacedDigit()
                 .contentTransition(.numericText())
+                .animation(.snappy, value: value)
 
             HStack(spacing: 4) {
                 Text("\(sign)\(abs(dayChange), format: .currency(code: "USD"))")
@@ -260,6 +261,7 @@ private struct LpspCoinbaseActionButton: View {
             .padding(.vertical, 16)
             .background(RoundedRectangle(cornerRadius: 12).fill(LpspCoinbaseTokens.cbSurfaceGray))
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: UUID())
     }
 }
 
@@ -276,6 +278,7 @@ private struct LpspCoinbaseCBPrimaryButton: View {
                 .frame(height: 48)
                 .background(RoundedRectangle(cornerRadius: 12).fill(LpspCoinbaseTokens.cbBlue))
         }
+        .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
     }
 }
 
@@ -354,6 +357,7 @@ private struct LpspCoinbaseWalletAddressView: View {
             .padding(12)
             .background(RoundedRectangle(cornerRadius: 8).fill(LpspCoinbaseTokens.cbSurfaceGray))
         }
+        .sensoryFeedback(.success, trigger: copied)
     }
 }
 

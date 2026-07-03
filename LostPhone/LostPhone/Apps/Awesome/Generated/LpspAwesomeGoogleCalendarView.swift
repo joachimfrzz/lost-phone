@@ -219,6 +219,7 @@ private struct LpspGoogleCalendarGcalFAB: View {
                         radius: pressed ? 2 : 1, y: pressed ? 2 : 1)
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.impact(weight: .medium), trigger: pressed)
         .pressEvents(onPress: { pressed = true }, onRelease: { pressed = false })
     }
 }

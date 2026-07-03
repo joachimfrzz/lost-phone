@@ -70,6 +70,7 @@ private struct LpspPrimeVideoPrimePlayButton: View {
             .background(RoundedRectangle(cornerRadius: 8).fill(LpspPrimeVideoTokens.primeBlue))
             .shadow(color: LpspPrimeVideoTokens.primeBlue.opacity(0.32), radius: 24, y: 8)
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: title)
         .buttonStyle(LpspPrimeVideoPrimePressableStyle(pressedScale: 0.97))
     }
 }
@@ -78,6 +79,8 @@ private struct LpspPrimeVideoPrimePressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -99,7 +102,10 @@ private struct LpspPrimeVideoPrimeWatchlistButton: View {
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .background(RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.14)))
+            .scaleEffect(bump ? 1.15 : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.6), value: bump)
         }
+        .sensoryFeedback(.success, trigger: added)
         .onChange(of: bump) { _, v in if v { DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { bump = false } } }
         .buttonStyle(LpspPrimeVideoPrimePressableStyle())
     }

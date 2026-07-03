@@ -117,6 +117,7 @@ private struct LpspExpediaPropertyCard: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(10)
+                .scaleEffect(saved ? 1.0 : 1.0)
             }
 
             VStack(alignment: .leading, spacing: 0) {
@@ -159,6 +160,7 @@ private struct LpspExpediaPropertyCard: View {
         .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(LpspExpediaTokens.expDivider, lineWidth: 0.5))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(color: .black.opacity(0.08), radius: 12, y: 4)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: saved)
     }
 }
 

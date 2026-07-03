@@ -163,12 +163,15 @@ private struct LpspDeezerPlayButton: View {
             .shadow(color: LpspDeezerTokens.dzPink.opacity(0.6), radius: 14, x: 0, y: 12)
         }
         .buttonStyle(LpspDeezerPressScale())
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: isPlaying)
     }
 }
 
 private struct LpspDeezerPressScale: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? 0.94 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 
@@ -228,6 +231,7 @@ private struct LpspDeezerSongRow: View {
                 Text(title)
                     .font(LpspDeezerFonts.dzRowTitle)
                     .foregroundStyle(isPlaying ? LpspDeezerTokens.dzPink : LpspDeezerTokens.dzTextPrimary)
+                    .animation(.easeOut(duration: 0.18), value: isPlaying)
                 Text(artist).font(LpspDeezerFonts.dzMeta).foregroundStyle(LpspDeezerTokens.dzTextSecondary)
             }
             Spacer()

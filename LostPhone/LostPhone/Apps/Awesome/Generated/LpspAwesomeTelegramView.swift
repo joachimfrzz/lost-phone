@@ -140,6 +140,7 @@ private struct LpspTelegramTgComposeBar: View {
                         .font(.system(size: 22))
                         .foregroundStyle(theme.accent)
                 }
+                .sensoryFeedback(.impact(flexibility: .soft), trigger: text)
                 .contextMenu {
                     Button("Send Without Sound", systemImage: "speaker.slash") { sendSilent() }
                     Button("Schedule Message", systemImage: "calendar") { scheduleSend() }

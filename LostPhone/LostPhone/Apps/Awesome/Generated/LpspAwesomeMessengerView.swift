@@ -129,6 +129,8 @@ private struct LpspMessengerReactionsPopover: View {
             ForEach(Array(emoji.enumerated()), id: \.offset) { i, e in
                 Text(e)
                     .font(.system(size: 30))
+                    .scaleEffect(shown ? 1 : 0.4)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.55)
                         .delay(Double(i) * 0.02), value: shown)
                     .onTapGesture { onPick(e) }
             }
@@ -142,6 +144,8 @@ private struct LpspMessengerReactionsPopover: View {
             Capsule().fill(LpspMessengerTokens.msgCanvas)
                 .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
         )
+        .scaleEffect(shown ? 1 : 0.7)
+        .animation(.spring(response: 0.32, dampingFraction: 0.6), value: shown)
         .onAppear { shown = true }
     }
 }
@@ -159,6 +163,8 @@ private struct LpspMessengerReactionBadge: View {
         .padding(.horizontal, 6).padding(.vertical, 3)
         .background(Capsule().fill(LpspMessengerTokens.msgCanvas)
             .overlay(Capsule().strokeBorder(LpspMessengerTokens.msgDivider, lineWidth: 1)))
+        .scaleEffect(landed ? 1 : 1.25)
+        .animation(.spring(response: 0.25, dampingFraction: 0.5), value: landed)
         .onAppear { landed = true }
     }
 }
@@ -200,8 +206,10 @@ private struct LpspMessengerComposerBar: View {
                         .frame(width: 32, height: 32)
                 }
             }
+            .sensoryFeedback(.impact(weight: .light), trigger: hasText)
         }
         .padding(.horizontal, 10).padding(.vertical, 8)
+        .animation(.spring(response: 0.18, dampingFraction: 0.7), value: hasText)
     }
 }
 

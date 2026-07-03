@@ -198,6 +198,7 @@ private struct LpspThreadsThreadsPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.8 : 1)
+            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 

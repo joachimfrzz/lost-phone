@@ -96,6 +96,8 @@ private struct LpspDropboxDbxPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -111,6 +113,7 @@ private struct LpspDropboxDbxUploadFAB: View {
                 .background(Circle().fill(LpspDropboxTokens.dbxBlue))
                 .shadow(color: LpspDropboxTokens.dbxBlue.opacity(0.32), radius: 20, y: 8)
         }
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
         .buttonStyle(LpspDropboxDbxPressableStyle(pressedScale: 0.92))
         .padding(.trailing, 16)
         .padding(.bottom, 16) // sits above the tab bar
@@ -248,6 +251,7 @@ private struct LpspDropboxDbxUploadBar: View {
                     Capsule().fill(LpspDropboxTokens.dbxDivider)
                     Capsule().fill(LpspDropboxTokens.dbxBlue)
                         .frame(width: geo.size.width * progress)
+                        .animation(.linear(duration: 0.2), value: progress)
                 }
             }
             .frame(height: 3)

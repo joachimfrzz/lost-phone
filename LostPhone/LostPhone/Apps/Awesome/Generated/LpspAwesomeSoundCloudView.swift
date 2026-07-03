@@ -161,6 +161,7 @@ private struct LpspSoundCloudSCPlayButton: View {
                 .background(Circle().fill(LpspSoundCloudTokens.scOrange))
                 .shadow(color: LpspSoundCloudTokens.scOrange.opacity(0.32), radius: 20, y: 6)
         }
+        .sensoryFeedback(.impact(weight: .medium), trigger: isPlaying)
         .buttonStyle(LpspSoundCloudSCPressable(pressedScale: 0.93))
     }
 }
@@ -169,6 +170,8 @@ private struct LpspSoundCloudSCPressable: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 

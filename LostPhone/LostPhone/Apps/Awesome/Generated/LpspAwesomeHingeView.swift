@@ -96,8 +96,10 @@ private struct LpspHingeHeartTap: View {
                 Image(systemName: "heart.fill")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(isFilled ? LpspHingeTokens.hingePaper : LpspHingeTokens.hingeBlack)
+                    .scaleEffect(isFilled ? 1.0 : 0.92)
             }
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: isFilled)
     }
 }
 
@@ -257,6 +259,7 @@ private struct LpspHingeRoseCTA: View {
             )
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.impact(weight: .heavy), trigger: UUID())
     }
 }
 
@@ -274,6 +277,7 @@ private struct LpspHingeHingePrimaryButton: View {
                 .background(Capsule().fill(LpspHingeTokens.hingeBlack))
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
     }
 }
 
@@ -307,6 +311,7 @@ private struct LpspHingeCommentSheet: View {
                         .background(Circle().fill(comment.isEmpty ? LpspHingeTokens.hingeBone : LpspHingeTokens.hingeBlack))
                 }
                 .disabled(comment.isEmpty)
+                .sensoryFeedback(.impact(weight: .medium), trigger: comment.isEmpty == false)
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
@@ -340,6 +345,7 @@ private struct LpspHingeMatchCelebration: View {
                     .frame(width: CGFloat.random(in: 4...10), height: CGFloat.random(in: 4...10))
                     .offset(x: CGFloat.random(in: -160...160), y: confettiTrigger ? 600 : -300)
                     .opacity(confettiTrigger ? 0 : 1)
+                    .animation(.easeIn(duration: 1.8).delay(Double(i) * 0.04), value: confettiTrigger)
             }
 
             VStack(spacing: 32) {
@@ -374,6 +380,7 @@ private struct LpspHingeMatchCelebration: View {
         .onAppear {
             confettiTrigger = true
         }
+        .sensoryFeedback(.success, trigger: confettiTrigger)
     }
 }
 

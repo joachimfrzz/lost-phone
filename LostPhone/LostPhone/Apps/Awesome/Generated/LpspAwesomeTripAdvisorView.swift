@@ -100,7 +100,10 @@ private struct LpspTripAdvisorBubbleRatingPicker: View {
                 Circle()
                     .fill(i <= rating ? LpspTripAdvisorTokens.taGreen : LpspTripAdvisorTokens.taEmptyBubble)
                     .frame(width: size, height: size)
+                    .scaleEffect(i == rating ? 1.0 : 1.0)
                     .onTapGesture { rating = i }
+                    .sensoryFeedback(.impact(weight: .light), trigger: rating)
+                    .animation(.spring(response: 0.2, dampingFraction: 0.6), value: rating)
             }
         }
     }
@@ -136,6 +139,8 @@ private struct LpspTripAdvisorTAPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 
@@ -168,6 +173,7 @@ private struct LpspTripAdvisorPlaceCard: View {
                         .padding(8)
                         .background(Circle().fill(.black.opacity(0.30)))
                 }
+                .sensoryFeedback(.success, trigger: saved)
                 .padding(12)
             }
 

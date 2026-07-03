@@ -182,6 +182,7 @@ private struct LpspFacebookFBActionButton: View {
             .contentShape(Rectangle())
         }
         .onLongPressGesture(minimumDuration: 0.4, perform: onLongPress)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: label)
     }
 }
 
@@ -227,6 +228,8 @@ private struct LpspFacebookReactionsPopover: View {
                     .font(.system(size: 28))
                     .foregroundStyle(reaction.color)
                     .frame(width: 48, height: 48)
+                    .scaleEffect(hoveredIndex == i ? 1.3 : 1.0)
+                    .animation(.spring(response: 0.25), value: hoveredIndex)
                     .onTapGesture {
                         selected = reaction
                         isShown = false
@@ -239,6 +242,7 @@ private struct LpspFacebookReactionsPopover: View {
             Capsule().fill(LpspFacebookTokens.fbCard)
                 .shadow(color: .black.opacity(0.2), radius: 16, y: 4)
         )
+        .sensoryFeedback(.selection, trigger: hoveredIndex)
         .transition(.scale.combined(with: .opacity))
     }
 }

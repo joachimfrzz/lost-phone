@@ -278,11 +278,6 @@ private struct LpspRevolutRootTabView: View {
     }
 }
 
-// Gradient CTA press — LpspRevolutRevPressableStyle: opacity 0.85 + scale 0.98, 150ms
-
-// Donut draw — Circle().trim animated 0→progress over 0.7s ease-out on appear
-
-// Balance hide/reveal
 private struct LpspRevolutBalanceReveal: ViewModifier {
     let hidden: Bool
     func body(content: Content) -> some View {

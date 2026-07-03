@@ -261,11 +261,6 @@ private struct LpspWiseRootTabView: View {
     }
 }
 
-// CTA press — LpspWiseWisePressableStyle: scale 0.98 + brightness -0.03, 150ms
-
-// Stepper advance: animate the circle fill + rail with .easeInOut(0.2) on `current` change
-
-// Rate ticker pulse
 private struct LpspWiseLiveDot: View {
     @State private var on = false
     var body: some View {

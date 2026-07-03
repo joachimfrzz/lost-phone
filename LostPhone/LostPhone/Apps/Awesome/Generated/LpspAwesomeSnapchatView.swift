@@ -92,7 +92,6 @@ private struct LpspSnapchatSnapCaptureButton: View {
             Circle()
                 .fill(isRecording ? LpspSnapchatTokens.snapYellow : Color.white)
                 .frame(width: 64, height: 64)
-                .scaleEffect(innerScale)
         }
         .frame(width: 82, height: 82)
         .gesture(

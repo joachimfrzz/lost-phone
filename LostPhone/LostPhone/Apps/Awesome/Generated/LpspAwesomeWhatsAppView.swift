@@ -76,7 +76,6 @@ private struct LpspWhatsAppWASendButton: View {
                 .background(Circle().fill(LpspWhatsAppTokens.waGreen))
                 .contentTransition(.symbolEffect(.replace))
         }
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: hasText)
         .buttonStyle(LpspWhatsAppWAPressableStyle(pressedScale: 0.92))
     }
 }
@@ -85,8 +84,6 @@ private struct LpspWhatsAppWAPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
-            .animation(.spring(response: 0.22, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -225,7 +222,6 @@ private struct LpspWhatsAppWAVoiceWaveformBubble: View {
                     .frame(width: 36, height: 36)
                     .background(Circle().fill(LpspWhatsAppTokens.waGreen))
             }
-            .sensoryFeedback(.impact(flexibility: .soft), trigger: isPlaying)
 
             GeometryReader { geo in
                 HStack(spacing: 2) {

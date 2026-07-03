@@ -109,15 +109,12 @@ private struct LpspChatGPTSendButton: View {
         }
         .disabled(!isEnabled && !isGenerating)
         .buttonStyle(LpspChatGPTSendPressStyle())
-        .sensoryFeedback(.impact(flexibility: .solid), trigger: isGenerating)
     }
 }
 
 private struct LpspChatGPTSendPressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -229,7 +226,6 @@ private struct LpspChatGPTFeedbackIconButton: View {
                 .background(Circle().fill(Color.clear))
         }
         .buttonStyle(.plain)
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
     }
 }
 
@@ -379,7 +375,6 @@ private struct LpspChatGPTVoiceModeView: View {
                     )
                 )
                 .frame(width: 280, height: 280)
-                .scaleEffect(pulseScale)
                 .shadow(color: LpspChatGPTTokens.gptVoiceBlue1.opacity(0.4), radius: 40)
                 .onAppear {
                     withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
@@ -413,7 +408,6 @@ private struct LpspChatGPTVoiceModeView: View {
             }
         }
         .transition(.opacity.combined(with: .scale(scale: 0.9)))
-        .sensoryFeedback(.impact(flexibility: .solid), trigger: isShown)
     }
 }
 

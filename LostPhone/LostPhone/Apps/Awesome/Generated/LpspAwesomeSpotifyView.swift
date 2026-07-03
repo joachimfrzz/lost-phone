@@ -68,7 +68,6 @@ private struct LpspSpotifySpotifyPlayButton: View {
                 .frame(width: size, height: size)
                 .background(Circle().fill(LpspSpotifyTokens.spotifyGreen))
         }
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: isPlaying)
         .buttonStyle(LpspSpotifySpotifyPressableStyle(pressedScale: 0.92))
     }
 }
@@ -77,8 +76,6 @@ private struct LpspSpotifySpotifyPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 

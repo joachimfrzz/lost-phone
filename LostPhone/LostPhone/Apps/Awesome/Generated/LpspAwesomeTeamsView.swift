@@ -84,7 +84,6 @@ private struct LpspTeamsPresenceDot: View {
         }
         .frame(width: size, height: size)
         .overlay(Circle().strokeBorder(Color(.systemBackground), lineWidth: 2))
-        .animation(.easeInOut(duration: 0.25), value: presence)
     }
 }
 
@@ -252,7 +251,6 @@ private struct LpspTeamsMeetingJoinBar: View {
             .fill(scheme == .dark ? LpspTeamsTokens.teamsPurpleDark : LpspTeamsTokens.teamsPurpleLight))
         .shadow(color: LpspTeamsTokens.teamsPurpleLight.opacity(0.35), radius: 16, y: 4)
         .opacity(pulse ? 0.85 : 1.0)
-        .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true), value: pulse)
         .padding(.horizontal, 12)
         .onAppear { pulse = true }
     }
@@ -274,17 +272,14 @@ private struct LpspTeamsTeamsPrimaryButton: View {
                     .fill(scheme == .dark ? LpspTeamsTokens.teamsPurpleDark : LpspTeamsTokens.teamsPurpleLight))
         }
         .buttonStyle(LpspTeamsTeamsPressable())
-        .sensoryFeedback(.impact(weight: .light), trigger: title)
     }
 }
 
 private struct LpspTeamsTeamsPressable: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .overlay(configuration.isPressed
                 ? RoundedRectangle(cornerRadius: 8).fill(LpspTeamsTokens.teamsPurplePress).blendMode(.multiply) : nil)
-            .animation(.spring(response: 0.25, dampingFraction: 0.85), value: configuration.isPressed)
     }
 }
 

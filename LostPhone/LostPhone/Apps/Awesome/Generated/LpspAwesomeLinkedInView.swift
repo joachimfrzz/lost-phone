@@ -95,15 +95,12 @@ private struct LpspLinkedInLinkedInPillButton: View {
             )
         }
         .buttonStyle(LpspLinkedInLinkedInPressableStyle())
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
     }
 }
 
 private struct LpspLinkedInLinkedInPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 
@@ -254,7 +251,6 @@ private struct LpspLinkedInReactionPicker: View {
                         .frame(width: 40, height: 40)
                 }
                 .transition(.scale.combined(with: .opacity))
-                .sensoryFeedback(.impact(flexibility: .soft), trigger: isShown)
             }
         }
         .padding(.horizontal, 8)
@@ -315,7 +311,6 @@ private struct LpspLinkedInActionBar: View {
             actionButton(icon: "arrow.2.squarepath", label: "Repost", tint: LpspLinkedInTokens.liTextSecondary) {}
             actionButton(icon: "paperplane", label: "Send", tint: LpspLinkedInTokens.liTextSecondary) {}
         }
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: isLiked)
     }
 
     func actionButton(icon: String, label: String, tint: Color, action: @escaping () -> Void) -> some View {

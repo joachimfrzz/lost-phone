@@ -95,7 +95,6 @@ private struct LpspUberUberPrimaryButton: View {
             .background(RoundedRectangle(cornerRadius: 8).fill(LpspUberTokens.uberBlack))
         }
         .buttonStyle(LpspUberUberPressableStyle(pressedFill: LpspUberTokens.uberGray900, pressedScale: 0.98))
-        .sensoryFeedback(.impact(weight: .medium), trigger: isLoading)
     }
 }
 
@@ -104,8 +103,6 @@ private struct LpspUberUberPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
-            .animation(.spring(response: 0.2, dampingFraction: 0.85), value: configuration.isPressed)
     }
 }
 
@@ -197,7 +194,6 @@ private struct LpspUberRideOptionCard: View {
             )
         }
         .buttonStyle(LpspUberUberPressableStyle())
-        .sensoryFeedback(.selection, trigger: isSelected)
     }
 }
 
@@ -347,9 +343,7 @@ private struct LpspUberDriverBeacon: View {
                 Circle()
                     .fill(LpspUberTokens.uberGreen.opacity(0.3 - Double(i) * 0.1))
                     .frame(width: 48, height: 48)
-                    .scaleEffect(animate ? 2.4 : 1)
                     .opacity(animate ? 0 : 1)
-                    .animation(
                         .easeInOut(duration: 1.8)
                             .repeatForever(autoreverses: false)
                             .delay(Double(i) * 0.6),

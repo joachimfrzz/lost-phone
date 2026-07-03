@@ -118,9 +118,6 @@ private struct LpspPlansGMDirectionsFAB: View {
                 .background(Circle().fill(pressed ? LpspPlansTokens.gmBluePressed : LpspPlansTokens.gmBlue))
                 .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
         }
-        .scaleEffect(pressed ? 0.95 : 1)
-        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: pressed)
-        .sensoryFeedback(.impact(weight: .medium), trigger: pressed)
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in pressed = true }
@@ -157,7 +154,6 @@ private struct LpspPlansGMLocationDot: View {
                 .fill(LpspPlansTokens.gmBlue)
                 .frame(width: 12, height: 12)
                 .overlay(Circle().stroke(.white, lineWidth: 3).frame(width: 18, height: 18))
-                .scaleEffect(pulse ? 1.15 : 1.0)
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {

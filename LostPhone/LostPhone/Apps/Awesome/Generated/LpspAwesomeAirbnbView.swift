@@ -95,9 +95,7 @@ private struct LpspAirbnbSaveHeart: View {
                 .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
                 .frame(width: 32, height: 32)
                 .contentShape(Rectangle().inset(by: -12)) // 44pt hit area
-                .scaleEffect(isSaved ? 1 : 1)
         }
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: isSaved)
     }
 }
 
@@ -304,7 +302,6 @@ private struct LpspAirbnbBookingFooter: View {
                             .fill(LpspAirbnbTokens.airbnbCoral)
                     )
             }
-            .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
         }
         .padding(.horizontal, 24)
         .frame(height: 80)

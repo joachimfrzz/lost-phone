@@ -70,7 +70,6 @@
       "Uber Eats",
       "Deliveroo",
       "Waze",
-      "Google Maps",
       "Booking",
       "Airbnb",
       "Expedia",
@@ -98,7 +97,9 @@
     },
     "spectre_actions": {
       "definition": "Mode showroom — tester les clones UI sans histoire.",
-      "actions_possibles": ["Ouvrir chaque app"],
+      "actions_possibles": [
+        "Ouvrir chaque app"
+      ],
       "actions_impossibles": []
     },
     "apps_accessibles": [
@@ -163,7 +164,6 @@
       "Uber Eats",
       "Deliveroo",
       "Waze",
-      "Google Maps",
       "Booking",
       "Airbnb",
       "Expedia",

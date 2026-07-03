@@ -49,7 +49,6 @@ enum AwesomeShowroomCatalog {
         "Uber Eats",
         "Deliveroo",
         "Waze",
-        "Google Maps",
         "Booking",
         "Airbnb",
         "Expedia",

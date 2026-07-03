@@ -235,12 +235,27 @@ private struct {prefix}PlaceholderChatRow: View {{
     else:
         row_def = ""
 
+    if chat_row and "TgChatListRow" in chat_row:
+        row_call = (
+            f'{row}(avatar: Image(systemName: "person.circle.fill"), name: chat.name, '
+            f"preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, "
+            f"isPinned: false, isMuted: !chat.hasRing)"
+        )
+    elif chat_row:
+        row_call = (
+            f'{row}(avatar: Image(systemName: "person.circle.fill"), name: chat.name, '
+            f"preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, "
+            f"hasStatusRing: chat.hasRing)"
+        )
+    else:
+        row_call = f'{row}(name: chat.name, preview: chat.preview, time: chat.time)'
+
     list_body = f"""
                 ForEach({prefix}DemoChats.chats) {{ chat in
                     NavigationLink {{
                         {prefix}ChatDetailScreen(chat: chat)
                     }} label: {{
-                        {row}(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, isPinned: false, isMuted: !chat.hasRing)
+                        {row_call}
                     }}
                 }}
 """ if chat_row else f"""
@@ -248,16 +263,23 @@ private struct {prefix}PlaceholderChatRow: View {{
                     NavigationLink {{
                         {prefix}ChatDetailScreen(chat: chat)
                     }} label: {{
-                        {row}(name: chat.name, preview: chat.preview, time: chat.time)
+                        {row_call}
                     }}
                 }}
 """
 
     bubble_block = ""
     if outgoing:
+        if "WAOutgoingBubble" in outgoing:
+            bubble_out = f'{outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", readState: .read)'
+        elif "TgOutgoingBubble" in outgoing:
+            bubble_out = f'{outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)'
+        else:
+            bubble_out = f'{outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)'
+        incoming = outgoing.replace("Outgoing", "Incoming") if "Outgoing" in outgoing else prefix + "IncomingBubbleWrapper"
         bubble_block = f"""
-                    {outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)
-                    {outgoing.replace('Outgoing', 'Incoming') if 'Outgoing' in outgoing else prefix + 'IncomingBubbleWrapper'}(text: "Oui, j'arrive !")
+                    {bubble_out}
+                    {incoming}(text: "Oui, j'arrive !")
 """
     else:
         bubble_block = f"""

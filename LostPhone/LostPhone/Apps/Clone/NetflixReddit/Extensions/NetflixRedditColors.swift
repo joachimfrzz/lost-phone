@@ -8,3 +8,11 @@ extension Color {
     static let customDarkGray = Color("customDarkGray")
     static let profileBG = Color("profileBG")
 }
+
+extension ShapeStyle where Self == Color {
+    static var netflixRed: Color { Color.netflixRed }
+    static var buttonGrayDark: Color { Color.buttonGrayDark }
+    static var bgLightGray: Color { Color.bgLightGray }
+    static var customDarkGray: Color { Color.customDarkGray }
+    static var profileBG: Color { Color.profileBG }
+}

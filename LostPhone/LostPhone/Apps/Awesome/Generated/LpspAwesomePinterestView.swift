@@ -368,8 +368,6 @@ private struct LpspPinterestPinterestRefreshSpinner: View {
     }
 }
 
-// Shared-element pin tap → detail
-// Use matchedGeometryEffect on the pin image between the grid tile and the detail hero
 private struct LpspPinterestSharedPinImage: View {
     let imageURL: URL
     let namespace: Namespace.ID

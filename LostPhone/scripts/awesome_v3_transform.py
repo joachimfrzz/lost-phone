@@ -107,6 +107,9 @@ def strip_leading_orphan_modifiers(code: str) -> str:
     lines = code.splitlines()
     while lines:
         s = lines[0].strip()
+        if not s:
+            lines.pop(0)
+            continue
         if s.startswith("//") or (s.startswith(".") and "struct " not in s and "enum " not in s):
             lines.pop(0)
             continue

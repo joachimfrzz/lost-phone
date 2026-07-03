@@ -358,11 +358,6 @@ private struct LpspAmazonAmazonRootTabView: View {
     }
 }
 
-// Cart badge bump
-.scaleEffect(bumping ? 1.3 : 1.0)
-.animation(.spring(response: 0.25, dampingFraction: 0.55), value: bumping)
-
-// Add-to-cart toast
 private struct LpspAmazonAddToCartToast: View {
     @Binding var visible: Bool
     var body: some View {

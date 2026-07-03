@@ -250,7 +250,7 @@ fileprivate struct LpspPerplexityCitationChip: View {
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle().inset(by: -8)) // 32pt tap target
-        .sensoryFeedback(.impact(weight: .soft), trigger: focused)
+        .sensoryFeedback(.impact(weight: .light), trigger: focused)
     }
 }
 

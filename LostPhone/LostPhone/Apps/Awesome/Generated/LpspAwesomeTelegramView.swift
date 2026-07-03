@@ -449,7 +449,7 @@ private struct LpspTelegramChatsTabScreen: View {
                     NavigationLink {
                         LpspTelegramChatDetailScreen(chat: chat)
                     } label: {
-                        LpspTelegramTgChatListRow(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, hasStatusRing: chat.hasRing)
+                        LpspTelegramTgChatListRow(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, isPinned: false, isMuted: !chat.hasRing)
                     }
                 }
 
@@ -467,7 +467,7 @@ private struct LpspTelegramChatDetailScreen: View {
             ScrollView {
                 LazyVStack(spacing: 8) {
 
-                    LpspTelegramTgOutgoingBubble(text: "Salut, tu es dispo ?", timestamp: "10:24", readState: .read)
+                    LpspTelegramTgOutgoingBubble(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)
                     LpspTelegramTgIncomingBubble(text: "Oui, j'arrive !")
 
                 }

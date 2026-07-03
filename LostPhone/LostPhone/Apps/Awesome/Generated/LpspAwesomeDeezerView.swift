@@ -275,7 +275,7 @@ fileprivate struct LpspDeezerNowPlayingTopBar: View {
             VStack(spacing: 2) {
                 Text("FLOW · YOUR MIX").font(LpspDeezerFonts.dzOverline).tracking(0.4)
                     .foregroundStyle(LpspDeezerTokens.dzTextSecondary)
-                Text("Made for you").font(.dzRead(13, .bold))
+                Text("Made for you").font(LpspDeezerFonts.dzRead(13, .bold))
                     .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
             }
             Spacer()

@@ -228,9 +228,10 @@ fileprivate struct LpspTwitchTwitchTheaterChatOverlay: View {
 
 fileprivate struct LpspTwitchChatLine: Identifiable {
     let id = UUID()
-    let username: String
-    let message: String
+    let user: String
+    let text: String
     let color: Color
+    var mentionsMe: Bool = false
 }
 
 

@@ -240,7 +240,7 @@ private struct {prefix}PlaceholderChatRow: View {{
                     NavigationLink {{
                         {prefix}ChatDetailScreen(chat: chat)
                     }} label: {{
-                        {row}(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, hasStatusRing: chat.hasRing)
+                        {row}(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, isPinned: false, isMuted: !chat.hasRing)
                     }}
                 }}
 """ if chat_row else f"""
@@ -256,7 +256,7 @@ private struct {prefix}PlaceholderChatRow: View {{
     bubble_block = ""
     if outgoing:
         bubble_block = f"""
-                    {outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", readState: .read)
+                    {outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)
                     {outgoing.replace('Outgoing', 'Incoming') if 'Outgoing' in outgoing else prefix + 'IncomingBubbleWrapper'}(text: "Oui, j'arrive !")
 """
     else:
@@ -389,7 +389,7 @@ def _social_screens(prefix, tokens, canvas, accent, feed_post, story_ring, post_
                             timestamp: post.time,
                             commentCount: post.comments,
                             title: post.title,
-                            body: post.body,
+                            postText: post.body,
                             flairs: [],
                             mediaUri: nil,
                             baseKarma: post.karma
@@ -815,7 +815,13 @@ private struct {prefix}DemoTx: Identifiable {{
 
 def _dating_screens(prefix, tokens, accent, swipe_card) -> str:
     card = (
-        f"{swipe_card}(profile: {prefix}DemoDatingProfile.sample)"
+        f"""{swipe_card}(
+                name: "Alex",
+                age: 28,
+                distance: "5 km",
+                occupation: "Designer",
+                photoURLs: []
+            )"""
         if swipe_card
         else f"{prefix}DemoSwipeCard(accent: {accent})"
     )

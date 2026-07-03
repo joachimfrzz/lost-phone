@@ -449,7 +449,7 @@ private struct LpspWhatsAppChatsTabScreen: View {
                     NavigationLink {
                         LpspWhatsAppChatDetailScreen(chat: chat)
                     } label: {
-                        LpspWhatsAppWAChatListRow(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, hasStatusRing: chat.hasRing)
+                        LpspWhatsAppWAChatListRow(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, isPinned: false, isMuted: !chat.hasRing)
                     }
                 }
 
@@ -467,7 +467,7 @@ private struct LpspWhatsAppChatDetailScreen: View {
             ScrollView {
                 LazyVStack(spacing: 8) {
 
-                    LpspWhatsAppWAOutgoingBubble(text: "Salut, tu es dispo ?", timestamp: "10:24", readState: .read)
+                    LpspWhatsAppWAOutgoingBubble(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)
                     LpspWhatsAppWAIncomingBubble(text: "Oui, j'arrive !")
 
                 }

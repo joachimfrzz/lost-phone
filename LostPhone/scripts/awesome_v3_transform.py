@@ -37,14 +37,89 @@ def enum_static_names(code: str, enum_name: str) -> list[str]:
     return list(dict.fromkeys(re.findall(r"static let (\w+)\s*=", block)))
 
 
+def enum_static_func_names(code: str, enum_name: str) -> list[str]:
+    marker = f"private enum {enum_name}"
+    if marker not in code:
+        return []
+    block = code.split(marker, 1)[1].split("\nprivate ", 1)[0]
+    return list(dict.fromkeys(re.findall(r"static func (\w+)\(", block)))
+
+
 def grad_static_names(code: str, grad_enum: str) -> list[str]:
     return enum_static_names(code, grad_enum) if grad_enum in code else []
 
 
 def fix_font_shorthand_refs(code: str, font_names: Sequence[str], fonts_enum: str) -> str:
-    for f in sorted(set(font_names), key=len, reverse=True):
-        code = re.sub(rf"(?<!\w)\.{re.escape(f)}\b(?!\()", f"{fonts_enum}.{f}", code)
+    font_funcs = set(enum_static_func_names(code, fonts_enum))
+    for f in sorted(set(font_names) - font_funcs, key=len, reverse=True):
+        code = re.sub(
+            rf"(?<!{re.escape(fonts_enum)})\.{re.escape(f)}\b(?!\()",
+            f"{fonts_enum}.{f}",
+            code,
+        )
+    for fn in font_funcs:
+        code = re.sub(
+            rf"(?<!{re.escape(fonts_enum)})\.{re.escape(fn)}\(",
+            f"{fonts_enum}.{fn}(",
+            code,
+        )
     return code
+
+
+def fix_posttext_argument_labels(code: str) -> str:
+    if "let postText:" not in code:
+        return code
+    code = code.replace("body: post.body", "postText: post.body")
+    return code
+
+
+def fix_sensory_feedback_weights(code: str) -> str:
+    return code.replace(".impact(weight: .soft)", ".impact(weight: .light)")
+
+
+def fix_incomplete_map_views(code: str, prefix: str) -> str:
+    """Complète UberMapView spec avec coordonnées démo si pickup/route absents."""
+    if "coordinate: pickup" not in code or ("let pickup" in code or "var pickup" in code):
+        return code
+    inject = (
+        "\n    private let pickup = CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522)\n"
+        "    private let destination = CLLocationCoordinate2D(latitude: 48.8738, longitude: 2.2950)\n"
+        "    private var route: [CLLocationCoordinate2D] { [pickup, destination] }\n"
+    )
+    for marker in (
+        f"fileprivate struct {prefix}UberUberMapView: View {{",
+        f"fileprivate struct {prefix}UberMapView: View {{",
+        f"struct {prefix}UberUberMapView: View {{",
+        f"struct {prefix}UberMapView: View {{",
+    ):
+        if marker in code:
+            return code.replace(marker, marker + inject, 1)
+    return code
+
+
+def strip_invalid_view_stroke_extensions(code: str) -> str:
+    """Supprime extensions View qui appellent .stroke (réservé aux Shape)."""
+    out: list[str] = []
+    i = 0
+    lines = code.splitlines(keepends=True)
+    while i < len(lines):
+        line = lines[i]
+        if re.match(r"fileprivate extension View\b", line.strip()):
+            block = [line]
+            i += 1
+            depth = line.count("{") - line.count("}")
+            while i < len(lines) and depth > 0:
+                block.append(lines[i])
+                depth += lines[i].count("{") - lines[i].count("}")
+                i += 1
+            block_text = "".join(block)
+            if re.search(r"\n\s*\.stroke\(", block_text):
+                continue
+            out.append(block_text)
+            continue
+        out.append(line)
+        i += 1
+    return "".join(out)
 
 
 def fix_shadow_gradient_colors(code: str, grad_enum: str, tokens_enum: str) -> str:
@@ -435,9 +510,10 @@ def add_missing_stub_types(code: str, prefix: str) -> str:
         stubs.append(
             f"fileprivate struct {prefix}ChatLine: Identifiable {{\n"
             f"    let id = UUID()\n"
-            f"    let username: String\n"
-            f"    let message: String\n"
+            f"    let user: String\n"
+            f"    let text: String\n"
             f"    let color: Color\n"
+            f"    var mentionsMe: Bool = false\n"
             f"}}"
         )
     if re.search(r"\bFlowLayout\b", code) and not re.search(rf"\bstruct\s+{re.escape(prefix)}FlowLayout\b", code):
@@ -667,6 +743,10 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     code = dedupe_extension_view(code)
     code = strip_spec_shell_views(code, prefix)
     code = fix_view_body_property_conflict(code)
+    code = fix_posttext_argument_labels(code)
+    code = fix_sensory_feedback_weights(code)
+    code = fix_incomplete_map_views(code, prefix)
+    code = strip_invalid_view_stroke_extensions(code)
     code = add_missing_stub_types(code, prefix)
     code = privatize_file_scoped_extensions(code)
     code = dedupe_private_types(code, prefix)

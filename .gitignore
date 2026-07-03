@@ -24,3 +24,4 @@ LostPhone/*.xcworkspace
 
 # Clones de référence (optionnel)
 _refs
+__pycache__/

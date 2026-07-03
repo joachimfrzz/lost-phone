@@ -1,10 +1,10 @@
 import Foundation
 
-/// Disposition exacte du clone zerocode117/iOS-26-clone (Reddit) — 14 apps.
+/// Disposition showroom — page 1 = clone zerocode117 (gelée), pages suivantes = apps ajoutées.
 enum CloneShowroomLayout {
     static let storyId = "showroom-clone14"
 
-    /// Page 1 — `ContentView.homeApps` (ordre Reddit).
+    /// Page 1 — ordre zerocode117 (ne pas modifier).
     static let gridApps: [String] = [
         "Météo",
         "Calendrier",
@@ -18,7 +18,18 @@ enum CloneShowroomLayout {
         "App Store",
     ]
 
-    /// Dock — `ContentView.dockApps`.
+    /// Page 2 — Étape 1 (apps Apple ajoutées).
+    static let gridAppsPage2: [String] = [
+        "Contacts",
+        "Rappels",
+        "Dictaphone",
+        "Wallet",
+    ]
+
+    /// Pages 3+ — apps tierces Awesome (Étape 2).
+    static let gridAppsTier: [String] = AwesomeShowroomCatalog.tierApps
+
+    /// Dock — `ContentView.dockApps` (gelé).
     static let dockApps: [String] = [
         "Telephone",
         "Safari",
@@ -26,7 +37,20 @@ enum CloneShowroomLayout {
         "Musique",
     ]
 
-    static let allApps: [String] = gridApps + dockApps
+    static var allGridApps: [String] {
+        gridApps + gridAppsPage2 + gridAppsTier
+    }
+
+    static let allApps: [String] = allGridApps + dockApps
+
+    /// Grille paginée (16 icônes max par page, comme J-3).
+    static var gridPages: [[String]] {
+        let apps = allGridApps
+        guard !apps.isEmpty else { return [[]] }
+        return stride(from: 0, to: apps.count, by: 16).map { start in
+            Array(apps.dropFirst(start).prefix(16))
+        }
+    }
 
     static func isShowroom(storyId: String?) -> Bool {
         storyId == Self.storyId

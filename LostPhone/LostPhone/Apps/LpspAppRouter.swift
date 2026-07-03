@@ -67,14 +67,13 @@ struct LpspAppRouter: View {
 
     var body: some View {
         let payload = phone.appData(for: appName)
+        let canonical = LpspAppAliases.canonical(appName)
 
         Group {
-            if CloneAppCatalog.isCloneApp(appName) {
-                if useShowroomDefaults {
-                    showroomCloneView(named: appName)
-                } else {
-                    cloneView(named: appName, payload: payload)
-                }
+            if phone.isCloneShowroom && useShowroomDefaults {
+                showroomAppView(named: appName, canonical: canonical)
+            } else if CloneAppCatalog.isCloneApp(appName) {
+                cloneView(named: appName, payload: payload)
             } else {
                 thirdPartyView(named: appName, payload: payload)
             }
@@ -82,34 +81,69 @@ struct LpspAppRouter: View {
     }
 
     @ViewBuilder
+    private func showroomAppView(named appName: String, canonical: String) -> some View {
+        if CloneAppCatalog.isCloneApp(appName) {
+            showroomCloneView(named: appName)
+        } else if AwesomeShowroomCatalog.tierApps.contains(canonical) {
+            AwesomeShowroomRouter.view(for: canonical)
+        } else {
+            showroomAddedView(named: appName, canonical: canonical)
+        }
+    }
+
+    @ViewBuilder
+    private func showroomAddedView(named appName: String, canonical: String) -> some View {
+        switch canonical {
+        case "Contacts":
+            ContactsView()
+        case "Rappels":
+            LpspRappelsView(lists: [])
+        case "Dictaphone":
+            LpspDictaphoneView()
+        case "Wallet":
+            LpspWalletView()
+        default:
+            GenericLpspAppView(appName: appName, payload: nil)
+        }
+    }
+
+    @ViewBuilder
     private func thirdPartyView(named appName: String, payload: AnyCodable?) -> some View {
         switch LpspAppAliases.canonical(appName) {
         case "WhatsApp":
-            LpspWhatsAppView(conversations: LpspAdapters.whatsApp(from: payload))
+            AwesomeShowroomRouter.view(for: "WhatsApp")
         case "Signal":
-            LpspSignalView(conversations: LpspAdapters.signal(from: payload))
+            AwesomeShowroomRouter.view(for: "Signal")
         case "Contacts":
             ContactsView(contacts: contacts)
         case "Uber":
-            LpspUberView(rides: LpspAdapters.uber(from: payload))
+            AwesomeShowroomRouter.view(for: "Uber")
         case "Banque":
-            LpspBanqueView(data: LpspAdapters.banque(from: payload))
+            AwesomeShowroomRouter.view(for: "Banque")
         case "Plans":
-            LpspPlansView(data: LpspAdapters.plans(from: payload))
+            AwesomeShowroomRouter.view(for: "Plans")
         case "Fichiers":
-            LpspFichiersView(files: LpspAdapters.fichiers(from: payload))
+            AwesomeShowroomRouter.view(for: "Fichiers")
         case "Rappels":
             LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Instagram":
-            LpspInstagramView(profile: LpspAdapters.instagram(from: payload))
+            AwesomeShowroomRouter.view(for: "Instagram")
         case "Spotify":
-            LpspSpotifyView(data: LpspAdapters.spotify(from: payload))
+            AwesomeShowroomRouter.view(for: "Spotify")
         case "Netflix":
-            LpspNetflixView(data: LpspAdapters.netflix(from: payload))
+            AwesomeShowroomRouter.view(for: "Netflix")
         case "Apple Music":
-            LpspAppleMusicView(data: LpspAdapters.appleMusic(from: payload))
+            AwesomeShowroomRouter.view(for: "Apple Music")
+        case "Dictaphone":
+            LpspDictaphoneView()
+        case "Wallet":
+            LpspWalletView()
         default:
-            GenericLpspAppView(appName: appName, payload: payload)
+            if AwesomeShowroomCatalog.tierApps.contains(LpspAppAliases.canonical(appName)) {
+                AwesomeShowroomRouter.view(for: appName)
+            } else {
+                GenericLpspAppView(appName: appName, payload: payload)
+            }
         }
     }
 
@@ -144,6 +178,14 @@ struct LpspAppRouter: View {
             AppStoreView()
         case "Musique", "Music":
             MusicView()
+        case "Contacts":
+            ContactsView()
+        case "Rappels":
+            LpspRappelsView(lists: [])
+        case "Dictaphone":
+            LpspDictaphoneView()
+        case "Wallet":
+            LpspWalletView()
         default:
             cloneView(named: appName, payload: nil)
         }
@@ -189,9 +231,19 @@ struct LpspAppRouter: View {
             AppStoreView()
         case "Musique", "Music":
             MusicView(manager: LpspCloneBridge.musicManager(from: payload))
+        case "Contacts":
+            ContactsView(contacts: contacts)
+        case "Rappels":
+            LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
+        case "Dictaphone":
+            LpspDictaphoneView()
+        case "Wallet":
+            LpspWalletView()
         default:
             if let type = CloneAppCatalog.appType(for: appName) {
                 legacyCloneView(type, payload: payload)
+            } else if AwesomeShowroomCatalog.tierApps.contains(LpspAppAliases.canonical(appName)) {
+                AwesomeShowroomRouter.view(for: appName)
             } else {
                 GenericLpspAppView(appName: appName, payload: payload)
             }

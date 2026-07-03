@@ -13,6 +13,8 @@ struct LpspBrandedAppIconContent: View {
         case "Plans": plansIcon
         case "Fichiers": fichiersIcon
         case "Rappels": rappelsIcon
+        case "Dictaphone": dictaphoneIcon
+        case "Wallet": walletIcon
         case "Instagram": instagramIcon
         case "Spotify": spotifyIcon
         case "Netflix": netflixIcon
@@ -221,9 +223,47 @@ struct LpspBrandedAppIconContent: View {
             }
     }
 
+    private var walletIcon: some View {
+        RoundedRectangle(cornerRadius: 15, style: .continuous)
+            .fill(.black)
+            .overlay {
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(white: 0.92), Color(white: 0.65), Color(white: 0.35)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 38, height: 26)
+                    .overlay {
+                        Image(systemName: "applelogo")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.white)
+                    }
+            }
+    }
+
+    private var dictaphoneIcon: some View {
+        RoundedRectangle(cornerRadius: 15, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [Color(red: 0.98, green: 0.23, blue: 0.19), Color(red: 0.85, green: 0.12, blue: 0.10)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay {
+                Image(systemName: "waveform")
+                    .font(.system(size: 28, weight: .medium))
+                    .foregroundStyle(.white)
+            }
+    }
+
     static func isBranded(_ appName: String) -> Bool {
         switch LpspAppAliases.canonical(appName) {
         case "WhatsApp", "Signal", "Uber", "Banque", "Plans", "Fichiers", "Rappels",
+             "Dictaphone", "Wallet",
              "Instagram", "Spotify", "Netflix", "Apple Music":
             return true
         default:

@@ -1,32 +1,35 @@
-# Intégration clones tiers (Reddit / GitHub)
+# Intégration clones tiers (Reddit / GitHub / Awesome)
 
-**Règle : copier le repo à l'identique** (comme Showroom zerocode117). Seuls renommages autorisés : conflits de types (`HomeView`, `ContentView`, …). LPSP branché plus tard.
+**Règle Showroom page 1** : ne pas modifier les 14 clones zerocode117 (gelés).
 
-## Clones vendored (strict)
+## Étape 1 — apps Apple ajoutées (page 2)
 
 | App | Source | Dossier | Entrée |
 |-----|--------|---------|--------|
-| Uber | 264Gaurav/UBER-ios | `UberReddit/` | `UberRedditHomeView()` |
-| Instagram | NDCSwift/InstagramRecreation2 | `InstagramReddit/` | `InstagramRedditContentView()` |
-| Netflix | debuging-life/netflix-clone | `NetflixReddit/` | `NetflixRedditContentView()` |
-| Apple Music | aisultanios/MyPlaylists | `MyPlaylistsReddit/` | `TabBar()` |
-| Rappels | azamsharp/RemindersClone | `RappelsReddit/` | `MyListsScreen()` |
-| Banque | GeraudLuku/YT-BankingApp | `BanqueReddit/` | `BanqueRedditContentView()` |
+| Contacts | ContactsView (SwiftUI existant) | `PhoneApp.swift` | `ContactsView()` |
+| Rappels | amanbind007/Swifty-Reminder-App-iOS | `RappelsSwifty/` | `RappelsSwiftyAppView()` |
+| Calculatrice | zerocode117 (identique AnukarOP) | `CalculatorApp.swift` | `CalculatorView()` |
+| Dictaphone | mushthak/voice-memos-clone-swiftui | `DictaphoneClone/` | `DictaphoneCloneAppView()` |
+| Wallet | Meliwat/awesome-ios-design-md apple-wallet | `WalletClone/` | `WalletCloneAppView()` |
+
+## Étape 2 — apps tierces Awesome
+
+Spec : [Meliwat/awesome-ios-design-md](https://github.com/Meliwat/awesome-ios-design-md) — chaque app suit `DESIGN-swiftui.md`.
+
+- Génération : `python3 LostPhone/scripts/generate_awesome_apps_v2.py` (quasi-conformant par catégorie)
+- Vues : `LostPhone/Apps/Awesome/Generated/LpspAwesome*.swift`
+- Routage : `AwesomeShowroomRouter.swift` + `AwesomeShowroomCatalog.swift`
 
 ## Règles
 
-1. **Copier les fichiers Swift + assets** du repo GitHub tel quel.
-2. **Renommer uniquement les conflits** avec le reste de Lost Phone (types *et* noms de fichiers dupliqués dans la cible Xcode, ex. `Double.swift`).
-3. **Ne pas toucher au Showroom** (`showroom-clone14`).
-4. **Ne pas réécrire l'UI** — pas de version « inspirée » ou simplifiée.
-5. **LPSP** : branchement narratif dans un second temps (onglet dédié ou injection).
-6. Exclure `README.md` / `INTEGRATION.md` du bundle (`project.yml`).
-7. **SwiftUINavigation** (Netflix) : vendored localement dans `Packages/SwiftUINavigation/` (commit `34e67994b4ea`) — le Package.swift upstream exige Swift 6.2, incompatible CI Xcode 16.4.
+1. **Copier les fichiers Swift + assets** du repo GitHub tel quel (Étape 1 vendored).
+2. **Renommer uniquement les conflits** (types *et* noms de fichiers dupliqués).
+3. **Ne pas toucher au socle showroom** (dock, glass, page 1, apps gelées).
+4. **Ne pas réécrire l'UI** des clones vendored — pas de version « inspirée ».
+5. **LPSP** : branchement narratif dans un second temps.
+6. Exclure `README.md` / `INTEGRATION.md` / `playground/` du bundle (`project.yml`).
 
-## File d'attente
+## Supprimé (remplacé par Awesome)
 
-| App | Statut |
-|-----|--------|
-| Plans | ⏳ |
-| Fichiers | ⏳ |
-| Spotify | ⏳ |
+- `UberReddit/`, `InstagramReddit/`, `NetflixReddit/`, `BanqueReddit/`, `MyPlaylistsReddit/`, `RappelsReddit/`
+- `Custom/LpspWhatsAppView.swift`, `LpspSignalView.swift`, `Tier/Lpsp*App.swift`

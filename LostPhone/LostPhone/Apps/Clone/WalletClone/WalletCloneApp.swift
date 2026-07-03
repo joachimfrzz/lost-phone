@@ -13,7 +13,7 @@ struct WalletCloneAppView: View {
                 VStack(spacing: 0) {
                     Text("Wallet")
                         .font(.walletTitle)
-                        .foregroundStyle(.walletTextPrimary)
+                        .foregroundStyle(Color.walletTextPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
@@ -82,7 +82,7 @@ struct WalletCloneAppView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text("LATEST TRANSACTIONS")
                 .font(.walletSectionHdr)
-                .foregroundStyle(.walletTextSecondary)
+                .foregroundStyle(Color.walletTextSecondary)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
 
@@ -155,7 +155,7 @@ private struct AppleCardFace: View {
                     Spacer()
                     Text(dailyCashBalance)
                         .font(.walletBodyMedium)
-                        .foregroundStyle(.walletDailyCash)
+                        .foregroundStyle(Color.walletDailyCash)
                 }
             }
             .padding(16)
@@ -215,7 +215,7 @@ private struct TransactionRow: View {
                 .overlay(Image(systemName: "cart.fill").foregroundStyle(.white).font(.system(size: 14)))
             VStack(alignment: .leading, spacing: 2) {
                 Text(merchant).font(.walletBody).foregroundStyle(.white)
-                Text(date).font(.walletFootnote).foregroundStyle(.walletTextSecondary)
+                Text(date).font(.walletFootnote).foregroundStyle(Color.walletTextSecondary)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
@@ -223,7 +223,7 @@ private struct TransactionRow: View {
                 if let dc = dailyCash {
                     Text("Daily Cash \(dc)")
                         .font(.walletCaption)
-                        .foregroundStyle(.walletDailyCash)
+                        .foregroundStyle(Color.walletDailyCash)
                 }
             }
         }

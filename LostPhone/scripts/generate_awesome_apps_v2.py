@@ -749,7 +749,7 @@ private struct {slug_name}TransactionRow: View {{
             Circle().fill(tx.color.opacity(0.2)).frame(width: 44, height: 44).overlay(Image(systemName: tx.icon).foregroundStyle(tx.color))
             VStack(alignment: .leading) {{ Text(tx.title).font(.system(size: 16, weight: .medium)); Text(tx.date).font(.system(size: 13)).foregroundStyle(.secondary) }}
             Spacer()
-            Text(tx.amount).font(.system(size: 16, weight: .semibold)).foregroundStyle(tx.amount.hasPrefix("-") ? .primary : .green)
+            Text(tx.amount).font(.system(size: 16, weight: .semibold)).foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
         }}
     }}
 }}

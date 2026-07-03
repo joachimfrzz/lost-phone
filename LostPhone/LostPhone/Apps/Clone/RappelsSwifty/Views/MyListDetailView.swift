@@ -53,8 +53,10 @@ struct MyListDetailView: View {
     }
 }
 
+/*
 struct MyListDetailView_Previews: PreviewProvider {
     static var previews: some View {
         MyListDetailView(myList: PreviewData.myList)
     }
 }
+*/

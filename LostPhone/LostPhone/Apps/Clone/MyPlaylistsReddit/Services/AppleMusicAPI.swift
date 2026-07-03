@@ -119,7 +119,7 @@ class AppleMusicAPI {
                             if data != nil {
                                 let playParams = try? decoder.decode(MPMusicPlayerPlayParameters.self, from: data!)
                                 DispatchQueue.main.async { [self] in
-                                playlistsArray.append(PlaylistWithMusicStructure(Playlist: playlist?.first ?? nil, Tracks: [Track?](), PlayParams: playParams ?? nil))
+                                playlistsArray.append(PlaylistWithMusicStructure(Playlist: playlist?.first ?? nil, Tracks: [MusicKit.Track?](), PlayParams: playParams ?? nil))
                                     if playlistsArray.count == playlist_ids.count {
                                         onCompletion(.SUCCESS, playlistsArray)
                                     }

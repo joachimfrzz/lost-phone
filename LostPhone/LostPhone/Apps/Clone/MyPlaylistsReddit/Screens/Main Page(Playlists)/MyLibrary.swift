@@ -632,7 +632,7 @@ struct LibraryElementsStructure: Identifiable {
 struct PlaylistWithMusicStructure {
         
     var Playlist: Playlist?
-    var Tracks: [Track?]
+    var Tracks: [MusicKit.Track?]
     var PlayParams: MPMusicPlayerPlayParameters?
     
 }

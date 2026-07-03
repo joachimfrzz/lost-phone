@@ -41,9 +41,9 @@ struct trackIcon: Identifiable, Hashable {
     
     let id: String
     var image: UIImage
-    let track: Track
+    let track: MusicKit.Track
     
-    init(image: UIImage, track: Track) {
+    init(image: UIImage, track: MusicKit.Track) {
         self.id = UUID().uuidString
         self.image = image
         self.track = track

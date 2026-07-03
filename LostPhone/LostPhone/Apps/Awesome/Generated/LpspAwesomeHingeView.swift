@@ -10,6 +10,26 @@ struct LpspAwesomeHingeView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspHingeFonts {
+    static let hingeDisplay      = Font.system(size: 36, weight: .regular)
+    static let hingeName         = Font.system(size: 28, weight: .regular)
+    static let hingePromptQ      = Font.system(size: 22, weight: .regular)
+    static let hingePromptA      = Font.system(size: 24, weight: .regular)
+    static let hingeSection      = Font.system(size: 18, weight: .regular)
+    static let hingeButton       = Font.system(size: 16, weight: .regular)
+    static let hingeBody         = Font.system(size: 16, weight: .regular)
+    static let hingeBodyBold     = Font.system(size: 16, weight: .regular)
+    static let hingeChip         = Font.system(size: 14, weight: .regular)
+    static let hingeMeta         = Font.system(size: 13, weight: .regular)
+    static let hingeCaption      = Font.system(size: 12, weight: .regular)
+    static let hingeTab          = Font.system(size: 10, weight: .regular)
+    static let hingeCommentInput = Font.system(size: 16, weight: .regular)
+    static let hingeMatchBanner  = Font.system(size: 14, weight: .regular)
+    static func hinge(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspHingeTokens {
     // MARK: - Canvas & Surfaces (the cream paper)
     static let hingeCream        = Color(red: 0.992, green: 0.973, blue: 0.949) // #FDF8F2 canvas
@@ -46,34 +66,10 @@ private enum LpspHingeTokens {
     static let hingeRoseDark     = Color(red: 0.941, green: 0.690, blue: 0.361) // #F0B05C OLED-brightened
 }
 
-private enum LpspHingeFonts {
-    // Display / hero
-    static let hingeDisplay      = Font.system(size: 36, weight: .regular)
-    static let hingeName         = Font.system(size: 28, weight: .regular)
-    static let hingePromptQ      = Font.system(size: 22, weight: .regular)
-    static let hingePromptA      = Font.system(size: 24, weight: .regular)
 
-    // Sections / body
-    static let hingeSection      = Font.system(size: 18, weight: .regular)
-    static let hingeButton       = Font.system(size: 16, weight: .regular)
-
-    // Chrome via Inter
-    static let hingeBody         = Font.system(size: 16, weight: .regular)
-    static let hingeBodyBold     = Font.system(size: 16, weight: .regular)
-    static let hingeChip         = Font.system(size: 14, weight: .regular)
-    static let hingeMeta         = Font.system(size: 13, weight: .regular)
-    static let hingeCaption      = Font.system(size: 12, weight: .regular)
-    static let hingeTab          = Font.system(size: 10, weight: .regular)
-    static let hingeCommentInput = Font.system(size: 16, weight: .regular)
-    static let hingeMatchBanner  = Font.system(size: 14, weight: .regular)
-}
 
 // If Sailec/Inter aren't bundled, this fallback keeps the warm system substitute:
-private enum LpspHingeFonts {
-    static func hinge(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
 
 private struct LpspHingeHeartTap: View {
     @Binding var isFilled: Bool
@@ -88,14 +84,14 @@ private struct LpspHingeHeartTap: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(isFilled ? LpspHingeTokens.hingeBlack : LpspHingeTokens.hingePaper)
+                    .fill(isFilled ? Color.hingeBlack : Color.hingePaper)
                     .overlay(
-                        Circle().strokeBorder(LpspHingeTokens.hingeBlack, lineWidth: 1)
+                        Circle().strokeBorder(Color.hingeBlack, lineWidth: 1)
                     )
                     .frame(width: 44, height: 44)
                 Image(systemName: "heart.fill")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(isFilled ? LpspHingeTokens.hingePaper : LpspHingeTokens.hingeBlack)
+                    .foregroundStyle(isFilled ? Color.hingePaper : Color.hingeBlack)
                     .scaleEffect(isFilled ? 1.0 : 0.92)
             }
         }
@@ -113,13 +109,13 @@ private struct LpspHingePromptCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(question)
                 .font(LpspHingeFonts.hingePromptQ)
-                .foregroundStyle(LpspHingeTokens.hingeGraphite)
+                .foregroundStyle(Color.hingeGraphite)
                 .italic() // Hinge italicizes certain templates
                 .padding(.bottom, 12)
 
             Text(answer)
                 .font(LpspHingeFonts.hingePromptA)
-                .foregroundStyle(LpspHingeTokens.hingeBlack)
+                .foregroundStyle(Color.hingeBlack)
                 .lineSpacing(4)
                 .padding(.bottom, 16)
 
@@ -132,9 +128,9 @@ private struct LpspHingePromptCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LpspHingeTokens.hingePaper)
+                .fill(Color.hingePaper)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16).strokeBorder(LpspHingeTokens.hingeDividerBone, lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: 16).strokeBorder(Color.hingeDividerBone, lineWidth: 0.5)
                 )
         )
         .shadow(color: Color(red: 0.110, green: 0.078, blue: 0.039).opacity(0.06), radius: 8, y: 2)
@@ -169,19 +165,19 @@ private struct LpspHingeAttributeChip: View {
         HStack(spacing: 6) {
             Image(systemName: glyph)
                 .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(LpspHingeTokens.hingeBlack)
+                .foregroundStyle(Color.hingeBlack)
             Text(label)
                 .font(LpspHingeFonts.hingeChip)
-                .foregroundStyle(LpspHingeTokens.hingeBlack)
+                .foregroundStyle(Color.hingeBlack)
             if isVerified {
                 Image(systemName: "checkmark.seal.fill")
                     .font(.system(size: 12))
-                    .foregroundStyle(LpspHingeTokens.hingeMatchGreen)
+                    .foregroundStyle(Color.hingeMatchGreen)
             }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 14)
-        .background(Capsule().fill(LpspHingeTokens.hingeSand))
+        .background(Capsule().fill(Color.hingeSand))
     }
 }
 
@@ -195,15 +191,15 @@ private struct LpspHingeStandoutsCard: View {
             HStack(spacing: 6) {
                 Image(systemName: "star.fill")
                     .font(.system(size: 14))
-                    .foregroundStyle(LpspHingeTokens.hingeRose)
+                    .foregroundStyle(Color.hingeRose)
                 Text("Standout")
                     .font(.custom("Sailec-Bold", size: 12))
-                    .foregroundStyle(LpspHingeTokens.hingeBlack)
+                    .foregroundStyle(Color.hingeBlack)
                 Spacer()
             }
             .frame(height: 32)
             .padding(.horizontal, 16)
-            .background(LpspHingeTokens.hingeRoseLight)
+            .background(Color.hingeRoseLight)
 
             photo
                 .resizable()
@@ -213,18 +209,18 @@ private struct LpspHingeStandoutsCard: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text(answer)
                     .font(LpspHingeFonts.hingePromptA)
-                    .foregroundStyle(LpspHingeTokens.hingeBlack)
+                    .foregroundStyle(Color.hingeBlack)
                 LpspHingeRoseCTA(label: "Send a Rose", action: onSendRose)
             }
             .padding(16)
         }
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(LpspHingeTokens.hingePaper)
+                .fill(Color.hingePaper)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20).strokeBorder(
                         LinearGradient(
-                            colors: [LpspHingeTokens.hingeRose, LpspHingeTokens.hingeRoseLight, LpspHingeTokens.hingeRose],
+                            colors: [Color.hingeRose, Color.hingeRoseLight, Color.hingeRose],
                             startPoint: .topLeading, endPoint: .bottomTrailing
                         ),
                         lineWidth: 1
@@ -245,17 +241,17 @@ private struct LpspHingeRoseCTA: View {
             HStack(spacing: 10) {
                 Image(systemName: "leaf.fill") // Rose glyph stand-in via SF Symbols
                     .font(.system(size: 16))
-                    .foregroundStyle(LpspHingeTokens.hingeRose)
+                    .foregroundStyle(Color.hingeRose)
                 Text(label)
                     .font(LpspHingeFonts.hingeButton)
-                    .foregroundStyle(LpspHingeTokens.hingePaper)
+                    .foregroundStyle(Color.hingePaper)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 56)
             .background(
                 Capsule()
-                    .fill(LpspHingeTokens.hingeBlack)
-                    .overlay(Capsule().strokeBorder(LpspHingeTokens.hingeRose, lineWidth: 1))
+                    .fill(Color.hingeBlack)
+                    .overlay(Capsule().strokeBorder(Color.hingeRose, lineWidth: 1))
             )
         }
         .buttonStyle(.plain)
@@ -271,10 +267,10 @@ private struct LpspHingeHingePrimaryButton: View {
         Button(action: action) {
             Text(label)
                 .font(LpspHingeFonts.hingeButton)
-                .foregroundStyle(LpspHingeTokens.hingePaper)
+                .foregroundStyle(Color.hingePaper)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(Capsule().fill(LpspHingeTokens.hingeBlack))
+                .background(Capsule().fill(Color.hingeBlack))
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
@@ -295,10 +291,10 @@ private struct LpspHingeCommentSheet: View {
             HStack(spacing: 10) {
                 TextField("Add a comment about her response", text: $comment, axis: .vertical)
                     .font(LpspHingeFonts.hingeCommentInput)
-                    .foregroundStyle(LpspHingeTokens.hingeBlack)
+                    .foregroundStyle(Color.hingeBlack)
                     .padding(.vertical, 14)
                     .padding(.horizontal, 20)
-                    .background(Capsule().fill(LpspHingeTokens.hingeSand))
+                    .background(Capsule().fill(Color.hingeSand))
                     .lineLimit(1...4)
 
                 Button {
@@ -306,9 +302,9 @@ private struct LpspHingeCommentSheet: View {
                 } label: {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(LpspHingeTokens.hingePaper)
+                        .foregroundStyle(Color.hingePaper)
                         .frame(width: 44, height: 44)
-                        .background(Circle().fill(comment.isEmpty ? LpspHingeTokens.hingeBone : LpspHingeTokens.hingeBlack))
+                        .background(Circle().fill(comment.isEmpty ? Color.hingeBone : Color.hingeBlack))
                 }
                 .disabled(comment.isEmpty)
                 .sensoryFeedback(.impact(weight: .medium), trigger: comment.isEmpty == false)
@@ -319,7 +315,7 @@ private struct LpspHingeCommentSheet: View {
         .padding(.top, 24)
         .background(
             RoundedRectangle(cornerRadius: 24)
-                .fill(LpspHingeTokens.hingePaper)
+                .fill(Color.hingePaper)
                 .ignoresSafeArea(edges: .bottom)
         )
     }
@@ -336,12 +332,12 @@ private struct LpspHingeMatchCelebration: View {
 
     var body: some View {
         ZStack {
-            LpspHingeTokens.hingeCream.ignoresSafeArea()
+            Color.hingeCream.ignoresSafeArea()
 
             // Confetti layer (Rose Gold particles)
             ForEach(0..<24, id: \.self) { i in
                 Circle()
-                    .fill(LpspHingeTokens.hingeRose)
+                    .fill(Color.hingeRose)
                     .frame(width: CGFloat.random(in: 4...10), height: CGFloat.random(in: 4...10))
                     .offset(x: CGFloat.random(in: -160...160), y: confettiTrigger ? 600 : -300)
                     .opacity(confettiTrigger ? 0 : 1)
@@ -361,18 +357,18 @@ private struct LpspHingeMatchCelebration: View {
                 VStack(spacing: 8) {
                     Text("It's a match!")
                         .font(LpspHingeFonts.hingeDisplay)
-                        .foregroundStyle(LpspHingeTokens.hingeBlack)
+                        .foregroundStyle(Color.hingeBlack)
                         .tracking(-0.6)
                     Text("You and \(theirName) liked each other")
                         .font(LpspHingeFonts.hingeBody)
-                        .foregroundStyle(LpspHingeTokens.hingeGraphite)
+                        .foregroundStyle(Color.hingeGraphite)
                 }
 
                 VStack(spacing: 12) {
                     LpspHingeHingePrimaryButton(label: "Send a message", action: onMessage)
                     Button("Keep browsing", action: onKeepBrowsing)
                         .font(.custom("Inter-Medium", size: 14))
-                        .foregroundStyle(LpspHingeTokens.hingeGraphite)
+                        .foregroundStyle(Color.hingeGraphite)
                 }
                 .padding(.horizontal, 24)
             }
@@ -389,7 +385,7 @@ private struct LpspHingeRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        appearance.backgroundColor = UIColor(LpspHingeTokens.hingeCream).withAlphaComponent(0.92)
+        appearance.backgroundColor = UIColor(Color.hingeCream).withAlphaComponent(0.92)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -402,7 +398,7 @@ private struct LpspHingeRootTabView: View {
             MatchesView()   .tabItem { Label("Matches",    systemImage: "bubble.left") }
             ProfileView()   .tabItem { Label("Profile",    systemImage: "person") }
         }
-        .tint(LpspHingeTokens.hingeBlack) // Hinge does not use color on active tab — it uses fill + warm black
+        .tint(Color.hingeBlack) // Hinge does not use color on active tab — it uses fill + warm black
     }
 }
 

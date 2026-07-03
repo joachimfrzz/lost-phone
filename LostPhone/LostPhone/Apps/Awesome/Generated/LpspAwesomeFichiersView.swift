@@ -10,6 +10,23 @@ struct LpspAwesomeFichiersView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspFichiersFonts {
+    static let dbxTitleLarge  = Font.system(size: 28, weight: .regular)
+    static let dbxSection     = Font.system(size: 22, weight: .regular)
+    static let dbxSheetTitle  = Font.system(size: 20, weight: .regular)
+    static let dbxCardTitle   = Font.system(size: 17, weight: .regular)
+    static let dbxRowName     = Font.system(size: 16, weight: .regular)
+    static let dbxBody        = Font.system(size: 15, weight: .regular)
+    static let dbxMeta        = Font.system(size: 14, weight: .regular)
+    static let dbxCaption     = Font.system(size: 12, weight: .regular)
+    static let dbxLabelUpper  = Font.system(size: 11, weight: .regular)
+    static let dbxButton      = Font.system(size: 16, weight: .regular)
+    static let dbxTab         = Font.system(size: 11, weight: .regular)
+    static func dbx(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspFichiersTokens {
     // MARK: - Canvas & Surfaces (Light)
     static let dbxCanvas     = Color.white                                   // #FFFFFF
@@ -44,26 +61,10 @@ private enum LpspFichiersTokens {
     static let dbxError   = Color(red: 0.820, green: 0.094, blue: 0.043)       // #D1180B
 }
 
-private enum LpspFichiersFonts {
-    static let dbxTitleLarge  = Font.system(size: 28, weight: .regular)
-    static let dbxSection     = Font.system(size: 22, weight: .regular)
-    static let dbxSheetTitle  = Font.system(size: 20, weight: .regular)
-    static let dbxCardTitle   = Font.system(size: 17, weight: .regular)
-    static let dbxRowName     = Font.system(size: 16, weight: .regular)
-    static let dbxBody        = Font.system(size: 15, weight: .regular)
-    static let dbxMeta        = Font.system(size: 14, weight: .regular)
-    static let dbxCaption     = Font.system(size: 12, weight: .regular)
-    static let dbxLabelUpper  = Font.system(size: 11, weight: .regular)
-    static let dbxButton      = Font.system(size: 16, weight: .regular)
-    static let dbxTab         = Font.system(size: 11, weight: .regular)
-}
+
 
 // If Sharp Grotesk / Inter is unavailable, fall back to the system grotesque:
-private enum LpspFichiersFonts {
-    static func dbx(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
 
 // Tabular figures for file sizes / dates / counts
 extension View {
@@ -84,7 +85,7 @@ private struct LpspFichiersDbxPrimaryButton: View {
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspFichiersTokens.dbxBlue.opacity(enabled ? 1 : 0.4))
+                        .fill(Color.dbxBlue.opacity(enabled ? 1 : 0.4))
                 )
         }
         .disabled(!enabled)
@@ -110,8 +111,8 @@ private struct LpspFichiersDbxUploadFAB: View {
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 56, height: 56)
-                .background(Circle().fill(LpspFichiersTokens.dbxBlue))
-                .shadow(color: LpspFichiersTokens.dbxBlue.opacity(0.32), radius: 20, y: 8)
+                .background(Circle().fill(Color.dbxBlue))
+                .shadow(color: Color.dbxBlue.opacity(0.32), radius: 20, y: 8)
         }
         .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
         .buttonStyle(LpspFichiersDbxPressableStyle(pressedScale: 0.92))
@@ -131,11 +132,11 @@ private struct LpspFichiersDbxFileRow: View {
 
     private var iconColor: Color {
         switch kind {
-        case .pdf:    return LpspFichiersTokens.dbxPdfRed
-        case .doc:    return LpspFichiersTokens.dbxBlue
-        case .sheet:  return LpspFichiersTokens.dbxSheetGreen
-        case .image:  return LpspFichiersTokens.dbxImageTeal
-        case .folder: return LpspFichiersTokens.dbxFolderSlate
+        case .pdf:    return .dbxPdfRed
+        case .doc:    return .dbxBlue
+        case .sheet:  return .dbxSheetGreen
+        case .image:  return .dbxImageTeal
+        case .folder: return .dbxFolderSlate
         }
     }
     private var iconSymbol: String {
@@ -154,7 +155,7 @@ private struct LpspFichiersDbxFileRow: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 28))
-                        .foregroundStyle(LpspFichiersTokens.dbxBlue)
+                        .foregroundStyle(Color.dbxBlue)
                         .frame(width: 40, height: 40)
                 } else {
                     RoundedRectangle(cornerRadius: 8)
@@ -170,11 +171,11 @@ private struct LpspFichiersDbxFileRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
                         .font(LpspFichiersFonts.dbxRowName)
-                        .foregroundStyle(LpspFichiersTokens.dbxTextPrimary)
+                        .foregroundStyle(Color.dbxTextPrimary)
                         .lineLimit(1)
                     Text(meta)
                         .font(LpspFichiersFonts.dbxMeta)
-                        .foregroundStyle(LpspFichiersTokens.dbxTextSecondary)
+                        .foregroundStyle(Color.dbxTextSecondary)
                         .dbxTabularNumbers()
                         .lineLimit(1)
                 }
@@ -183,11 +184,11 @@ private struct LpspFichiersDbxFileRow: View {
 
                 Image(systemName: kind == .folder ? "chevron.right" : "ellipsis")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(LpspFichiersTokens.dbxTextSecondary)
+                    .foregroundStyle(Color.dbxTextSecondary)
             }
             .padding(.horizontal, 16)
             .frame(height: 60)
-            .background(isSelected ? LpspFichiersTokens.dbxBlueTint : LpspFichiersTokens.dbxCanvas)
+            .background(isSelected ? Color.dbxBlueTint : Color.dbxCanvas)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -202,30 +203,30 @@ private struct LpspFichiersDbxRecentCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack {
-                RoundedRectangle(cornerRadius: 4).fill(LpspFichiersTokens.dbxSurface)
+                RoundedRectangle(cornerRadius: 4).fill(Color.dbxSurface)
                 if let thumbnail {
                     thumbnail.resizable().aspectRatio(contentMode: .fill)
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                 } else {
                     Image(systemName: "doc.fill")
-                        .font(.system(size: 28)).foregroundStyle(LpspFichiersTokens.dbxBlue)
+                        .font(.system(size: 28)).foregroundStyle(Color.dbxBlue)
                 }
             }
             .frame(width: 140, height: 96)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(name).font(LpspFichiersFonts.dbxCardTitle)
-                    .foregroundStyle(LpspFichiersTokens.dbxTextPrimary).lineLimit(2)
+                    .foregroundStyle(Color.dbxTextPrimary).lineLimit(2)
                 Text(meta).font(LpspFichiersFonts.dbxCaption)
-                    .foregroundStyle(LpspFichiersTokens.dbxTextSecondary).dbxTabularNumbers()
+                    .foregroundStyle(Color.dbxTextSecondary).dbxTabularNumbers()
             }
         }
         .padding(12)
         .frame(width: 140, height: 160, alignment: .top)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(LpspFichiersTokens.dbxCanvas)
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(LpspFichiersTokens.dbxDivider, lineWidth: 1))
+                .fill(Color.dbxCanvas)
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.dbxDivider, lineWidth: 1))
         )
     }
 }
@@ -239,17 +240,17 @@ private struct LpspFichiersDbxUploadBar: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(label).font(.dbxMeta.weight(.semibold))
-                    .foregroundStyle(LpspFichiersTokens.dbxTextPrimary)
+                    .foregroundStyle(Color.dbxTextPrimary)
                 Spacer()
                 if done {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(LpspFichiersTokens.dbxSuccess)
+                        .foregroundStyle(Color.dbxSuccess)
                 }
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(LpspFichiersTokens.dbxDivider)
-                    Capsule().fill(LpspFichiersTokens.dbxBlue)
+                    Capsule().fill(Color.dbxDivider)
+                    Capsule().fill(Color.dbxBlue)
                         .frame(width: geo.size.width * progress)
                         .animation(.linear(duration: 0.2), value: progress)
                 }
@@ -258,7 +259,7 @@ private struct LpspFichiersDbxUploadBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(LpspFichiersTokens.dbxCanvas)
+        .background(Color.dbxCanvas)
     }
 }
 
@@ -266,7 +267,7 @@ private struct LpspFichiersDbxRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = UIColor(LpspFichiersTokens.dbxCanvas).withAlphaComponent(0.94)
+        appearance.backgroundColor = UIColor(Color.dbxCanvas).withAlphaComponent(0.94)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -278,7 +279,7 @@ private struct LpspFichiersDbxRootTabView: View {
             OfflineView().tabItem { Label("Offline", systemImage: "arrow.down.circle") }
             AccountView().tabItem { Label("Account", systemImage: "person.crop.circle") }
         }
-        .tint(LpspFichiersTokens.dbxBlue) // active = Dropbox Blue
+        .tint(.dbxBlue) // active = Dropbox Blue
     }
 }
 
@@ -299,13 +300,13 @@ private struct LpspFichiersDbxPhotoGrid: View {
                         .overlay(alignment: .topTrailing) {
                             if selected.contains(i) {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(LpspFichiersTokens.dbxBlue, .white)
+                                    .foregroundStyle(Color.dbxBlue, .white)
                                     .padding(6)
                             }
                         }
                         .overlay(
                             Rectangle().strokeBorder(
-                                selected.contains(i) ? LpspFichiersTokens.dbxBlue : .clear, lineWidth: 4)
+                                selected.contains(i) ? Color.dbxBlue : .clear, lineWidth: 4)
                         )
                         .onLongPressGesture { toggle(i) }
                 }

@@ -11,42 +11,34 @@ struct LpspAwesomeBinanceView: View {
 
 // MARK: - Composants spec (préfixés)
 private enum LpspBinanceTokens {
-    // MARK: - Canvas & Surfaces (Dark — default)
     static let bnCanvas    = Color(red: 0.043, green: 0.055, blue: 0.067) // #0B0E11
     static let bnSurface1  = Color(red: 0.094, green: 0.102, blue: 0.125) // #181A20
     static let bnSurface2  = Color(red: 0.118, green: 0.125, blue: 0.149) // #1E2026
     static let bnSurface3  = Color(red: 0.169, green: 0.192, blue: 0.224) // #2B3139
     static let bnDivider   = Color(red: 0.169, green: 0.192, blue: 0.224) // #2B3139
-
-    // MARK: - Canvas & Surfaces (Light — secondary)
     static let bnCanvasLight   = Color.white                                  // #FFFFFF
     static let bnSurface1Light = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let bnDividerLight  = Color(red: 0.918, green: 0.925, blue: 0.937) // #EAECEF
-
-    // MARK: - Brand & Market Semantics
     static let bnYellow        = Color(red: 0.941, green: 0.725, blue: 0.043) // #F0B90B
     static let bnYellowPressed  = Color(red: 0.788, green: 0.580, blue: 0.0)  // #C99400
     static let bnUp            = Color(red: 0.055, green: 0.796, blue: 0.506) // #0ECB81
     static let bnDown          = Color(red: 0.965, green: 0.275, blue: 0.365) // #F6465D
     static let bnUpPressed     = Color(red: 0.043, green: 0.647, blue: 0.447) // #0BA572
     static let bnDownPressed   = Color(red: 0.851, green: 0.220, blue: 0.286) // #D93849
-
-    // MARK: - Text
     static let bnTextPrimary    = Color(red: 0.918, green: 0.925, blue: 0.937) // #EAECEF
     static let bnTextSecondary  = Color(red: 0.518, green: 0.557, blue: 0.612) // #848E9C
     static let bnTextTertiary   = Color(red: 0.369, green: 0.400, blue: 0.451) // #5E6673
     static let bnTextPrimaryLt  = Color(red: 0.118, green: 0.137, blue: 0.161) // #1E2329
-
-    // MARK: - Semantic / Info
     static let bnInfo  = Color(red: 0.200, green: 0.459, blue: 0.733) // #3375BB
-}
-
-// Tints
-private enum LpspBinanceTokens {
     static let bnYellowTint = LpspBinanceTokens.bnYellow.opacity(0.12)
     static let bnAskFill    = LpspBinanceTokens.bnDown.opacity(0.14)
     static let bnBidFill     = LpspBinanceTokens.bnUp.opacity(0.14)
 }
+
+
+
+// Tints
+
 
 private enum LpspBinanceFonts {
     // UI Sans (IBM Plex Sans)

@@ -10,6 +10,27 @@ struct LpspAwesomeTikTokView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspTikTokFonts {
+    static let tiktokDisplayName = Font.system(size: 24, weight: .regular)
+    static let tiktokSheetTitle  = Font.system(size: 17, weight: .regular)
+    static let tiktokUsername    = Font.system(size: 16, weight: .regular)
+    static let tiktokCaption     = Font.system(size: 15, weight: .regular)
+    static let tiktokHashtag     = Font.system(size: 15, weight: .regular)
+    static let tiktokActionCount = Font.system(size: 13, weight: .regular)
+    static let tiktokMusic       = Font.system(size: 13, weight: .regular)
+    static let tiktokUsernameList = Font.system(size: 15, weight: .regular)
+    static let tiktokBody         = Font.system(size: 14, weight: .regular)
+    static let tiktokMeta         = Font.system(size: 12, weight: .regular)
+    static let tiktokButtonPrimary   = Font.system(size: 16, weight: .regular)
+    static let tiktokButtonSecondary = Font.system(size: 14, weight: .regular)
+    static let tiktokFollow          = Font.system(size: 14, weight: .regular)
+    static let tiktokTab             = Font.system(size: 10, weight: .regular)
+    static let tiktokChip            = Font.system(size: 13, weight: .regular)
+    static func tiktok(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspTikTokTokens {
     // MARK: - Canvas & Surfaces
     static let tiktokCanvas      = Color(red: 0.004, green: 0.004, blue: 0.004) // #010101
@@ -34,41 +55,14 @@ private enum LpspTikTokTokens {
     static let tiktokScrubberTrack = Color.white.opacity(0.3)
 }
 
-private enum LpspTikTokFonts {
-    // Headlines
-    static let tiktokDisplayName = Font.system(size: 24, weight: .regular)
-    static let tiktokSheetTitle  = Font.system(size: 17, weight: .regular)
 
-    // Feed overlays
-    static let tiktokUsername    = Font.system(size: 16, weight: .regular)
-    static let tiktokCaption     = Font.system(size: 15, weight: .regular)
-    static let tiktokHashtag     = Font.system(size: 15, weight: .regular)
-    static let tiktokActionCount = Font.system(size: 13, weight: .regular)
-    static let tiktokMusic       = Font.system(size: 13, weight: .regular)
-
-    // Lists / sheets
-    static let tiktokUsernameList = Font.system(size: 15, weight: .regular)
-    static let tiktokBody         = Font.system(size: 14, weight: .regular)
-    static let tiktokMeta         = Font.system(size: 12, weight: .regular)
-
-    // Controls
-    static let tiktokButtonPrimary   = Font.system(size: 16, weight: .regular)
-    static let tiktokButtonSecondary = Font.system(size: 14, weight: .regular)
-    static let tiktokFollow          = Font.system(size: 14, weight: .regular)
-    static let tiktokTab             = Font.system(size: 10, weight: .regular)
-    static let tiktokChip            = Font.system(size: 13, weight: .regular)
-}
 
 // Fallback if Proxima Nova isn't bundled:
-private enum LpspTikTokFonts {
-    static func tiktok(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
 
 private struct LpspTikTokTikTokTextShadow: ViewModifier {
     func body(content: Content) -> some View {
-        content.shadow(color: LpspTikTokTokens.tiktokScrimMedium, radius: 4, x: 0, y: 1)
+        content.shadow(color: .tiktokScrimMedium, radius: 4, x: 0, y: 1)
     }
 }
 
@@ -82,10 +76,10 @@ private struct LpspTikTokChromaticAberration: ViewModifier {
     func body(content: Content) -> some View {
         ZStack {
             content
-                .foregroundStyle(LpspTikTokTokens.tiktokCyan)
+                .foregroundStyle(Color.tiktokCyan)
                 .offset(x: -offset)
             content
-                .foregroundStyle(LpspTikTokTokens.tiktokRose)
+                .foregroundStyle(Color.tiktokRose)
                 .offset(x: offset)
             content
                 .foregroundStyle(.white)
@@ -117,7 +111,7 @@ private struct LpspTikTokTikTokFollowButton: View {
                 .frame(minHeight: 28)
                 .background(
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(isFollowing ? LpspTikTokTokens.tiktokFollowerGray : LpspTikTokTokens.tiktokRose)
+                        .fill(isFollowing ? Color.tiktokFollowerGray : Color.tiktokRose)
                 )
         }
         .sensoryFeedback(.success, trigger: isFollowing) { old, new in !old && new }
@@ -141,16 +135,16 @@ private struct LpspTikTokTikTokCreateButton: View {
         Button(action: action) {
             ZStack {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(LpspTikTokTokens.tiktokCyan)
+                    .fill(Color.tiktokCyan)
                     .offset(x: -3)
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(LpspTikTokTokens.tiktokRose)
+                    .fill(Color.tiktokRose)
                     .offset(x: 3)
                 RoundedRectangle(cornerRadius: 8)
                     .fill(.white)
                 Image(systemName: "plus")
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(LpspTikTokTokens.tiktokCanvas)
+                    .foregroundStyle(Color.tiktokCanvas)
             }
             .frame(width: 44, height: 30)
             .compositingGroup()
@@ -176,7 +170,7 @@ private struct LpspTikTokActionRail: View {
             avatarBadge
             LpspTikTokActionIcon(systemName: isLiked ? "heart.fill" : "heart",
                        count: likeCount,
-                       tint: isLiked ? LpspTikTokTokens.tiktokRose : .white) {
+                       tint: isLiked ? .tiktokRose : .white) {
                 isLiked.toggle()
                 likeCount += isLiked ? 1 : -1
             }
@@ -190,7 +184,7 @@ private struct LpspTikTokActionRail: View {
 
     private var avatarBadge: some View {
         ZStack(alignment: .bottom) {
-            AsyncImage(url: avatarURL) { $0.resizable() } placeholder: { LpspTikTokTokens.tiktokSurface }
+            AsyncImage(url: avatarURL) { $0.resizable() } placeholder: { Color.tiktokSurface }
                 .frame(width: 48, height: 48)
                 .clipShape(Circle())
                 .overlay(Circle().stroke(.white, lineWidth: 2))
@@ -200,7 +194,7 @@ private struct LpspTikTokActionRail: View {
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 18, height: 18)
-                        .background(Circle().fill(LpspTikTokTokens.tiktokRose))
+                        .background(Circle().fill(Color.tiktokRose))
                 }
                 .offset(y: 9)
                 .sensoryFeedback(.success, trigger: isFollowed)
@@ -221,7 +215,7 @@ private struct LpspTikTokActionIcon: View {
                 Image(systemName: systemName)
                     .font(.system(size: 30, weight: .semibold))
                     .foregroundStyle(tint)
-                    .shadow(color: LpspTikTokTokens.tiktokScrimLight, radius: 3, x: 0, y: 1)
+                    .shadow(color: .tiktokScrimLight, radius: 3, x: 0, y: 1)
                 Text(LpspTikTokTikTokCount.format(count))
                     .font(LpspTikTokFonts.tiktokActionCount)
                     .foregroundStyle(.white)
@@ -248,8 +242,8 @@ private struct LpspTikTokSpinningMusicDisc: View {
 
     var body: some View {
         ZStack {
-            Circle().fill(LpspTikTokTokens.tiktokCanvas)
-            AsyncImage(url: artwork) { $0.resizable() } placeholder: { LpspTikTokTokens.tiktokSurface }
+            Circle().fill(Color.tiktokCanvas)
+            AsyncImage(url: artwork) { $0.resizable() } placeholder: { Color.tiktokSurface }
                 .frame(width: 28, height: 28)
                 .clipShape(Circle())
             Circle().stroke(.white.opacity(0.4), lineWidth: 1)
@@ -319,7 +313,7 @@ private struct LpspTikTokDoubleTapLike: ViewModifier {
                         ForEach(hearts) { heart in
                             Image(systemName: "heart.fill")
                                 .font(.system(size: 120, weight: .bold))
-                                .foregroundStyle(LpspTikTokTokens.tiktokRose)
+                                .foregroundStyle(Color.tiktokRose)
                                 .scaleEffect(heart.scale)
                                 .opacity(heart.opacity)
                                 .position(heart.position)
@@ -367,8 +361,8 @@ private struct LpspTikTokVideoScrubber: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
-                Capsule().fill(LpspTikTokTokens.tiktokScrubberTrack)
-                Capsule().fill(LpspTikTokTokens.tiktokRose).frame(width: proxy.size.width * progress)
+                Capsule().fill(Color.tiktokScrubberTrack)
+                Capsule().fill(Color.tiktokRose).frame(width: proxy.size.width * progress)
             }
         }
         .frame(height: isScrubbing ? 4 : 2)
@@ -380,8 +374,8 @@ private struct LpspTikTokTikTokLoadingSpinner: View {
     @State private var rotation: Double = 0
     var body: some View {
         ZStack {
-            Circle().trim(from: 0, to: 0.75).stroke(LpspTikTokTokens.tiktokCyan, lineWidth: 3).offset(x: -3)
-            Circle().trim(from: 0, to: 0.75).stroke(LpspTikTokTokens.tiktokRose, lineWidth: 3).offset(x: 3)
+            Circle().trim(from: 0, to: 0.75).stroke(Color.tiktokCyan, lineWidth: 3).offset(x: -3)
+            Circle().trim(from: 0, to: 0.75).stroke(Color.tiktokRose, lineWidth: 3).offset(x: 3)
             Circle().trim(from: 0, to: 0.75).stroke(.white, lineWidth: 3)
         }
         .frame(width: 32, height: 32)
@@ -416,7 +410,7 @@ private struct LpspTikTokRootTabBar: View {
                 if isOnFeed {
                     Color.clear
                 } else {
-                    LpspTikTokTokens.tiktokCanvas.opacity(0.92)
+                    Color.tiktokCanvas.opacity(0.92)
                         .background(.regularMaterial)
                 }
             }
@@ -438,7 +432,7 @@ private struct LpspTikTokRootTabBar: View {
             }
             .foregroundStyle(selected == tab ? .white : .white.opacity(0.5))
             .frame(maxWidth: .infinity)
-            .shadow(color: isOnFeed ? LpspTikTokTokens.tiktokScrimLight : .clear, radius: 3, x: 0, y: 1)
+            .shadow(color: isOnFeed ? .tiktokScrimLight : .clear, radius: 3, x: 0, y: 1)
         }
     }
 }

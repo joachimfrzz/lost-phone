@@ -10,6 +10,31 @@ struct LpspAwesomeUberView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspUberFonts {
+    static let uberHero         = Font.system(size: 36, weight: .regular)
+    static let uberSheetTitle   = Font.system(size: 24, weight: .regular)
+    static let uberNavTitle     = Font.system(size: 18, weight: .regular)
+    static let uberWhereTo      = Font.system(size: 18, weight: .regular)
+    static let uberRowTitle     = Font.system(size: 16, weight: .regular)
+    static let uberBody         = Font.system(size: 15, weight: .regular)
+    static let uberMeta         = Font.system(size: 14, weight: .regular)
+    static let uberLabelUpper   = Font.system(size: 11, weight: .regular)
+    static let uberButton       = Font.system(size: 17, weight: .regular)
+    static let uberButtonSmall  = Font.system(size: 15, weight: .regular)
+    static let uberTab          = Font.system(size: 11, weight: .regular)
+    static let uberCaption      = Font.system(size: 12, weight: .regular)
+    static let uberPrice        = Font.system(size: 16, weight: .regular)
+    static let uberETA          = Font.system(size: 14, weight: .regular)
+    static let uberETABadge     = Font.system(size: 18, weight: .regular)
+    static let uberAddress      = Font.system(size: 13, weight: .regular)
+    static func uber(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+    static func uberMono(_ size: CGFloat, weight: Font.Weight = .medium) -> Font {
+        .system(size: size, weight: weight, design: .monospaced)
+    }
+}
+
 private enum LpspUberTokens {
     // MARK: - Canvas & Brand
     static let uberBlack          = Color.black                                 // #000000
@@ -40,39 +65,10 @@ private enum LpspUberTokens {
     static let uberDivider      = Color("UberDivider")      // #E5E5E5 / #3A3A3A
 }
 
-private enum LpspUberFonts {
-    // Uber Move (Display) — 20pt+
-    static let uberHero         = Font.system(size: 36, weight: .regular)
-    static let uberSheetTitle   = Font.system(size: 24, weight: .regular)
-    static let uberNavTitle     = Font.system(size: 18, weight: .regular)
 
-    // Uber Move Text — below 20pt UI
-    static let uberWhereTo      = Font.system(size: 18, weight: .regular)
-    static let uberRowTitle     = Font.system(size: 16, weight: .regular)
-    static let uberBody         = Font.system(size: 15, weight: .regular)
-    static let uberMeta         = Font.system(size: 14, weight: .regular)
-    static let uberLabelUpper   = Font.system(size: 11, weight: .regular)
-    static let uberButton       = Font.system(size: 17, weight: .regular)
-    static let uberButtonSmall  = Font.system(size: 15, weight: .regular)
-    static let uberTab          = Font.system(size: 11, weight: .regular)
-    static let uberCaption      = Font.system(size: 12, weight: .regular)
-
-    // Uber Move Mono — ETAs, fares, addresses
-    static let uberPrice        = Font.system(size: 16, weight: .regular)
-    static let uberETA          = Font.system(size: 14, weight: .regular)
-    static let uberETABadge     = Font.system(size: 18, weight: .regular)
-    static let uberAddress      = Font.system(size: 13, weight: .regular)
-}
 
 // System fallback when Uber Move isn't bundled:
-private enum LpspUberFonts {
-    static func uber(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-    static func uberMono(_ size: CGFloat, weight: Font.Weight = .medium) -> Font {
-        .system(size: size, weight: weight, design: .monospaced)
-    }
-}
+
 
 private struct LpspUberUberPrimaryButton: View {
     let title: String
@@ -92,9 +88,9 @@ private struct LpspUberUberPrimaryButton: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(RoundedRectangle(cornerRadius: 8).fill(LpspUberTokens.uberBlack))
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.uberBlack))
         }
-        .buttonStyle(LpspUberUberPressableStyle(pressedFill: LpspUberTokens.uberGray900, pressedScale: 0.98))
+        .buttonStyle(LpspUberUberPressableStyle(pressedFill: .uberGray900, pressedScale: 0.98))
         .sensoryFeedback(.impact(weight: .medium), trigger: isLoading)
     }
 }
@@ -113,17 +109,17 @@ private struct LpspUberWhereToInput: View {
     var body: some View {
         HStack(spacing: 14) {
             VStack(spacing: 4) {
-                Rectangle().fill(LpspUberTokens.uberBlack).frame(width: 8, height: 8)
+                Rectangle().fill(Color.uberBlack).frame(width: 8, height: 8)
                 ForEach(0..<3) { _ in
-                    Rectangle().fill(LpspUberTokens.uberGray400).frame(width: 1, height: 3)
+                    Rectangle().fill(Color.uberGray400).frame(width: 1, height: 3)
                 }
-                Rectangle().fill(LpspUberTokens.uberBlack).frame(width: 8, height: 8)
+                Rectangle().fill(Color.uberBlack).frame(width: 8, height: 8)
             }
             .padding(.leading, 16)
 
             Text("Where to?")
                 .font(LpspUberFonts.uberWhereTo)
-                .foregroundStyle(LpspUberTokens.uberTextPrimary)
+                .foregroundStyle(.uberTextPrimary)
 
             Spacer()
 
@@ -133,15 +129,15 @@ private struct LpspUberWhereToInput: View {
                 Text("Later")
                     .font(LpspUberFonts.uberButtonSmall)
             }
-            .foregroundStyle(LpspUberTokens.uberTextPrimary)
+            .foregroundStyle(.uberTextPrimary)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(Capsule().fill(LpspUberTokens.uberWhite))
-            .overlay(Capsule().strokeBorder(LpspUberTokens.uberGray200, lineWidth: 1))
+            .background(Capsule().fill(Color.uberWhite))
+            .overlay(Capsule().strokeBorder(Color.uberGray200, lineWidth: 1))
             .padding(.trailing, 8)
         }
         .frame(height: 56)
-        .background(RoundedRectangle(cornerRadius: 8).fill(LpspUberTokens.uberGray50))
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color.uberGray50))
     }
 }
 
@@ -164,34 +160,34 @@ private struct LpspUberRideOptionCard: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
-                        Text(name).font(LpspUberFonts.uberRowTitle).foregroundStyle(LpspUberTokens.uberTextPrimary)
+                        Text(name).font(LpspUberFonts.uberRowTitle).foregroundStyle(.uberTextPrimary)
                         HStack(spacing: 2) {
                             Image(systemName: "person.fill").font(.system(size: 10))
                             Text("\(capacity)").font(LpspUberFonts.uberCaption)
                         }
-                        .foregroundStyle(LpspUberTokens.uberTextSecondary)
+                        .foregroundStyle(.uberTextSecondary)
                     }
                     Text("\(eta) away")
                         .font(LpspUberFonts.uberAddress)
-                        .foregroundStyle(LpspUberTokens.uberTextSecondary)
+                        .foregroundStyle(.uberTextSecondary)
                 }
 
                 Spacer()
 
                 Text(price)
                     .font(LpspUberFonts.uberPrice)
-                    .foregroundStyle(LpspUberTokens.uberTextPrimary)
+                    .foregroundStyle(.uberTextPrimary)
             }
             .padding(.horizontal, 16)
             .frame(height: 72)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected ? LpspUberTokens.uberGray50 : LpspUberTokens.uberWhite)
+                    .fill(isSelected ? Color.uberGray50 : Color.uberWhite)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(
-                        isSelected ? LpspUberTokens.uberBlack : LpspUberTokens.uberGray200,
+                        isSelected ? Color.uberBlack : Color.uberGray200,
                         lineWidth: isSelected ? 2 : 1
                     )
             )
@@ -220,12 +216,12 @@ private struct LpspUberActiveTripCard: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(driverName)
                         .font(LpspUberFonts.uberRowTitle)
-                        .foregroundStyle(LpspUberTokens.uberTextPrimary)
+                        .foregroundStyle(.uberTextPrimary)
                     HStack(spacing: 4) {
                         Image(systemName: "star.fill").font(.system(size: 11))
                         Text(String(format: "%.2f", rating)).font(LpspUberFonts.uberETA)
                     }
-                    .foregroundStyle(LpspUberTokens.uberTextSecondary)
+                    .foregroundStyle(.uberTextSecondary)
                 }
 
                 Spacer()
@@ -234,24 +230,24 @@ private struct LpspUberActiveTripCard: View {
                     .font(LpspUberFonts.uberETA)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(Capsule().fill(LpspUberTokens.uberGray50))
+                    .background(Capsule().fill(Color.uberGray50))
             }
 
             Text(carModel)
                 .font(LpspUberFonts.uberMeta)
-                .foregroundStyle(LpspUberTokens.uberGray700)
+                .foregroundStyle(Color.uberGray700)
 
-            Divider().background(LpspUberTokens.uberDivider)
+            Divider().background(Color.uberDivider)
 
             HStack(spacing: 24) {
                 ForEach([("message", "Message"), ("phone", "Call"), ("square.and.arrow.up", "Share")], id: \.1) { icon, label in
                     VStack(spacing: 6) {
                         ZStack {
-                            Circle().fill(LpspUberTokens.uberGray50).frame(width: 44, height: 44)
+                            Circle().fill(Color.uberGray50).frame(width: 44, height: 44)
                             Image(systemName: icon).font(.system(size: 20, weight: .medium))
-                                .foregroundStyle(LpspUberTokens.uberTextPrimary)
+                                .foregroundStyle(.uberTextPrimary)
                         }
-                        Text(label).font(LpspUberFonts.uberCaption).foregroundStyle(LpspUberTokens.uberTextSecondary)
+                        Text(label).font(LpspUberFonts.uberCaption).foregroundStyle(.uberTextSecondary)
                     }
                 }
                 Spacer()
@@ -270,7 +266,7 @@ private struct LpspUberUberBottomSheet<Content: View>: View {
             .sheet(isPresented: .constant(true)) {
                 VStack(spacing: 0) {
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(LpspUberTokens.uberGray200)
+                        .fill(Color.uberGray200)
                         .frame(width: 36, height: 4)
                         .padding(.top, 6)
                         .padding(.bottom, 14)
@@ -281,7 +277,7 @@ private struct LpspUberUberBottomSheet<Content: View>: View {
                     selection: $selectedDetent
                 )
                 .presentationDragIndicator(.hidden)
-                .presentationBackground(LpspUberTokens.uberSurface)
+                .presentationBackground(Color.uberSurface)
                 .presentationCornerRadius(16)
                 .interactiveDismissDisabled()
             }
@@ -296,12 +292,12 @@ private struct LpspUberUberMapView: View {
     var body: some View {
         Map(position: $camera) {
             Marker("Pickup", systemImage: "circle.fill", coordinate: pickup)
-                .tint(LpspUberTokens.uberBlack)
+                .tint(.uberBlack)
             Annotation("Destination", coordinate: destination) {
                 LpspUberDestinationPin()
             }
             MapPolyline(coordinates: route)
-                .stroke(LpspUberTokens.uberBlack, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                .stroke(Color.uberBlack, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
         }
         .mapStyle(.standard(pointsOfInterest: .excludingAll))
         .mapControlVisibility(.hidden)
@@ -316,7 +312,7 @@ private struct LpspUberDestinationPin: View {
                 .offset(y: 4)
                 .blur(radius: 3)
             RoundedRectangle(cornerRadius: 4)
-                .fill(LpspUberTokens.uberBlack)
+                .fill(Color.uberBlack)
                 .frame(width: 32, height: 32)
         }
     }
@@ -330,9 +326,9 @@ private struct LpspUberFloatingMapButton: View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.system(size: 20, weight: .medium))
-                .foregroundStyle(LpspUberTokens.uberTextPrimary)
+                .foregroundStyle(.uberTextPrimary)
                 .frame(width: 44, height: 44)
-                .background(Circle().fill(LpspUberTokens.uberSurface))
+                .background(Circle().fill(Color.uberSurface))
                 .shadow(color: .black.opacity(0.12), radius: 8, y: 2)
         }
     }
@@ -345,7 +341,7 @@ private struct LpspUberDriverBeacon: View {
         ZStack {
             ForEach(0..<3) { i in
                 Circle()
-                    .fill(LpspUberTokens.uberGreen.opacity(0.3 - Double(i) * 0.1))
+                    .fill(Color.uberGreen.opacity(0.3 - Double(i) * 0.1))
                     .frame(width: 48, height: 48)
                     .scaleEffect(animate ? 2.4 : 1)
                     .opacity(animate ? 0 : 1)
@@ -360,7 +356,7 @@ private struct LpspUberDriverBeacon: View {
                 .font(.system(size: 14))
                 .foregroundStyle(.black)
                 .frame(width: 24, height: 24)
-                .background(Circle().fill(LpspUberTokens.uberWhite))
+                .background(Circle().fill(Color.uberWhite))
         }
         .onAppear { animate = true }
     }
@@ -371,7 +367,7 @@ private struct LpspUberRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = UIColor.systemBackground
-        appearance.shadowColor = UIColor(LpspUberTokens.uberDivider)
+        appearance.shadowColor = UIColor(Color.uberDivider)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -383,7 +379,7 @@ private struct LpspUberRootTabView: View {
             ActivityView().tabItem { Label("Activity", systemImage: "clock.fill") }
             AccountView().tabItem { Label("Account", systemImage: "person.fill") }
         }
-        .tint(LpspUberTokens.uberBlack)
+        .tint(.uberBlack)
     }
 }
 

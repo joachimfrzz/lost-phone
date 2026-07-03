@@ -10,6 +10,28 @@ struct LpspAwesomeAirbnbView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspAirbnbFonts {
+    static let airbnbLargeNav   = Font.system(size: 32, weight: .regular)
+    static let airbnbHero       = Font.system(size: 26, weight: .regular)
+    static let airbnbSection    = Font.system(size: 22, weight: .regular)
+    static let airbnbSubsection = Font.system(size: 18, weight: .regular)
+    static let airbnbCardTitle  = Font.system(size: 15, weight: .regular)
+    static let airbnbBody       = Font.system(size: 16, weight: .regular)
+    static let airbnbBodySmall  = Font.system(size: 14, weight: .regular)
+    static let airbnbMeta       = Font.system(size: 14, weight: .regular)
+    static let airbnbRatingNum  = Font.system(size: 14, weight: .regular)
+    static let airbnbPriceInline = Font.system(size: 15, weight: .regular)
+    static let airbnbPriceHero   = Font.system(size: 22, weight: .regular)
+    static let airbnbButton     = Font.system(size: 16, weight: .regular)
+    static let airbnbButtonSm   = Font.system(size: 14, weight: .regular)
+    static let airbnbTab        = Font.system(size: 10, weight: .regular)
+    static let airbnbChip       = Font.system(size: 12, weight: .regular)
+    static let airbnbCaption    = Font.system(size: 12, weight: .regular)
+    static func airbnb(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default) // SF Pro
+    }
+}
+
 private enum LpspAirbnbTokens {
     // MARK: - Canvas & Surfaces
     static let airbnbCanvas       = Color(red: 1.00, green: 1.00, blue: 1.00)   // #FFFFFF
@@ -42,38 +64,10 @@ private enum LpspAirbnbTokens {
     static let airbnbDarkTextSec  = Color(red: 0.627, green: 0.627, blue: 0.627) // #A0A0A0
 }
 
-private enum LpspAirbnbFonts {
-    // Large titles / hero
-    static let airbnbLargeNav   = Font.system(size: 32, weight: .regular)
-    static let airbnbHero       = Font.system(size: 26, weight: .regular)
-    static let airbnbSection    = Font.system(size: 22, weight: .regular)
-    static let airbnbSubsection = Font.system(size: 18, weight: .regular)
 
-    // Cards & body
-    static let airbnbCardTitle  = Font.system(size: 15, weight: .regular)
-    static let airbnbBody       = Font.system(size: 16, weight: .regular)
-    static let airbnbBodySmall  = Font.system(size: 14, weight: .regular)
-    static let airbnbMeta       = Font.system(size: 14, weight: .regular)
-    static let airbnbRatingNum  = Font.system(size: 14, weight: .regular)
-
-    // Prices
-    static let airbnbPriceInline = Font.system(size: 15, weight: .regular)
-    static let airbnbPriceHero   = Font.system(size: 22, weight: .regular)
-
-    // Buttons / labels
-    static let airbnbButton     = Font.system(size: 16, weight: .regular)
-    static let airbnbButtonSm   = Font.system(size: 14, weight: .regular)
-    static let airbnbTab        = Font.system(size: 10, weight: .regular)
-    static let airbnbChip       = Font.system(size: 12, weight: .regular)
-    static let airbnbCaption    = Font.system(size: 12, weight: .regular)
-}
 
 // If Cereal isn't bundled, this fallback keeps the warm system substitute:
-private enum LpspAirbnbFonts {
-    static func airbnb(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default) // SF Pro
-    }
-}
+
 
 private struct LpspAirbnbSaveHeart: View {
     @Binding var isSaved: Bool
@@ -86,11 +80,11 @@ private struct LpspAirbnbSaveHeart: View {
         } label: {
             Image(systemName: isSaved ? "heart.fill" : "heart")
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(isSaved ? LpspAirbnbTokens.airbnbCoral : .white)
+                .foregroundStyle(isSaved ? Color.airbnbCoral : .white)
                 .overlay(
                     Image(systemName: "heart")
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(isSaved ? .clear : LpspAirbnbTokens.airbnbInk)
+                        .foregroundStyle(isSaved ? .clear : Color.airbnbInk)
                 )
                 .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
                 .frame(width: 32, height: 32)
@@ -109,13 +103,13 @@ private struct LpspAirbnbRatingRow: View {
         HStack(spacing: 4) {
             Image(systemName: "star.fill")
                 .font(.system(size: 12))
-                .foregroundStyle(LpspAirbnbTokens.airbnbHof)
+                .foregroundStyle(Color.airbnbHof)
             Text(String(format: "%.2f", rating))
                 .font(LpspAirbnbFonts.airbnbRatingNum)
-                .foregroundStyle(LpspAirbnbTokens.airbnbHof)
+                .foregroundStyle(Color.airbnbHof)
             Text(" · \(reviewCount.formatted())")
                 .font(LpspAirbnbFonts.airbnbMeta)
-                .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
+                .foregroundStyle(Color.airbnbFoggy)
         }
     }
 }
@@ -157,31 +151,31 @@ private struct LpspAirbnbStayCard: View {
             // Title
             Text(title)
                 .font(LpspAirbnbFonts.airbnbCardTitle)
-                .foregroundStyle(LpspAirbnbTokens.airbnbHof)
+                .foregroundStyle(Color.airbnbHof)
                 .lineLimit(1)
                 .padding(.top, 2)
 
             // Host subtitle
             Text(host)
                 .font(LpspAirbnbFonts.airbnbMeta)
-                .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
+                .foregroundStyle(Color.airbnbFoggy)
                 .lineLimit(1)
                 .padding(.top, 2)
 
             // Dates
             Text(dates)
                 .font(LpspAirbnbFonts.airbnbMeta)
-                .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
+                .foregroundStyle(Color.airbnbFoggy)
                 .padding(.top, 6)
 
             // Price
             HStack(spacing: 4) {
                 Text("$\(pricePerNight)")
                     .font(LpspAirbnbFonts.airbnbPriceInline)
-                    .foregroundStyle(LpspAirbnbTokens.airbnbHof)
+                    .foregroundStyle(Color.airbnbHof)
                 Text("night")
                     .font(.system(size: 15, weight: .regular))
-                    .foregroundStyle(LpspAirbnbTokens.airbnbHof)
+                    .foregroundStyle(Color.airbnbHof)
             }
             .padding(.top, 4)
         }
@@ -197,28 +191,28 @@ private struct LpspAirbnbSearchPill: View {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(LpspAirbnbTokens.airbnbInk)
+                    .foregroundStyle(Color.airbnbInk)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Where to?")
                         .font(.custom("AirbnbCereal-Bold", size: 14))
-                        .foregroundStyle(LpspAirbnbTokens.airbnbInk)
+                        .foregroundStyle(Color.airbnbInk)
                     Text("Anywhere · Any week · Add guests")
                         .font(.custom("AirbnbCereal-Book", size: 12))
-                        .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
+                        .foregroundStyle(Color.airbnbFoggy)
                 }
                 Spacer()
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(LpspAirbnbTokens.airbnbInk)
+                    .foregroundStyle(Color.airbnbInk)
                     .padding(10)
-                    .overlay(Circle().strokeBorder(LpspAirbnbTokens.airbnbDivider, lineWidth: 1))
+                    .overlay(Circle().strokeBorder(Color.airbnbDivider, lineWidth: 1))
             }
             .padding(.horizontal, 20)
             .frame(height: 56)
             .background(
                 Capsule()
-                    .fill(LpspAirbnbTokens.airbnbCanvas)
-                    .overlay(Capsule().strokeBorder(LpspAirbnbTokens.airbnbDivider, lineWidth: 0.5))
+                    .fill(Color.airbnbCanvas)
+                    .overlay(Capsule().strokeBorder(Color.airbnbDivider, lineWidth: 0.5))
                     .shadow(color: .black.opacity(0.08), radius: 12, y: 4)
                     .shadow(color: .black.opacity(0.04), radius: 2, y: 1)
             )
@@ -239,13 +233,13 @@ private struct LpspAirbnbCategoryBar: View {
                     VStack(spacing: 8) {
                         Image(systemName: cat.icon)
                             .font(.system(size: 24))
-                            .foregroundStyle(selected == idx ? LpspAirbnbTokens.airbnbInk : Color(red: 0.443, green: 0.443, blue: 0.443))
+                            .foregroundStyle(selected == idx ? Color.airbnbInk : Color(red: 0.443, green: 0.443, blue: 0.443))
                         Text(cat.label)
                             .font(LpspAirbnbFonts.airbnbChip)
-                            .foregroundStyle(selected == idx ? LpspAirbnbTokens.airbnbInk : Color(red: 0.443, green: 0.443, blue: 0.443))
+                            .foregroundStyle(selected == idx ? Color.airbnbInk : Color(red: 0.443, green: 0.443, blue: 0.443))
                         if selected == idx {
                             Rectangle()
-                                .fill(LpspAirbnbTokens.airbnbInk)
+                                .fill(Color.airbnbInk)
                                 .frame(height: 2)
                                 .matchedGeometryEffect(id: "underline", in: underlineNS)
                         } else {
@@ -264,9 +258,9 @@ private struct LpspAirbnbCategoryBar: View {
             .padding(.horizontal, 16)
         }
         .frame(height: 72)
-        .background(LpspAirbnbTokens.airbnbCanvas)
+        .background(Color.airbnbCanvas)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(LpspAirbnbTokens.airbnbDivider).frame(height: 0.5)
+            Rectangle().fill(Color.airbnbDivider).frame(height: 0.5)
         }
     }
 }
@@ -282,14 +276,14 @@ private struct LpspAirbnbBookingFooter: View {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("$\(totalPrice)")
                         .font(.custom("AirbnbCereal-Bold", size: 16))
-                        .foregroundStyle(LpspAirbnbTokens.airbnbInk)
+                        .foregroundStyle(Color.airbnbInk)
                     Text("total")
                         .font(LpspAirbnbFonts.airbnbBodySmall)
-                        .foregroundStyle(LpspAirbnbTokens.airbnbInk)
+                        .foregroundStyle(Color.airbnbInk)
                 }
                 Text(dateRange)
                     .font(LpspAirbnbFonts.airbnbBodySmall)
-                    .foregroundStyle(LpspAirbnbTokens.airbnbInk)
+                    .foregroundStyle(Color.airbnbInk)
                     .underline()
             }
             Spacer()
@@ -301,7 +295,7 @@ private struct LpspAirbnbBookingFooter: View {
                     .padding(.horizontal, 28)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(LpspAirbnbTokens.airbnbCoral)
+                            .fill(Color.airbnbCoral)
                     )
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
@@ -310,7 +304,7 @@ private struct LpspAirbnbBookingFooter: View {
         .frame(height: 80)
         .background(.regularMaterial)
         .overlay(alignment: .top) {
-            Rectangle().fill(LpspAirbnbTokens.airbnbDivider).frame(height: 0.5)
+            Rectangle().fill(Color.airbnbDivider).frame(height: 0.5)
         }
     }
 }
@@ -324,12 +318,12 @@ private struct LpspAirbnbMapPriceBubble: View {
     var bg: Color {
         switch state {
         case .default:  return .white
-        case .visited:  return LpspAirbnbTokens.airbnbInk
-        case .selected: return LpspAirbnbTokens.airbnbCoral
+        case .visited:  return Color.airbnbInk
+        case .selected: return Color.airbnbCoral
         }
     }
     var fg: Color {
-        state == .default ? LpspAirbnbTokens.airbnbInk : .white
+        state == .default ? Color.airbnbInk : .white
     }
 
     var body: some View {
@@ -363,7 +357,7 @@ private struct LpspAirbnbRootTabView: View {
             InboxView()     .tabItem { Label("Inbox",     systemImage: "message") }
             ProfileView()   .tabItem { Label("Profile",   systemImage: "person.circle") }
         }
-        .tint(LpspAirbnbTokens.airbnbCoral) // active = Primary Coral
+        .tint(Color.airbnbCoral) // active = Primary Coral
     }
 }
 
@@ -377,7 +371,7 @@ private struct LpspAirbnbShowroomRoot: View {
                 .tabItem { Label("Wishlists", systemImage: "heart") }
                 .tag(0)
         }
-        .tint(LpspAirbnbTokens.airbnbCanvas)
+        .tint(LpspAirbnbTokens.airbnbLargeNav)
         
     }
 }
@@ -391,9 +385,9 @@ private struct LpspAirbnbGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspAirbnbTokens.airbnbCanvas.opacity(0.15))
+                        .fill(LpspAirbnbTokens.airbnbLargeNav.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAirbnbTokens.airbnbCanvas))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAirbnbTokens.airbnbLargeNav))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

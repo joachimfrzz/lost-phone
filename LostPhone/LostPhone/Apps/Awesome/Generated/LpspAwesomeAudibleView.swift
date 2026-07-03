@@ -10,6 +10,27 @@ struct LpspAwesomeAudibleView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspAudibleFonts {
+    static let audTitleLarge = Font.system(size: 30, weight: .regular)
+    static let audBookTitle  = Font.system(size: 26, weight: .regular)
+    static let audSection    = Font.system(size: 22, weight: .regular)
+    static let audCardTitle  = Font.system(size: 17, weight: .regular)
+    static let audMiniTitle  = Font.system(size: 14, weight: .regular)
+    static let audAuthor     = Font.system(size: 14, weight: .regular)
+    static let audNarrator   = Font.system(size: 13, weight: .regular)
+    static let audChapter    = Font.system(size: 16, weight: .regular)
+    static let audBody       = Font.system(size: 15, weight: .regular)
+    static let audCaptions   = Font.system(size: 18, weight: .regular)
+    static let audMeta       = Font.system(size: 13, weight: .regular)
+    static let audLabelUpper = Font.system(size: 11, weight: .regular)
+    static let audButton     = Font.system(size: 16, weight: .regular)
+    static let audButtonSec  = Font.system(size: 14, weight: .regular)
+    static let audSpeed      = Font.system(size: 15, weight: .regular)
+    static let audTab        = Font.system(size: 10, weight: .regular)
+    static func audSerif(_ size: CGFloat) -> Font { .system(size: size, weight: .bold, design: .serif) }
+    static func audSans(_ size: CGFloat, weight: Font.Weight = .regular) -> Font { .system(size: size, weight: weight, design: .default) }
+}
+
 private enum LpspAudibleTokens {
     // MARK: - Canvas & Surfaces
     static let audCanvas   = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
@@ -32,32 +53,9 @@ extension ShapeStyle where Self == Color {
     static var audOrangeGlow: Color { Color(red: 1.0, green: 0.6, blue: 0.0).opacity(0.28) }
 }
 
-private enum LpspAudibleFonts {
-    // Headings — Playfair Display (serif) ONLY
-    static let audTitleLarge = Font.system(size: 30, weight: .regular)
-    static let audBookTitle  = Font.system(size: 26, weight: .regular)
-    static let audSection    = Font.system(size: 22, weight: .regular)
-    static let audCardTitle  = Font.system(size: 17, weight: .regular)
-    static let audMiniTitle  = Font.system(size: 14, weight: .regular)
 
-    // Body / UI — Inter (sans)
-    static let audAuthor     = Font.system(size: 14, weight: .regular)
-    static let audNarrator   = Font.system(size: 13, weight: .regular)
-    static let audChapter    = Font.system(size: 16, weight: .regular)
-    static let audBody       = Font.system(size: 15, weight: .regular)
-    static let audCaptions   = Font.system(size: 18, weight: .regular)
-    static let audMeta       = Font.system(size: 13, weight: .regular)
-    static let audLabelUpper = Font.system(size: 11, weight: .regular)
-    static let audButton     = Font.system(size: 16, weight: .regular)
-    static let audButtonSec  = Font.system(size: 14, weight: .regular)
-    static let audSpeed      = Font.system(size: 15, weight: .regular)
-    static let audTab        = Font.system(size: 10, weight: .regular)
-}
 
-private enum LpspAudibleFonts {
-    static func audSerif(_ size: CGFloat) -> Font { .system(size: size, weight: .bold, design: .serif) }
-    static func audSans(_ size: CGFloat, weight: Font.Weight = .regular) -> Font { .system(size: size, weight: weight, design: .default) }
-}
+
 
 private struct LpspAudibleCoverProgressRing: View {
     let artwork: Image
@@ -68,10 +66,10 @@ private struct LpspAudibleCoverProgressRing: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(LpspAudibleTokens.audDivider, lineWidth: ring)
+                .stroke(Color.audDivider, lineWidth: ring)
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(LpspAudibleTokens.audOrange, style: StrokeStyle(lineWidth: ring, lineCap: .round))
+                .stroke(Color.audOrange, style: StrokeStyle(lineWidth: ring, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             artwork
                 .resizable().aspectRatio(1, contentMode: .fill)
@@ -92,9 +90,9 @@ private struct LpspAudibleAudiblePlayButton: View {
         Button(action: action) {
             Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                 .font(.system(size: size * 0.44, weight: .bold))
-                .foregroundStyle(LpspAudibleTokens.audCanvas) // dark glyph on orange
+                .foregroundStyle(Color.audCanvas) // dark glyph on orange
                 .frame(width: size, height: size)
-                .background(Circle().fill(LpspAudibleTokens.audOrange))
+                .background(Circle().fill(Color.audOrange))
                 .shadow(color: .audOrangeGlow, radius: 22, y: 6)
         }
         .sensoryFeedback(.impact(weight: .medium), trigger: isPlaying)
@@ -116,7 +114,7 @@ private struct LpspAudibleSkipButton: View {
         } label: {
             Image(systemName: dir == .back ? "gobackward.30" : "goforward.30")
                 .font(.system(size: 30, weight: .regular))
-                .foregroundStyle(flash ? LpspAudibleTokens.audOrange : .white)
+                .foregroundStyle(flash ? Color.audOrange : .white)
                 .frame(width: 44, height: 44)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: flash)
@@ -139,15 +137,15 @@ private struct LpspAudibleSpeedDialSheet: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Capsule().fill(LpspAudibleTokens.audTextTertiary).frame(width: 36, height: 4).padding(.top, 10)
+            Capsule().fill(Color.audTextTertiary).frame(width: 36, height: 4).padding(.top, 10)
 
             Text(String(format: "%.2f×", speed).replacingOccurrences(of: ".00", with: ".0"))
                 .font(.custom("Inter-Bold", size: 22)).monospacedDigit()
-                .foregroundStyle(LpspAudibleTokens.audOrange)
+                .foregroundStyle(Color.audOrange)
                 .contentTransition(.numericText())
 
             Slider(value: $speed, in: 0.5...3.5, step: 0.05) { _ in }
-                .tint(LpspAudibleTokens.audOrange)
+                .tint(.audOrange)
                 .onChange(of: speed) { _, new in
                     if (new * 4).rounded() == new * 4 { // .25 detent
                         UISelectionFeedbackGenerator().selectionChanged()
@@ -161,17 +159,17 @@ private struct LpspAudibleSpeedDialSheet: View {
                     } label: {
                         Text(String(format: "%.2g×", p))
                             .font(LpspAudibleFonts.audSpeed)
-                            .foregroundStyle(speed == p ? LpspAudibleTokens.audCanvas : .white)
+                            .foregroundStyle(speed == p ? Color.audCanvas : .white)
                             .padding(.vertical, 8).padding(.horizontal, 16)
                             .background(RoundedRectangle(cornerRadius: 8)
-                                .fill(speed == p ? LpspAudibleTokens.audOrange : LpspAudibleTokens.audSurface2))
+                                .fill(speed == p ? Color.audOrange : Color.audSurface2))
                     }
                 }
             }
             Spacer()
         }
         .padding(.horizontal, 20)
-        .background(LpspAudibleTokens.audSurface1)
+        .background(Color.audSurface1)
         .presentationDetents([.height(280)])
         .presentationCornerRadius(16)
     }
@@ -194,8 +192,8 @@ private struct LpspAudibleAudiblePlayer: View {
 
             VStack(spacing: 6) {
                 Text(title).font(LpspAudibleFonts.audTitleLarge).foregroundStyle(.white).multilineTextAlignment(.center)
-                Text(author).font(LpspAudibleFonts.audAuthor).foregroundStyle(LpspAudibleTokens.audTextSecondary)
-                Text(narrator).font(LpspAudibleFonts.audNarrator).foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                Text(author).font(LpspAudibleFonts.audAuthor).foregroundStyle(.audTextSecondary)
+                Text(narrator).font(LpspAudibleFonts.audNarrator).foregroundStyle(.audTextSecondary)
             }
 
             HStack(spacing: 36) {
@@ -204,24 +202,24 @@ private struct LpspAudibleAudiblePlayer: View {
                 LpspAudibleSkipButton(dir: .forward) { progress = min(1, progress + 0.01) }
             }
 
-            Text("8 hrs 14 min left").font(LpspAudibleFonts.audMeta).foregroundStyle(LpspAudibleTokens.audTextSecondary).monospacedDigit()
+            Text("8 hrs 14 min left").font(LpspAudibleFonts.audMeta).foregroundStyle(.audTextSecondary).monospacedDigit()
 
             HStack(spacing: 24) {
                 Button { showSpeed = true } label: {
-                    Text(String(format: "%.2g×", speed)).font(LpspAudibleFonts.audSpeed).foregroundStyle(LpspAudibleTokens.audOrange)
+                    Text(String(format: "%.2g×", speed)).font(LpspAudibleFonts.audSpeed).foregroundStyle(Color.audOrange)
                         .padding(.vertical, 8).padding(.horizontal, 14)
-                        .background(Capsule().fill(LpspAudibleTokens.audSurface2))
+                        .background(Capsule().fill(Color.audSurface2))
                 }
-                Image(systemName: "moon.zzz").foregroundStyle(LpspAudibleTokens.audTextSecondary)
-                Image(systemName: "bookmark").foregroundStyle(LpspAudibleTokens.audTextSecondary)
-                Image(systemName: "list.bullet").foregroundStyle(LpspAudibleTokens.audTextSecondary)
-                Image(systemName: "car").foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                Image(systemName: "moon.zzz").foregroundStyle(.audTextSecondary)
+                Image(systemName: "bookmark").foregroundStyle(.audTextSecondary)
+                Image(systemName: "list.bullet").foregroundStyle(.audTextSecondary)
+                Image(systemName: "car").foregroundStyle(.audTextSecondary)
             }
             .font(.system(size: 22))
             Spacer()
         }
         .padding(.horizontal, 24)
-        .background(LpspAudibleTokens.audCanvas.ignoresSafeArea())
+        .background(Color.audCanvas.ignoresSafeArea())
         .sheet(isPresented: $showSpeed) { LpspAudibleSpeedDialSheet(speed: $speed) }
     }
 }
@@ -238,16 +236,16 @@ private struct LpspAudibleContinueRow: View {
             LpspAudibleCoverProgressRing(artwork: artwork, progress: progress, size: 72, ring: 3)
             VStack(alignment: .leading, spacing: 3) {
                 Text(title).font(LpspAudibleFonts.audCardTitle).foregroundStyle(.white).lineLimit(1)
-                Text(author).font(.custom("Inter-Regular", size: 13)).foregroundStyle(LpspAudibleTokens.audTextSecondary).lineLimit(1)
-                Text(remaining).font(.custom("Inter-Regular", size: 12)).foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                Text(author).font(.custom("Inter-Regular", size: 13)).foregroundStyle(.audTextSecondary).lineLimit(1)
+                Text(remaining).font(.custom("Inter-Regular", size: 12)).foregroundStyle(.audTextSecondary)
             }
             Spacer()
             Image(systemName: "play.fill")
-                .font(.system(size: 18, weight: .bold)).foregroundStyle(LpspAudibleTokens.audCanvas)
-                .frame(width: 56, height: 56).background(Circle().fill(LpspAudibleTokens.audOrange))
+                .font(.system(size: 18, weight: .bold)).foregroundStyle(Color.audCanvas)
+                .frame(width: 56, height: 56).background(Circle().fill(Color.audOrange))
         }
         .padding(14)
-        .background(RoundedRectangle(cornerRadius: 12).fill(LpspAudibleTokens.audSurface1))
+        .background(RoundedRectangle(cornerRadius: 12).fill(Color.audSurface1))
     }
 }
 
@@ -257,33 +255,33 @@ private struct LpspAudibleChapterListSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Capsule().fill(LpspAudibleTokens.audTextTertiary).frame(width: 36, height: 4).padding(.vertical, 10)
+            Capsule().fill(Color.audTextTertiary).frame(width: 36, height: 4).padding(.vertical, 10)
             Text("Chapters").font(LpspAudibleFonts.audSection).foregroundStyle(.white)
                 .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 16).padding(.bottom, 8)
             ScrollView {
                 ForEach(chapters, id: \.n) { c in
                     HStack(spacing: 12) {
                         if c.state == .playing {
-                            Rectangle().fill(LpspAudibleTokens.audOrange).frame(width: 3, height: 28)
+                            Rectangle().fill(Color.audOrange).frame(width: 3, height: 28)
                         } else {
                             Color.clear.frame(width: 3, height: 28)
                         }
-                        Text("\(c.n).").font(LpspAudibleFonts.audChapter).foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                        Text("\(c.n).").font(LpspAudibleFonts.audChapter).foregroundStyle(.audTextSecondary)
                         Text(c.title)
                             .font(LpspAudibleFonts.audChapter)
-                            .foregroundStyle(c.state == .playing ? LpspAudibleTokens.audOrange : .white)
+                            .foregroundStyle(c.state == .playing ? Color.audOrange : .white)
                         Spacer()
                         if c.state == .finished {
-                            Image(systemName: "checkmark").font(.system(size: 12, weight: .bold)).foregroundStyle(LpspAudibleTokens.audOrange)
+                            Image(systemName: "checkmark").font(.system(size: 12, weight: .bold)).foregroundStyle(Color.audOrange)
                         }
-                        Text(c.dur).font(LpspAudibleFonts.audMeta).foregroundStyle(LpspAudibleTokens.audTextSecondary).monospacedDigit()
+                        Text(c.dur).font(LpspAudibleFonts.audMeta).foregroundStyle(.audTextSecondary).monospacedDigit()
                     }
                     .padding(.horizontal, 16).frame(height: 56)
-                    Divider().overlay(LpspAudibleTokens.audDivider)
+                    Divider().overlay(Color.audDivider)
                 }
             }
         }
-        .background(LpspAudibleTokens.audSurface1)
+        .background(Color.audSurface1)
         .presentationDetents([.medium, .large])
         .presentationCornerRadius(16)
     }
@@ -298,12 +296,12 @@ private struct LpspAudibleCaptionsPanel: View {
             ForEach(words.indices, id: \.self) { i in
                 Text(words[i])
                     .font(LpspAudibleFonts.audCaptions)
-                    .foregroundStyle(i == activeWordIndex ? .white : LpspAudibleTokens.audTextSecondary)
+                    .foregroundStyle(i == activeWordIndex ? .white : Color.audTextSecondary)
                     .animation(.easeOut(duration: 0.18), value: activeWordIndex)
             }
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 12).fill(LpspAudibleTokens.audSurface1))
+        .background(RoundedRectangle(cornerRadius: 12).fill(Color.audSurface1))
     }
 }
 // FlowLayout: a simple wrapping Layout (omitted for brevity).
@@ -313,7 +311,7 @@ private struct LpspAudibleRootTabView: View {
         let a = UITabBarAppearance()
         a.configureWithTransparentBackground()
         a.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        a.backgroundColor = UIColor(LpspAudibleTokens.audCanvas).withAlphaComponent(0.96)
+        a.backgroundColor = UIColor(Color.audCanvas).withAlphaComponent(0.96)
         UITabBar.appearance().standardAppearance = a
         UITabBar.appearance().scrollEdgeAppearance = a
     }
@@ -324,7 +322,7 @@ private struct LpspAudibleRootTabView: View {
             DiscoverView().tabItem { Label("Discover", systemImage: "magnifyingglass") }
             ProfileView().tabItem { Label("Profile", systemImage: "person.crop.circle") }
         }
-        .tint(LpspAudibleTokens.audOrange)
+        .tint(.audOrange)
     }
 }
 

@@ -47,35 +47,10 @@ private enum LpspBumbleTokens {
     static let bumbleDarkText    = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
 }
 
-private enum LpspBumbleFonts {
-    // Display / hero
-    static let bumbleMatchHero    = Font.system(size: 44, weight: .regular)
-    static let bumbleDisplay      = Font.system(size: 32, weight: .regular)
-    static let bumbleScreenTitle  = Font.system(size: 24, weight: .regular)
-    static let bumbleCardName     = Font.system(size: 28, weight: .regular)
-    static let bumbleSection      = Font.system(size: 18, weight: .regular)
 
-    // Body
-    static let bumbleBody         = Font.system(size: 16, weight: .regular)
-    static let bumbleBodyBold     = Font.system(size: 16, weight: .regular)
-    static let bumbleBodySmall    = Font.system(size: 14, weight: .regular)
-
-    // Buttons & labels
-    static let bumbleButton       = Font.system(size: 16, weight: .regular)
-    static let bumbleButtonLarge  = Font.system(size: 18, weight: .regular)
-    static let bumbleTab          = Font.system(size: 10, weight: .regular)
-    static let bumbleChip         = Font.system(size: 13, weight: .regular)
-    static let bumbleMeta         = Font.system(size: 13, weight: .regular)
-    static let bumbleCounter      = Font.system(size: 11, weight: .regular)
-    static let bumbleCompliment   = Font.system(size: 22, weight: .regular)
-}
 
 // Fallback when Brando isn't bundled — SF Pro is the warmest system substitute
-private enum LpspBumbleFonts {
-    static func bumble(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
 
 private struct LpspBumbleBumblePrimaryButton: View {
     let label: String
@@ -152,6 +127,27 @@ private struct LpspBumbleSwipeActionRow: View {
                     .foregroundStyle(LpspBumbleTokens.bumbleYellow)
             } action: { onCompliment() }
         }
+    }
+}
+
+private enum LpspBumbleFonts {
+    static let bumbleMatchHero    = Font.system(size: 44, weight: .regular)
+    static let bumbleDisplay      = Font.system(size: 32, weight: .regular)
+    static let bumbleScreenTitle  = Font.system(size: 24, weight: .regular)
+    static let bumbleCardName     = Font.system(size: 28, weight: .regular)
+    static let bumbleSection      = Font.system(size: 18, weight: .regular)
+    static let bumbleBody         = Font.system(size: 16, weight: .regular)
+    static let bumbleBodyBold     = Font.system(size: 16, weight: .regular)
+    static let bumbleBodySmall    = Font.system(size: 14, weight: .regular)
+    static let bumbleButton       = Font.system(size: 16, weight: .regular)
+    static let bumbleButtonLarge  = Font.system(size: 18, weight: .regular)
+    static let bumbleTab          = Font.system(size: 10, weight: .regular)
+    static let bumbleChip         = Font.system(size: 13, weight: .regular)
+    static let bumbleMeta         = Font.system(size: 13, weight: .regular)
+    static let bumbleCounter      = Font.system(size: 11, weight: .regular)
+    static let bumbleCompliment   = Font.system(size: 22, weight: .regular)
+    static func bumble(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
     }
 }
 

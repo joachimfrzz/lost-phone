@@ -10,6 +10,24 @@ struct LpspAwesomeThreadsView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspThreadsFonts {
+    static let threadsScreenTitle    = Font.system(size: 17, weight: .regular)
+    static let threadsDisplayName    = Font.system(size: 15, weight: .regular)
+    static let threadsPostBody       = Font.system(size: 15, weight: .regular)
+    static let threadsQuotedBody     = Font.system(size: 14, weight: .regular)
+    static let threadsHandle         = Font.system(size: 14, weight: .regular)
+    static let threadsActionCount    = Font.system(size: 13, weight: .regular)
+    static let threadsProfileBio     = Font.system(size: 15, weight: .regular)
+    static let threadsButton         = Font.system(size: 15, weight: .regular)
+    static let threadsSecondaryBtn   = Font.system(size: 14, weight: .regular)
+    static let threadsComposePH      = Font.system(size: 17, weight: .regular)
+    static let threadsDMBody         = Font.system(size: 15, weight: .regular)
+    static let threadsFilterChip     = Font.system(size: 14, weight: .regular)
+    static func threadsFallback(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspThreadsTokens {
     // MARK: - Canvas & Surfaces (Dark / Default)
     static let threadsCanvas          = Color.black                                   // #000000
@@ -40,27 +58,10 @@ private enum LpspThreadsTokens {
     static let threadsIGVerified      = Color(red: 0.000, green: 0.584, blue: 0.965) // #0095F6
 }
 
-private enum LpspThreadsFonts {
-    static let threadsScreenTitle    = Font.system(size: 17, weight: .regular)
-    static let threadsDisplayName    = Font.system(size: 15, weight: .regular)
-    static let threadsPostBody       = Font.system(size: 15, weight: .regular)
-    static let threadsQuotedBody     = Font.system(size: 14, weight: .regular)
-    static let threadsHandle         = Font.system(size: 14, weight: .regular)
-    static let threadsActionCount    = Font.system(size: 13, weight: .regular)
-    static let threadsProfileBio     = Font.system(size: 15, weight: .regular)
-    static let threadsButton         = Font.system(size: 15, weight: .regular)
-    static let threadsSecondaryBtn   = Font.system(size: 14, weight: .regular)
-    static let threadsComposePH      = Font.system(size: 17, weight: .regular)
-    static let threadsDMBody         = Font.system(size: 15, weight: .regular)
-    static let threadsFilterChip     = Font.system(size: 14, weight: .regular)
-}
+
 
 // System fallback if Instagram Sans isn't bundled:
-private enum LpspThreadsFonts {
-    static func threadsFallback(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
 
 private struct LpspThreadsThreadPostRow: View {
     let displayName: String
@@ -85,7 +86,7 @@ private struct LpspThreadsThreadPostRow: View {
                         .clipShape(Circle())
                     if hasReplies {
                         Rectangle()
-                            .fill(LpspThreadsTokens.threadsLine)
+                            .fill(Color.threadsLine)
                             .frame(width: 1)
                             .padding(.top, 4)
                     }
@@ -96,29 +97,29 @@ private struct LpspThreadsThreadPostRow: View {
                     HStack(spacing: 4) {
                         Text(displayName)
                             .font(LpspThreadsFonts.threadsDisplayName)
-                            .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                            .foregroundStyle(.threadsTextPrimaryDark)
                             .lineLimit(1)
                         Text("@\(handle)")
                             .font(LpspThreadsFonts.threadsHandle)
-                            .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                            .foregroundStyle(.threadsTextSecondary)
                             .lineLimit(1)
                         Text("·")
-                            .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                            .foregroundStyle(.threadsTextSecondary)
                         Text(timestamp)
                             .font(LpspThreadsFonts.threadsHandle)
-                            .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                            .foregroundStyle(.threadsTextSecondary)
                         Spacer()
                         Button { /* overflow */ } label: {
                             Image(systemName: "ellipsis")
                                 .font(.system(size: 18))
-                                .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                                .foregroundStyle(.threadsTextSecondary)
                         }
                     }
 
                     // Body
                     Text(body)
                         .font(LpspThreadsFonts.threadsPostBody)
-                        .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                        .foregroundStyle(.threadsTextPrimaryDark)
                         .lineSpacing(6)  // approximates 1.4 line-height at 15pt
                         .fixedSize(horizontal: false, vertical: true)
 
@@ -126,16 +127,16 @@ private struct LpspThreadsThreadPostRow: View {
                     HStack(spacing: 20) {
                         LpspThreadsActionBtn(icon: isLiked ? "heart.fill" : "heart",
                                   count: likeCount,
-                                  tint: isLiked ? LpspThreadsTokens.threadsLikeCoral : LpspThreadsTokens.threadsTextSecondary) {
+                                  tint: isLiked ? .threadsLikeCoral : .threadsTextSecondary) {
                             withAnimation(.spring(response: 0.3)) { isLiked.toggle() }
                         }
-                        LpspThreadsActionBtn(icon: "bubble.left", count: commentCount, tint: LpspThreadsTokens.threadsTextSecondary) {}
+                        LpspThreadsActionBtn(icon: "bubble.left", count: commentCount, tint: .threadsTextSecondary) {}
                         LpspThreadsActionBtn(icon: isReposted ? "arrow.2.squarepath.circle.fill" : "arrow.2.squarepath",
                                   count: nil,
-                                  tint: LpspThreadsTokens.threadsTextSecondary) {
+                                  tint: .threadsTextSecondary) {
                             isReposted.toggle()
                         }
-                        LpspThreadsActionBtn(icon: "paperplane", count: nil, tint: LpspThreadsTokens.threadsTextSecondary) {}
+                        LpspThreadsActionBtn(icon: "paperplane", count: nil, tint: .threadsTextSecondary) {}
                         Spacer()
                     }
                     .padding(.top, 4)
@@ -145,9 +146,9 @@ private struct LpspThreadsThreadPostRow: View {
             .padding(.top, 16)
             .padding(.bottom, 12)
 
-            Divider().background(LpspThreadsTokens.threadsDivider)
+            Divider().background(Color.threadsDivider)
         }
-        .background(LpspThreadsTokens.threadsCanvas)
+        .background(Color.threadsCanvas)
     }
 }
 
@@ -186,7 +187,7 @@ private struct LpspThreadsThreadsPostPill: View {
                 .foregroundStyle(.black)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 20)
-                .background(Capsule().fill(LpspThreadsTokens.threadsTextPrimaryDark))
+                .background(Capsule().fill(Color.threadsTextPrimaryDark))
         }
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1 : 0.3)
@@ -210,15 +211,15 @@ private struct LpspThreadsThreadsFollowPill: View {
         Button(action: action) {
             Text(isFollowing ? "Following" : "Follow")
                 .font(LpspThreadsFonts.threadsSecondaryBtn)
-                .foregroundStyle(isFollowing ? LpspThreadsTokens.threadsTextPrimaryDark : .black)
+                .foregroundStyle(isFollowing ? .threadsTextPrimaryDark : .black)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 20)
                 .frame(minWidth: 92)
                 .background(
-                    Capsule().fill(isFollowing ? Color.clear : LpspThreadsTokens.threadsTextPrimaryDark)
+                    Capsule().fill(isFollowing ? Color.clear : Color.threadsTextPrimaryDark)
                 )
                 .overlay(
-                    Capsule().strokeBorder(isFollowing ? LpspThreadsTokens.threadsTextSecondary : .clear, lineWidth: 1)
+                    Capsule().strokeBorder(isFollowing ? Color.threadsTextSecondary : .clear, lineWidth: 1)
                 )
         }
         .buttonStyle(LpspThreadsThreadsPressableStyle())
@@ -239,15 +240,15 @@ private struct LpspThreadsActivityFilterRow: View {
                     } label: {
                         Text(label)
                             .font(LpspThreadsFonts.threadsFilterChip)
-                            .foregroundStyle(isOn ? .black : LpspThreadsTokens.threadsTextPrimaryDark)
+                            .foregroundStyle(isOn ? .black : .threadsTextPrimaryDark)
                             .padding(.vertical, 8)
                             .padding(.horizontal, 16)
                             .frame(minHeight: 36)
                             .background(
-                                Capsule().fill(isOn ? LpspThreadsTokens.threadsTextPrimaryDark : .clear)
+                                Capsule().fill(isOn ? Color.threadsTextPrimaryDark : .clear)
                             )
                             .overlay(
-                                Capsule().strokeBorder(isOn ? Color.clear : LpspThreadsTokens.threadsLine, lineWidth: 1)
+                                Capsule().strokeBorder(isOn ? Color.clear : Color.threadsLine, lineWidth: 1)
                             )
                     }
                 }
@@ -269,10 +270,10 @@ private struct LpspThreadsThreadsComposer: View {
                     ForEach(drafts.indices, id: \.self) { i in
                         HStack(alignment: .top, spacing: 12) {
                             VStack(spacing: 0) {
-                                Circle().fill(LpspThreadsTokens.threadsSurface2).frame(width: 36, height: 36)
+                                Circle().fill(Color.threadsSurface2).frame(width: 36, height: 36)
                                 if i < drafts.count - 1 || drafts[i].isEmpty == false {
                                     Rectangle()
-                                        .fill(LpspThreadsTokens.threadsLine)
+                                        .fill(Color.threadsLine)
                                         .frame(width: 1)
                                         .frame(maxHeight: .infinity)
                                         .padding(.top, 4)
@@ -280,11 +281,11 @@ private struct LpspThreadsThreadsComposer: View {
                             }
 
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("you").font(LpspThreadsFonts.threadsDisplayName).foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                                Text("you").font(LpspThreadsFonts.threadsDisplayName).foregroundStyle(.threadsTextPrimaryDark)
                                 TextField("Start a thread...", text: $drafts[i], axis: .vertical)
                                     .font(LpspThreadsFonts.threadsComposePH)
-                                    .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
-                                    .tint(LpspThreadsTokens.threadsTextPrimaryDark)
+                                    .foregroundStyle(.threadsTextPrimaryDark)
+                                    .tint(.threadsTextPrimaryDark)
                                     .lineLimit(1...20)
                             }
                         }
@@ -295,26 +296,26 @@ private struct LpspThreadsThreadsComposer: View {
                     // Add-to-thread dot
                     HStack(alignment: .center, spacing: 12) {
                         Circle()
-                            .strokeBorder(LpspThreadsTokens.threadsLine, lineWidth: 1)
+                            .strokeBorder(Color.threadsLine, lineWidth: 1)
                             .frame(width: 20, height: 20)
                             .overlay(
                                 Image(systemName: "plus")
                                     .font(.system(size: 10, weight: .semibold))
-                                    .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                                    .foregroundStyle(.threadsTextSecondary)
                             )
                             .padding(.leading, 24)
                         Button("Add to thread") { drafts.append("") }
                             .font(LpspThreadsFonts.threadsHandle)
-                            .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                            .foregroundStyle(.threadsTextSecondary)
                     }
                     .padding(.top, 8)
                 }
             }
-            .background(LpspThreadsTokens.threadsCanvas)
+            .background(Color.threadsCanvas)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                        .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                        .foregroundStyle(.threadsTextPrimaryDark)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     LpspThreadsThreadsPostPill(title: "Post",
@@ -322,7 +323,7 @@ private struct LpspThreadsThreadsComposer: View {
                                     action: { /* submit */ dismiss() })
                 }
             }
-            .toolbarBackground(LpspThreadsTokens.threadsCanvas, for: .navigationBar)
+            .toolbarBackground(Color.threadsCanvas, for: .navigationBar)
         }
         .preferredColorScheme(.dark)
     }
@@ -354,7 +355,7 @@ private struct LpspThreadsRootTabView: View {
             ActivityView() .tabItem { Image(systemName: "heart.fill") }
             ProfileView()  .tabItem { Image(systemName: "person.circle.fill") }
         }
-        .tint(LpspThreadsTokens.threadsTextPrimaryDark)
+        .tint(.threadsTextPrimaryDark)
     }
 }
 

@@ -10,41 +10,11 @@ struct LpspAwesomeSoundCloudView: View {
 }
 
 // MARK: - Composants spec (préfixés)
-private enum LpspSoundCloudTokens {
-    // MARK: - Canvas & Surfaces (Light)
-    static let scCanvas      = Color(red: 1.00, green: 1.00, blue: 1.00) // #FFFFFF
-    static let scSurface     = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
-    static let scDivider     = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
-
-    // MARK: - Canvas & Surfaces (Dark)
-    static let scCanvasDark  = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
-    static let scSurfaceDark = Color(red: 0.149, green: 0.149, blue: 0.149) // #262626
-    static let scDividerDark = Color(red: 0.20, green: 0.20, blue: 0.20)    // #333333
-
-    // MARK: - Text
-    static let scTextPrimary   = Color(red: 0.20, green: 0.20, blue: 0.20) // #333333
-    static let scTextSecondary = Color(red: 0.60, green: 0.60, blue: 0.60) // #999999
-    static let scTextTertiary  = Color(red: 0.749, green: 0.749, blue: 0.749) // #BFBFBF
-
-    // MARK: - Brand
-    static let scOrange        = Color(red: 1.00, green: 0.333, blue: 0.00) // #FF5500
-    static let scOrangeLight   = Color(red: 1.00, green: 0.467, blue: 0.00) // #FF7700
-    static let scOrangePressed = Color(red: 0.902, green: 0.290, blue: 0.00) // #E64A00
-    static let scErrorRed      = Color(red: 0.898, green: 0.282, blue: 0.302) // #E5484D
-}
-
-private enum LpspSoundCloudTokens {
-    static func scCanvasAdaptive(_ scheme: ColorScheme) -> Color { scheme == .dark ? scCanvasDark : scCanvas }
-    static func scSurfaceAdaptive(_ scheme: ColorScheme) -> Color { scheme == .dark ? scSurfaceDark : scSurface }
-    static func scTextAdaptive(_ scheme: ColorScheme) -> Color { scheme == .dark ? .white : scTextPrimary }
-}
-
 private enum LpspSoundCloudFonts {
     static let scTitleLarge  = Font.system(size: 28, weight: .regular)
     static let scNowPlaying  = Font.system(size: 22, weight: .regular)
     static let scSection     = Font.system(size: 22, weight: .regular)
     static let scProfileName = Font.system(size: 20, weight: .regular)
-
     static let scTrackTitle  = Font.system(size: 16, weight: .regular)
     static let scCardTitle   = Font.system(size: 15, weight: .regular)
     static let scSubtitle    = Font.system(size: 14, weight: .regular)
@@ -55,14 +25,38 @@ private enum LpspSoundCloudFonts {
     static let scButton      = Font.system(size: 15, weight: .regular)
     static let scTab         = Font.system(size: 10, weight: .regular)
     static let scTimestamp   = Font.system(size: 11, weight: .regular)
-}
-
-// System fallback if Interstate / Inter are unavailable
-private enum LpspSoundCloudFonts {
     static func sc(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
         .system(size: size, weight: weight, design: .default)
     }
 }
+
+private enum LpspSoundCloudTokens {
+    static let scCanvas      = Color(red: 1.00, green: 1.00, blue: 1.00) // #FFFFFF
+    static let scSurface     = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
+    static let scDivider     = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
+    static let scCanvasDark  = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
+    static let scSurfaceDark = Color(red: 0.149, green: 0.149, blue: 0.149) // #262626
+    static let scDividerDark = Color(red: 0.20, green: 0.20, blue: 0.20)    // #333333
+    static let scTextPrimary   = Color(red: 0.20, green: 0.20, blue: 0.20) // #333333
+    static let scTextSecondary = Color(red: 0.60, green: 0.60, blue: 0.60) // #999999
+    static let scTextTertiary  = Color(red: 0.749, green: 0.749, blue: 0.749) // #BFBFBF
+    static let scOrange        = Color(red: 1.00, green: 0.333, blue: 0.00) // #FF5500
+    static let scOrangeLight   = Color(red: 1.00, green: 0.467, blue: 0.00) // #FF7700
+    static let scOrangePressed = Color(red: 0.902, green: 0.290, blue: 0.00) // #E64A00
+    static let scErrorRed      = Color(red: 0.898, green: 0.282, blue: 0.302) // #E5484D
+    static func scCanvasAdaptive(_ scheme: ColorScheme) -> Color { scheme == .dark ? scCanvasDark : scCanvas }
+    static func scSurfaceAdaptive(_ scheme: ColorScheme) -> Color { scheme == .dark ? scSurfaceDark : scSurface }
+    static func scTextAdaptive(_ scheme: ColorScheme) -> Color { scheme == .dark ? .white : scTextPrimary }
+}
+
+
+
+
+
+
+
+// System fallback if Interstate / Inter are unavailable
+
 
 private struct LpspSoundCloudWaveformComment: Identifiable {
     let id = UUID()
@@ -91,9 +85,9 @@ private struct LpspSoundCloudWaveformScrubber: View {
                 if let c = revealed {
                     Text(c.text)
                         .font(LpspSoundCloudFonts.scComment)
-                        .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+                        .foregroundStyle(.scTextPrimary)
                         .padding(.horizontal, 10).padding(.vertical, 6)
-                        .background(Capsule().fill(LpspSoundCloudTokens.scSurface))
+                        .background(Capsule().fill(Color.scSurface))
                         .offset(x: min(max(0, CGFloat(c.position) * w - 60), w - 120), y: -34)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
@@ -104,7 +98,7 @@ private struct LpspSoundCloudWaveformScrubber: View {
                         let amp = samples.isEmpty ? 0.3 : samples[i * samples.count / count]
                         let played = Double(i) / Double(count) <= progress
                         Capsule()
-                            .fill(played ? LpspSoundCloudTokens.scOrange : LpspSoundCloudTokens.scOrangeLight.opacity(0.45))
+                            .fill(played ? Color.scOrange : Color.scOrangeLight.opacity(0.45))
                             .frame(width: barW, height: max(3, amp * 56))
                     }
                 }
@@ -112,7 +106,7 @@ private struct LpspSoundCloudWaveformScrubber: View {
 
                 // Playhead
                 Rectangle()
-                    .fill(LpspSoundCloudTokens.scTextPrimary)
+                    .fill(Color.scTextPrimary)
                     .frame(width: 1, height: 64)
                     .offset(x: CGFloat(progress) * w)
 
@@ -122,7 +116,7 @@ private struct LpspSoundCloudWaveformScrubber: View {
                         .resizable()
                         .frame(width: 20, height: 20)
                         .clipShape(Circle())
-                        .overlay(Circle().strokeBorder(LpspSoundCloudTokens.scCanvas, lineWidth: 1.5))
+                        .overlay(Circle().strokeBorder(Color.scCanvas, lineWidth: 1.5))
                         .offset(x: CGFloat(c.position) * w - 10, y: 52)
                         .onAppear {
                             // reveal as the playhead sweeps past
@@ -158,8 +152,8 @@ private struct LpspSoundCloudSCPlayButton: View {
                 .font(.system(size: size * 0.4, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(width: size, height: size)
-                .background(Circle().fill(LpspSoundCloudTokens.scOrange))
-                .shadow(color: LpspSoundCloudTokens.scOrange.opacity(0.32), radius: 20, y: 6)
+                .background(Circle().fill(Color.scOrange))
+                .shadow(color: Color.scOrange.opacity(0.32), radius: 20, y: 6)
         }
         .sensoryFeedback(.impact(weight: .medium), trigger: isPlaying)
         .buttonStyle(LpspSoundCloudSCPressable(pressedScale: 0.93))
@@ -185,11 +179,11 @@ private struct LpspSoundCloudSCPill: View {
         Button(action: action) {
             Text(title)
                 .font(style == .filled ? .scButton : .scSubtitle)
-                .foregroundStyle(style == .filled ? .white : LpspSoundCloudTokens.scTextPrimary)
+                .foregroundStyle(style == .filled ? .white : .scTextPrimary)
                 .padding(.vertical, 9)
                 .padding(.horizontal, style == .filled ? 24 : 20)
-                .background(RoundedRectangle(cornerRadius: 4).fill(style == .filled ? LpspSoundCloudTokens.scOrange : .clear))
-                .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(style == .outline ? LpspSoundCloudTokens.scTextSecondary : .clear, lineWidth: 1))
+                .background(RoundedRectangle(cornerRadius: 4).fill(style == .filled ? Color.scOrange : .clear))
+                .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(style == .outline ? Color.scTextSecondary : .clear, lineWidth: 1))
         }
         .buttonStyle(LpspSoundCloudSCPressable())
     }
@@ -211,10 +205,10 @@ private struct LpspSoundCloudSCTrackRow: View {
                 .clipShape(RoundedRectangle(cornerRadius: 4))
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(uploader).font(LpspSoundCloudFonts.scSubtitle).foregroundStyle(LpspSoundCloudTokens.scTextSecondary).lineLimit(1)
+                Text(uploader).font(LpspSoundCloudFonts.scSubtitle).foregroundStyle(.scTextSecondary).lineLimit(1)
                 Text(title)
                     .font(LpspSoundCloudFonts.scTrackTitle)
-                    .foregroundStyle(isPlaying ? LpspSoundCloudTokens.scOrange : LpspSoundCloudTokens.scTextPrimary)
+                    .foregroundStyle(isPlaying ? Color.scOrange : .scTextPrimary)
                     .lineLimit(1)
             }
 
@@ -226,7 +220,7 @@ private struct LpspSoundCloudSCTrackRow: View {
 
             Image(systemName: "ellipsis")
                 .font(.system(size: 20))
-                .foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+                .foregroundStyle(.scTextSecondary)
         }
         .padding(.horizontal, 16)
         .frame(height: 72)
@@ -253,25 +247,25 @@ private struct LpspSoundCloudSCNowPlaying: View {
                 .shadow(color: .black.opacity(0.18), radius: 32, y: 12)
 
             VStack(spacing: 4) {
-                Text(title).font(LpspSoundCloudFonts.scNowPlaying).foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
-                Text(uploader).font(LpspSoundCloudFonts.scSubtitle).foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+                Text(title).font(LpspSoundCloudFonts.scNowPlaying).foregroundStyle(.scTextPrimary)
+                Text(uploader).font(LpspSoundCloudFonts.scSubtitle).foregroundStyle(.scTextSecondary)
             }
 
             LpspSoundCloudWaveformScrubber(samples: samples, progress: progress, comments: comments) { progress = $0 }
                 .padding(.horizontal, 16)
 
             HStack(spacing: 28) {
-                Image(systemName: "shuffle").foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
-                Image(systemName: "backward.end.fill").foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+                Image(systemName: "shuffle").foregroundStyle(.scTextSecondary)
+                Image(systemName: "backward.end.fill").foregroundStyle(.scTextPrimary)
                 LpspSoundCloudSCPlayButton(isPlaying: isPlaying) { isPlaying.toggle() }
-                Image(systemName: "forward.end.fill").foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
-                Image(systemName: "repeat").foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+                Image(systemName: "forward.end.fill").foregroundStyle(.scTextPrimary)
+                Image(systemName: "repeat").foregroundStyle(.scTextSecondary)
             }
             .font(.system(size: 22))
             Spacer()
         }
         .padding(.horizontal, 24)
-        .background(LpspSoundCloudTokens.scCanvas.ignoresSafeArea())
+        .background(Color.scCanvas.ignoresSafeArea())
     }
 }
 
@@ -292,7 +286,7 @@ private struct LpspSoundCloudRootTabView: View {
             UploadView().tabItem { Label("Upload", systemImage: "arrow.up.circle.fill") }
             ProfileView().tabItem { Label("You", systemImage: "person.crop.circle") }
         }
-        .tint(LpspSoundCloudTokens.scOrange) // active = orange
+        .tint(.scOrange) // active = orange
     }
 }
 

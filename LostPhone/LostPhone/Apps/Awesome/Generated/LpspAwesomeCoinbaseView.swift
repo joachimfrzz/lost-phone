@@ -55,48 +55,10 @@ private enum LpspCoinbaseTokens {
     static let cbDarkTextSec   = Color(red: 0.627, green: 0.643, blue: 0.667) // #A0A4AA
 }
 
-private enum LpspCoinbaseFonts {
-    // Hero amounts (Display variant)
-    static let cbPortfolioHero = Font.system(size: 40, weight: .regular)
-    static let cbBuyAmount     = Font.system(size: 56, weight: .regular)
-    static let cbScreenTitle   = Font.system(size: 28, weight: .regular)
 
-    // Sections & titles (Sans)
-    static let cbSectionHeader = Font.system(size: 20, weight: .regular)
-    static let cbAssetTitle    = Font.system(size: 16, weight: .regular)
-
-    // Prices & deltas
-    static let cbAssetPrice    = Font.system(size: 16, weight: .regular)
-    static let cbAssetChange   = Font.system(size: 13, weight: .regular)
-
-    // Body
-    static let cbBody          = Font.system(size: 15, weight: .regular)
-    static let cbBodySmall     = Font.system(size: 13, weight: .regular)
-
-    // Micro
-    static let cbTicker        = Font.system(size: 13, weight: .regular)
-    static let cbTab           = Font.system(size: 10, weight: .regular)
-    static let cbAllCaps       = Font.system(size: 11, weight: .regular)
-    static let cbRangeChip     = Font.system(size: 13, weight: .regular)
-
-    // Buttons
-    static let cbButton        = Font.system(size: 16, weight: .regular)
-    static let cbButtonSmall   = Font.system(size: 13, weight: .regular)
-
-    // Mono (technical readouts)
-    static let cbWalletAddr    = Font.system(size: 13, weight: .regular)
-    static let cbTxHash        = Font.system(size: 12, weight: .regular)
-}
 
 // Fallback if Coinbase fonts aren't bundled — SF Pro / SF Mono:
-private enum LpspCoinbaseFonts {
-    static func cb(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-    static func cbMono(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .monospaced)
-    }
-}
+
 
 private struct LpspCoinbasePortfolioHero: View {
     let value: Double
@@ -239,6 +201,32 @@ private struct LpspCoinbaseAssetActionRow: View {
             LpspCoinbaseActionButton(icon: "qrcode", label: "Receive",   action: onReceive)
         }
         .padding(.horizontal, 16)
+    }
+}
+
+private enum LpspCoinbaseFonts {
+    static let cbPortfolioHero = Font.system(size: 40, weight: .regular)
+    static let cbBuyAmount     = Font.system(size: 56, weight: .regular)
+    static let cbScreenTitle   = Font.system(size: 28, weight: .regular)
+    static let cbSectionHeader = Font.system(size: 20, weight: .regular)
+    static let cbAssetTitle    = Font.system(size: 16, weight: .regular)
+    static let cbAssetPrice    = Font.system(size: 16, weight: .regular)
+    static let cbAssetChange   = Font.system(size: 13, weight: .regular)
+    static let cbBody          = Font.system(size: 15, weight: .regular)
+    static let cbBodySmall     = Font.system(size: 13, weight: .regular)
+    static let cbTicker        = Font.system(size: 13, weight: .regular)
+    static let cbTab           = Font.system(size: 10, weight: .regular)
+    static let cbAllCaps       = Font.system(size: 11, weight: .regular)
+    static let cbRangeChip     = Font.system(size: 13, weight: .regular)
+    static let cbButton        = Font.system(size: 16, weight: .regular)
+    static let cbButtonSmall   = Font.system(size: 13, weight: .regular)
+    static let cbWalletAddr    = Font.system(size: 13, weight: .regular)
+    static let cbTxHash        = Font.system(size: 12, weight: .regular)
+    static func cb(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+    static func cbMono(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .monospaced)
     }
 }
 

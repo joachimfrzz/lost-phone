@@ -11,35 +11,27 @@ struct LpspAwesomeFlightyView: View {
 
 // MARK: - Composants spec (préfixés)
 private enum LpspFlightyTokens {
-    // MARK: - Canvas & Surfaces
     static let fltCanvas   = Color(red: 0.043, green: 0.043, blue: 0.059)  // #0B0B0F
     static let fltSurface1 = Color(red: 0.102, green: 0.102, blue: 0.122)  // #1A1A1F
     static let fltSurface2 = Color(red: 0.133, green: 0.133, blue: 0.157)  // #222228
     static let fltSurface3 = Color(red: 0.173, green: 0.173, blue: 0.204)  // #2C2C34
     static let fltDivider  = Color(red: 0.180, green: 0.180, blue: 0.212)  // #2E2E36
-
-    // MARK: - Text
     static let fltTextPrimary   = Color.white                              // #FFFFFF
     static let fltTextSecondary = Color(red: 0.557, green: 0.557, blue: 0.588) // #8E8E96
     static let fltTextTertiary  = Color(red: 0.353, green: 0.353, blue: 0.384) // #5A5A62
-
-    // MARK: - Brand
     static let fltBlue        = Color(red: 0.039, green: 0.518, blue: 1.000) // #0A84FF
     static let fltBluePressed = Color(red: 0.000, green: 0.400, blue: 0.800) // #0066CC
-
-    // MARK: - LpspFlightyStatus (strict semantics)
     static let fltOnTime    = Color(red: 0.188, green: 0.820, blue: 0.345)  // #30D158
     static let fltDelay     = Color(red: 1.000, green: 0.839, blue: 0.039)  // #FFD60A
     static let fltCancelled = Color(red: 1.000, green: 0.271, blue: 0.227)  // #FF453A
-
-    // MARK: - Map
     static let fltMapLand      = Color(red: 0.086, green: 0.086, blue: 0.106) // #16161B
     static let fltMapGraticule = Color(red: 0.122, green: 0.122, blue: 0.149) // #1F1F26
-}
-
-private enum LpspFlightyTokens {
     static let fltBlueGlow = LpspFlightyTokens.fltBlue.opacity(0.45)
 }
+
+
+
+
 
 private enum LpspFlightyFonts {
     static let fltTimeHero  = Font.system(size: 32, weight: .bold)

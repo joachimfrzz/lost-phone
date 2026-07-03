@@ -10,6 +10,32 @@ struct LpspAwesomeClaudeView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspClaudeFonts {
+    static let claudeDisplay      = Font.system(size: 32, weight: .regular)
+    static let claudeConvTitle    = Font.system(size: 18, weight: .regular)
+    static let claudeH1           = Font.system(size: 24, weight: .regular)
+    static let claudeH2           = Font.system(size: 20, weight: .regular)
+    static let claudeH3           = Font.system(size: 17, weight: .regular)
+    static let claudeBody         = Font.system(size: 16, weight: .regular)
+    static let claudeBodyBold     = Font.system(size: 16, weight: .regular)
+    static let claudeBodyItalic   = Font.system(size: 16, weight: .regular)
+    static let claudeBlockquote   = Font.system(size: 16, weight: .regular)
+    static let claudeUser         = Font.system(size: 16, weight: .regular)
+    static let claudeAction       = Font.system(size: 15, weight: .regular)
+    static let claudeChip         = Font.system(size: 13, weight: .regular)
+    static let claudeMeta         = Font.system(size: 12, weight: .regular)
+    static let claudeCaption      = Font.system(size: 11, weight: .regular)
+    static let claudeSenderLabel  = Font.system(size: 13, weight: .regular)
+    static let claudeGroupHeader  = Font.system(size: 11, weight: .regular)
+    static let claudeCodeInline   = Font.system(size: 14, weight: .regular)
+    static let claudeCodeBlock    = Font.system(size: 14, weight: .regular)
+    static let claudeCodeBlockSm  = Font.system(size: 13, weight: .regular)
+    static let claudeCodeLang     = Font.system(size: 11, weight: .regular)
+    static func claude(_ size: CGFloat, weight: Font.Weight = .regular, serif: Bool = false) -> Font {
+        .system(size: size, weight: weight, design: serif ? .serif : .default)
+    }
+}
+
 private enum LpspClaudeTokens {
     // MARK: - Canvas (the Claude paper)
     static let claudeCream     = Color(red: 0.973, green: 0.957, blue: 0.929) // #F8F4ED canvas
@@ -54,44 +80,10 @@ private enum LpspClaudeTokens {
     static let claudeOrangeSoftDk = Color(red: 0.290, green: 0.208, blue: 0.165) // #4A352A
 }
 
-private enum LpspClaudeFonts {
-    // Display
-    static let claudeDisplay      = Font.system(size: 32, weight: .regular)
-    static let claudeConvTitle    = Font.system(size: 18, weight: .regular)
 
-    // Headings inside assistant messages
-    static let claudeH1           = Font.system(size: 24, weight: .regular)
-    static let claudeH2           = Font.system(size: 20, weight: .regular)
-    static let claudeH3           = Font.system(size: 17, weight: .regular)
-
-    // Assistant body — the most-rendered text in the app
-    static let claudeBody         = Font.system(size: 16, weight: .regular)
-    static let claudeBodyBold     = Font.system(size: 16, weight: .regular)
-    static let claudeBodyItalic   = Font.system(size: 16, weight: .regular)
-    static let claudeBlockquote   = Font.system(size: 16, weight: .regular)
-
-    // User messages & UI chrome
-    static let claudeUser         = Font.system(size: 16, weight: .regular)
-    static let claudeAction       = Font.system(size: 15, weight: .regular)
-    static let claudeChip         = Font.system(size: 13, weight: .regular)
-    static let claudeMeta         = Font.system(size: 12, weight: .regular)
-    static let claudeCaption      = Font.system(size: 11, weight: .regular)
-    static let claudeSenderLabel  = Font.system(size: 13, weight: .regular)
-    static let claudeGroupHeader  = Font.system(size: 11, weight: .regular)
-
-    // Code
-    static let claudeCodeInline   = Font.system(size: 14, weight: .regular)
-    static let claudeCodeBlock    = Font.system(size: 14, weight: .regular)
-    static let claudeCodeBlockSm  = Font.system(size: 13, weight: .regular)
-    static let claudeCodeLang     = Font.system(size: 11, weight: .regular)
-}
 
 // Fallback when Tiempos isn't bundled — Source Serif Pro / SF Pro is the closest pairing
-private enum LpspClaudeFonts {
-    static func claude(_ size: CGFloat, weight: Font.Weight = .regular, serif: Bool = false) -> Font {
-        .system(size: size, weight: weight, design: serif ? .serif : .default)
-    }
-}
+
 
 private struct LpspClaudeClaudeMark: Shape {
     func path(in rect: CGRect) -> Path {
@@ -129,7 +121,7 @@ private struct LpspClaudeClaudeMark: Shape {
 
 private struct LpspClaudeClaudeAvatar: View {
     var size: CGFloat = 18
-    var color: Color = LpspClaudeTokens.claudeOrange
+    var color: Color = .claudeOrange
 
     var body: some View {
         LpspClaudeClaudeMark()
@@ -151,12 +143,12 @@ private struct LpspClaudeAssistantMessage: View {
                 HStack(spacing: 6) {
                     Text("Claude")
                         .font(LpspClaudeFonts.claudeSenderLabel)
-                        .foregroundStyle(LpspClaudeTokens.claudeGraphite)
+                        .foregroundStyle(Color.claudeGraphite)
                     Text("·")
-                        .foregroundStyle(LpspClaudeTokens.claudeStone)
+                        .foregroundStyle(Color.claudeStone)
                     Text(modelName)
                         .font(LpspClaudeFonts.claudeChip)
-                        .foregroundStyle(LpspClaudeTokens.claudeStone)
+                        .foregroundStyle(Color.claudeStone)
                 }
             }
             .padding(.leading, 4)
@@ -164,7 +156,7 @@ private struct LpspClaudeAssistantMessage: View {
             // Body — markdown-rendered Tiempos prose
             Text(content)
                 .font(LpspClaudeFonts.claudeBody)
-                .foregroundStyle(LpspClaudeTokens.claudeInk)
+                .foregroundStyle(Color.claudeInk)
                 .lineSpacing(8) // Approximates 1.55 line-height
 
             if isStreaming {
@@ -181,7 +173,7 @@ private struct LpspClaudeStreamingCursor: View {
 
     var body: some View {
         Rectangle()
-            .fill(LpspClaudeTokens.claudeOrange)
+            .fill(Color.claudeOrange)
             .frame(width: 8, height: 18)
             .cornerRadius(1)
             .opacity(visible ? 1 : 0)
@@ -202,12 +194,12 @@ private struct LpspClaudeUserMessage: View {
             Spacer(minLength: 40)
             Text(text)
                 .font(LpspClaudeFonts.claudeUser)
-                .foregroundStyle(LpspClaudeTokens.claudeInk)
+                .foregroundStyle(Color.claudeInk)
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 18)
-                        .fill(LpspClaudeTokens.claudeSurface1)
+                        .fill(Color.claudeSurface1)
                 )
                 .frame(maxWidth: UIScreen.main.bounds.width * 0.8, alignment: .trailing)
         }
@@ -230,7 +222,7 @@ private struct LpspClaudeChatInput: View {
                 Button(action: onAttach) {
                     Image(systemName: "plus.circle")
                         .font(.system(size: 24))
-                        .foregroundStyle(LpspClaudeTokens.claudeGraphite)
+                        .foregroundStyle(Color.claudeGraphite)
                 }
                 .padding(.bottom, 14)
 
@@ -238,7 +230,7 @@ private struct LpspClaudeChatInput: View {
                 TextField("Reply to Claude…", text: $text, axis: .vertical)
                     .focused($focused)
                     .font(LpspClaudeFonts.claudeUser)
-                    .foregroundStyle(LpspClaudeTokens.claudeInk)
+                    .foregroundStyle(Color.claudeInk)
                     .padding(.vertical, 14)
                     .lineLimit(1...8)
 
@@ -251,10 +243,10 @@ private struct LpspClaudeChatInput: View {
                 }) {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(canSend ? LpspClaudeTokens.claudePaper : LpspClaudeTokens.claudeStone)
+                        .foregroundStyle(canSend ? Color.claudePaper : Color.claudeStone)
                         .frame(width: 40, height: 40)
                         .background(
-                            Circle().fill(canSend ? LpspClaudeTokens.claudeOrange : LpspClaudeTokens.claudeSurface2)
+                            Circle().fill(canSend ? Color.claudeOrange : Color.claudeSurface2)
                         )
                 }
                 .disabled(!canSend)
@@ -265,11 +257,11 @@ private struct LpspClaudeChatInput: View {
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(LpspClaudeTokens.claudePaper)
+                    .fill(Color.claudePaper)
                     .overlay(
                         RoundedRectangle(cornerRadius: 24)
                             .strokeBorder(
-                                focused ? LpspClaudeTokens.claudeOrange : LpspClaudeTokens.claudeSand,
+                                focused ? Color.claudeOrange : Color.claudeSand,
                                 lineWidth: focused ? 1.5 : 1
                             )
                     )
@@ -290,16 +282,16 @@ private struct LpspClaudeModelPickerChip: View {
                 LpspClaudeClaudeAvatar(size: 14)
                 Text(modelName)
                     .font(LpspClaudeFonts.claudeChip)
-                    .foregroundStyle(LpspClaudeTokens.claudeInk)
+                    .foregroundStyle(Color.claudeInk)
                 Image(systemName: "chevron.down")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(LpspClaudeTokens.claudeStone)
+                    .foregroundStyle(Color.claudeStone)
             }
             .padding(.vertical, 6)
             .padding(.horizontal, 12)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(LpspClaudeTokens.claudeSurface1)
+                    .fill(Color.claudeSurface1)
             )
         }
         .buttonStyle(.plain)
@@ -321,12 +313,12 @@ private struct LpspClaudeModelPickerSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Select Model").font(LpspClaudeFonts.claudeAction).foregroundStyle(LpspClaudeTokens.claudeInk)
+                Text("Select Model").font(LpspClaudeFonts.claudeAction).foregroundStyle(Color.claudeInk)
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 22))
-                        .foregroundStyle(LpspClaudeTokens.claudeStone)
+                        .foregroundStyle(Color.claudeStone)
                 }
             }
             .padding(.horizontal, 20)
@@ -340,26 +332,26 @@ private struct LpspClaudeModelPickerSheet: View {
                     }
                 } label: {
                     HStack(spacing: 16) {
-                        LpspClaudeClaudeAvatar(size: 24, color: model.available ? LpspClaudeTokens.claudeOrange : LpspClaudeTokens.claudeBone)
+                        LpspClaudeClaudeAvatar(size: 24, color: model.available ? .claudeOrange : .claudeBone)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(model.name).font(.system(size: 16, weight: .medium)).foregroundStyle(LpspClaudeTokens.claudeInk)
-                            Text(model.subtitle).font(LpspClaudeFonts.claudeChip).foregroundStyle(LpspClaudeTokens.claudeGraphite)
+                            Text(model.name).font(.system(size: 16, weight: .medium)).foregroundStyle(Color.claudeInk)
+                            Text(model.subtitle).font(LpspClaudeFonts.claudeChip).foregroundStyle(Color.claudeGraphite)
                         }
                         Spacer()
                         if model.name == selectedModel {
-                            Circle().fill(LpspClaudeTokens.claudeOrange).frame(width: 12, height: 12)
+                            Circle().fill(Color.claudeOrange).frame(width: 12, height: 12)
                         }
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 14)
                 }
                 .buttonStyle(.plain)
-                Rectangle().fill(LpspClaudeTokens.claudeSurface1).frame(height: 1).padding(.leading, 60)
+                Rectangle().fill(Color.claudeSurface1).frame(height: 1).padding(.leading, 60)
             }
         }
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(LpspClaudeTokens.claudePaper)
+                .fill(Color.claudePaper)
         )
         .sensoryFeedback(.selection, trigger: selectedModel)
     }
@@ -374,7 +366,7 @@ private struct LpspClaudeCodeBlock: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text(language).font(LpspClaudeFonts.claudeCodeLang).foregroundStyle(LpspClaudeTokens.claudeStone)
+                Text(language).font(LpspClaudeFonts.claudeCodeLang).foregroundStyle(Color.claudeStone)
                 Spacer()
                 Button {
                     UIPasteboard.general.string = code
@@ -385,7 +377,7 @@ private struct LpspClaudeCodeBlock: View {
                 } label: {
                     Image(systemName: copied ? "checkmark" : "doc.on.doc")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(LpspClaudeTokens.claudeCodeFg)
+                        .foregroundStyle(Color.claudeCodeFg)
                         .frame(width: 32, height: 32)
                         .background(Color.white.opacity(0.05).clipShape(Circle()))
                 }
@@ -393,20 +385,20 @@ private struct LpspClaudeCodeBlock: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(Rectangle().fill(LpspClaudeTokens.claudeDarkSurface2.opacity(0.4)))
+            .background(Rectangle().fill(Color.claudeDarkSurface2.opacity(0.4)))
 
             // Body
             ScrollView(.horizontal, showsIndicators: false) {
                 Text(code)
                     .font(LpspClaudeFonts.claudeCodeBlock)
-                    .foregroundStyle(LpspClaudeTokens.claudeCodeFg)
+                    .foregroundStyle(Color.claudeCodeFg)
                     .padding(16)
             }
         }
-        .background(LpspClaudeTokens.claudeCodeBg)
+        .background(Color.claudeCodeBg)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
-            RoundedRectangle(cornerRadius: 12).strokeBorder(LpspClaudeTokens.claudeSand, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 12).strokeBorder(Color.claudeSand, lineWidth: 1)
         )
     }
 }
@@ -422,11 +414,11 @@ private struct LpspClaudeThinkingIndicator: View {
                 .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: pulse)
             Text(elapsedSeconds.map { "Thought for \($0)s" } ?? "Thinking…")
                 .font(LpspClaudeFonts.claudeChip)
-                .foregroundStyle(LpspClaudeTokens.claudeGraphite)
+                .foregroundStyle(Color.claudeGraphite)
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 12)
-        .background(Capsule().fill(LpspClaudeTokens.claudeOrangeSoft))
+        .background(Capsule().fill(Color.claudeOrangeSoft))
         .onAppear { pulse = true }
     }
 }
@@ -451,29 +443,29 @@ private struct LpspClaudeArtifactCard: View {
         Button(action: onOpen) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
-                    Image(systemName: icon).font(.system(size: 14)).foregroundStyle(LpspClaudeTokens.claudeGraphite)
-                    Text(title).font(.system(size: 17, weight: .medium)).foregroundStyle(LpspClaudeTokens.claudeInk)
+                    Image(systemName: icon).font(.system(size: 14)).foregroundStyle(Color.claudeGraphite)
+                    Text(title).font(.system(size: 17, weight: .medium)).foregroundStyle(Color.claudeInk)
                     Spacer()
-                    Image(systemName: "arrow.up.right").font(.system(size: 12)).foregroundStyle(LpspClaudeTokens.claudeStone)
+                    Image(systemName: "arrow.up.right").font(.system(size: 12)).foregroundStyle(Color.claudeStone)
                 }
 
                 Text(preview)
                     .font(LpspClaudeFonts.claudeCodeBlockSm)
-                    .foregroundStyle(LpspClaudeTokens.claudeGraphite)
+                    .foregroundStyle(Color.claudeGraphite)
                     .lineLimit(6)
                     .multilineTextAlignment(.leading)
                     .padding(.horizontal, 8).padding(.vertical, 6)
                     .background(
-                        RoundedRectangle(cornerRadius: 8).fill(LpspClaudeTokens.claudeSurface1)
+                        RoundedRectangle(cornerRadius: 8).fill(Color.claudeSurface1)
                     )
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(LpspClaudeTokens.claudePaper)
+                    .fill(Color.claudePaper)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12).strokeBorder(LpspClaudeTokens.claudeSand, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 12).strokeBorder(Color.claudeSand, lineWidth: 1)
                     )
             )
             .shadow(color: Color.black.opacity(0.06), radius: 8, y: 2)
@@ -492,18 +484,18 @@ private struct LpspClaudeConversationView: View {
             // Top header
             HStack {
                 Button { /* open sidebar */ } label: {
-                    Image(systemName: "line.3.horizontal").font(.system(size: 18)).foregroundStyle(LpspClaudeTokens.claudeInk)
+                    Image(systemName: "line.3.horizontal").font(.system(size: 18)).foregroundStyle(Color.claudeInk)
                 }
                 Spacer()
-                Text("Untitled chat").font(LpspClaudeFonts.claudeConvTitle).foregroundStyle(LpspClaudeTokens.claudeInk)
+                Text("Untitled chat").font(LpspClaudeFonts.claudeConvTitle).foregroundStyle(Color.claudeInk)
                 Spacer()
                 Button { /* ... */ } label: {
-                    Image(systemName: "ellipsis").font(.system(size: 18)).foregroundStyle(LpspClaudeTokens.claudeInk)
+                    Image(systemName: "ellipsis").font(.system(size: 18)).foregroundStyle(Color.claudeInk)
                 }
             }
             .padding(.horizontal, 16)
             .frame(height: 52)
-            .background(LpspClaudeTokens.claudeCream)
+            .background(Color.claudeCream)
 
             // Model chip
             HStack {
@@ -523,11 +515,11 @@ private struct LpspClaudeConversationView: View {
                 }
                 .padding(.horizontal, 16).padding(.vertical, 16)
             }
-            .background(LpspClaudeTokens.claudeCream)
+            .background(Color.claudeCream)
 
             LpspClaudeChatInput(text: $input, onSend: {}, onAttach: {})
         }
-        .background(LpspClaudeTokens.claudeCream.ignoresSafeArea())
+        .background(Color.claudeCream.ignoresSafeArea())
         .sheet(isPresented: $showingModelPicker) {
             LpspClaudeModelPickerSheet(
                 selectedModel: $modelName,

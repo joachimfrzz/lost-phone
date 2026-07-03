@@ -10,6 +10,27 @@ struct LpspAwesomeTwitchView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspTwitchFonts {
+    static let twitchTitleLarge   = Font.system(size: 28, weight: .regular)
+    static let twitchChannelName  = Font.system(size: 22, weight: .regular)
+    static let twitchSectionHeader = Font.system(size: 20, weight: .regular)
+    static let twitchStreamTitle  = Font.system(size: 16, weight: .regular)
+    static let twitchChannelLabel = Font.system(size: 15, weight: .regular)
+    static let twitchBody         = Font.system(size: 15, weight: .regular)
+    static let twitchChatMessage  = Font.system(size: 14, weight: .regular)
+    static let twitchChatUsername = Font.system(size: 14, weight: .regular)
+    static let twitchMeta         = Font.system(size: 13, weight: .regular)
+    static let twitchCardSubtitle = Font.system(size: 12, weight: .regular)
+    static let twitchLabelUpper   = Font.system(size: 11, weight: .regular)
+    static let twitchButton       = Font.system(size: 15, weight: .regular)
+    static let twitchButtonSecondary = Font.system(size: 14, weight: .regular)
+    static let twitchTab          = Font.system(size: 10, weight: .regular)
+    static let twitchBadge        = Font.system(size: 11, weight: .regular)
+    static func twitch(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspTwitchTokens {
     // MARK: - Canvas & Surfaces
     static let twitchCanvas    = Color(red: 0.055, green: 0.055, blue: 0.063) // #0E0E10
@@ -32,29 +53,9 @@ private enum LpspTwitchTokens {
     static let twitchOnlineGreen   = Color(red: 0.000, green: 0.757, blue: 0.431) // #00C16E
 }
 
-private enum LpspTwitchFonts {
-    static let twitchTitleLarge   = Font.system(size: 28, weight: .regular)
-    static let twitchChannelName  = Font.system(size: 22, weight: .regular)
-    static let twitchSectionHeader = Font.system(size: 20, weight: .regular)
-    static let twitchStreamTitle  = Font.system(size: 16, weight: .regular)
-    static let twitchChannelLabel = Font.system(size: 15, weight: .regular)
-    static let twitchBody         = Font.system(size: 15, weight: .regular)
-    static let twitchChatMessage  = Font.system(size: 14, weight: .regular)
-    static let twitchChatUsername = Font.system(size: 14, weight: .regular)
-    static let twitchMeta         = Font.system(size: 13, weight: .regular)
-    static let twitchCardSubtitle = Font.system(size: 12, weight: .regular)
-    static let twitchLabelUpper   = Font.system(size: 11, weight: .regular)
-    static let twitchButton       = Font.system(size: 15, weight: .regular)
-    static let twitchButtonSecondary = Font.system(size: 14, weight: .regular)
-    static let twitchTab          = Font.system(size: 10, weight: .regular)
-    static let twitchBadge        = Font.system(size: 11, weight: .regular)
-}
 
-private enum LpspTwitchFonts {
-    static func twitch(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspTwitchTwitchFollowButton: View {
     @Binding var isFollowing: Bool
@@ -72,14 +73,14 @@ private struct LpspTwitchTwitchFollowButton: View {
                     .font(isFollowing ? .twitchButtonSecondary : .twitchButton)
                     .tracking(isFollowing ? 0 : 0.2)
             }
-            .foregroundStyle(isFollowing ? LpspTwitchTokens.twitchTextPrimary : .white)
+            .foregroundStyle(isFollowing ? Color.twitchTextPrimary : .white)
             .padding(.horizontal, 16)
             .frame(height: 40)
             .background(
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(isFollowing ? LpspTwitchTokens.twitchSurface2 : LpspTwitchTokens.twitchPurple)
+                    .fill(isFollowing ? Color.twitchSurface2 : Color.twitchPurple)
             )
-            .shadow(color: isFollowing ? .clear : LpspTwitchTokens.twitchPurple.opacity(0.35), radius: 18, y: 6)
+            .shadow(color: isFollowing ? .clear : Color.twitchPurple.opacity(0.35), radius: 18, y: 6)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: isFollowing)
         .buttonStyle(LpspTwitchTwitchPressableStyle(pressedScale: 0.97))
@@ -108,7 +109,7 @@ private struct LpspTwitchTwitchLivePill: View {
         .foregroundStyle(.white)
         .padding(.horizontal, 8)
         .frame(height: 22)
-        .background(RoundedRectangle(cornerRadius: 4).fill(LpspTwitchTokens.twitchLiveRed))
+        .background(RoundedRectangle(cornerRadius: 4).fill(Color.twitchLiveRed))
         .onAppear { pulse = true }
     }
 }
@@ -152,9 +153,9 @@ private struct LpspTwitchTwitchLiveCard: View {
             HStack(alignment: .top, spacing: 8) {
                 avatar.resizable().frame(width: 32, height: 32).clipShape(Circle())
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(LpspTwitchFonts.twitchStreamTitle).foregroundStyle(LpspTwitchTokens.twitchTextPrimary).lineLimit(2)
-                    Text(channel).font(LpspTwitchFonts.twitchMeta).foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
-                    Text(game).font(LpspTwitchFonts.twitchCardSubtitle).foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                    Text(title).font(LpspTwitchFonts.twitchStreamTitle).foregroundStyle(.twitchTextPrimary).lineLimit(2)
+                    Text(channel).font(LpspTwitchFonts.twitchMeta).foregroundStyle(.twitchTextSecondary)
+                    Text(game).font(LpspTwitchFonts.twitchCardSubtitle).foregroundStyle(.twitchTextSecondary)
                 }
             }
         }
@@ -171,7 +172,7 @@ private struct LpspTwitchTwitchChatRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             (Text(username + " ").font(LpspTwitchFonts.twitchChatUsername).foregroundColor(userColor)
-             + Text(message).font(LpspTwitchFonts.twitchChatMessage).foregroundColor(LpspTwitchTokens.twitchTextPrimary))
+             + Text(message).font(LpspTwitchFonts.twitchChatMessage).foregroundColor(.twitchTextPrimary))
             .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
         }
@@ -179,8 +180,8 @@ private struct LpspTwitchTwitchChatRow: View {
         .padding(.horizontal, 12)
         .background(
             mentioned
-            ? LpspTwitchTokens.twitchPurple.opacity(0.20)
-                .overlay(Rectangle().fill(LpspTwitchTokens.twitchPurple).frame(width: 2), alignment: .leading)
+            ? Color.twitchPurple.opacity(0.20)
+                .overlay(Rectangle().fill(Color.twitchPurple).frame(width: 2), alignment: .leading)
             : nil
         )
     }
@@ -195,7 +196,7 @@ private struct LpspTwitchTwitchAvatarRing: View {
             .resizable()
             .frame(width: size, height: size)
             .clipShape(Circle())
-            .overlay(Circle().strokeBorder(isLive ? LpspTwitchTokens.twitchLiveRed : LpspTwitchTokens.twitchPurple, lineWidth: 2))
+            .overlay(Circle().strokeBorder(isLive ? Color.twitchLiveRed : Color.twitchPurple, lineWidth: 2))
             .padding(2)
     }
 }
@@ -215,11 +216,11 @@ private struct LpspTwitchTwitchTheaterChatOverlay: View {
                 }}
                 TextField("Send a message", text: .constant(""))
                     .padding(12)
-                    .background(LpspTwitchTokens.twitchSurface2)
+                    .background(Color.twitchSurface2)
             }
             .frame(width: 320)
             .background(.ultraThinMaterial)
-            .background(LpspTwitchTokens.twitchCanvas.opacity(0.72))
+            .background(Color.twitchCanvas.opacity(0.72))
             .transition(.move(edge: .trailing).combined(with: .opacity))
         }
     }
@@ -230,7 +231,7 @@ private struct LpspTwitchRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspTwitchTokens.twitchCanvas).withAlphaComponent(0.94)
+        appearance.backgroundColor = UIColor(Color.twitchCanvas).withAlphaComponent(0.94)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -242,7 +243,7 @@ private struct LpspTwitchRootTabView: View {
             NotificationsView().tabItem { Label("Notifications", systemImage: "bell.fill") }
             ProfileView().tabItem       { Label("Profile",       systemImage: "person.crop.circle.fill") }
         }
-        .tint(LpspTwitchTokens.twitchPurple) // active = purple, purple is the indicator
+        .tint(.twitchPurple) // active = purple, purple is the indicator
     }
 }
 

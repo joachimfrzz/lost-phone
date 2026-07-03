@@ -10,6 +10,23 @@ struct LpspAwesomeSpotifyView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspSpotifyFonts {
+    static let spotifyTitleLarge  = Font.system(size: 28, weight: .regular)
+    static let spotifyTitle       = Font.system(size: 22, weight: .regular)
+    static let spotifyPlaylistHero = Font.system(size: 24, weight: .regular)
+    static let spotifyTrackTitle  = Font.system(size: 16, weight: .regular)
+    static let spotifyCardTitle   = Font.system(size: 15, weight: .regular)
+    static let spotifySubtitle    = Font.system(size: 14, weight: .regular)
+    static let spotifyBody        = Font.system(size: 15, weight: .regular)
+    static let spotifyMeta        = Font.system(size: 12, weight: .regular)
+    static let spotifyLabelUpper  = Font.system(size: 11, weight: .regular)
+    static let spotifyButton      = Font.system(size: 16, weight: .regular)
+    static let spotifyTab         = Font.system(size: 11, weight: .regular)
+    static func spotify(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspSpotifyTokens {
     // MARK: - Canvas & Surfaces
     static let spotifyCanvas       = Color(red: 0.07, green: 0.07, blue: 0.07)   // #121212
@@ -31,29 +48,10 @@ private enum LpspSpotifyTokens {
     static let spotifyErrorRed     = Color(red: 0.945, green: 0.369, blue: 0.424) // #F15E6C
 }
 
-private enum LpspSpotifyFonts {
-    // Spotify Mix Title (use at 18pt+)
-    static let spotifyTitleLarge  = Font.system(size: 28, weight: .regular)
-    static let spotifyTitle       = Font.system(size: 22, weight: .regular)
-    static let spotifyPlaylistHero = Font.system(size: 24, weight: .regular)
 
-    // Spotify Mix UI (use below 18pt)
-    static let spotifyTrackTitle  = Font.system(size: 16, weight: .regular)
-    static let spotifyCardTitle   = Font.system(size: 15, weight: .regular)
-    static let spotifySubtitle    = Font.system(size: 14, weight: .regular)
-    static let spotifyBody        = Font.system(size: 15, weight: .regular)
-    static let spotifyMeta        = Font.system(size: 12, weight: .regular)
-    static let spotifyLabelUpper  = Font.system(size: 11, weight: .regular)
-    static let spotifyButton      = Font.system(size: 16, weight: .regular)
-    static let spotifyTab         = Font.system(size: 11, weight: .regular)
-}
 
 // If Spotify Mix is unavailable, register a system fallback once:
-private enum LpspSpotifyFonts {
-    static func spotify(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
 
 private struct LpspSpotifySpotifyPlayButton: View {
     let isPlaying: Bool
@@ -66,7 +64,7 @@ private struct LpspSpotifySpotifyPlayButton: View {
                 .font(.system(size: size * 0.45, weight: .bold))
                 .foregroundStyle(.black) // intentional: black on green
                 .frame(width: size, height: size)
-                .background(Circle().fill(LpspSpotifyTokens.spotifyGreen))
+                .background(Circle().fill(Color.spotifyGreen))
         }
         .sensoryFeedback(.impact(flexibility: .soft), trigger: isPlaying)
         .buttonStyle(LpspSpotifySpotifyPressableStyle(pressedScale: 0.92))
@@ -97,10 +95,10 @@ private struct LpspSpotifySpotifyPillButton: View {
                 .padding(.vertical, 10)
                 .padding(.horizontal, 32)
                 .background(
-                    Capsule().fill(style == .filled ? LpspSpotifyTokens.spotifyGreen : .clear)
+                    Capsule().fill(style == .filled ? Color.spotifyGreen : .clear)
                 )
                 .overlay(
-                    Capsule().strokeBorder(style == .outline ? LpspSpotifyTokens.spotifyTextSecondary : .clear, lineWidth: 1)
+                    Capsule().strokeBorder(style == .outline ? Color.spotifyTextSecondary : .clear, lineWidth: 1)
                 )
         }
         .buttonStyle(LpspSpotifySpotifyPressableStyle())
@@ -124,11 +122,11 @@ private struct LpspSpotifyTrackRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(LpspSpotifyFonts.spotifyTrackTitle)
-                    .foregroundStyle(isPlaying ? LpspSpotifyTokens.spotifyGreen : .white)
+                    .foregroundStyle(isPlaying ? Color.spotifyGreen : .white)
                     .lineLimit(1)
                 Text(artist)
                     .font(LpspSpotifyFonts.spotifySubtitle)
-                    .foregroundStyle(isPlaying ? LpspSpotifyTokens.spotifyGreen : LpspSpotifyTokens.spotifyTextSecondary)
+                    .foregroundStyle(isPlaying ? Color.spotifyGreen : .spotifyTextSecondary)
                     .lineLimit(1)
             }
 
@@ -137,7 +135,7 @@ private struct LpspSpotifyTrackRow: View {
             Button { /* menu */ } label: {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 20))
-                    .foregroundStyle(LpspSpotifyTokens.spotifyTextSecondary)
+                    .foregroundStyle(.spotifyTextSecondary)
             }
         }
         .padding(.horizontal, 16)
@@ -155,7 +153,7 @@ private struct LpspSpotifyNowPlayingScreen: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [dominantColor, LpspSpotifyTokens.spotifyCanvas],
+                colors: [dominantColor, .spotifyCanvas],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -176,7 +174,7 @@ private struct LpspSpotifyNowPlayingScreen: View {
                         .foregroundStyle(.white)
                     Text(artist)
                         .font(LpspSpotifyFonts.spotifySubtitle)
-                        .foregroundStyle(LpspSpotifyTokens.spotifyTextSecondary)
+                        .foregroundStyle(.spotifyTextSecondary)
                 }
 
                 // Scrubber + controls (omitted for brevity)
@@ -192,7 +190,7 @@ import CoreImage
 
 private enum LpspSpotifyAlbumColorExtractor {
     static func dominantColor(from image: UIImage) -> Color {
-        guard let ciImage = CIImage(image: image) else { return LpspSpotifyTokens.spotifyCanvas }
+        guard let ciImage = CIImage(image: image) else { return .spotifyCanvas }
         let extentVector = CIVector(
             x: ciImage.extent.origin.x, y: ciImage.extent.origin.y,
             z: ciImage.extent.size.width, w: ciImage.extent.size.height
@@ -201,7 +199,7 @@ private enum LpspSpotifyAlbumColorExtractor {
             kCIInputImageKey: ciImage,
             kCIInputExtentKey: extentVector,
         ])!
-        guard let output = filter.outputImage else { return LpspSpotifyTokens.spotifyCanvas }
+        guard let output = filter.outputImage else { return .spotifyCanvas }
         var bitmap = [UInt8](repeating: 0, count: 4)
         let context = CIContext(options: [.workingColorSpace: kCFNull as Any])
         context.render(output, toBitmap: &bitmap, rowBytes: 4,
@@ -220,7 +218,7 @@ private struct LpspSpotifyRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspSpotifyTokens.spotifyCanvas).withAlphaComponent(0.92)
+        appearance.backgroundColor = UIColor(Color.spotifyCanvas).withAlphaComponent(0.92)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }

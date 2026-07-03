@@ -16,7 +16,7 @@
 ## Règles
 
 1. **Copier les fichiers Swift + assets** du repo GitHub tel quel.
-2. **Renommer uniquement les conflits** avec le reste de Lost Phone.
+2. **Renommer uniquement les conflits** avec le reste de Lost Phone (types *et* noms de fichiers dupliqués dans la cible Xcode, ex. `Double.swift`).
 3. **Ne pas toucher au Showroom** (`showroom-clone14`).
 4. **Ne pas réécrire l'UI** — pas de version « inspirée » ou simplifiée.
 5. **LPSP** : branchement narratif dans un second temps (onglet dédié ou injection).

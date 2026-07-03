@@ -16,7 +16,7 @@
 
 Spec : [Meliwat/awesome-ios-design-md](https://github.com/Meliwat/awesome-ios-design-md) — chaque app suit `DESIGN-swiftui.md`.
 
-- Génération : `python3 LostPhone/scripts/generate_awesome_apps.py`
+- Génération : `python3 LostPhone/scripts/generate_awesome_apps_v2.py` (quasi-conformant par catégorie)
 - Vues : `LostPhone/Apps/Awesome/Generated/LpspAwesome*.swift`
 - Routage : `AwesomeShowroomRouter.swift` + `AwesomeShowroomCatalog.swift`
 

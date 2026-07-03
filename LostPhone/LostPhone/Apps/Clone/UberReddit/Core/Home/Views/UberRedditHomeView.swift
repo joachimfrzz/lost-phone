@@ -47,5 +47,6 @@ struct UberRedditHomeView:View {
 
 
 #Preview {
-    HomeView()
+    UberRedditHomeView()
+        .environmentObject(LocationSearchViewModel())
 }

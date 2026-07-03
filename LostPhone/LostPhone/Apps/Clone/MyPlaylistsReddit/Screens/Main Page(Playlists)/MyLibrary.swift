@@ -357,7 +357,7 @@ class MyLibrary: UIViewController {
         usersPlaylistCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         usersPlaylistCollectionView.register(libraryElementsCell.self, forCellWithReuseIdentifier: libraryElementsCellId)
         usersPlaylistCollectionView.register(usersPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: usersPlaylistCollectionViewCellID)
-        usersPlaylistCollectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
+        usersPlaylistCollectionView.register(MyPlaylistsHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         usersPlaylistCollectionView.showsVerticalScrollIndicator = true
         usersPlaylistCollectionView.showsHorizontalScrollIndicator = false
         usersPlaylistCollectionView.backgroundColor = UIColor.clear
@@ -523,7 +523,7 @@ extension MyLibrary: UICollectionViewDelegateFlowLayout, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! MyPlaylistsHeaderView
 
         if indexPath.section == 0 {
             headerView.titleLabel.removeFromSuperview()

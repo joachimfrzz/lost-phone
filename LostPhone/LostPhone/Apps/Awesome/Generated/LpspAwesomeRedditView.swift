@@ -28,7 +28,7 @@ private enum LpspRedditTokens {
     // MARK: - Canvas & Surface (Light)
     static let rdCanvasLight        = Color(red: 0.965, green: 0.969, blue: 0.973) // #F6F7F8
     static let rdCanvasClassicLight = Color(red: 0.855, green: 0.878, blue: 0.902) // #DAE0E6
-    static let rdCardLight          = Color.white                                    // #FFFFFF
+    static let rdCardLight          = LpspRedditTokens.white                                    // #FFFFFF
     static let rdSurface2Light      = Color(red: 0.949, green: 0.953, blue: 0.961)  // #F2F3F5
     static let rdDividerLight       = Color(red: 0.929, green: 0.937, blue: 0.945)  // #EDEFF1
 
@@ -361,7 +361,7 @@ private struct LpspRedditRDSubredditBanner: View {
                 }
                 .frame(width: 72, height: 72)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(Color.white, lineWidth: 3))
+                .overlay(Circle().stroke(LpspRedditTokens.white, lineWidth: 3))
                 .offset(x: 16, y: 36)
             }
             .frame(height: 160)
@@ -371,7 +371,7 @@ private struct LpspRedditRDSubredditBanner: View {
                         .font(LpspRedditFonts.rdButton)
                         .foregroundStyle(joined ? accentColor : .white)
                         .padding(.horizontal, 16).padding(.vertical, 6)
-                        .background(Capsule().fill(joined ? Color.white : accentColor))
+                        .background(Capsule().fill(joined ? LpspRedditTokens.white : accentColor))
                         .overlay(Capsule().stroke(accentColor, lineWidth: joined ? 1.5 : 0))
                 }
                 .padding(16)

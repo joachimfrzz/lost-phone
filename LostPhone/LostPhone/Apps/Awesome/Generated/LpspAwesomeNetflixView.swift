@@ -18,7 +18,7 @@ private enum LpspNetflixTokens {
 
     // MARK: - Canvas & Surfaces
     static let netflixCanvas    = Color(red: 0.078, green: 0.078, blue: 0.078) // #141414
-    static let netflixDeepBlack = Color.black                                   // #000000
+    static let netflixDeepBlack = LpspNetflixTokens.black                                   // #000000
     static let netflixSurface1  = Color(red: 0.122, green: 0.122, blue: 0.122) // #1F1F1F
     static let netflixSurface2  = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
     static let netflixSurface3  = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
@@ -26,7 +26,7 @@ private enum LpspNetflixTokens {
     static let netflixInput     = Color(red: 0.2,   green: 0.2,   blue: 0.2)   // #333333
 
     // MARK: - Text
-    static let netflixTextPrimary   = Color.white                                // #FFFFFF
+    static let netflixTextPrimary   = LpspNetflixTokens.white                                // #FFFFFF
     static let netflixTextSecondary = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let netflixTextTertiary  = Color(red: 0.467, green: 0.467, blue: 0.467) // #777777
 
@@ -117,7 +117,7 @@ private struct LpspNetflixNetflixSecondaryButton: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.white.opacity(0.15))
+                    .fill(LpspNetflixTokens.white.opacity(0.15))
             )
         }
         .buttonStyle(LpspNetflixNetflixPressableStyle())
@@ -144,7 +144,7 @@ private struct LpspNetflixPosterTile: View {
                 if let progress {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(Color.white.opacity(0.3)).frame(height: 2)
+                            Rectangle().fill(LpspNetflixTokens.white.opacity(0.3)).frame(height: 2)
                             Rectangle().fill(LpspNetflixTokens.netflixRed)
                                 .frame(width: geo.size.width * progress, height: 2)
                         }
@@ -221,7 +221,7 @@ private struct LpspNetflixTop10Item: View {
                         .font(.custom("NetflixSans-Black", size: 160).weight(.black))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [Color.white.opacity(0.1), Color.clear],
+                                colors: [LpspNetflixTokens.white.opacity(0.1), LpspNetflixTokens.clear],
                                 startPoint: .top, endPoint: .bottom
                             )
                         )
@@ -313,7 +313,7 @@ private struct LpspNetflixNetflixHeader: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 6)
                                 .overlay(
-                                    Capsule().stroke(Color.white.opacity(0.4), lineWidth: 1)
+                                    Capsule().stroke(LpspNetflixTokens.white.opacity(0.4), lineWidth: 1)
                                 )
                         }
                     }

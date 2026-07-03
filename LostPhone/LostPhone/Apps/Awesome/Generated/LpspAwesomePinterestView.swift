@@ -17,7 +17,7 @@ private enum LpspPinterestTokens {
     static let pinterestRedHover   = Color(red: 0.8,   green: 0.0,   blue: 0.125)  // #CC0020
 
     // MARK: - Canvas (Light)
-    static let pinterestCanvasLight   = Color.white                                 // #FFFFFF
+    static let pinterestCanvasLight   = LpspPinterestTokens.white                                 // #FFFFFF
     static let pinterestSurface1Light = Color(red: 0.973, green: 0.973, blue: 0.973) // #F8F8F8
     static let pinterestInputLight    = Color(red: 0.937, green: 0.937, blue: 0.937) // #EFEFEF
     static let pinterestDividerLight  = Color(red: 0.914, green: 0.914, blue: 0.914) // #E9E9E9
@@ -32,7 +32,7 @@ private enum LpspPinterestTokens {
     static let pinterestTextPrimaryLight   = Color(red: 0.067, green: 0.067, blue: 0.067) // #111111
     static let pinterestTextSecondaryLight = Color(red: 0.463, green: 0.463, blue: 0.463) // #767676
     static let pinterestTextTertiaryLight  = Color(red: 0.710, green: 0.710, blue: 0.710) // #B5B5B5
-    static let pinterestTextPrimaryDark    = Color.white                                   // #FFFFFF
+    static let pinterestTextPrimaryDark    = LpspPinterestTokens.white                                   // #FFFFFF
     static let pinterestTextSecondaryDark  = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
 
     // MARK: - Semantic
@@ -243,7 +243,7 @@ private struct LpspPinterestFloatingSearchBar: View {
         .padding(.horizontal, 18)
         .frame(height: 48)
         .background(
-            Capsule().fill(Color.white)
+            Capsule().fill(LpspPinterestTokens.white)
                 .shadow(color: .black.opacity(0.08), radius: 8, y: 2)
         )
         .padding(.horizontal, 16)
@@ -373,7 +373,7 @@ private struct LpspPinterestSharedPinImage: View {
     let namespace: Namespace.ID
     let id: UUID
     var body: some View {
-        AsyncImage(url: imageURL) { img in img.resizable().scaledToFill() } placeholder: { Color.gray }
+        AsyncImage(url: imageURL) { img in img.resizable().scaledToFill() } placeholder: { LpspPinterestTokens.gray }
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .matchedGeometryEffect(id: id, in: namespace)
     }

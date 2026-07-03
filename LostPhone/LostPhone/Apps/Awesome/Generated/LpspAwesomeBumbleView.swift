@@ -61,7 +61,7 @@ private struct LpspBumbleBumblePrimaryButton: View {
         Button(action: action) {
             Text(label)
                 .font(LpspBumbleFonts.bumbleButton)
-                .foregroundStyle(Color.black) // Pure black on yellow — WCAG AA requires it
+                .foregroundStyle(LpspBumbleTokens.black) // Pure black on yellow — WCAG AA requires it
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
                 .background(Capsule().fill(LpspBumbleTokens.bumbleYellow))
@@ -105,7 +105,7 @@ private struct LpspBumbleSwipeActionRow: View {
                     .shadow(color: LpspBumbleTokens.bumbleYellow.opacity(0.5), radius: 16, y: 6)
                 Image(systemName: "heart.fill")
                     .font(.system(size: 28, weight: .heavy))
-                    .foregroundStyle(Color.black)
+                    .foregroundStyle(LpspBumbleTokens.black)
             }
             .onTapGesture {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -114,7 +114,7 @@ private struct LpspBumbleSwipeActionRow: View {
 
             // Star SuperSwipe — medium yellow
             LpspBumbleActionCircle(diameter: 56, fill: LpspBumbleTokens.bumbleYellow, stroke: nil) {
-                Image(systemName: "star.fill").font(.system(size: 22, weight: .heavy)).foregroundStyle(Color.black)
+                Image(systemName: "star.fill").font(.system(size: 22, weight: .heavy)).foregroundStyle(LpspBumbleTokens.black)
             } action: {
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 onSuper()
@@ -193,7 +193,7 @@ private struct LpspBumbleSwipeCard: View {
                 HStack(spacing: 4) {
                     ForEach(0..<photos.count, id: \.self) { idx in
                         Capsule()
-                            .fill(idx == currentPhoto ? Color.white : Color.white.opacity(0.4))
+                            .fill(idx == currentPhoto ? LpspBumbleTokens.white : LpspBumbleTokens.white.opacity(0.4))
                             .frame(height: 3)
                     }
                 }
@@ -263,7 +263,7 @@ private struct LpspBumbleCountdownChip: View {
         Text(formatted)
             .font(LpspBumbleFonts.bumbleMeta)
             .fontWeight(.bold)
-            .foregroundStyle(Color.black)
+            .foregroundStyle(LpspBumbleTokens.black)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
             .frame(maxWidth: .infinity)
@@ -330,7 +330,7 @@ private struct LpspBumbleMatchCelebration: View {
                             .foregroundStyle(LpspBumbleTokens.bumbleBlack)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
-                            .background(Capsule().fill(Color.white))
+                            .background(Capsule().fill(LpspBumbleTokens.white))
                     }
                     .buttonStyle(.plain)
 
@@ -404,7 +404,7 @@ private struct LpspBumbleBumbleChatInput: View {
             } label: {
                 Image(systemName: "arrow.up")
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(canSend ? Color.black : LpspBumbleTokens.bumbleMist)
+                    .foregroundStyle(canSend ? LpspBumbleTokens.black : LpspBumbleTokens.bumbleMist)
                     .frame(width: 40, height: 40)
                     .background(Circle().fill(canSend ? LpspBumbleTokens.bumbleYellow : LpspBumbleTokens.bumbleSurface1))
             }

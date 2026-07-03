@@ -17,7 +17,7 @@ private enum LpspYouTubeTokens {
     static let ytRedHover   = Color(red: 0.902, green: 0.0,   blue: 0.0)   // #E60000
 
     // MARK: - Light Canvas
-    static let ytCanvasLight   = Color.white                                  // #FFFFFF
+    static let ytCanvasLight   = LpspYouTubeTokens.white                                  // #FFFFFF
     static let ytSurface1Light = Color(red: 0.976, green: 0.976, blue: 0.976) // #F9F9F9
     static let ytSurface2Light = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
     static let ytDividerLight  = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
@@ -35,7 +35,7 @@ private enum LpspYouTubeTokens {
     static let ytTextTertiaryLight  = Color(red: 0.565, green: 0.565, blue: 0.565) // #909090
 
     // MARK: - Text (Dark)
-    static let ytTextPrimaryDark   = Color.white
+    static let ytTextPrimaryDark   = LpspYouTubeTokens.white
     static let ytTextSecondaryDark = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let ytTextTertiaryDark  = Color(red: 0.443, green: 0.443, blue: 0.443) // #717171
 
@@ -136,7 +136,7 @@ private struct LpspYouTubeVideoCard: View {
 
                 if isLive {
                     HStack(spacing: 4) {
-                        Circle().fill(Color.white).frame(width: 6, height: 6)
+                        Circle().fill(LpspYouTubeTokens.white).frame(width: 6, height: 6)
                         Text("LIVE")
                             .font(.custom("Roboto-Bold", size: 11))
                             .foregroundStyle(.white)
@@ -150,7 +150,7 @@ private struct LpspYouTubeVideoCard: View {
                         .font(LpspYouTubeFonts.ytDurationTag)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 6).padding(.vertical, 4)
-                        .background(RoundedRectangle(cornerRadius: 4).fill(Color.black.opacity(0.75)))
+                        .background(RoundedRectangle(cornerRadius: 4).fill(LpspYouTubeTokens.black.opacity(0.75)))
                         .padding(6)
                 }
             }
@@ -315,7 +315,7 @@ private struct LpspYouTubeShortsActionRail: View {
             ZStack(alignment: .bottomTrailing) {
                 AsyncImage(url: creatorAvatarURL) { img in
                     img.resizable().scaledToFill()
-                } placeholder: { Color.gray }
+                } placeholder: { LpspYouTubeTokens.gray }
                     .frame(width: 44, height: 44)
                     .clipShape(Circle())
                     .overlay(Circle().stroke(.white, lineWidth: 2))

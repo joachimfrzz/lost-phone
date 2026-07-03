@@ -37,7 +37,7 @@ private enum LpspDisneyTokens {
     static let dpDivider  = Color(red: 0.165, green: 0.188, blue: 0.314) // #2A3050
 
     // MARK: - Text
-    static let dpTextPrimary   = Color.white                                 // #FFFFFF
+    static let dpTextPrimary   = LpspDisneyTokens.white                                 // #FFFFFF
     static let dpTextSecondary = Color(red: 0.627, green: 0.651, blue: 0.753) // #A0A6C0
     static let dpTextTertiary  = Color(red: 0.353, green: 0.376, blue: 0.502) // #5A6080
 
@@ -65,7 +65,7 @@ private struct LpspDisneyDPPlayButton: View {
                 Image(systemName: "play.fill")
                 Text(label).font(LpspDisneyFonts.dpButton).tracking(0.3)
             }
-            .foregroundStyle(Color.dpCanvas) // dark glyph on white
+            .foregroundStyle(LpspDisneyTokens.dpCanvas) // dark glyph on white
             .frame(maxWidth: .infinity)
             .frame(height: 48)
             .background(RoundedRectangle(cornerRadius: 8).fill(.white))
@@ -88,8 +88,8 @@ private struct LpspDisneyDPSecondaryButton: View {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 48)
-            .background(RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.12)))
-            .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.white.opacity(0.24), lineWidth: 1))
+            .background(RoundedRectangle(cornerRadius: 8).fill(LpspDisneyTokens.white.opacity(0.12)))
+            .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(LpspDisneyTokens.white.opacity(0.24), lineWidth: 1))
         }
         .buttonStyle(LpspDisneyDPPressable())
     }
@@ -119,11 +119,11 @@ private struct LpspDisneyBrandPortalTile: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(focused ? Color.dpGlowBlue : Color.dpDivider,
+                    .strokeBorder(focused ? LpspDisneyTokens.dpGlowBlue : LpspDisneyTokens.dpDivider,
                                   lineWidth: focused ? 2 : 1)
             )
             .scaleEffect(focused ? 1.04 : 1)
-            .shadow(color: focused ? Color.dpGlowBlue.opacity(0.35) : .clear, radius: 24)
+            .shadow(color: focused ? LpspDisneyTokens.dpGlowBlue.opacity(0.35) : .clear, radius: 24)
             .animation(.easeOut(duration: 0.18), value: focused)
             .onTapGesture { /* open universe hub */ }
             .onLongPressGesture(minimumDuration: 0, pressing: { focused = $0 }, perform: {})
@@ -138,9 +138,9 @@ private struct LpspDisneyDPFocusable: ViewModifier {
             .scaleEffect(focused ? 1.04 : 1)
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .strokeBorder(focused ? Color.dpGlowBlue : .clear, lineWidth: 2)
+                    .strokeBorder(focused ? LpspDisneyTokens.dpGlowBlue : .clear, lineWidth: 2)
             )
-            .shadow(color: focused ? Color.dpFocusGlow : .clear, radius: 24)
+            .shadow(color: focused ? LpspDisneyTokens.dpFocusGlow : .clear, radius: 24)
             .animation(.easeOut(duration: 0.18), value: focused)
             .onLongPressGesture(minimumDuration: 0, pressing: { focused = $0 }, perform: {})
     }
@@ -163,8 +163,8 @@ private struct LpspDisneyContentCard16x9: View {
                     Spacer()
                     GeometryReader { g in
                         ZStack(alignment: .leading) {
-                            Rectangle().fill(Color.white.opacity(0.25))
-                            Rectangle().fill(Color.dpBlue).frame(width: g.size.width * p)
+                            Rectangle().fill(LpspDisneyTokens.white.opacity(0.25))
+                            Rectangle().fill(LpspDisneyTokens.dpBlue).frame(width: g.size.width * p)
                         }
                     }
                     .frame(height: 3)
@@ -196,8 +196,8 @@ private struct LpspDisneyEpisodeRow: View {
                     VStack { Spacer()
                         GeometryReader { g in
                             ZStack(alignment: .leading) {
-                                Rectangle().fill(Color.white.opacity(0.25))
-                                Rectangle().fill(Color.dpBlue).frame(width: g.size.width * p)
+                                Rectangle().fill(LpspDisneyTokens.white.opacity(0.25))
+                                Rectangle().fill(LpspDisneyTokens.dpBlue).frame(width: g.size.width * p)
                             }
                         }.frame(height: 3)
                     }
@@ -205,14 +205,14 @@ private struct LpspDisneyEpisodeRow: View {
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(LpspDisneyFonts.dpCardTitle).foregroundStyle(.white)
-                Text(synopsis).font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(.dpTextSecondary).lineLimit(2)
-                Text(runtime).font(LpspDisneyFonts.dpMeta).foregroundStyle(.dpTextSecondary).monospacedDigit()
+                Text(synopsis).font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(LpspDisneyTokens.dpTextSecondary).lineLimit(2)
+                Text(runtime).font(LpspDisneyFonts.dpMeta).foregroundStyle(LpspDisneyTokens.dpTextSecondary).monospacedDigit()
             }
             Spacer(minLength: 4)
-            Image(systemName: "arrow.down.circle").font(.system(size: 22)).foregroundStyle(.dpTextSecondary)
+            Image(systemName: "arrow.down.circle").font(.system(size: 22)).foregroundStyle(LpspDisneyTokens.dpTextSecondary)
         }
         .padding(12)
-        .background(RoundedRectangle(cornerRadius: 8).fill(Color.dpSurface1))
+        .background(RoundedRectangle(cornerRadius: 8).fill(LpspDisneyTokens.dpSurface1))
     }
 }
 
@@ -221,7 +221,7 @@ private struct LpspDisneyRootTabView: View {
         let a = UITabBarAppearance()
         a.configureWithTransparentBackground()
         a.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        a.backgroundColor = UIColor(Color.dpCanvas).withAlphaComponent(0.96)
+        a.backgroundColor = UIColor(LpspDisneyTokens.dpCanvas).withAlphaComponent(0.96)
         UITabBar.appearance().standardAppearance = a
         UITabBar.appearance().scrollEdgeAppearance = a
     }

@@ -80,11 +80,11 @@ private struct LpspAirbnbSaveHeart: View {
         } label: {
             Image(systemName: isSaved ? "heart.fill" : "heart")
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(isSaved ? Color.airbnbCoral : .white)
+                .foregroundStyle(isSaved ? LpspAirbnbTokens.airbnbCoral : .white)
                 .overlay(
                     Image(systemName: "heart")
                         .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(isSaved ? .clear : Color.airbnbInk)
+                        .foregroundStyle(isSaved ? .clear : LpspAirbnbTokens.airbnbInk)
                 )
                 .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
                 .frame(width: 32, height: 32)
@@ -103,13 +103,13 @@ private struct LpspAirbnbRatingRow: View {
         HStack(spacing: 4) {
             Image(systemName: "star.fill")
                 .font(.system(size: 12))
-                .foregroundStyle(Color.airbnbHof)
+                .foregroundStyle(LpspAirbnbTokens.airbnbHof)
             Text(String(format: "%.2f", rating))
                 .font(LpspAirbnbFonts.airbnbRatingNum)
-                .foregroundStyle(Color.airbnbHof)
+                .foregroundStyle(LpspAirbnbTokens.airbnbHof)
             Text(" · \(reviewCount.formatted())")
                 .font(LpspAirbnbFonts.airbnbMeta)
-                .foregroundStyle(Color.airbnbFoggy)
+                .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
         }
     }
 }
@@ -151,31 +151,31 @@ private struct LpspAirbnbStayCard: View {
             // Title
             Text(title)
                 .font(LpspAirbnbFonts.airbnbCardTitle)
-                .foregroundStyle(Color.airbnbHof)
+                .foregroundStyle(LpspAirbnbTokens.airbnbHof)
                 .lineLimit(1)
                 .padding(.top, 2)
 
             // Host subtitle
             Text(host)
                 .font(LpspAirbnbFonts.airbnbMeta)
-                .foregroundStyle(Color.airbnbFoggy)
+                .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
                 .lineLimit(1)
                 .padding(.top, 2)
 
             // Dates
             Text(dates)
                 .font(LpspAirbnbFonts.airbnbMeta)
-                .foregroundStyle(Color.airbnbFoggy)
+                .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
                 .padding(.top, 6)
 
             // Price
             HStack(spacing: 4) {
                 Text("$\(pricePerNight)")
                     .font(LpspAirbnbFonts.airbnbPriceInline)
-                    .foregroundStyle(Color.airbnbHof)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbHof)
                 Text("night")
                     .font(.system(size: 15, weight: .regular))
-                    .foregroundStyle(Color.airbnbHof)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbHof)
             }
             .padding(.top, 4)
         }
@@ -191,28 +191,28 @@ private struct LpspAirbnbSearchPill: View {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.airbnbInk)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbInk)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Where to?")
                         .font(.custom("AirbnbCereal-Bold", size: 14))
-                        .foregroundStyle(Color.airbnbInk)
+                        .foregroundStyle(LpspAirbnbTokens.airbnbInk)
                     Text("Anywhere · Any week · Add guests")
                         .font(.custom("AirbnbCereal-Book", size: 12))
-                        .foregroundStyle(Color.airbnbFoggy)
+                        .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
                 }
                 Spacer()
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.airbnbInk)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbInk)
                     .padding(10)
-                    .overlay(Circle().strokeBorder(Color.airbnbDivider, lineWidth: 1))
+                    .overlay(Circle().strokeBorder(LpspAirbnbTokens.airbnbDivider, lineWidth: 1))
             }
             .padding(.horizontal, 20)
             .frame(height: 56)
             .background(
                 Capsule()
-                    .fill(Color.airbnbCanvas)
-                    .overlay(Capsule().strokeBorder(Color.airbnbDivider, lineWidth: 0.5))
+                    .fill(LpspAirbnbTokens.airbnbCanvas)
+                    .overlay(Capsule().strokeBorder(LpspAirbnbTokens.airbnbDivider, lineWidth: 0.5))
                     .shadow(color: .black.opacity(0.08), radius: 12, y: 4)
                     .shadow(color: .black.opacity(0.04), radius: 2, y: 1)
             )
@@ -233,18 +233,18 @@ private struct LpspAirbnbCategoryBar: View {
                     VStack(spacing: 8) {
                         Image(systemName: cat.icon)
                             .font(.system(size: 24))
-                            .foregroundStyle(selected == idx ? Color.airbnbInk : Color(red: 0.443, green: 0.443, blue: 0.443))
+                            .foregroundStyle(selected == idx ? LpspAirbnbTokens.airbnbInk : Color(red: 0.443, green: 0.443, blue: 0.443))
                         Text(cat.label)
                             .font(LpspAirbnbFonts.airbnbChip)
-                            .foregroundStyle(selected == idx ? Color.airbnbInk : Color(red: 0.443, green: 0.443, blue: 0.443))
+                            .foregroundStyle(selected == idx ? LpspAirbnbTokens.airbnbInk : Color(red: 0.443, green: 0.443, blue: 0.443))
                         if selected == idx {
                             Rectangle()
-                                .fill(Color.airbnbInk)
+                                .fill(LpspAirbnbTokens.airbnbInk)
                                 .frame(height: 2)
                                 .matchedGeometryEffect(id: "underline", in: underlineNS)
                         } else {
                             Rectangle()
-                                .fill(Color.clear)
+                                .fill(LpspAirbnbTokens.clear)
                                 .frame(height: 2)
                         }
                     }
@@ -258,9 +258,9 @@ private struct LpspAirbnbCategoryBar: View {
             .padding(.horizontal, 16)
         }
         .frame(height: 72)
-        .background(Color.airbnbCanvas)
+        .background(LpspAirbnbTokens.airbnbCanvas)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(Color.airbnbDivider).frame(height: 0.5)
+            Rectangle().fill(LpspAirbnbTokens.airbnbDivider).frame(height: 0.5)
         }
     }
 }
@@ -276,14 +276,14 @@ private struct LpspAirbnbBookingFooter: View {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("$\(totalPrice)")
                         .font(.custom("AirbnbCereal-Bold", size: 16))
-                        .foregroundStyle(Color.airbnbInk)
+                        .foregroundStyle(LpspAirbnbTokens.airbnbInk)
                     Text("total")
                         .font(LpspAirbnbFonts.airbnbBodySmall)
-                        .foregroundStyle(Color.airbnbInk)
+                        .foregroundStyle(LpspAirbnbTokens.airbnbInk)
                 }
                 Text(dateRange)
                     .font(LpspAirbnbFonts.airbnbBodySmall)
-                    .foregroundStyle(Color.airbnbInk)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbInk)
                     .underline()
             }
             Spacer()
@@ -295,7 +295,7 @@ private struct LpspAirbnbBookingFooter: View {
                     .padding(.horizontal, 28)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.airbnbCoral)
+                            .fill(LpspAirbnbTokens.airbnbCoral)
                     )
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
@@ -304,7 +304,7 @@ private struct LpspAirbnbBookingFooter: View {
         .frame(height: 80)
         .background(.regularMaterial)
         .overlay(alignment: .top) {
-            Rectangle().fill(Color.airbnbDivider).frame(height: 0.5)
+            Rectangle().fill(LpspAirbnbTokens.airbnbDivider).frame(height: 0.5)
         }
     }
 }
@@ -318,12 +318,12 @@ private struct LpspAirbnbMapPriceBubble: View {
     var bg: Color {
         switch state {
         case .default:  return .white
-        case .visited:  return Color.airbnbInk
-        case .selected: return Color.airbnbCoral
+        case .visited:  return LpspAirbnbTokens.airbnbInk
+        case .selected: return LpspAirbnbTokens.airbnbCoral
         }
     }
     var fg: Color {
-        state == .default ? Color.airbnbInk : .white
+        state == .default ? LpspAirbnbTokens.airbnbInk : .white
     }
 
     var body: some View {
@@ -357,7 +357,7 @@ private struct LpspAirbnbRootTabView: View {
             InboxView()     .tabItem { Label("Inbox",     systemImage: "message") }
             ProfileView()   .tabItem { Label("Profile",   systemImage: "person.circle") }
         }
-        .tint(Color.airbnbCoral) // active = Primary Coral
+        .tint(LpspAirbnbTokens.airbnbCoral) // active = Primary Coral
     }
 }
 

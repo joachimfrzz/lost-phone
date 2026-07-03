@@ -21,7 +21,7 @@ private enum LpspDeliverooTokens {
     static let rooPromoGold   = Color(red: 1.000, green: 0.757, blue: 0.000) // #FFC100
 
     // MARK: - Canvas & Surfaces (Light)
-    static let rooCanvas        = Color.white                                   // #FFFFFF
+    static let rooCanvas        = LpspDeliverooTokens.white                                   // #FFFFFF
     static let rooSurface1      = Color(red: 0.957, green: 0.957, blue: 0.949) // #F4F4F2
     static let rooSurface2      = Color(red: 0.918, green: 0.918, blue: 0.910) // #EAEAE8
     static let rooDivider       = Color(red: 0.910, green: 0.910, blue: 0.902) // #E8E8E6
@@ -97,7 +97,7 @@ private struct LpspDeliverooRestaurantCard: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(saved ? LpspDeliverooTokens.rooTeal : .white)
                         .frame(width: 32, height: 32)
-                        .background(Color.black.opacity(0.4), in: Circle())
+                        .background(LpspDeliverooTokens.black.opacity(0.4), in: Circle())
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(10)

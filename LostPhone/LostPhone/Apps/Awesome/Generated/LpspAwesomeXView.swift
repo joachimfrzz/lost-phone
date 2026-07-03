@@ -30,7 +30,7 @@ private enum LpspXFonts {
 
 private enum LpspXTokens {
     // MARK: - Canvas & Surfaces (Dark / Default)
-    static let xCanvas           = Color.black                                   // #000000
+    static let xCanvas           = LpspXTokens.black                                   // #000000
     static let xSurface1          = Color(red: 0.086, green: 0.094, blue: 0.110) // #16181C
     static let xSurface2          = Color(red: 0.118, green: 0.125, blue: 0.141) // #1E2024
     static let xDivider           = Color(red: 0.184, green: 0.200, blue: 0.212) // #2F3336
@@ -39,7 +39,7 @@ private enum LpspXTokens {
     static let xDimDivider        = Color(red: 0.220, green: 0.267, blue: 0.302) // #38444D
 
     // MARK: - Canvas & Surfaces (Light)
-    static let xLightCanvas       = Color.white                                  // #FFFFFF
+    static let xLightCanvas       = LpspXTokens.white                                  // #FFFFFF
     static let xLightSurface1     = Color(red: 0.969, green: 0.976, blue: 0.976) // #F7F9F9
     static let xLightSurface2     = Color(red: 0.937, green: 0.953, blue: 0.957) // #EFF3F4
 
@@ -91,54 +91,54 @@ private struct LpspXXPostRow: View {
                     HStack(spacing: 4) {
                         Text(displayName)
                             .font(LpspXFonts.xDisplayName)
-                            .foregroundStyle(.xTextPrimaryDark)
+                            .foregroundStyle(LpspXTokens.xTextPrimaryDark)
                             .lineLimit(1)
                         if isVerified {
                             Image(systemName: "checkmark.seal.fill")
                                 .font(.system(size: 16))
-                                .foregroundStyle(.xBlue)
+                                .foregroundStyle(LpspXTokens.xBlue)
                         }
                         Text("@\(handle)")
                             .font(LpspXFonts.xHandle)
-                            .foregroundStyle(.xTextSecondaryDark)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
                             .lineLimit(1)
                         Text("·")
-                            .foregroundStyle(.xTextSecondaryDark)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
                         Text(timestamp)
                             .font(LpspXFonts.xHandle)
-                            .foregroundStyle(.xTextSecondaryDark)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
                         Spacer()
                         Button { /* overflow */ } label: {
                             Image(systemName: "ellipsis")
                                 .font(.system(size: 18))
-                                .foregroundStyle(.xTextSecondaryDark)
+                                .foregroundStyle(LpspXTokens.xTextSecondaryDark)
                         }
                     }
 
                     // Body
                     Text(body)
                         .font(LpspXFonts.xPostBody)
-                        .foregroundStyle(.xTextPrimaryDark)
+                        .foregroundStyle(LpspXTokens.xTextPrimaryDark)
                         .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
 
                     // Action row
                     HStack(spacing: 0) {
-                        LpspXXActionIcon(systemName: "bubble.left",        count: replyCount,  color: .xTextSecondaryDark, active: false)
+                        LpspXXActionIcon(systemName: "bubble.left",        count: replyCount,  color: LpspXTokens.xTextSecondaryDark, active: false)
                         Spacer()
                         LpspXXActionIcon(systemName: isReposted ? "arrow.2.squarepath" : "arrow.2.squarepath",
-                                    count: repostCount, color: isReposted ? .xRepostGreen : .xTextSecondaryDark, active: isReposted)
+                                    count: repostCount, color: isReposted ? LpspXTokens.xRepostGreen : LpspXTokens.xTextSecondaryDark, active: isReposted)
                             .onTapGesture { withAnimation(.spring(response: 0.35)) { isReposted.toggle() } }
                         Spacer()
                         LpspXXActionIcon(systemName: isLiked ? "heart.fill" : "heart",
-                                    count: likeCount, color: isLiked ? .xLikePink : .xTextSecondaryDark, active: isLiked)
+                                    count: likeCount, color: isLiked ? LpspXTokens.xLikePink : LpspXTokens.xTextSecondaryDark, active: isLiked)
                             .onTapGesture { withAnimation(.spring(response: 0.35)) { isLiked.toggle() } }
                         Spacer()
-                        LpspXXActionIcon(systemName: "chart.bar",          count: viewCount,   color: .xTextSecondaryDark, active: false)
+                        LpspXXActionIcon(systemName: "chart.bar",          count: viewCount,   color: LpspXTokens.xTextSecondaryDark, active: false)
                         Spacer()
                         Image(systemName: "square.and.arrow.up")
                             .font(.system(size: 18))
-                            .foregroundStyle(.xTextSecondaryDark)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
                     }
                     .padding(.top, 8)
                 }
@@ -146,9 +146,9 @@ private struct LpspXXPostRow: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
 
-            Divider().background(Color.xDivider)
+            Divider().background(LpspXTokens.xDivider)
         }
-        .background(Color.xCanvas)
+        .background(LpspXTokens.xCanvas)
     }
 }
 
@@ -191,7 +191,7 @@ private struct LpspXXPostFAB: View {
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundStyle(.black)
                 .frame(width: 56, height: 56)
-                .background(Circle().fill(Color.white))
+                .background(Circle().fill(LpspXTokens.white))
                 .shadow(color: .black.opacity(0.4), radius: 12, y: 4)
         }
         .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
@@ -218,15 +218,15 @@ private struct LpspXXFollowPill: View {
         Button(action: action) {
             Text(isFollowing ? "Following" : "Follow")
                 .font(LpspXFonts.xButton)
-                .foregroundStyle(isFollowing ? .xTextPrimaryDark : .black)
+                .foregroundStyle(isFollowing ? LpspXTokens.xTextPrimaryDark : .black)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 16)
                 .frame(minWidth: 80)
                 .background(
-                    Capsule().fill(isFollowing ? Color.clear : Color.xTextPrimaryDark)
+                    Capsule().fill(isFollowing ? LpspXTokens.clear : LpspXTokens.xTextPrimaryDark)
                 )
                 .overlay(
-                    Capsule().strokeBorder(isFollowing ? Color.xTextSecondaryDark : .clear, lineWidth: 1)
+                    Capsule().strokeBorder(isFollowing ? LpspXTokens.xTextSecondaryDark : .clear, lineWidth: 1)
                 )
         }
         .buttonStyle(LpspXXPressableStyle())
@@ -244,14 +244,14 @@ private struct LpspXXFeedFilter: View {
                 VStack(spacing: 12) {
                     Text(titles[i])
                         .font(LpspXFonts.xButton)
-                        .foregroundStyle(selection == i ? .xTextPrimaryDark : .xTextSecondaryDark)
+                        .foregroundStyle(selection == i ? LpspXTokens.xTextPrimaryDark : LpspXTokens.xTextSecondaryDark)
                     if selection == i {
                         Capsule()
-                            .fill(Color.xBlue)
+                            .fill(LpspXTokens.xBlue)
                             .frame(width: 40, height: 4)
                             .matchedGeometryEffect(id: "indicator", in: indicator)
                     } else {
-                        Color.clear.frame(height: 4)
+                        LpspXTokens.clear.frame(height: 4)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -265,7 +265,7 @@ private struct LpspXXFeedFilter: View {
         }
         .frame(height: 48)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(Color.xDivider).frame(height: 1)
+            Rectangle().fill(LpspXTokens.xDivider).frame(height: 1)
         }
     }
 }
@@ -281,7 +281,7 @@ private struct LpspXLikeBurstModifier: ViewModifier {
             .overlay {
                 ForEach(Array(particles.enumerated()), id: \.offset) { _, p in
                     Circle()
-                        .fill(Color.xLikePink)
+                        .fill(LpspXTokens.xLikePink)
                         .frame(width: 4, height: 4)
                         .offset(x: p.x, y: p.y)
                         .opacity(0)
@@ -331,7 +331,7 @@ private struct LpspXRootTabView: View {
             NotificationsView().tabItem { Image(systemName: "bell.fill") }
             MessagesView()      .tabItem { Image(systemName: "envelope.fill") }
         }
-        .tint(.xTextPrimaryDark)
+        .tint(LpspXTokens.xTextPrimaryDark)
     }
 }
 

@@ -32,14 +32,14 @@ private enum LpspUberEatsFonts {
 }
 
 private enum LpspUberEatsTokens {
-    static let ueCanvas    = Color.white                                       // #FFFFFF
+    static let ueCanvas    = LpspUberEatsTokens.white                                       // #FFFFFF
     static let ueSurface   = Color(red: 0.953, green: 0.953, blue: 0.953)      // #F3F3F3
     static let ueSurface2  = Color(red: 0.933, green: 0.933, blue: 0.933)      // #EEEEEE
     static let ueDivider   = Color(red: 0.910, green: 0.910, blue: 0.910)      // #E8E8E8
-    static let ueTextPrimary   = Color.black                                   // #000000
+    static let ueTextPrimary   = LpspUberEatsTokens.black                                   // #000000
     static let ueTextSecondary = Color(red: 0.420, green: 0.420, blue: 0.420)  // #6B6B6B
     static let ueTextTertiary  = Color(red: 0.651, green: 0.651, blue: 0.651)  // #A6A6A6
-    static let ueDarkCanvas    = Color.black                                   // #000000
+    static let ueDarkCanvas    = LpspUberEatsTokens.black                                   // #000000
     static let ueDarkSurface   = Color(red: 0.110, green: 0.110, blue: 0.118)  // #1C1C1E
     static let ueDarkSurface2  = Color(red: 0.173, green: 0.173, blue: 0.180)  // #2C2C2E
     static let ueGreen        = Color(red: 0.024, green: 0.757, blue: 0.404)   // #06C167
@@ -47,8 +47,8 @@ private enum LpspUberEatsTokens {
     static let ueGreenTint    = Color(red: 0.906, green: 0.973, blue: 0.937)   // #E7F8EF
     static let ueErrorRed     = Color(red: 0.882, green: 0.098, blue: 0.000)   // #E11900
     static let ueBusyAmber    = Color(red: 1.000, green: 0.541, blue: 0.000)   // #FF8A00
-    static func ueBackground(_ s: ColorScheme) -> Color { s == .dark ? .ueDarkCanvas  : .ueCanvas }
-    static func ueCard(_ s: ColorScheme)       -> Color { s == .dark ? .ueDarkSurface : .ueSurface }
+    static func ueBackground(_ s: ColorScheme) -> Color { s == .dark ? LpspUberEatsTokens.ueDarkCanvas  : LpspUberEatsTokens.ueCanvas }
+    static func ueCard(_ s: ColorScheme)       -> Color { s == .dark ? LpspUberEatsTokens.ueDarkSurface : LpspUberEatsTokens.ueSurface }
     static func ueText(_ s: ColorScheme)       -> Color { s == .dark ? .white         : .black }
 }
 
@@ -76,7 +76,7 @@ private struct LpspUberEatsUEPrimaryButton: View {
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .padding(.horizontal, trailing == nil ? 0 : 20)
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.ueGreen))
+            .background(RoundedRectangle(cornerRadius: 12).fill(LpspUberEatsTokens.ueGreen))
         }
         .sensoryFeedback(.impact(weight: .light), trigger: title)
         .buttonStyle(LpspUberEatsUEPressableStyle(pressedScale: 0.98))
@@ -117,7 +117,7 @@ private struct LpspUberEatsUERestaurantCard: View {
                         .font(.ueCaption.weight(.bold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
-                        .background(Capsule().fill(Color.ueGreen))
+                        .background(Capsule().fill(LpspUberEatsTokens.ueGreen))
                         .padding(10)
                 }
                 HStack { Spacer()
@@ -128,13 +128,13 @@ private struct LpspUberEatsUERestaurantCard: View {
                         .background(Circle().fill(.white.opacity(0.9)))
                 }.padding(10)
             }
-            Text(name).font(LpspUberEatsFonts.ueRestaurantName).foregroundStyle(Color.ueText(scheme))
+            Text(name).font(LpspUberEatsFonts.ueRestaurantName).foregroundStyle(LpspUberEatsTokens.ueText(scheme))
             HStack(spacing: 6) {
                 Image(systemName: "star.fill").font(.system(size: 12))
-                    .foregroundStyle(Color.ueText(scheme))   // monochrome, not yellow
-                Text(rating).font(LpspUberEatsFonts.ueMeta).foregroundStyle(Color.ueText(scheme))
-                Text("· \(eta) ·").font(LpspUberEatsFonts.ueMeta).foregroundStyle(.ueTextSecondary)
-                Text(fee).font(LpspUberEatsFonts.ueMeta).foregroundStyle(freeDelivery ? Color.ueGreen : .ueTextSecondary)
+                    .foregroundStyle(LpspUberEatsTokens.ueText(scheme))   // monochrome, not yellow
+                Text(rating).font(LpspUberEatsFonts.ueMeta).foregroundStyle(LpspUberEatsTokens.ueText(scheme))
+                Text("· \(eta) ·").font(LpspUberEatsFonts.ueMeta).foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                Text(fee).font(LpspUberEatsFonts.ueMeta).foregroundStyle(freeDelivery ? LpspUberEatsTokens.ueGreen : LpspUberEatsTokens.ueTextSecondary)
             }
         }
         .onLongPressGesture(minimumDuration: 0, pressing: { p in
@@ -152,7 +152,7 @@ private struct LpspUberEatsUEStickyCartBar: View {
         Button(action: onView) {
             HStack {
                 Text("\(count)")
-                    .font(LpspUberEatsFonts.ueCartBadge).foregroundStyle(Color.ueGreen)
+                    .font(LpspUberEatsFonts.ueCartBadge).foregroundStyle(LpspUberEatsTokens.ueGreen)
                     .frame(width: 28, height: 28)
                     .background(Circle().fill(.white))
                 Spacer()
@@ -163,7 +163,7 @@ private struct LpspUberEatsUEStickyCartBar: View {
             }
             .padding(.horizontal, 16)
             .frame(height: 56)
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.ueGreen))
+            .background(RoundedRectangle(cornerRadius: 12).fill(LpspUberEatsTokens.ueGreen))
             .padding(.horizontal, 16)
             .shadow(color: .black.opacity(0.12), radius: 12, y: -2)
         }
@@ -183,9 +183,9 @@ private struct LpspUberEatsUEMenuItemRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(name).font(LpspUberEatsFonts.ueMenuItemTitle).foregroundStyle(Color.ueText(scheme))
-                Text(desc).font(LpspUberEatsFonts.ueMeta).foregroundStyle(.ueTextSecondary).lineLimit(2)
-                Text(price).font(LpspUberEatsFonts.ueBody).foregroundStyle(Color.ueText(scheme)).padding(.top, 2)
+                Text(name).font(LpspUberEatsFonts.ueMenuItemTitle).foregroundStyle(LpspUberEatsTokens.ueText(scheme))
+                Text(desc).font(LpspUberEatsFonts.ueMeta).foregroundStyle(LpspUberEatsTokens.ueTextSecondary).lineLimit(2)
+                Text(price).font(LpspUberEatsFonts.ueBody).foregroundStyle(LpspUberEatsTokens.ueText(scheme)).padding(.top, 2)
             }
             Spacer(minLength: 12)
             ZStack(alignment: .bottomTrailing) {
@@ -197,14 +197,14 @@ private struct LpspUberEatsUEMenuItemRow: View {
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 28, height: 28)
-                        .background(Circle().fill(Color.ueGreen))
+                        .background(Circle().fill(LpspUberEatsTokens.ueGreen))
                 }
                 .sensoryFeedback(.impact(weight: .light), trigger: price)
                 .offset(x: 6, y: 6)
             }
         }
         .padding(.vertical, 12)
-        .overlay(Divider().background(Color.ueDivider), alignment: .bottom)
+        .overlay(Divider().background(LpspUberEatsTokens.ueDivider), alignment: .bottom)
     }
 }
 
@@ -216,7 +216,7 @@ private struct LpspUberEatsCartCountBadge: View {
         Text("\(count)")
             .font(LpspUberEatsFonts.ueCartBadge).foregroundStyle(.white)
             .frame(width: 18, height: 18)
-            .background(Circle().fill(Color.ueGreen))
+            .background(Circle().fill(LpspUberEatsTokens.ueGreen))
             .scaleEffect(bump ? 1.25 : 1)
             .onChange(of: count) { _, _ in
                 withAnimation(.spring(response: 0.28, dampingFraction: 0.5)) { bump = true }
@@ -239,7 +239,7 @@ private struct LpspUberEatsUEOrderTrackingView: View {
             Map {
                 MapPolyline(coordinates: route).stroke(.black, lineWidth: 4)   // near-black route
                 Annotation("Courier", coordinate: courier) {
-                    Circle().fill(Color.ueGreen)
+                    Circle().fill(LpspUberEatsTokens.ueGreen)
                         .frame(width: 22, height: 22)
                         .overlay(Circle().strokeBorder(.white, lineWidth: 3))
                 }
@@ -249,7 +249,7 @@ private struct LpspUberEatsUEOrderTrackingView: View {
 
             // Draggable tracking sheet
             VStack(alignment: .leading, spacing: 16) {
-                Capsule().fill(Color.ueDivider).frame(width: 40, height: 5)
+                Capsule().fill(LpspUberEatsTokens.ueDivider).frame(width: 40, height: 5)
                     .frame(maxWidth: .infinity)
                 Text(etaText).font(LpspUberEatsFonts.ueSectionHeader)            // "Arriving in 12 min"
                 LpspUberEatsUEProgressStepper(steps: ["Preparing", "Picked up", "On the way", "Delivered"],
@@ -258,7 +258,7 @@ private struct LpspUberEatsUEOrderTrackingView: View {
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.ueCanvas)
+            .background(LpspUberEatsTokens.ueCanvas)
             .clipShape(.rect(topLeadingRadius: 16, topTrailingRadius: 16))
             .shadow(color: .black.opacity(0.16), radius: 28, y: -8)
         }
@@ -279,7 +279,7 @@ private struct LpspUberEatsUEProgressStepper: View {
         HStack(spacing: 6) {
             ForEach(steps.indices, id: \.self) { i in
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(i <= current ? Color.ueGreen : Color.ueSurface2)
+                    .fill(i <= current ? LpspUberEatsTokens.ueGreen : LpspUberEatsTokens.ueSurface2)
                     .frame(height: 4)
             }
         }

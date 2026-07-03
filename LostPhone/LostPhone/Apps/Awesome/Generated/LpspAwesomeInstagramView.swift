@@ -12,8 +12,8 @@ struct LpspAwesomeInstagramView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspInstagramTokens {
     // Canvas & surfaces
-    static let igCanvasLight   = Color.white
-    static let igCanvasDark    = Color.black  // true #000000 for OLED
+    static let igCanvasLight   = LpspInstagramTokens.white
+    static let igCanvasDark    = LpspInstagramTokens.black  // true #000000 for OLED
     static let igElevatedDark  = Color(red: 0.071, green: 0.071, blue: 0.071)  // #121212
     static let igSurfaceInputL = Color(red: 0.937, green: 0.937, blue: 0.937)  // #EFEFEF
     static let igSurfaceInputD = Color(red: 0.149, green: 0.149, blue: 0.149)  // #262626

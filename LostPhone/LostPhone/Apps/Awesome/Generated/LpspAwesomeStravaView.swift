@@ -354,7 +354,7 @@ private struct LpspStravaRootTabView: View {
             TabView(selection: $tab) {
                 FeedView()    .tabItem { Label("Home", systemImage: "house") }.tag(0)
                 MapsView()    .tabItem { Label("Maps", systemImage: "map") }.tag(1)
-                Color.clear   .tabItem { Label("",     systemImage: "") }.tag(2) // placeholder for Record
+                LpspStravaTokens.clear   .tabItem { Label("",     systemImage: "") }.tag(2) // placeholder for Record
                 GroupsView()  .tabItem { Label("Groups", systemImage: "person.3") }.tag(3)
                 ProfileView() .tabItem { Label("You",  systemImage: "person.crop.circle") }.tag(4)
             }

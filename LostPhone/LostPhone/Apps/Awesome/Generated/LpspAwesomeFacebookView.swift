@@ -13,7 +13,7 @@ struct LpspAwesomeFacebookView: View {
 private enum LpspFacebookTokens {
     // MARK: - Canvas & Surfaces (Light)
     static let fbCanvas           = Color(red: 0.941, green: 0.949, blue: 0.961) // #F0F2F5
-    static let fbCard             = Color.white                                   // #FFFFFF
+    static let fbCard             = LpspFacebookTokens.white                                   // #FFFFFF
     static let fbSurfaceTint      = Color(red: 0.969, green: 0.973, blue: 0.980) // #F7F8FA
     static let fbDivider          = Color(red: 0.894, green: 0.902, blue: 0.922) // #E4E6EB
     static let fbSeparator        = Color(red: 0.808, green: 0.816, blue: 0.831) // #CED0D4

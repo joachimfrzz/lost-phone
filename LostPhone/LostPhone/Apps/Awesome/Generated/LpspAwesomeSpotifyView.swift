@@ -30,14 +30,14 @@ private enum LpspSpotifyFonts {
 private enum LpspSpotifyTokens {
     // MARK: - Canvas & Surfaces
     static let spotifyCanvas       = Color(red: 0.07, green: 0.07, blue: 0.07)   // #121212
-    static let spotifyDeepBlack    = Color.black                                 // #000000
+    static let spotifyDeepBlack    = LpspSpotifyTokens.black                                 // #000000
     static let spotifySurface1     = Color(red: 0.094, green: 0.094, blue: 0.094) // #181818
     static let spotifySurface2     = Color(red: 0.157, green: 0.157, blue: 0.157) // #282828
     static let spotifySurface3     = Color(red: 0.243, green: 0.243, blue: 0.243) // #3E3E3E
     static let spotifyDivider      = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
 
     // MARK: - Text
-    static let spotifyTextPrimary   = Color.white                                // #FFFFFF
+    static let spotifyTextPrimary   = LpspSpotifyTokens.white                                // #FFFFFF
     static let spotifyTextSecondary = Color(red: 0.702, green: 0.702, blue: 0.702) // #B3B3B3
     static let spotifyTextTertiary  = Color(red: 0.416, green: 0.416, blue: 0.416) // #6A6A6A
 
@@ -64,7 +64,7 @@ private struct LpspSpotifySpotifyPlayButton: View {
                 .font(.system(size: size * 0.45, weight: .bold))
                 .foregroundStyle(.black) // intentional: black on green
                 .frame(width: size, height: size)
-                .background(Circle().fill(Color.spotifyGreen))
+                .background(Circle().fill(LpspSpotifyTokens.spotifyGreen))
         }
         .sensoryFeedback(.impact(flexibility: .soft), trigger: isPlaying)
         .buttonStyle(LpspSpotifySpotifyPressableStyle(pressedScale: 0.92))
@@ -95,10 +95,10 @@ private struct LpspSpotifySpotifyPillButton: View {
                 .padding(.vertical, 10)
                 .padding(.horizontal, 32)
                 .background(
-                    Capsule().fill(style == .filled ? Color.spotifyGreen : .clear)
+                    Capsule().fill(style == .filled ? LpspSpotifyTokens.spotifyGreen : .clear)
                 )
                 .overlay(
-                    Capsule().strokeBorder(style == .outline ? Color.spotifyTextSecondary : .clear, lineWidth: 1)
+                    Capsule().strokeBorder(style == .outline ? LpspSpotifyTokens.spotifyTextSecondary : .clear, lineWidth: 1)
                 )
         }
         .buttonStyle(LpspSpotifySpotifyPressableStyle())
@@ -122,11 +122,11 @@ private struct LpspSpotifyTrackRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(LpspSpotifyFonts.spotifyTrackTitle)
-                    .foregroundStyle(isPlaying ? Color.spotifyGreen : .white)
+                    .foregroundStyle(isPlaying ? LpspSpotifyTokens.spotifyGreen : .white)
                     .lineLimit(1)
                 Text(artist)
                     .font(LpspSpotifyFonts.spotifySubtitle)
-                    .foregroundStyle(isPlaying ? Color.spotifyGreen : .spotifyTextSecondary)
+                    .foregroundStyle(isPlaying ? LpspSpotifyTokens.spotifyGreen : LpspSpotifyTokens.spotifyTextSecondary)
                     .lineLimit(1)
             }
 
@@ -135,7 +135,7 @@ private struct LpspSpotifyTrackRow: View {
             Button { /* menu */ } label: {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 20))
-                    .foregroundStyle(.spotifyTextSecondary)
+                    .foregroundStyle(LpspSpotifyTokens.spotifyTextSecondary)
             }
         }
         .padding(.horizontal, 16)
@@ -153,7 +153,7 @@ private struct LpspSpotifyNowPlayingScreen: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [dominantColor, .spotifyCanvas],
+                colors: [dominantColor, LpspSpotifyTokens.spotifyCanvas],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -174,7 +174,7 @@ private struct LpspSpotifyNowPlayingScreen: View {
                         .foregroundStyle(.white)
                     Text(artist)
                         .font(LpspSpotifyFonts.spotifySubtitle)
-                        .foregroundStyle(.spotifyTextSecondary)
+                        .foregroundStyle(LpspSpotifyTokens.spotifyTextSecondary)
                 }
 
                 // Scrubber + controls (omitted for brevity)
@@ -190,7 +190,7 @@ import CoreImage
 
 private enum LpspSpotifyAlbumColorExtractor {
     static func dominantColor(from image: UIImage) -> Color {
-        guard let ciImage = CIImage(image: image) else { return .spotifyCanvas }
+        guard let ciImage = CIImage(image: image) else { return LpspSpotifyTokens.spotifyCanvas }
         let extentVector = CIVector(
             x: ciImage.extent.origin.x, y: ciImage.extent.origin.y,
             z: ciImage.extent.size.width, w: ciImage.extent.size.height
@@ -199,7 +199,7 @@ private enum LpspSpotifyAlbumColorExtractor {
             kCIInputImageKey: ciImage,
             kCIInputExtentKey: extentVector,
         ])!
-        guard let output = filter.outputImage else { return .spotifyCanvas }
+        guard let output = filter.outputImage else { return LpspSpotifyTokens.spotifyCanvas }
         var bitmap = [UInt8](repeating: 0, count: 4)
         let context = CIContext(options: [.workingColorSpace: kCFNull as Any])
         context.render(output, toBitmap: &bitmap, rowBytes: 4,
@@ -218,7 +218,7 @@ private struct LpspSpotifyRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(Color.spotifyCanvas).withAlphaComponent(0.92)
+        appearance.backgroundColor = UIColor(LpspSpotifyTokens.spotifyCanvas).withAlphaComponent(0.92)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }

@@ -29,7 +29,7 @@ private enum LpspDropboxFonts {
 
 private enum LpspDropboxTokens {
     // MARK: - Canvas & Surfaces (Light)
-    static let dbxCanvas     = Color.white                                   // #FFFFFF
+    static let dbxCanvas     = LpspDropboxTokens.white                                   // #FFFFFF
     static let dbxSurface    = Color(red: 0.969, green: 0.961, blue: 0.949)   // #F7F5F2
     static let dbxDivider    = Color(red: 0.902, green: 0.882, blue: 0.855)   // #E6E1DA
 
@@ -85,7 +85,7 @@ private struct LpspDropboxDbxPrimaryButton: View {
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.dbxBlue.opacity(enabled ? 1 : 0.4))
+                        .fill(LpspDropboxTokens.dbxBlue.opacity(enabled ? 1 : 0.4))
                 )
         }
         .disabled(!enabled)
@@ -111,8 +111,8 @@ private struct LpspDropboxDbxUploadFAB: View {
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 56, height: 56)
-                .background(Circle().fill(Color.dbxBlue))
-                .shadow(color: Color.dbxBlue.opacity(0.32), radius: 20, y: 8)
+                .background(Circle().fill(LpspDropboxTokens.dbxBlue))
+                .shadow(color: LpspDropboxTokens.dbxBlue.opacity(0.32), radius: 20, y: 8)
         }
         .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
         .buttonStyle(LpspDropboxDbxPressableStyle(pressedScale: 0.92))
@@ -132,11 +132,11 @@ private struct LpspDropboxDbxFileRow: View {
 
     private var iconColor: Color {
         switch kind {
-        case .pdf:    return .dbxPdfRed
-        case .doc:    return .dbxBlue
-        case .sheet:  return .dbxSheetGreen
-        case .image:  return .dbxImageTeal
-        case .folder: return .dbxFolderSlate
+        case .pdf:    return LpspDropboxTokens.dbxPdfRed
+        case .doc:    return LpspDropboxTokens.dbxBlue
+        case .sheet:  return LpspDropboxTokens.dbxSheetGreen
+        case .image:  return LpspDropboxTokens.dbxImageTeal
+        case .folder: return LpspDropboxTokens.dbxFolderSlate
         }
     }
     private var iconSymbol: String {
@@ -155,7 +155,7 @@ private struct LpspDropboxDbxFileRow: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 28))
-                        .foregroundStyle(Color.dbxBlue)
+                        .foregroundStyle(LpspDropboxTokens.dbxBlue)
                         .frame(width: 40, height: 40)
                 } else {
                     RoundedRectangle(cornerRadius: 8)
@@ -171,11 +171,11 @@ private struct LpspDropboxDbxFileRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
                         .font(LpspDropboxFonts.dbxRowName)
-                        .foregroundStyle(Color.dbxTextPrimary)
+                        .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
                         .lineLimit(1)
                     Text(meta)
                         .font(LpspDropboxFonts.dbxMeta)
-                        .foregroundStyle(Color.dbxTextSecondary)
+                        .foregroundStyle(LpspDropboxTokens.dbxTextSecondary)
                         .dbxTabularNumbers()
                         .lineLimit(1)
                 }
@@ -184,11 +184,11 @@ private struct LpspDropboxDbxFileRow: View {
 
                 Image(systemName: kind == .folder ? "chevron.right" : "ellipsis")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(Color.dbxTextSecondary)
+                    .foregroundStyle(LpspDropboxTokens.dbxTextSecondary)
             }
             .padding(.horizontal, 16)
             .frame(height: 60)
-            .background(isSelected ? Color.dbxBlueTint : Color.dbxCanvas)
+            .background(isSelected ? LpspDropboxTokens.dbxBlueTint : LpspDropboxTokens.dbxCanvas)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -203,30 +203,30 @@ private struct LpspDropboxDbxRecentCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack {
-                RoundedRectangle(cornerRadius: 4).fill(Color.dbxSurface)
+                RoundedRectangle(cornerRadius: 4).fill(LpspDropboxTokens.dbxSurface)
                 if let thumbnail {
                     thumbnail.resizable().aspectRatio(contentMode: .fill)
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                 } else {
                     Image(systemName: "doc.fill")
-                        .font(.system(size: 28)).foregroundStyle(Color.dbxBlue)
+                        .font(.system(size: 28)).foregroundStyle(LpspDropboxTokens.dbxBlue)
                 }
             }
             .frame(width: 140, height: 96)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(name).font(LpspDropboxFonts.dbxCardTitle)
-                    .foregroundStyle(Color.dbxTextPrimary).lineLimit(2)
+                    .foregroundStyle(LpspDropboxTokens.dbxTextPrimary).lineLimit(2)
                 Text(meta).font(LpspDropboxFonts.dbxCaption)
-                    .foregroundStyle(Color.dbxTextSecondary).dbxTabularNumbers()
+                    .foregroundStyle(LpspDropboxTokens.dbxTextSecondary).dbxTabularNumbers()
             }
         }
         .padding(12)
         .frame(width: 140, height: 160, alignment: .top)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.dbxCanvas)
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.dbxDivider, lineWidth: 1))
+                .fill(LpspDropboxTokens.dbxCanvas)
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(LpspDropboxTokens.dbxDivider, lineWidth: 1))
         )
     }
 }
@@ -240,17 +240,17 @@ private struct LpspDropboxDbxUploadBar: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(label).font(.dbxMeta.weight(.semibold))
-                    .foregroundStyle(Color.dbxTextPrimary)
+                    .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
                 Spacer()
                 if done {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(Color.dbxSuccess)
+                        .foregroundStyle(LpspDropboxTokens.dbxSuccess)
                 }
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.dbxDivider)
-                    Capsule().fill(Color.dbxBlue)
+                    Capsule().fill(LpspDropboxTokens.dbxDivider)
+                    Capsule().fill(LpspDropboxTokens.dbxBlue)
                         .frame(width: geo.size.width * progress)
                         .animation(.linear(duration: 0.2), value: progress)
                 }
@@ -259,7 +259,7 @@ private struct LpspDropboxDbxUploadBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.dbxCanvas)
+        .background(LpspDropboxTokens.dbxCanvas)
     }
 }
 
@@ -267,7 +267,7 @@ private struct LpspDropboxDbxRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = UIColor(Color.dbxCanvas).withAlphaComponent(0.94)
+        appearance.backgroundColor = UIColor(LpspDropboxTokens.dbxCanvas).withAlphaComponent(0.94)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -279,7 +279,7 @@ private struct LpspDropboxDbxRootTabView: View {
             OfflineView().tabItem { Label("Offline", systemImage: "arrow.down.circle") }
             AccountView().tabItem { Label("Account", systemImage: "person.crop.circle") }
         }
-        .tint(.dbxBlue) // active = Dropbox Blue
+        .tint(LpspDropboxTokens.dbxBlue) // active = Dropbox Blue
     }
 }
 
@@ -300,13 +300,13 @@ private struct LpspDropboxDbxPhotoGrid: View {
                         .overlay(alignment: .topTrailing) {
                             if selected.contains(i) {
                                 Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(Color.dbxBlue, .white)
+                                    .foregroundStyle(LpspDropboxTokens.dbxBlue, .white)
                                     .padding(6)
                             }
                         }
                         .overlay(
                             Rectangle().strokeBorder(
-                                selected.contains(i) ? Color.dbxBlue : .clear, lineWidth: 4)
+                                selected.contains(i) ? LpspDropboxTokens.dbxBlue : .clear, lineWidth: 4)
                         )
                         .onLongPressGesture { toggle(i) }
                 }

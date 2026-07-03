@@ -31,7 +31,7 @@ private enum LpspGrokFonts {
 
 private enum LpspGrokTokens {
     // MARK: - Canvas & Surfaces
-    static let grokCanvas    = Color.black                                  // #000000
+    static let grokCanvas    = LpspGrokTokens.black                                  // #000000
     static let grokSurface1  = Color(red: 0.086, green: 0.094, blue: 0.110) // #16181C
     static let grokSurface2  = Color(red: 0.118, green: 0.129, blue: 0.149) // #1E2126
     static let grokSurface3  = Color(red: 0.153, green: 0.165, blue: 0.180) // #272A2E
@@ -43,7 +43,7 @@ private enum LpspGrokTokens {
     static let grokTextTertiary  = Color(red: 0.302, green: 0.318, blue: 0.337) // #4D5156
 
     // MARK: - Functional / Brand
-    static let grokAccentWhite   = Color.white                                  // #FFFFFF
+    static let grokAccentWhite   = LpspGrokTokens.white                                  // #FFFFFF
     static let grokPressedWhite  = Color(red: 0.843, green: 0.859, blue: 0.863) // #D7DBDC
     static let grokLinkBlue      = Color(red: 0.114, green: 0.608, blue: 0.941) // #1D9BF0
     static let grokLinkPressed   = Color(red: 0.102, green: 0.549, blue: 0.847) // #1A8CD8
@@ -71,7 +71,7 @@ private struct LpspGrokGrokUserBubble: View {
             Spacer(minLength: 48)
             Text(text)
                 .font(LpspGrokFonts.grokBody)
-                .foregroundStyle(Color.grokTextPrimary)
+                .foregroundStyle(LpspGrokTokens.grokTextPrimary)
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
                 .background(
@@ -79,7 +79,7 @@ private struct LpspGrokGrokUserBubble: View {
                         cornerRadii: .init(topLeading: 20, bottomLeading: 20,
                                            bottomTrailing: 6, topTrailing: 20)
                     )
-                    .fill(Color.grokSurface1)
+                    .fill(LpspGrokTokens.grokSurface1)
                 )
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -95,14 +95,14 @@ private struct LpspGrokGrokAssistantResponse: View {
         VStack(alignment: .leading, spacing: 12) {
             Image("grok-glyph") // 24pt mark, once per response
                 .resizable().frame(width: 24, height: 24)
-                .foregroundStyle(Color.grokTextPrimary)
+                .foregroundStyle(LpspGrokTokens.grokTextPrimary)
 
             (Text(text)
                 + (isStreaming
-                   ? Text("▍").foregroundColor(cursorVisible ? .grokTextPrimary : .clear)
+                   ? Text("▍").foregroundColor(cursorVisible ? LpspGrokTokens.grokTextPrimary : .clear)
                    : Text("")))
                 .font(LpspGrokFonts.grokBody)
-                .foregroundStyle(Color.grokTextPrimary)
+                .foregroundStyle(LpspGrokTokens.grokTextPrimary)
                 .lineSpacing(6) // ~1.55 line-height at 16pt
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -138,33 +138,33 @@ private struct LpspGrokXCitationCard: View {
         Button(action: onOpen) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
-                    Circle().fill(Color.grokSurface3).frame(width: 28, height: 28)
-                    Text(author).font(LpspGrokFonts.grokCiteAuthor).foregroundStyle(Color.grokTextPrimary)
+                    Circle().fill(LpspGrokTokens.grokSurface3).frame(width: 28, height: 28)
+                    Text(author).font(LpspGrokFonts.grokCiteAuthor).foregroundStyle(LpspGrokTokens.grokTextPrimary)
                     if isVerified {
                         Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 14)).foregroundStyle(Color.grokLinkBlue)
+                            .font(.system(size: 14)).foregroundStyle(LpspGrokTokens.grokLinkBlue)
                     }
                     Text("@\(handle) · \(timeAgo)")
-                        .font(LpspGrokFonts.grokCiteMeta).foregroundStyle(Color.grokTextSecondary)
+                        .font(LpspGrokFonts.grokCiteMeta).foregroundStyle(LpspGrokTokens.grokTextSecondary)
                     Spacer()
                     Image("x-glyph").resizable().frame(width: 16, height: 16)
-                        .foregroundStyle(Color.grokTextSecondary)
+                        .foregroundStyle(LpspGrokTokens.grokTextSecondary)
                 }
                 Text(postText)
-                    .font(LpspGrokFonts.grokBodySmall).foregroundStyle(Color.grokTextPrimary)
+                    .font(LpspGrokFonts.grokBodySmall).foregroundStyle(LpspGrokTokens.grokTextPrimary)
                     .lineLimit(4)
                 HStack(spacing: 20) {
                     metric("bubble.left", replies)
                     metric("arrow.2.squarepath", reposts)
                     metric("heart", likes)
                 }
-                .font(LpspGrokFonts.grokCaption).foregroundStyle(Color.grokTextSecondary)
+                .font(LpspGrokFonts.grokCaption).foregroundStyle(LpspGrokTokens.grokTextSecondary)
             }
             .padding(14)
             .background(RoundedRectangle(cornerRadius: 16)
-                .fill(pressed ? Color.grokSurface3 : Color.grokSurface2))
+                .fill(pressed ? LpspGrokTokens.grokSurface3 : LpspGrokTokens.grokSurface2))
             .overlay(RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(pressed ? Color.grokLinkBlue : Color.grokDivider, lineWidth: 1))
+                .strokeBorder(pressed ? LpspGrokTokens.grokLinkBlue : LpspGrokTokens.grokDivider, lineWidth: 1))
         }
         .buttonStyle(.plain)
         .onLongPressGesture(minimumDuration: 0, pressing: { pressed = $0 }, perform: {})
@@ -189,10 +189,10 @@ private struct LpspGrokGrokSendButton: View {
                 switch state {
                 case .streaming:
                     Image(systemName: "stop.fill")
-                        .foregroundStyle(Color.grokTextPrimary)
+                        .foregroundStyle(LpspGrokTokens.grokTextPrimary)
                 default:
                     Image(systemName: "arrow.up")
-                        .foregroundStyle(state == .enabled ? Color.black : Color.grokTextSecondary)
+                        .foregroundStyle(state == .enabled ? LpspGrokTokens.black : LpspGrokTokens.grokTextSecondary)
                 }
             }
             .font(.system(size: 16, weight: .semibold))
@@ -206,9 +206,9 @@ private struct LpspGrokGrokSendButton: View {
 
     private var fill: Color {
         switch state {
-        case .disabled:  return .grokSurface3
-        case .enabled:   return .grokAccentWhite
-        case .streaming: return .grokSurface3
+        case .disabled:  return LpspGrokTokens.grokSurface3
+        case .enabled:   return LpspGrokTokens.grokAccentWhite
+        case .streaming: return LpspGrokTokens.grokSurface3
         }
     }
 }
@@ -232,21 +232,21 @@ private struct LpspGrokGrokModeToggle: View {
             segment("Fun",     active:  isFun) { isFun = true }
         }
         .padding(3)
-        .background(Capsule().fill(Color.grokSurface1))
-        .overlay(Capsule().strokeBorder(Color.grokDivider, lineWidth: 1))
+        .background(Capsule().fill(LpspGrokTokens.grokSurface1))
+        .overlay(Capsule().strokeBorder(LpspGrokTokens.grokDivider, lineWidth: 1))
         .sensoryFeedback(.selection, trigger: isFun)
     }
 
     private func segment(_ label: String, active: Bool, tap: @escaping () -> Void) -> some View {
         Text(label)
             .font(LpspGrokFonts.grokModePill)
-            .foregroundStyle(active ? (label == "Fun" ? Color.grokLinkBlue : .black)
-                                    : Color.grokTextSecondary)
+            .foregroundStyle(active ? (label == "Fun" ? LpspGrokTokens.grokLinkBlue : .black)
+                                    : LpspGrokTokens.grokTextSecondary)
             .padding(.vertical, 7).padding(.horizontal, 14)
             .background {
                 if active {
                     Capsule()
-                        .fill(label == "Fun" ? Color.grokSurface1 : Color.grokAccentWhite)
+                        .fill(label == "Fun" ? LpspGrokTokens.grokSurface1 : LpspGrokTokens.grokAccentWhite)
                         .matchedGeometryEffect(id: "pill", in: ns)
                 }
             }
@@ -264,19 +264,19 @@ private struct LpspGrokGrokPromptBar: View {
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
             Image(systemName: "paperclip")
-                .font(.system(size: 18)).foregroundStyle(Color.grokTextSecondary)
+                .font(.system(size: 18)).foregroundStyle(LpspGrokTokens.grokTextSecondary)
             TextField("Ask Grok anything", text: $text, axis: .vertical)
                 .font(LpspGrokFonts.grokPromptInput)
-                .foregroundStyle(Color.grokTextPrimary)
-                .tint(Color.grokTextPrimary)
+                .foregroundStyle(LpspGrokTokens.grokTextPrimary)
+                .tint(LpspGrokTokens.grokTextPrimary)
                 .lineLimit(1...5)
                 .focused($focused)
             LpspGrokGrokSendButton(state: sendState, action: onSend)
         }
         .padding(.horizontal, 12).padding(.vertical, 8)
-        .background(RoundedRectangle(cornerRadius: 24).fill(Color.grokSurface1))
+        .background(RoundedRectangle(cornerRadius: 24).fill(LpspGrokTokens.grokSurface1))
         .overlay(RoundedRectangle(cornerRadius: 24)
-            .strokeBorder(focused ? Color(red: 0.243, green: 0.255, blue: 0.275) : Color.grokDivider,
+            .strokeBorder(focused ? Color(red: 0.243, green: 0.255, blue: 0.275) : LpspGrokTokens.grokDivider,
                           lineWidth: 1))
         .padding(.horizontal, 16)
     }
@@ -291,22 +291,22 @@ private struct LpspGrokGrokRoot: View {
             HStack {
                 Button { showHistory = true } label: {
                     Image(systemName: "line.3.horizontal")
-                        .font(.system(size: 20)).foregroundStyle(Color.grokTextPrimary)
+                        .font(.system(size: 20)).foregroundStyle(LpspGrokTokens.grokTextPrimary)
                 }
                 Spacer()
                 LpspGrokGrokModeToggle(isFun: $isFun)
                 Spacer()
                 Button { /* new chat */ } label: {
                     Image(systemName: "square.and.pencil")
-                        .font(.system(size: 20)).foregroundStyle(Color.grokTextPrimary)
+                        .font(.system(size: 20)).foregroundStyle(LpspGrokTokens.grokTextPrimary)
                 }
             }
             .padding(.horizontal, 16).frame(height: 44)
-            .background(Color.grokCanvas)
+            .background(LpspGrokTokens.grokCanvas)
 
             ConversationScroll() // user bubbles + assistant responses + citations
         }
-        .background(Color.grokCanvas.ignoresSafeArea())
+        .background(LpspGrokTokens.grokCanvas.ignoresSafeArea())
         .sheet(isPresented: $showHistory) { GrokHistoryPanel() }
     }
 }

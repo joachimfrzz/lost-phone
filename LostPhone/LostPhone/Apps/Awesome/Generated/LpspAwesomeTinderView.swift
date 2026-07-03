@@ -12,7 +12,7 @@ struct LpspAwesomeTinderView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspTinderTokens {
     // MARK: - Canvas (Light)
-    static let tdrCanvas        = Color.white                                    // #FFFFFF
+    static let tdrCanvas        = LpspTinderTokens.white                                    // #FFFFFF
     static let tdrSurfaceMuted  = Color(red: 0.961, green: 0.961, blue: 0.961)  // #F5F5F5
     static let tdrSurfaceTint   = Color(red: 0.980, green: 0.980, blue: 0.980)  // #FAFAFA
     static let tdrDivider       = Color(red: 0.898, green: 0.898, blue: 0.898)  // #E5E5E5
@@ -103,7 +103,7 @@ private struct LpspTinderTinderSwipeCard: View {
 
             // Bottom gradient for legibility
             LinearGradient(
-                colors: [.clear, Color.black.opacity(0.7)],
+                colors: [.clear, LpspTinderTokens.black.opacity(0.7)],
                 startPoint: UnitPoint(x: 0.5, y: 0.5),
                 endPoint: .bottom
             )
@@ -126,8 +126,8 @@ private struct LpspTinderTinderSwipeCard: View {
                     ForEach(0..<photoURLs.count, id: \.self) { idx in
                         RoundedRectangle(cornerRadius: 1.5)
                             .fill(idx == currentPhoto
-                                ? Color.white
-                                : Color.white.opacity(0.4))
+                                ? LpspTinderTokens.white
+                                : LpspTinderTokens.white.opacity(0.4))
                             .frame(height: 3)
                     }
                 }
@@ -235,7 +235,7 @@ private struct LpspTinderTinderActionButton: View {
                 .foregroundStyle(color)
                 .frame(width: size, height: size)
                 .background(
-                    Circle().fill(Color.white)
+                    Circle().fill(LpspTinderTokens.white)
                         .overlay(Circle().strokeBorder(color, lineWidth: 2))
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 2)
                 )
@@ -302,7 +302,7 @@ private struct LpspTinderTinderMatchScreen: View {
                             .foregroundStyle(LpspTinderGradients.tdrBrand)
                             .padding(.vertical, 14).padding(.horizontal, 32)
                             .frame(maxWidth: .infinity)
-                            .background(Capsule().fill(Color.white))
+                            .background(Capsule().fill(LpspTinderTokens.white))
                     }
                     Button {
                         // keep playing

@@ -22,10 +22,10 @@ private enum LpspYouTubeMusicTokens {
     // MARK: - Brand
     static let ytmRed         = Color(red: 1.0,   green: 0.0,   blue: 0.0)   // #FF0000
     static let ytmRedPressed  = Color(red: 0.8,   green: 0.0,   blue: 0.0)   // #CC0000
-    static let ytmActionWhite = Color.white                                    // #FFFFFF
+    static let ytmActionWhite = LpspYouTubeMusicTokens.white                                    // #FFFFFF
 
     // MARK: - Text
-    static let ytmTextPrimary   = Color.white                                  // #FFFFFF
+    static let ytmTextPrimary   = LpspYouTubeMusicTokens.white                                  // #FFFFFF
     static let ytmTextSecondary = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let ytmTextTertiary  = Color(red: 0.443, green: 0.443, blue: 0.443) // #717171
 
@@ -141,7 +141,7 @@ private struct LpspYouTubeMusicSongVideoToggle: View {
             segment("Video", active: mode == .video) { mode = .video }
         }
         .padding(4)
-        .background(Color.white.opacity(0.08))
+        .background(LpspYouTubeMusicTokens.white.opacity(0.08))
         .clipShape(Capsule())
     }
 
@@ -151,7 +151,7 @@ private struct LpspYouTubeMusicSongVideoToggle: View {
             .tracking(0.2)
             .foregroundStyle(active ? LpspYouTubeMusicTokens.ytmCanvas : LpspYouTubeMusicTokens.ytmTextSecondary)
             .padding(.vertical, 7).padding(.horizontal, 18)
-            .background(active ? LpspYouTubeMusicTokens.ytmActionWhite : Color.clear)
+            .background(active ? LpspYouTubeMusicTokens.ytmActionWhite : LpspYouTubeMusicTokens.clear)
             .clipShape(Capsule())
             .contentShape(Rectangle())
             .onTapGesture {
@@ -170,7 +170,7 @@ private struct LpspYouTubeMusicScrubber: View {
             GeometryReader { geo in
                 let w = geo.size.width
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.white.opacity(0.22)).frame(height: 3)
+                    Capsule().fill(LpspYouTubeMusicTokens.white.opacity(0.22)).frame(height: 3)
                     Capsule()
                         .fill(scrubbing ? LpspYouTubeMusicTokens.ytmRed : LpspYouTubeMusicTokens.ytmActionWhite)
                         .frame(width: max(0, w * progress), height: 3)
@@ -275,7 +275,7 @@ private struct LpspYouTubeMusicUpNextShelf: View {
             }
         }
         .background(LpspYouTubeMusicTokens.ytmCanvas)
-        .overlay(Rectangle().fill(Color.white.opacity(0.12)).frame(height: 0.5), alignment: .top)
+        .overlay(Rectangle().fill(LpspYouTubeMusicTokens.white.opacity(0.12)).frame(height: 0.5), alignment: .top)
     }
 }
 

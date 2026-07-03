@@ -10,6 +10,23 @@ struct LpspAwesomeTeamsView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspTeamsFonts {
+    static let teamsTitleLarge = Font.system(size: 28, weight: .regular)
+    static let teamsSection    = Font.system(size: 20, weight: .regular)
+    static let teamsTeamName   = Font.system(size: 16, weight: .regular)
+    static let teamsListTitle  = Font.system(size: 16, weight: .regular)
+    static let teamsAuthor     = Font.system(size: 15, weight: .regular)
+    static let teamsBody       = Font.system(size: 15, weight: .regular)
+    static let teamsButton     = Font.system(size: 16, weight: .regular)
+    static let teamsMetadata   = Font.system(size: 13, weight: .regular)
+    static let teamsReaction   = Font.system(size: 12, weight: .regular)
+    static let teamsTab        = Font.system(size: 10, weight: .regular)
+    static let teamsTinyUpper  = Font.system(size: 11, weight: .regular)
+    static func teamsSys(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspTeamsTokens {
     // Resolve light/dark at the call site
     static func teams(_ light: Color, _ dark: Color, _ scheme: ColorScheme) -> Color {
@@ -44,25 +61,9 @@ private enum LpspTeamsTokens {
     static let teamsOffline   = Color(red: 0.541, green: 0.533, blue: 0.525)     // #8A8886
 }
 
-private enum LpspTeamsFonts {
-    static let teamsTitleLarge = Font.system(size: 28, weight: .regular)
-    static let teamsSection    = Font.system(size: 20, weight: .regular)
-    static let teamsTeamName   = Font.system(size: 16, weight: .regular)
-    static let teamsListTitle  = Font.system(size: 16, weight: .regular)
-    static let teamsAuthor     = Font.system(size: 15, weight: .regular)
-    static let teamsBody       = Font.system(size: 15, weight: .regular)
-    static let teamsButton     = Font.system(size: 16, weight: .regular)
-    static let teamsMetadata   = Font.system(size: 13, weight: .regular)
-    static let teamsReaction   = Font.system(size: 12, weight: .regular)
-    static let teamsTab        = Font.system(size: 10, weight: .regular)
-    static let teamsTinyUpper  = Font.system(size: 11, weight: .regular)
-}
 
-private enum LpspTeamsFonts {
-    static func teamsSys(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private enum LpspTeamsPresence { case available, busy, dnd, away, offline }
 
@@ -73,13 +74,13 @@ private struct LpspTeamsPresenceDot: View {
     var body: some View {
         ZStack {
             switch presence {
-            case .available: Circle().fill(LpspTeamsTokens.teamsAvailable)
-            case .busy:      Circle().fill(LpspTeamsTokens.teamsBusy)
+            case .available: Circle().fill(Color.teamsAvailable)
+            case .busy:      Circle().fill(Color.teamsBusy)
             case .dnd:
-                Circle().fill(LpspTeamsTokens.teamsBusy)
+                Circle().fill(Color.teamsBusy)
                 Capsule().fill(.white).frame(width: size * 0.5, height: size * 0.18)
-            case .away:      Circle().fill(LpspTeamsTokens.teamsAway)
-            case .offline:   Circle().strokeBorder(LpspTeamsTokens.teamsOffline, lineWidth: 1.5)
+            case .away:      Circle().fill(Color.teamsAway)
+            case .offline:   Circle().strokeBorder(Color.teamsOffline, lineWidth: 1.5)
             }
         }
         .frame(width: size, height: size)
@@ -94,7 +95,7 @@ private struct LpspTeamsAvatarWithPresence: View {
     var size: CGFloat = 32
     var body: some View {
         Circle()
-            .fill(LpspTeamsTokens.teamsPurpleLight.opacity(0.25))
+            .fill(Color.teamsPurpleLight.opacity(0.25))
             .frame(width: size, height: size)
             .overlay(Text(initials).font(.teamsSys(size * 0.4, weight: .semibold)))
             .overlay(alignment: .bottomTrailing) {
@@ -117,15 +118,15 @@ private struct LpspTeamsTeamTreeRow: View {
             Button { withAnimation(.easeInOut(duration: 0.2)) { expanded.toggle() } } label: {
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTeamsTokens.teamsPurpleLight.opacity(0.3))
+                        .fill(Color.teamsPurpleLight.opacity(0.3))
                         .frame(width: 32, height: 32)
                         .overlay(Text(String(team.name.prefix(1))).font(.teamsSys(14, weight: .bold)))
                     Text(team.name).font(LpspTeamsFonts.teamsTeamName)
-                        .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
+                        .foregroundStyle(Color.teams(.teamsLightText1, .teamsDarkText1, scheme))
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme))
+                        .foregroundStyle(Color.teams(.teamsLightText2, .teamsDarkText2, scheme))
                         .rotationEffect(.degrees(expanded ? 90 : 0))
                 }
                 .padding(.horizontal, 16)
@@ -151,22 +152,22 @@ private struct LpspTeamsChannelRow: View {
         HStack(spacing: 8) {
             Text("#")
                 .font(.teamsSys(16, weight: .semibold))
-                .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme))
+                .foregroundStyle(Color.teams(.teamsLightText2, .teamsDarkText2, scheme))
             Text(channel.name)
                 .font(LpspTeamsFonts.teamsListTitle)
                 .fontWeight(channel.unread ? .bold : .semibold)
-                .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
+                .foregroundStyle(Color.teams(.teamsLightText1, .teamsDarkText1, scheme))
             Spacer()
             if channel.unread {
-                Circle().fill(LpspTeamsTokens.teamsPurpleLight).frame(width: 8, height: 8)
+                Circle().fill(Color.teamsPurpleLight).frame(width: 8, height: 8)
             }
         }
         .padding(.leading, 44)
         .padding(.trailing, 16)
         .frame(height: 44)
-        .background(isActive ? LpspTeamsTokens.teamsPurpleLight.opacity(0.12) : .clear)
+        .background(isActive ? Color.teamsPurpleLight.opacity(0.12) : .clear)
         .overlay(alignment: .leading) {
-            if isActive { Rectangle().fill(LpspTeamsTokens.teamsPurpleLight).frame(width: 3) }
+            if isActive { Rectangle().fill(Color.teamsPurpleLight).frame(width: 3) }
         }
     }
 }
@@ -186,12 +187,12 @@ private struct LpspTeamsMessageCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(author).font(LpspTeamsFonts.teamsAuthor)
-                        .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
+                        .foregroundStyle(Color.teams(.teamsLightText1, .teamsDarkText1, scheme))
                     Text(timestamp).font(LpspTeamsFonts.teamsMetadata)
-                        .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme))
+                        .foregroundStyle(Color.teams(.teamsLightText2, .teamsDarkText2, scheme))
                 }
                 Text(body).font(LpspTeamsFonts.teamsBody)
-                    .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
+                    .foregroundStyle(Color.teams(.teamsLightText1, .teamsDarkText1, scheme))
 
                 HStack(spacing: 6) {
                     LpspTeamsReactionChip(emoji: "👍", count: 3, mine: true)
@@ -200,14 +201,14 @@ private struct LpspTeamsMessageCard: View {
                 if replyCount > 0 {
                     Text("💬 \(replyCount) replies · Last reply 2h ago")
                         .font(LpspTeamsFonts.teamsMetadata)
-                        .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme))
+                        .foregroundStyle(Color.teams(.teamsLightText2, .teamsDarkText2, scheme))
                 }
             }
             Spacer(minLength: 0)
         }
         .padding(12)
         .background(RoundedRectangle(cornerRadius: 8)
-            .fill(Color.teams(LpspTeamsTokens.teamsLightSurface1, LpspTeamsTokens.teamsDarkSurface1, scheme)))
+            .fill(Color.teams(.teamsLightSurface1, .teamsDarkSurface1, scheme)))
     }
 }
 
@@ -218,12 +219,12 @@ private struct LpspTeamsReactionChip: View {
         HStack(spacing: 4) {
             Text(emoji).font(.system(size: 12))
             Text("\(count)").font(LpspTeamsFonts.teamsReaction)
-                .foregroundStyle(Color.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme))
+                .foregroundStyle(Color.teams(.teamsLightText2, .teamsDarkText2, scheme))
         }
         .padding(.horizontal, 8).padding(.vertical, 4)
         .background(Capsule().fill(mine
-            ? LpspTeamsTokens.teamsPurpleLight.opacity(0.12)
-            : Color.teams(LpspTeamsTokens.teamsLightSurface2, LpspTeamsTokens.teamsDarkSurface2, scheme)))
+            ? Color.teamsPurpleLight.opacity(0.12)
+            : Color.teams(.teamsLightSurface2, .teamsDarkSurface2, scheme)))
     }
 }
 
@@ -241,7 +242,7 @@ private struct LpspTeamsMeetingJoinBar: View {
             Button(action: onJoin) {
                 Text("Join")
                     .font(.teamsSys(14, weight: .semibold))
-                    .foregroundStyle(scheme == .dark ? LpspTeamsTokens.teamsPurpleDark : LpspTeamsTokens.teamsPurpleLight)
+                    .foregroundStyle(scheme == .dark ? Color.teamsPurpleDark : Color.teamsPurpleLight)
                     .padding(.horizontal, 18).frame(height: 30)
                     .background(Capsule().fill(.white))
             }
@@ -249,8 +250,8 @@ private struct LpspTeamsMeetingJoinBar: View {
         .padding(.horizontal, 16)
         .frame(height: 56)
         .background(RoundedRectangle(cornerRadius: 12)
-            .fill(scheme == .dark ? LpspTeamsTokens.teamsPurpleDark : LpspTeamsTokens.teamsPurpleLight))
-        .shadow(color: LpspTeamsTokens.teamsPurpleLight.opacity(0.35), radius: 16, y: 4)
+            .fill(scheme == .dark ? Color.teamsPurpleDark : Color.teamsPurpleLight))
+        .shadow(color: Color.teamsPurpleLight.opacity(0.35), radius: 16, y: 4)
         .opacity(pulse ? 0.85 : 1.0)
         .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true), value: pulse)
         .padding(.horizontal, 12)
@@ -271,7 +272,7 @@ private struct LpspTeamsTeamsPrimaryButton: View {
                 .padding(.vertical, 12).padding(.horizontal, 24)
                 .frame(height: 44)
                 .background(RoundedRectangle(cornerRadius: 8)
-                    .fill(scheme == .dark ? LpspTeamsTokens.teamsPurpleDark : LpspTeamsTokens.teamsPurpleLight))
+                    .fill(scheme == .dark ? Color.teamsPurpleDark : Color.teamsPurpleLight))
         }
         .buttonStyle(LpspTeamsTeamsPressable())
         .sensoryFeedback(.impact(weight: .light), trigger: title)
@@ -283,7 +284,7 @@ private struct LpspTeamsTeamsPressable: ButtonStyle {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .overlay(configuration.isPressed
-                ? RoundedRectangle(cornerRadius: 8).fill(LpspTeamsTokens.teamsPurplePress).blendMode(.multiply) : nil)
+                ? RoundedRectangle(cornerRadius: 8).fill(Color.teamsPurplePress).blendMode(.multiply) : nil)
             .animation(.spring(response: 0.25, dampingFraction: 0.85), value: configuration.isPressed)
     }
 }
@@ -299,7 +300,7 @@ private struct LpspTeamsRootTabView: View {
             CalendarView().tabItem { Label("Calendar", systemImage: "calendar") }
             CallsView().tabItem    { Label("Calls",    systemImage: "phone.fill") }
         }
-        .tint(scheme == .dark ? LpspTeamsTokens.teamsPurpleDark : LpspTeamsTokens.teamsPurpleLight)
+        .tint(scheme == .dark ? .teamsPurpleDark : .teamsPurpleLight)
     }
 }
 

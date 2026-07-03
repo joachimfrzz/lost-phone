@@ -10,6 +10,25 @@ struct LpspAwesomeGeminiView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspGeminiFonts {
+    static let gemGreeting    = Font.system(size: 28, weight: .regular)
+    static let gemTitle       = Font.system(size: 22, weight: .regular)
+    static let gemSection     = Font.system(size: 18, weight: .regular)
+    static let gemAnswerH2    = Font.system(size: 20, weight: .regular)
+    static let gemAnswerH3    = Font.system(size: 17, weight: .regular)
+    static let gemAnswerBody  = Font.system(size: 16, weight: .regular)
+    static let gemUserTurn    = Font.system(size: 16, weight: .regular)
+    static let gemPromptInput = Font.system(size: 16, weight: .regular)
+    static let gemChip        = Font.system(size: 14, weight: .regular)
+    static let gemMeta        = Font.system(size: 13, weight: .regular)
+    static let gemCode        = Font.system(size: 14, weight: .regular)
+    static let gemLabelUpper  = Font.system(size: 11, weight: .regular)
+    static let gemButton      = Font.system(size: 15, weight: .regular)
+    static func gem(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspGeminiTokens {
     // MARK: - Canvas & Surfaces (Light)
     static let gemCanvas   = Color.white                                     // #FFFFFF
@@ -43,32 +62,14 @@ private enum LpspGeminiTokens {
 // The single brand gesture — used for sparkle, streaming edge, focus ring, chip accents.
 private enum LpspGeminiGradients {
     static let gemini = LinearGradient(
-        colors: [LpspGeminiTokens.gemBlue, LpspGeminiTokens.gemViolet, LpspGeminiTokens.gemCoral],
+        colors: [.gemBlue, .gemViolet, .gemCoral],
         startPoint: .leading, endPoint: .trailing
     )
 }
 
-private enum LpspGeminiFonts {
-    static let gemGreeting    = Font.system(size: 28, weight: .regular)
-    static let gemTitle       = Font.system(size: 22, weight: .regular)
-    static let gemSection     = Font.system(size: 18, weight: .regular)
-    static let gemAnswerH2    = Font.system(size: 20, weight: .regular)
-    static let gemAnswerH3    = Font.system(size: 17, weight: .regular)
-    static let gemAnswerBody  = Font.system(size: 16, weight: .regular)
-    static let gemUserTurn    = Font.system(size: 16, weight: .regular)
-    static let gemPromptInput = Font.system(size: 16, weight: .regular)
-    static let gemChip        = Font.system(size: 14, weight: .regular)
-    static let gemMeta        = Font.system(size: 13, weight: .regular)
-    static let gemCode        = Font.system(size: 14, weight: .regular)
-    static let gemLabelUpper  = Font.system(size: 11, weight: .regular)
-    static let gemButton      = Font.system(size: 15, weight: .regular)
-}
 
-private enum LpspGeminiFonts {
-    static func gem(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspGeminiGemSparkle: View {
     var size: CGFloat = 20
@@ -89,7 +90,7 @@ private struct LpspGeminiGemUserTurn: View {
             Spacer(minLength: 48)
             Text(text)
                 .font(LpspGeminiFonts.gemUserTurn)
-                .foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+                .foregroundStyle(Color.gemTextPrimary)
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
                 .background(
@@ -97,7 +98,7 @@ private struct LpspGeminiGemUserTurn: View {
                         topLeadingRadius: 20, bottomLeadingRadius: 20,
                         bottomTrailingRadius: 4, topTrailingRadius: 20
                     )
-                    .fill(LpspGeminiTokens.gemSurface)
+                    .fill(Color.gemSurface)
                 )
         }
         .padding(.horizontal, 16)
@@ -114,7 +115,7 @@ private struct LpspGeminiGemAssistantTurn: View {
                 LpspGeminiGemSparkle(size: 20)
                 Text(markdown)
                     .font(LpspGeminiFonts.gemAnswerBody)
-                    .foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+                    .foregroundStyle(Color.gemTextPrimary)
                     .lineSpacing(8) // ≈ 1.55 line-height at 16pt
                     .textSelection(.enabled)
             }
@@ -135,7 +136,7 @@ private struct LpspGeminiGemAssistantTurn: View {
     private func actionIcon(_ name: String) -> some View {
         Image(systemName: name)
             .font(.system(size: 18))
-            .foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+            .foregroundStyle(Color.gemTextSecondary)
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
     }
@@ -148,11 +149,11 @@ private struct LpspGeminiGemStreamingText: View {
     var body: some View {
         Text(text)
             .font(LpspGeminiFonts.gemAnswerBody)
-            .foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+            .foregroundStyle(Color.gemTextPrimary)
             .lineSpacing(8)
             .overlay(
                 LinearGradient(
-                    colors: [.clear, LpspGeminiTokens.gemViolet.opacity(0.28), .clear],
+                    colors: [.clear, Color.gemViolet.opacity(0.28), .clear],
                     startPoint: .init(x: phase, y: 0.5),
                     endPoint: .init(x: phase + 0.3, y: 0.5)
                 )
@@ -195,7 +196,7 @@ private struct LpspGeminiGemPromptBar: View {
         HStack(spacing: 10) {
             Button { /* attach */ } label: {
                 Image(systemName: "plus")
-                    .font(.system(size: 22)).foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+                    .font(.system(size: 22)).foregroundStyle(Color.gemTextSecondary)
             }
             TextField("Ask Gemini", text: $text, axis: .vertical)
                 .font(LpspGeminiFonts.gemPromptInput)
@@ -203,14 +204,14 @@ private struct LpspGeminiGemPromptBar: View {
                 .lineLimit(1...5)
             Button { /* mic */ } label: {
                 Image(systemName: "mic")
-                    .font(.system(size: 22)).foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+                    .font(.system(size: 22)).foregroundStyle(Color.gemTextSecondary)
             }
             sendButton
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
         .frame(minHeight: 52)
-        .background(Capsule(style: .continuous).fill(LpspGeminiTokens.gemSurface))
+        .background(Capsule(style: .continuous).fill(Color.gemSurface))
         .overlay(
             Capsule(style: .continuous)
                 .strokeBorder(LpspGeminiGradients.gemini, lineWidth: focused ? 1.5 : 0)
@@ -226,16 +227,16 @@ private struct LpspGeminiGemPromptBar: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(width: 36, height: 36)
-                    .background(Circle().fill(LpspGeminiTokens.gemBlue))
+                    .background(Circle().fill(Color.gemBlue))
             }
         } else {
             let active = !text.isEmpty
             Button(action: onSend) {
                 Image(systemName: "arrow.up")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(active ? .white : LpspGeminiTokens.gemTextTertiary)
+                    .foregroundStyle(active ? .white : Color.gemTextTertiary)
                     .frame(width: 36, height: 36)
-                    .background(Circle().fill(active ? LpspGeminiTokens.gemBlue : .clear))
+                    .background(Circle().fill(active ? Color.gemBlue : .clear))
             }
             .disabled(!active)
             .sensoryFeedback(.impact(flexibility: .soft), trigger: active)
@@ -252,15 +253,15 @@ private struct LpspGeminiGemSuggestionChip: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 if featured { LpspGeminiGemSparkle(size: 12) }
-                Text(label).font(LpspGeminiFonts.gemChip).foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+                Text(label).font(LpspGeminiFonts.gemChip).foregroundStyle(Color.gemTextPrimary)
             }
             .padding(.vertical, 10)
             .padding(.horizontal, 16)
-            .background(Capsule().fill(LpspGeminiTokens.gemSurface))
+            .background(Capsule().fill(Color.gemSurface))
             .overlay(
                 Capsule().strokeBorder(
                     featured ? AnyShapeStyle(LpspGeminiGradients.gemini)
-                             : AnyShapeStyle(LpspGeminiTokens.gemDivider),
+                             : AnyShapeStyle(Color.gemDivider),
                     lineWidth: 1)
             )
         }
@@ -283,9 +284,9 @@ private struct LpspGeminiGemDrawer: View {
             HStack { Image(systemName: "plus"); Text("New chat").font(LpspGeminiFonts.gemButton) }
                 .padding(.vertical, 12).padding(.horizontal, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Capsule().fill(LpspGeminiTokens.gemSurface))
+                .background(Capsule().fill(Color.gemSurface))
 
-            Text("TODAY").font(LpspGeminiFonts.gemLabelUpper).foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+            Text("TODAY").font(LpspGeminiFonts.gemLabelUpper).foregroundStyle(Color.gemTextSecondary)
                 .padding(.top, 16).padding(.leading, 8)
 
             ForEach(recents) { r in
@@ -296,13 +297,13 @@ private struct LpspGeminiGemDrawer: View {
                 .padding(.vertical, 12).padding(.horizontal, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    Capsule().fill(r.active ? LpspGeminiTokens.gemSurface : .clear))
+                    Capsule().fill(r.active ? Color.gemSurface : .clear))
             }
             Spacer()
         }
         .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(LpspGeminiTokens.gemCanvas)
+        .background(Color.gemCanvas)
     }
 }
 
@@ -327,7 +328,7 @@ private struct LpspGeminiGemRoot: View {
                         Image(systemName: "person.crop.circle").font(.system(size: 28))
                     }
                     .padding(.horizontal, 16).padding(.vertical, 8)
-                    .background(LpspGeminiTokens.gemCanvas)
+                    .background(Color.gemCanvas)
                 }
             if drawerOpen {
                 Color.black.opacity(0.4).ignoresSafeArea()

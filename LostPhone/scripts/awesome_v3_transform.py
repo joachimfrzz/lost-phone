@@ -285,6 +285,96 @@ def strip_orphan_motion_lines(code: str) -> str:
     return "\n".join(out)
 
 
+def _extract_braced_block(code: str, start: int) -> tuple[str, int]:
+    """Return (inner_body, end_index) for block opening at start (at 'private enum' or 'extension')."""
+    i = code.find("{", start)
+    if i < 0:
+        return "", start
+    depth = 1
+    j = i + 1
+    while j < len(code) and depth:
+        if code[j] == "{":
+            depth += 1
+        elif code[j] == "}":
+            depth -= 1
+        j += 1
+    return code[i + 1 : j - 1], j
+
+
+def merge_duplicate_private_enums(code: str, enum_name: str) -> str:
+    """Fusionne plusieurs `private enum Foo` identiques (specs multi-blocs)."""
+    marker = f"private enum {enum_name}"
+    if code.count(marker) <= 1:
+        return code
+
+    static_lines: dict[str, str] = {}
+    other_lines: list[str] = []
+    spans: list[tuple[int, int]] = []
+
+    search_from = 0
+    while True:
+        idx = code.find(marker, search_from)
+        if idx < 0:
+            break
+        body, end = _extract_braced_block(code, idx)
+        spans.append((idx, end))
+        for line in body.splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("//"):
+                continue
+            m = re.match(r"static let (\w+)", stripped)
+            if m:
+                static_lines.setdefault(m.group(1), line)
+            elif stripped not in other_lines:
+                other_lines.append(line)
+        search_from = end
+
+    merged_inner = "\n".join(list(static_lines.values()) + other_lines)
+    merged_block = f"private enum {enum_name} {{\n{merged_inner}\n}}\n"
+
+    for start, end in reversed(spans):
+        code = code[:start] + code[end:]
+
+    # Insérer le bloc fusionné avant le premier composant struct/enum
+    insert = re.search(r"\nprivate struct ", code)
+    if insert:
+        pos = insert.start() + 1
+        code = code[:pos] + merged_block + "\n" + code[pos:]
+    else:
+        code = merged_block + "\n" + code
+
+    return code
+
+
+def dedupe_extension_view(code: str) -> str:
+    """Supprime les fonctions dupliquées dans les extension View répétées."""
+    seen: set[str] = set()
+    out: list[str] = []
+    i = 0
+    lines = code.splitlines(keepends=True)
+    while i < len(lines):
+        line = lines[i]
+        if line.strip().startswith("extension View"):
+            block_lines = [line]
+            i += 1
+            depth = line.count("{") - line.count("}")
+            while i < len(lines) and depth > 0:
+                block_lines.append(lines[i])
+                depth += lines[i].count("{") - lines[i].count("}")
+                i += 1
+            block = "".join(block_lines)
+            funcs = re.findall(r"func (\w+)\(", block)
+            if funcs and all(f in seen for f in funcs):
+                continue
+            for f in funcs:
+                seen.add(f)
+            out.append(block)
+            continue
+        out.append(line)
+        i += 1
+    return "".join(out)
+
+
 def finalize_component_swift(code: str, prefix: str) -> str:
     """Post-traitement : extensions restantes → enums, struct → private struct."""
     tokens_enum = f"{prefix}Tokens"
@@ -304,6 +394,11 @@ def finalize_component_swift(code: str, prefix: str) -> str:
         code, _ = transform_font_extension(code, fonts_enum)
     if "extension LinearGradient" in code:
         code = transform_linear_gradient_extension(code, grad_enum)
+
+    code = merge_duplicate_private_enums(code, tokens_enum)
+    code = merge_duplicate_private_enums(code, fonts_enum)
+    code = merge_duplicate_private_enums(code, grad_enum)
+    code = dedupe_extension_view(code)
 
     token_names = re.findall(rf"{re.escape(tokens_enum)}\.(\w+)", code) + re.findall(
         r"static let (\w+)\s*=", code

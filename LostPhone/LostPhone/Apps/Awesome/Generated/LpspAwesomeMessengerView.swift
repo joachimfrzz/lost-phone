@@ -10,6 +10,26 @@ struct LpspAwesomeMessengerView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspMessengerFonts {
+    static let msgLargeTitle   = Font.system(size: 28, weight: .regular)
+    static let msgConvoName    = Font.system(size: 17, weight: .regular)
+    static let msgConvoUnread  = Font.system(size: 17, weight: .regular)
+    static let msgThreadTitle  = Font.system(size: 16, weight: .regular)
+    static let msgMessageBody  = Font.system(size: 16, weight: .regular)
+    static let msgPreview      = Font.system(size: 15, weight: .regular)
+    static let msgSection      = Font.system(size: 13, weight: .regular)
+    static let msgTimestamp    = Font.system(size: 13, weight: .regular)
+    static let msgBubbleMeta   = Font.system(size: 12, weight: .regular)
+    static let msgReactCount   = Font.system(size: 12, weight: .regular)
+    static let msgButton       = Font.system(size: 16, weight: .regular)
+    static let msgTab          = Font.system(size: 10, weight: .regular)
+    static let msgActiveNow    = Font.system(size: 12, weight: .regular)
+    static let msgSystem       = Font.system(size: 13, weight: .regular)
+    static func messenger(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspMessengerTokens {
     // MARK: - Gradient stops (outgoing bubble only)
     static let msgGradBlue   = Color(red: 0.039, green: 0.486, blue: 1.000) // #0A7CFF
@@ -45,33 +65,14 @@ private enum LpspMessengerTokens {
 private enum LpspMessengerGradients {
     // The signature outgoing-bubble ribbon (≈135°)
     static let msgBubble = LinearGradient(
-        colors: [LpspMessengerTokens.msgGradBlue, LpspMessengerTokens.msgGradViolet, LpspMessengerTokens.msgGradPink],
+        colors: [.msgGradBlue, .msgGradViolet, .msgGradPink],
         startPoint: .topLeading, endPoint: .bottomTrailing
     )
 }
 
-private enum LpspMessengerFonts {
-    static let msgLargeTitle   = Font.system(size: 28, weight: .regular)
-    static let msgConvoName    = Font.system(size: 17, weight: .regular)
-    static let msgConvoUnread  = Font.system(size: 17, weight: .regular)
-    static let msgThreadTitle  = Font.system(size: 16, weight: .regular)
-    static let msgMessageBody  = Font.system(size: 16, weight: .regular)
-    static let msgPreview      = Font.system(size: 15, weight: .regular)
-    static let msgSection      = Font.system(size: 13, weight: .regular)
-    static let msgTimestamp    = Font.system(size: 13, weight: .regular)
-    static let msgBubbleMeta   = Font.system(size: 12, weight: .regular)
-    static let msgReactCount   = Font.system(size: 12, weight: .regular)
-    static let msgButton       = Font.system(size: 16, weight: .regular)
-    static let msgTab          = Font.system(size: 10, weight: .regular)
-    static let msgActiveNow    = Font.system(size: 12, weight: .regular)
-    static let msgSystem       = Font.system(size: 13, weight: .regular)
-}
 
-private enum LpspMessengerFonts {
-    static func messenger(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspMessengerOutgoingBubble: View {
     let text: String
@@ -89,7 +90,7 @@ private struct LpspMessengerOutgoingBubble: View {
                 .padding(.horizontal, 14)
                 .background(
                     // Gradient anchored to the conversation, not the bubble:
-                    LinearGradient(colors: [LpspMessengerTokens.msgGradBlue, LpspMessengerTokens.msgGradViolet, LpspMessengerTokens.msgGradPink],
+                    LinearGradient(colors: [.msgGradBlue, .msgGradViolet, .msgGradPink],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                         .frame(height: threadHeight)
                         .offset(y: -bubbleOriginY)
@@ -136,12 +137,12 @@ private struct LpspMessengerReactionsPopover: View {
             }
             Image(systemName: "plus")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(LpspMessengerTokens.msgTextSecondary)
+                .foregroundStyle(Color.msgTextSecondary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(
-            Capsule().fill(LpspMessengerTokens.msgCanvas)
+            Capsule().fill(Color.msgCanvas)
                 .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
         )
         .scaleEffect(shown ? 1 : 0.7)
@@ -158,11 +159,11 @@ private struct LpspMessengerReactionBadge: View {
     var body: some View {
         HStack(spacing: 3) {
             Text(emoji).font(.system(size: 14))
-            if count > 1 { Text("\(count)").font(LpspMessengerFonts.msgReactCount).foregroundStyle(LpspMessengerTokens.msgTextSecondary) }
+            if count > 1 { Text("\(count)").font(LpspMessengerFonts.msgReactCount).foregroundStyle(Color.msgTextSecondary) }
         }
         .padding(.horizontal, 6).padding(.vertical, 3)
-        .background(Capsule().fill(LpspMessengerTokens.msgCanvas)
-            .overlay(Capsule().strokeBorder(LpspMessengerTokens.msgDivider, lineWidth: 1)))
+        .background(Capsule().fill(Color.msgCanvas)
+            .overlay(Capsule().strokeBorder(Color.msgDivider, lineWidth: 1)))
         .scaleEffect(landed ? 1 : 1.25)
         .animation(.spring(response: 0.25, dampingFraction: 0.5), value: landed)
         .onAppear { landed = true }
@@ -179,7 +180,7 @@ private struct LpspMessengerComposerBar: View {
                 HStack(spacing: 16) {
                     ForEach(["camera", "photo", "mic", "face.smiling"], id: \.self) {
                         Image(systemName: $0).font(.system(size: 22))
-                            .foregroundStyle(LpspMessengerTokens.msgBlue)
+                            .foregroundStyle(Color.msgBlue)
                     }
                 }
                 .transition(.opacity.combined(with: .scale))
@@ -188,10 +189,10 @@ private struct LpspMessengerComposerBar: View {
                 TextField("Aa", text: $text, axis: .vertical)
                     .font(LpspMessengerFonts.msgMessageBody).lineLimit(1...5)
                 Image(systemName: "face.smiling").font(.system(size: 20))
-                    .foregroundStyle(LpspMessengerTokens.msgTextSecondary)
+                    .foregroundStyle(Color.msgTextSecondary)
             }
             .padding(.horizontal, 12).frame(minHeight: 36)
-            .background(Capsule().fill(LpspMessengerTokens.msgSurface))
+            .background(Capsule().fill(Color.msgSurface))
 
             // Big-thumb: 👍 when empty (one-tap like), filled send when text exists
             Button { text = "" } label: {
@@ -199,10 +200,10 @@ private struct LpspMessengerComposerBar: View {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 16, weight: .bold)).foregroundStyle(.white)
                         .frame(width: 32, height: 32)
-                        .background(Circle().fill(LpspMessengerTokens.msgBlue))
+                        .background(Circle().fill(Color.msgBlue))
                 } else {
                     Image(systemName: "hand.thumbsup.fill")
-                        .font(.system(size: 22)).foregroundStyle(LpspMessengerTokens.msgBlue)
+                        .font(.system(size: 22)).foregroundStyle(Color.msgBlue)
                         .frame(width: 32, height: 32)
                 }
             }
@@ -223,24 +224,24 @@ private struct LpspMessengerConversationRow: View {
     var body: some View {
         HStack(spacing: 12) {
             ZStack(alignment: .bottomTrailing) {
-                Circle().fill(LpspMessengerTokens.msgSurface).frame(width: 56, height: 56)
+                Circle().fill(Color.msgSurface).frame(width: 56, height: 56)
                 if activeNow {
-                    Circle().fill(LpspMessengerTokens.msgActiveGreen)
+                    Circle().fill(Color.msgActiveGreen)
                         .frame(width: 14, height: 14)
-                        .overlay(Circle().strokeBorder(LpspMessengerTokens.msgCanvas, lineWidth: 2))
+                        .overlay(Circle().strokeBorder(Color.msgCanvas, lineWidth: 2))
                 }
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text(name)
                     .font(unread ? .msgConvoUnread : .msgConvoName)
-                    .foregroundStyle(LpspMessengerTokens.msgTextPrimary)
+                    .foregroundStyle(Color.msgTextPrimary)
                 Text(preview).font(LpspMessengerFonts.msgPreview)
-                    .foregroundStyle(LpspMessengerTokens.msgTextSecondary).lineLimit(1)
+                    .foregroundStyle(Color.msgTextSecondary).lineLimit(1)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 6) {
-                Text(time).font(LpspMessengerFonts.msgTimestamp).foregroundStyle(LpspMessengerTokens.msgTextSecondary)
-                if unread { Circle().fill(LpspMessengerTokens.msgBlue).frame(width: 8, height: 8) }
+                Text(time).font(LpspMessengerFonts.msgTimestamp).foregroundStyle(Color.msgTextSecondary)
+                if unread { Circle().fill(Color.msgBlue).frame(width: 8, height: 8) }
             }
         }
         .padding(.vertical, 12).padding(.horizontal, 16)
@@ -253,12 +254,12 @@ private struct LpspMessengerTypingBubble: View {
     var body: some View {
         HStack(spacing: 4) {
             ForEach(0..<3) { i in
-                Circle().fill(LpspMessengerTokens.msgTextSecondary).frame(width: 7, height: 7)
+                Circle().fill(Color.msgTextSecondary).frame(width: 7, height: 7)
                     .offset(y: sin(phase + Double(i) * 0.6) * 3)
             }
         }
         .padding(.vertical, 12).padding(.horizontal, 14)
-        .background(Capsule().fill(LpspMessengerTokens.msgIncoming))
+        .background(Capsule().fill(Color.msgIncoming))
         .onAppear {
             withAnimation(.linear(duration: 0.9).repeatForever(autoreverses: false)) {
                 phase = .pi * 2
@@ -272,7 +273,7 @@ private struct LpspMessengerRootTabView: View {
         let a = UITabBarAppearance()
         a.configureWithOpaqueBackground()
         a.backgroundColor = UIColor.systemBackground
-        a.shadowColor = UIColor(LpspMessengerTokens.msgDivider)
+        a.shadowColor = UIColor(Color.msgDivider)
         UITabBar.appearance().standardAppearance = a
         UITabBar.appearance().scrollEdgeAppearance = a
     }
@@ -282,7 +283,7 @@ private struct LpspMessengerRootTabView: View {
             MarketplaceView().tabItem { Label("Marketplace", systemImage: "storefront.fill") }
             StoriesView().tabItem { Label("Stories", systemImage: "play.circle.fill") }
         }
-        .tint(LpspMessengerTokens.msgBlue)
+        .tint(.msgBlue)
     }
 }
 

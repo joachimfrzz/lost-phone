@@ -10,6 +10,24 @@ struct LpspAwesomeTripAdvisorView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspTripAdvisorFonts {
+    static let taTitleLarge  = Font.system(size: 28, weight: .regular)
+    static let taPlaceHero   = Font.system(size: 24, weight: .regular)
+    static let taSection     = Font.system(size: 22, weight: .regular)
+    static let taPlaceName   = Font.system(size: 17, weight: .regular)
+    static let taCardTitle   = Font.system(size: 16, weight: .regular)
+    static let taReviewBody  = Font.system(size: 15, weight: .regular)
+    static let taButton      = Font.system(size: 16, weight: .regular)
+    static let taButtonSec   = Font.system(size: 15, weight: .regular)
+    static let taMeta        = Font.system(size: 13, weight: .regular)
+    static let taTab         = Font.system(size: 11, weight: .regular)
+    static let taBadge       = Font.system(size: 11, weight: .regular)
+    static let taCaption     = Font.system(size: 12, weight: .regular)
+    static func ta(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspTripAdvisorTokens {
     // MARK: - Canvas & Surfaces
     static let taCanvas        = Color.white                                    // #FFFFFF
@@ -32,26 +50,9 @@ private enum LpspTripAdvisorTokens {
     static let taErrorRed      = Color(red: 0.839, green: 0.071, blue: 0.180)   // #D6122E
 }
 
-private enum LpspTripAdvisorFonts {
-    static let taTitleLarge  = Font.system(size: 28, weight: .regular)
-    static let taPlaceHero   = Font.system(size: 24, weight: .regular)
-    static let taSection     = Font.system(size: 22, weight: .regular)
-    static let taPlaceName   = Font.system(size: 17, weight: .regular)
-    static let taCardTitle   = Font.system(size: 16, weight: .regular)
-    static let taReviewBody  = Font.system(size: 15, weight: .regular)
-    static let taButton      = Font.system(size: 16, weight: .regular)
-    static let taButtonSec   = Font.system(size: 15, weight: .regular)
-    static let taMeta        = Font.system(size: 13, weight: .regular)
-    static let taTab         = Font.system(size: 11, weight: .regular)
-    static let taBadge       = Font.system(size: 11, weight: .regular)
-    static let taCaption     = Font.system(size: 12, weight: .regular)
-}
 
-private enum LpspTripAdvisorFonts {
-    static func ta(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspTripAdvisorBubbleRating: View {
     let value: Double          // 0.0 ... 5.0
@@ -68,7 +69,7 @@ private struct LpspTripAdvisorBubbleRating: View {
             if let count = reviewCount {
                 Text("\(String(format: "%.1f", value)) (\(count.formatted()))")
                     .font(LpspTripAdvisorFonts.taMeta)
-                    .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                    .foregroundStyle(.taTextSecondary)
             }
         }
     }
@@ -77,9 +78,9 @@ private struct LpspTripAdvisorBubbleRating: View {
     private func bubble(at index: Int) -> some View {
         let fill = min(max(value - Double(index), 0), 1)  // 0, 0.5, or 1
         ZStack {
-            Circle().fill(LpspTripAdvisorTokens.taEmptyBubble)
+            Circle().fill(Color.taEmptyBubble)
             Circle()
-                .fill(LpspTripAdvisorTokens.taGreen)
+                .fill(Color.taGreen)
                 .mask(
                     Rectangle()
                         .frame(width: size * fill)
@@ -98,7 +99,7 @@ private struct LpspTripAdvisorBubbleRatingPicker: View {
         HStack(spacing: 8) {
             ForEach(1...5, id: \.self) { i in
                 Circle()
-                    .fill(i <= rating ? LpspTripAdvisorTokens.taGreen : LpspTripAdvisorTokens.taEmptyBubble)
+                    .fill(i <= rating ? Color.taGreen : Color.taEmptyBubble)
                     .frame(width: size, height: size)
                     .scaleEffect(i == rating ? 1.0 : 1.0)
                     .onTapGesture { rating = i }
@@ -125,7 +126,7 @@ private struct LpspTripAdvisorTAPillButton: View {
                 .padding(.horizontal, style == .filled ? 28 : 24)
                 .frame(maxWidth: .infinity)
                 .background(
-                    Capsule().fill(style == .filled ? LpspTripAdvisorTokens.taGreen : .clear)
+                    Capsule().fill(style == .filled ? Color.taGreen : .clear)
                 )
                 .overlay(
                     Capsule().strokeBorder(style == .outline ? Color.black : .clear, lineWidth: 1)
@@ -169,7 +170,7 @@ private struct LpspTripAdvisorPlaceCard: View {
                 } label: {
                     Image(systemName: saved ? "heart.fill" : "heart")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(saved ? LpspTripAdvisorTokens.taGreen : .white)
+                        .foregroundStyle(saved ? Color.taGreen : .white)
                         .padding(8)
                         .background(Circle().fill(.black.opacity(0.30)))
                 }
@@ -183,14 +184,14 @@ private struct LpspTripAdvisorPlaceCard: View {
                     .foregroundStyle(.black)
                     .padding(.vertical, 4)
                     .padding(.horizontal, 10)
-                    .background(Capsule().fill(LpspTripAdvisorTokens.taGreen))
+                    .background(Capsule().fill(Color.taGreen))
             }
 
-            Text(name).font(LpspTripAdvisorFonts.taPlaceName).foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+            Text(name).font(LpspTripAdvisorFonts.taPlaceName).foregroundStyle(.taTextPrimary)
             LpspTripAdvisorBubbleRating(value: rating, size: 16, reviewCount: reviews)
             Text("\(category) · \(priceTier) · \(distance)")
                 .font(LpspTripAdvisorFonts.taMeta)
-                .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                .foregroundStyle(.taTextSecondary)
         }
         .contentShape(Rectangle())
     }
@@ -246,7 +247,7 @@ private struct LpspTripAdvisorRootTabView: View {
             ReviewView().tabItem { Label("Review", systemImage: "square.and.pencil") }
             MoreView().tabItem { Label("More", systemImage: "ellipsis") }
         }
-        .tint(LpspTripAdvisorTokens.taGreen) // active = Tripadvisor Green
+        .tint(.taGreen) // active = Tripadvisor Green
     }
 }
 

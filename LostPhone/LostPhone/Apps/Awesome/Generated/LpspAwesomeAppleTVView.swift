@@ -11,37 +11,28 @@ struct LpspAwesomeAppleTVView: View {
 
 // MARK: - Composants spec (préfixés)
 private enum LpspAppleTVTokens {
-    // MARK: - Canvas & Surfaces (true-black product)
     static let atvCanvas    = Color.black                                     // #000000
     static let atvSurface1  = Color(red: 0.110, green: 0.110, blue: 0.118)   // #1C1C1E
     static let atvSurface2  = Color(red: 0.173, green: 0.173, blue: 0.180)   // #2C2C2E
     static let atvDivider   = Color(red: 0.220, green: 0.220, blue: 0.227)   // #38383A
-
-    // MARK: - Text (iOS dark label ramp)
     static let atvTextPrimary   = Color.white                                 // #FFFFFF
     static let atvTextSecondary = Color(red: 0.596, green: 0.596, blue: 0.624) // #98989F
     static let atvTextTertiary  = Color(red: 0.388, green: 0.388, blue: 0.400) // #636366
-
-    // MARK: - Primary CTA (always white)
     static let atvCTA        = Color.white                                    // #FFFFFF
     static let atvCTAPressed = Color(red: 0.898, green: 0.898, blue: 0.918)   // #E5E5EA
     static let atvCTALabel   = Color.black                                    // #000000
-
-    // MARK: - Accent (the only one — iOS dark systemBlue)
     static let atvBlue        = Color(red: 0.039, green: 0.518, blue: 1.000)  // #0A84FF
     static let atvBluePressed = Color(red: 0.000, green: 0.376, blue: 0.875)  // #0060DF
-
-    // MARK: - Semantic
     static let atvMLS     = Color(red: 0.929, green: 0.102, blue: 0.435)      // #ED1A6F (MLS only)
     static let atvLive    = Color(red: 1.000, green: 0.271, blue: 0.227)      // #FF453A
     static let atvSuccess = Color(red: 0.188, green: 0.820, blue: 0.345)      // #30D158
     static let atvGold    = Color(red: 1.000, green: 0.839, blue: 0.039)      // #FFD60A
-}
-
-private enum LpspAppleTVTokens {
-    /// iOS translucent control fill — secondary buttons, search field base.
     static let atvGlassFill = Color(red: 0.471, green: 0.471, blue: 0.502).opacity(0.36)
 }
+
+
+
+
 
 private enum LpspAppleTVGradients {
     /// Hero card bottom scrim.

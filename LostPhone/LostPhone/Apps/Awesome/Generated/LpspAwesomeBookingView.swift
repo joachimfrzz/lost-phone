@@ -10,6 +10,24 @@ struct LpspAwesomeBookingView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspBookingFonts {
+    static let bkScreenTitle = Font.system(size: 22, weight: .regular)
+    static let bkSection     = Font.system(size: 18, weight: .regular)
+    static let bkPropName    = Font.system(size: 17, weight: .regular)
+    static let bkPrice       = Font.system(size: 17, weight: .regular)
+    static let bkScoreNum    = Font.system(size: 15, weight: .regular)
+    static let bkBody        = Font.system(size: 15, weight: .regular)
+    static let bkButton      = Font.system(size: 16, weight: .regular)
+    static let bkScoreWord   = Font.system(size: 14, weight: .regular)
+    static let bkMeta        = Font.system(size: 13, weight: .regular)
+    static let bkTag         = Font.system(size: 12, weight: .regular)
+    static let bkTab         = Font.system(size: 11, weight: .regular)
+    static let bkCaption     = Font.system(size: 11, weight: .regular)
+    static func bk(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspBookingTokens {
     // MARK: - Canvas & Surfaces
     static let bkCanvas      = Color.white                                  // #FFFFFF
@@ -35,26 +53,9 @@ private enum LpspBookingTokens {
     static let bkWarning = Color(red: 0.961, green: 0.651, blue: 0.137) // #F5A623
 }
 
-private enum LpspBookingFonts {
-    static let bkScreenTitle = Font.system(size: 22, weight: .regular)
-    static let bkSection     = Font.system(size: 18, weight: .regular)
-    static let bkPropName    = Font.system(size: 17, weight: .regular)
-    static let bkPrice       = Font.system(size: 17, weight: .regular)
-    static let bkScoreNum    = Font.system(size: 15, weight: .regular)
-    static let bkBody        = Font.system(size: 15, weight: .regular)
-    static let bkButton      = Font.system(size: 16, weight: .regular)
-    static let bkScoreWord   = Font.system(size: 14, weight: .regular)
-    static let bkMeta        = Font.system(size: 13, weight: .regular)
-    static let bkTag         = Font.system(size: 12, weight: .regular)
-    static let bkTab         = Font.system(size: 11, weight: .regular)
-    static let bkCaption     = Font.system(size: 11, weight: .regular)
-}
 
-private enum LpspBookingFonts {
-    static func bk(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspBookingReviewScoreBadge: View {
     let score: Double          // 8.9
@@ -75,13 +76,13 @@ private struct LpspBookingReviewScoreBadge: View {
                 .font(LpspBookingFonts.bkScoreNum).monospacedDigit()
                 .foregroundStyle(.white)
                 .padding(.horizontal, 7).padding(.vertical, 4)
-                .background(RoundedRectangle(cornerRadius: 5).fill(LpspBookingTokens.bkBlue))
+                .background(RoundedRectangle(cornerRadius: 5).fill(Color.bkBlue))
             Text(word)
                 .font(LpspBookingFonts.bkScoreWord)
-                .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                .foregroundStyle(Color.bkTextPrimary)
             Text("· \(reviews.formatted()) reviews")
                 .font(LpspBookingFonts.bkTag).fontWeight(.regular)
-                .foregroundStyle(LpspBookingTokens.bkTextSecondary)
+                .foregroundStyle(Color.bkTextSecondary)
         }
     }
 }
@@ -105,13 +106,13 @@ private struct LpspBookingPropertyCard: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(name).font(LpspBookingFonts.bkPropName).foregroundStyle(LpspBookingTokens.bkTextPrimary).lineLimit(2)
+                Text(name).font(LpspBookingFonts.bkPropName).foregroundStyle(Color.bkTextPrimary).lineLimit(2)
                 HStack(spacing: 6) {
-                    Text(area).font(LpspBookingFonts.bkMeta).foregroundStyle(LpspBookingTokens.bkCTA)
-                    Text(distance).font(LpspBookingFonts.bkMeta).foregroundStyle(LpspBookingTokens.bkTextSecondary)
+                    Text(area).font(LpspBookingFonts.bkMeta).foregroundStyle(Color.bkCTA)
+                    Text(distance).font(LpspBookingFonts.bkMeta).foregroundStyle(Color.bkTextSecondary)
                 }
                 Text("Free cancellation")
-                    .font(LpspBookingFonts.bkMeta).foregroundStyle(LpspBookingTokens.bkSuccess)
+                    .font(LpspBookingFonts.bkMeta).foregroundStyle(Color.bkSuccess)
                 LpspBookingReviewScoreBadge(score: score, reviews: reviews)
 
                 Spacer(minLength: 4)
@@ -120,15 +121,15 @@ private struct LpspBookingPropertyCard: View {
                     if let originalPrice {
                         Text(originalPrice)
                             .font(LpspBookingFonts.bkMeta).strikethrough()
-                            .foregroundStyle(LpspBookingTokens.bkTextTertiary)
+                            .foregroundStyle(Color.bkTextTertiary)
                     }
                     Text(price).font(LpspBookingFonts.bkPrice).monospacedDigit()
-                        .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                        .foregroundStyle(Color.bkTextPrimary)
                     Text("Includes taxes and fees")
-                        .font(LpspBookingFonts.bkCaption).foregroundStyle(LpspBookingTokens.bkTextSecondary)
+                        .font(LpspBookingFonts.bkCaption).foregroundStyle(Color.bkTextSecondary)
                     if let scarcity {
                         Text(scarcity)
-                            .font(LpspBookingFonts.bkTag).foregroundStyle(LpspBookingTokens.bkDeal)
+                            .font(LpspBookingFonts.bkTag).foregroundStyle(Color.bkDeal)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -136,8 +137,8 @@ private struct LpspBookingPropertyCard: View {
         }
         .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 8).fill(LpspBookingTokens.bkCanvas)
-                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(LpspBookingTokens.bkDivider, lineWidth: 1))
+            RoundedRectangle(cornerRadius: 8).fill(Color.bkCanvas)
+                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.bkDivider, lineWidth: 1))
         )
     }
 }
@@ -152,7 +153,7 @@ private struct LpspBookingBookingCTA: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)
-                .background(RoundedRectangle(cornerRadius: 8).fill(LpspBookingTokens.bkCTA))
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.bkCTA))
         }
         .buttonStyle(LpspBookingBKPressableStyle())
     }
@@ -172,17 +173,17 @@ private struct LpspBookingSearchFormCard: View {
     var body: some View {
         VStack(spacing: 0) {
             LpspBookingFormRow(system: "mappin.and.ellipse", text: "Where are you going?")
-            Divider().overlay(LpspBookingTokens.bkDivider)
+            Divider().overlay(Color.bkDivider)
             LpspBookingFormRow(system: "calendar", text: "Fri 12 Jul — Sun 14 Jul")
-            Divider().overlay(LpspBookingTokens.bkDivider)
+            Divider().overlay(Color.bkDivider)
             LpspBookingFormRow(system: "person", text: "2 adults · 0 children · 1 room")
             LpspBookingBookingCTA(label: "Search") {}
                 .padding(.top, 12)
         }
         .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 8).fill(LpspBookingTokens.bkCanvas)
-                .shadow(color: LpspBookingTokens.bkTextPrimary.opacity(0.08), radius: 6, y: 2)
+            RoundedRectangle(cornerRadius: 8).fill(Color.bkCanvas)
+                .shadow(color: Color.bkTextPrimary.opacity(0.08), radius: 6, y: 2)
         )
     }
 
@@ -192,8 +193,8 @@ private struct LpspBookingSearchFormCard: View {
         var body: some View {
             HStack(spacing: 10) {
                 Image(systemName: system)
-                    .font(.system(size: 18)).foregroundStyle(LpspBookingTokens.bkTextSecondary).frame(width: 22)
-                Text(text).font(LpspBookingFonts.bkBody).foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                    .font(.system(size: 18)).foregroundStyle(Color.bkTextSecondary).frame(width: 22)
+                Text(text).font(LpspBookingFonts.bkBody).foregroundStyle(Color.bkTextPrimary)
                 Spacer()
             }
             .frame(height: 52)
@@ -211,12 +212,12 @@ private struct LpspBookingGeniusBanner: View {
             }
             Spacer()
             Text("10% off")
-                .font(LpspBookingFonts.bkTag).foregroundStyle(LpspBookingTokens.bkBlue)
+                .font(LpspBookingFonts.bkTag).foregroundStyle(Color.bkBlue)
                 .padding(.horizontal, 8).padding(.vertical, 4)
-                .background(Capsule().fill(LpspBookingTokens.bkYellow))
+                .background(Capsule().fill(Color.bkYellow))
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 8).fill(LpspBookingTokens.bkBlue))
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color.bkBlue))
     }
 }
 
@@ -229,11 +230,11 @@ private struct LpspBookingFilterChip: View {
             Text(label)
                 .font(LpspBookingFonts.bkTag)
                 .fontWeight(isSelected ? .bold : .semibold)
-                .foregroundStyle(isSelected ? LpspBookingTokens.bkCTA : LpspBookingTokens.bkTextPrimary)
+                .foregroundStyle(isSelected ? Color.bkCTA : Color.bkTextPrimary)
                 .padding(.horizontal, 16).padding(.vertical, 8)
-                .background(Capsule().fill(isSelected ? LpspBookingTokens.bkBlueTint : LpspBookingTokens.bkCanvas))
+                .background(Capsule().fill(isSelected ? Color.bkBlueTint : Color.bkCanvas))
                 .overlay(
-                    Capsule().strokeBorder(isSelected ? LpspBookingTokens.bkCTA : LpspBookingTokens.bkDivider,
+                    Capsule().strokeBorder(isSelected ? Color.bkCTA : Color.bkDivider,
                                            lineWidth: isSelected ? 1.5 : 1)
                 )
         }
@@ -248,10 +249,10 @@ private struct LpspBookingPricePin: View {
     var body: some View {
         Text(price)
             .font(.bk(13, weight: .bold)).monospacedDigit()
-            .foregroundStyle(isSelected ? .white : LpspBookingTokens.bkTextPrimary)
+            .foregroundStyle(isSelected ? .white : Color.bkTextPrimary)
             .padding(.horizontal, 10).padding(.vertical, 6)
-            .background(Capsule().fill(isSelected ? LpspBookingTokens.bkBlue : LpspBookingTokens.bkCanvas))
-            .shadow(color: LpspBookingTokens.bkTextPrimary.opacity(0.16), radius: 6, y: 2)
+            .background(Capsule().fill(isSelected ? Color.bkBlue : Color.bkCanvas))
+            .shadow(color: Color.bkTextPrimary.opacity(0.16), radius: 6, y: 2)
             .scaleEffect(isSelected ? 1.12 : 1)
             .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
     }
@@ -263,7 +264,7 @@ private struct LpspBookingRootTabView: View {
     init() {
         let nav = UINavigationBarAppearance()
         nav.configureWithOpaqueBackground()
-        nav.backgroundColor = UIColor(LpspBookingTokens.bkBlue)
+        nav.backgroundColor = UIColor(Color.bkBlue)
         nav.titleTextAttributes = [.foregroundColor: UIColor.white]
         UINavigationBar.appearance().standardAppearance = nav
         UINavigationBar.appearance().scrollEdgeAppearance = nav
@@ -271,7 +272,7 @@ private struct LpspBookingRootTabView: View {
         let tab = UITabBarAppearance()
         tab.configureWithOpaqueBackground()
         tab.backgroundColor = UIColor.white
-        tab.shadowColor = UIColor(LpspBookingTokens.bkDivider)
+        tab.shadowColor = UIColor(Color.bkDivider)
         UITabBar.appearance().standardAppearance = tab
         UITabBar.appearance().scrollEdgeAppearance = tab
     }
@@ -283,7 +284,7 @@ private struct LpspBookingRootTabView: View {
             ProfileView().tabItem  { Label("Profile",  systemImage: "person") }
             HelpView().tabItem     { Label("Help",     systemImage: "questionmark.circle") }
         }
-        .tint(LpspBookingTokens.bkCTA) // active = CTA blue
+        .tint(.bkCTA) // active = CTA blue
     }
 }
 

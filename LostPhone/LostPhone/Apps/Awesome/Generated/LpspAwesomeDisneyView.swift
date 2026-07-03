@@ -10,6 +10,25 @@ struct LpspAwesomeDisneyView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspDisneyFonts {
+    static let dpBillboard  = Font.system(size: 30, weight: .regular)
+    static let dpDetailTitle = Font.system(size: 26, weight: .regular)
+    static let dpSection    = Font.system(size: 20, weight: .regular)
+    static let dpRowHeader  = Font.system(size: 18, weight: .regular)
+    static let dpCardTitle  = Font.system(size: 14, weight: .regular)
+    static let dpSynopsis   = Font.system(size: 15, weight: .regular)
+    static let dpMetaStrip  = Font.system(size: 13, weight: .regular)
+    static let dpSubtitle   = Font.system(size: 14, weight: .regular)
+    static let dpMeta       = Font.system(size: 12, weight: .regular)
+    static let dpBadge      = Font.system(size: 10, weight: .regular)
+    static let dpButton     = Font.system(size: 16, weight: .regular)
+    static let dpButtonSec  = Font.system(size: 14, weight: .regular)
+    static let dpTab        = Font.system(size: 10, weight: .regular)
+    static func dp(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspDisneyTokens {
     // MARK: - Canvas & Surfaces
     static let dpCanvas   = Color(red: 0.039, green: 0.055, blue: 0.165) // #0A0E2A
@@ -33,27 +52,9 @@ extension ShapeStyle where Self == Color {
     static var dpFocusGlow: Color { Color(red: 0.102, green: 0.459, blue: 1.0).opacity(0.30) }
 }
 
-private enum LpspDisneyFonts {
-    static let dpBillboard  = Font.system(size: 30, weight: .regular)
-    static let dpDetailTitle = Font.system(size: 26, weight: .regular)
-    static let dpSection    = Font.system(size: 20, weight: .regular)
-    static let dpRowHeader  = Font.system(size: 18, weight: .regular)
-    static let dpCardTitle  = Font.system(size: 14, weight: .regular)
-    static let dpSynopsis   = Font.system(size: 15, weight: .regular)
-    static let dpMetaStrip  = Font.system(size: 13, weight: .regular)
-    static let dpSubtitle   = Font.system(size: 14, weight: .regular)
-    static let dpMeta       = Font.system(size: 12, weight: .regular)
-    static let dpBadge      = Font.system(size: 10, weight: .regular)
-    static let dpButton     = Font.system(size: 16, weight: .regular)
-    static let dpButtonSec  = Font.system(size: 14, weight: .regular)
-    static let dpTab        = Font.system(size: 10, weight: .regular)
-}
 
-private enum LpspDisneyFonts {
-    static func dp(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspDisneyDPPlayButton: View {
     let label: String
@@ -64,7 +65,7 @@ private struct LpspDisneyDPPlayButton: View {
                 Image(systemName: "play.fill")
                 Text(label).font(LpspDisneyFonts.dpButton).tracking(0.3)
             }
-            .foregroundStyle(LpspDisneyTokens.dpCanvas) // dark glyph on white
+            .foregroundStyle(Color.dpCanvas) // dark glyph on white
             .frame(maxWidth: .infinity)
             .frame(height: 48)
             .background(RoundedRectangle(cornerRadius: 8).fill(.white))
@@ -118,11 +119,11 @@ private struct LpspDisneyBrandPortalTile: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(focused ? LpspDisneyTokens.dpGlowBlue : LpspDisneyTokens.dpDivider,
+                    .strokeBorder(focused ? Color.dpGlowBlue : Color.dpDivider,
                                   lineWidth: focused ? 2 : 1)
             )
             .scaleEffect(focused ? 1.04 : 1)
-            .shadow(color: focused ? LpspDisneyTokens.dpGlowBlue.opacity(0.35) : .clear, radius: 24)
+            .shadow(color: focused ? Color.dpGlowBlue.opacity(0.35) : .clear, radius: 24)
             .animation(.easeOut(duration: 0.18), value: focused)
             .onTapGesture { /* open universe hub */ }
             .onLongPressGesture(minimumDuration: 0, pressing: { focused = $0 }, perform: {})
@@ -137,7 +138,7 @@ private struct LpspDisneyDPFocusable: ViewModifier {
             .scaleEffect(focused ? 1.04 : 1)
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .strokeBorder(focused ? LpspDisneyTokens.dpGlowBlue : .clear, lineWidth: 2)
+                    .strokeBorder(focused ? Color.dpGlowBlue : .clear, lineWidth: 2)
             )
             .shadow(color: focused ? Color.dpFocusGlow : .clear, radius: 24)
             .animation(.easeOut(duration: 0.18), value: focused)
@@ -163,7 +164,7 @@ private struct LpspDisneyContentCard16x9: View {
                     GeometryReader { g in
                         ZStack(alignment: .leading) {
                             Rectangle().fill(Color.white.opacity(0.25))
-                            Rectangle().fill(LpspDisneyTokens.dpBlue).frame(width: g.size.width * p)
+                            Rectangle().fill(Color.dpBlue).frame(width: g.size.width * p)
                         }
                     }
                     .frame(height: 3)
@@ -196,7 +197,7 @@ private struct LpspDisneyEpisodeRow: View {
                         GeometryReader { g in
                             ZStack(alignment: .leading) {
                                 Rectangle().fill(Color.white.opacity(0.25))
-                                Rectangle().fill(LpspDisneyTokens.dpBlue).frame(width: g.size.width * p)
+                                Rectangle().fill(Color.dpBlue).frame(width: g.size.width * p)
                             }
                         }.frame(height: 3)
                     }
@@ -204,14 +205,14 @@ private struct LpspDisneyEpisodeRow: View {
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(LpspDisneyFonts.dpCardTitle).foregroundStyle(.white)
-                Text(synopsis).font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(LpspDisneyTokens.dpTextSecondary).lineLimit(2)
-                Text(runtime).font(LpspDisneyFonts.dpMeta).foregroundStyle(LpspDisneyTokens.dpTextSecondary).monospacedDigit()
+                Text(synopsis).font(.custom("AvenirNext-Regular", size: 13)).foregroundStyle(.dpTextSecondary).lineLimit(2)
+                Text(runtime).font(LpspDisneyFonts.dpMeta).foregroundStyle(.dpTextSecondary).monospacedDigit()
             }
             Spacer(minLength: 4)
-            Image(systemName: "arrow.down.circle").font(.system(size: 22)).foregroundStyle(LpspDisneyTokens.dpTextSecondary)
+            Image(systemName: "arrow.down.circle").font(.system(size: 22)).foregroundStyle(.dpTextSecondary)
         }
         .padding(12)
-        .background(RoundedRectangle(cornerRadius: 8).fill(LpspDisneyTokens.dpSurface1))
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color.dpSurface1))
     }
 }
 
@@ -220,7 +221,7 @@ private struct LpspDisneyRootTabView: View {
         let a = UITabBarAppearance()
         a.configureWithTransparentBackground()
         a.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        a.backgroundColor = UIColor(LpspDisneyTokens.dpCanvas).withAlphaComponent(0.96)
+        a.backgroundColor = UIColor(Color.dpCanvas).withAlphaComponent(0.96)
         UITabBar.appearance().standardAppearance = a
         UITabBar.appearance().scrollEdgeAppearance = a
     }

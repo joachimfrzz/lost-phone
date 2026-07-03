@@ -10,6 +10,28 @@ struct LpspAwesomePayPalView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspPayPalFonts {
+    static let ppBalanceHero    = Font.system(size: 36, weight: .regular)
+    static let ppSendAmountHero = Font.system(size: 56, weight: .regular)
+    static let ppScreenTitle    = Font.system(size: 24, weight: .regular)
+    static let ppSectionHeader  = Font.system(size: 18, weight: .regular)
+    static let ppCardTitle      = Font.system(size: 16, weight: .regular)
+    static let ppActivityAmount = Font.system(size: 16, weight: .regular)
+    static let ppBody           = Font.system(size: 16, weight: .regular)
+    static let ppBodySmall      = Font.system(size: 14, weight: .regular)
+    static let ppActivityTitle  = Font.system(size: 15, weight: .regular)
+    static let ppActivitySub    = Font.system(size: 13, weight: .regular)
+    static let ppMeta           = Font.system(size: 13, weight: .regular)
+    static let ppLink           = Font.system(size: 15, weight: .regular)
+    static let ppTab            = Font.system(size: 11, weight: .regular)
+    static let ppChip           = Font.system(size: 13, weight: .regular)
+    static let ppButton         = Font.system(size: 17, weight: .regular)
+    static let ppButtonSmall    = Font.system(size: 15, weight: .regular)
+    static func pp(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspPayPalTokens {
     // MARK: - Brand
     static let payPalBlue        = Color(red: 0.00, green: 0.188, blue: 0.529)  // #003087
@@ -38,10 +60,10 @@ private enum LpspPayPalTokens {
     static let ppWarningBg     = Color(red: 1.00, green: 0.965, blue: 0.878)  // #FFF6E0
 
     // MARK: - Activity Icon Colors
-    static let ppIconSent      = LpspPayPalTokens.payPalBlue       // #003087
-    static let ppIconReceived  = LpspPayPalTokens.ppSuccess        // #1C8B43
-    static let ppIconCard      = LpspPayPalTokens.payPalSky        // #0070BA
-    static let ppIconReward    = LpspPayPalTokens.ppWarning        // #FFB81C
+    static let ppIconSent      = Color.payPalBlue       // #003087
+    static let ppIconReceived  = Color.ppSuccess        // #1C8B43
+    static let ppIconCard      = Color.payPalSky        // #0070BA
+    static let ppIconReward    = Color.ppWarning        // #FFB81C
 
     // MARK: - Dark mode
     static let ppDarkCanvas    = Color(red: 0.039, green: 0.055, blue: 0.102) // #0A0E1A
@@ -52,38 +74,10 @@ private enum LpspPayPalTokens {
     static let ppDarkTextSec   = Color(red: 0.659, green: 0.682, blue: 0.769) // #A8AEC4
 }
 
-private enum LpspPayPalFonts {
-    // Hero amounts
-    static let ppBalanceHero    = Font.system(size: 36, weight: .regular)
-    static let ppSendAmountHero = Font.system(size: 56, weight: .regular)
 
-    // Titles
-    static let ppScreenTitle    = Font.system(size: 24, weight: .regular)
-    static let ppSectionHeader  = Font.system(size: 18, weight: .regular)
-    static let ppCardTitle      = Font.system(size: 16, weight: .regular)
-    static let ppActivityAmount = Font.system(size: 16, weight: .regular)
-
-    // Body (Small variant)
-    static let ppBody           = Font.system(size: 16, weight: .regular)
-    static let ppBodySmall      = Font.system(size: 14, weight: .regular)
-    static let ppActivityTitle  = Font.system(size: 15, weight: .regular)
-    static let ppActivitySub    = Font.system(size: 13, weight: .regular)
-    static let ppMeta           = Font.system(size: 13, weight: .regular)
-    static let ppLink           = Font.system(size: 15, weight: .regular)
-    static let ppTab            = Font.system(size: 11, weight: .regular)
-    static let ppChip           = Font.system(size: 13, weight: .regular)
-
-    // Buttons
-    static let ppButton         = Font.system(size: 17, weight: .regular)
-    static let ppButtonSmall    = Font.system(size: 15, weight: .regular)
-}
 
 // Fallback if PayPal Sans isn't bundled — SF Pro:
-private enum LpspPayPalFonts {
-    static func pp(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
 
 private struct LpspPayPalBalanceCard: View {
     let balance: Double
@@ -92,11 +86,11 @@ private struct LpspPayPalBalanceCard: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("PayPal balance")
                 .font(LpspPayPalFonts.ppActivitySub)
-                .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+                .foregroundStyle(Color.ppTextMuted)
 
             Text(balance, format: .currency(code: "USD"))
                 .font(LpspPayPalFonts.ppBalanceHero)
-                .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                .foregroundStyle(Color.ppTextPrimary)
                 .monospacedDigit()
                 .contentTransition(.numericText())
                 .animation(.snappy, value: balance)
@@ -106,23 +100,23 @@ private struct LpspPayPalBalanceCard: View {
                     Text("Add Money")
                         .font(LpspPayPalFonts.ppButton).foregroundStyle(.white)
                         .frame(maxWidth: .infinity).frame(height: 44)
-                        .background(Capsule().fill(LpspPayPalTokens.payPalBlue))
+                        .background(Capsule().fill(Color.payPalBlue))
                 }
                 Button(action: {}) {
                     Text("Transfer")
-                        .font(LpspPayPalFonts.ppButtonSmall).foregroundStyle(LpspPayPalTokens.payPalBlue)
+                        .font(LpspPayPalFonts.ppButtonSmall).foregroundStyle(Color.payPalBlue)
                         .frame(maxWidth: .infinity).frame(height: 44)
-                        .overlay(Capsule().strokeBorder(LpspPayPalTokens.payPalBlue, lineWidth: 1.5))
+                        .overlay(Capsule().strokeBorder(Color.payPalBlue, lineWidth: 1.5))
                 }
             }
         }
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LpspPayPalTokens.ppCanvas)
+                .fill(Color.ppCanvas)
                 .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
         )
-        .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(LpspPayPalTokens.ppDivider, lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Color.ppDivider, lineWidth: 1))
         .padding(.horizontal, 16)
     }
 }
@@ -139,10 +133,10 @@ private struct LpspPayPalActivityRow: View {
 
     private var iconColor: Color {
         switch icon {
-        case .sent:     return LpspPayPalTokens.ppIconSent
-        case .received: return LpspPayPalTokens.ppIconReceived
-        case .card:     return LpspPayPalTokens.ppIconCard
-        case .reward:   return LpspPayPalTokens.ppIconReward
+        case .sent:     return .ppIconSent
+        case .received: return .ppIconReceived
+        case .card:     return .ppIconCard
+        case .reward:   return .ppIconReward
         }
     }
     private var iconSystemName: String {
@@ -153,7 +147,7 @@ private struct LpspPayPalActivityRow: View {
         case .reward:   return "gift.fill"
         }
     }
-    private var amountColor: Color { direction == .received ? LpspPayPalTokens.ppSuccess : LpspPayPalTokens.ppTextPrimary }
+    private var amountColor: Color { direction == .received ? .ppSuccess : .ppTextPrimary }
     private var sign: String { direction == .received ? "+" : "" }
 
     var body: some View {
@@ -171,10 +165,10 @@ private struct LpspPayPalActivityRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(name)
                     .font(LpspPayPalFonts.ppActivityTitle)
-                    .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                    .foregroundStyle(Color.ppTextPrimary)
                 Text(subtitle)
                     .font(LpspPayPalFonts.ppActivitySub)
-                    .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+                    .foregroundStyle(Color.ppTextMuted)
             }
 
             Spacer()
@@ -186,9 +180,9 @@ private struct LpspPayPalActivityRow: View {
         }
         .padding(.horizontal, 16)
         .frame(minHeight: 68)
-        .background(LpspPayPalTokens.ppCanvas)
+        .background(Color.ppCanvas)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(LpspPayPalTokens.ppDivider).frame(height: 0.5)
+            Rectangle().fill(Color.ppDivider).frame(height: 0.5)
         }
     }
 }
@@ -204,7 +198,7 @@ private struct LpspPayPalPayPalPrimaryButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(Capsule().fill(LpspPayPalTokens.payPalBlue))
+                .background(Capsule().fill(Color.payPalBlue))
         }
         .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
     }
@@ -218,10 +212,10 @@ private struct LpspPayPalPayPalSecondaryButton: View {
         Button(action: action) {
             Text(label)
                 .font(LpspPayPalFonts.ppButtonSmall)
-                .foregroundStyle(LpspPayPalTokens.payPalBlue)
+                .foregroundStyle(Color.payPalBlue)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .overlay(Capsule().strokeBorder(LpspPayPalTokens.payPalBlue, lineWidth: 1.5))
+                .overlay(Capsule().strokeBorder(Color.payPalBlue, lineWidth: 1.5))
         }
     }
 }
@@ -241,14 +235,14 @@ private struct LpspPayPalSendMoneyScreen: View {
             VStack(spacing: 8) {
                 Text("USD")
                     .font(LpspPayPalFonts.ppMeta)
-                    .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+                    .foregroundStyle(Color.ppTextMuted)
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text("$")
                         .font(.custom("PayPalSansBig-Bold", size: 40))
-                        .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+                        .foregroundStyle(Color.ppTextMuted)
                     Text(amount)
                         .font(LpspPayPalFonts.ppSendAmountHero)
-                        .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                        .foregroundStyle(Color.ppTextPrimary)
                         .monospacedDigit()
                 }
             }
@@ -261,7 +255,7 @@ private struct LpspPayPalSendMoneyScreen: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
         }
-        .background(LpspPayPalTokens.ppCanvas)
+        .background(Color.ppCanvas)
     }
 }
 
@@ -273,12 +267,12 @@ private struct LpspPayPalPayPalWordmark: View {
             Text("P")
                 .font(.custom("PayPalSansBig-Bold", size: size))
                 .italic()
-                .foregroundStyle(LpspPayPalTokens.payPalSky)
+                .foregroundStyle(Color.payPalSky)
                 .offset(x: -size * 0.18)
             Text("P")
                 .font(.custom("PayPalSansBig-Bold", size: size))
                 .italic()
-                .foregroundStyle(LpspPayPalTokens.payPalBlue)
+                .foregroundStyle(Color.payPalBlue)
                 .offset(x: size * 0.10)
         }
         .frame(width: size * 1.4, height: size * 1.2)
@@ -294,11 +288,11 @@ private struct LpspPayPalActivityFilterChip: View {
         Button(action: action) {
             Text(label)
                 .font(LpspPayPalFonts.ppChip)
-                .foregroundStyle(isSelected ? .white : LpspPayPalTokens.ppTextMuted)
+                .foregroundStyle(isSelected ? .white : Color.ppTextMuted)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(
-                    Capsule().fill(isSelected ? LpspPayPalTokens.payPalBlue : LpspPayPalTokens.ppSurfaceGray2)
+                    Capsule().fill(isSelected ? Color.payPalBlue : Color.ppSurfaceGray2)
                 )
         }
     }
@@ -310,18 +304,18 @@ private struct LpspPayPalStatusPill: View {
 
     private var bg: Color {
         switch status {
-        case .completed: return LpspPayPalTokens.ppSuccessBg
-        case .pending:   return LpspPayPalTokens.ppWarningBg
-        case .failed:    return LpspPayPalTokens.ppErrorBg
-        case .refunded:  return LpspPayPalTokens.ppSurfaceGray2
+        case .completed: return .ppSuccessBg
+        case .pending:   return .ppWarningBg
+        case .failed:    return .ppErrorBg
+        case .refunded:  return .ppSurfaceGray2
         }
     }
     private var fg: Color {
         switch status {
-        case .completed: return LpspPayPalTokens.ppSuccess
+        case .completed: return .ppSuccess
         case .pending:   return Color(red: 0.628, green: 0.420, blue: 0.0) // #A06B00
-        case .failed:    return LpspPayPalTokens.ppError
-        case .refunded:  return LpspPayPalTokens.ppTextMuted
+        case .failed:    return .ppError
+        case .refunded:  return .ppTextMuted
         }
     }
     private var label: String {
@@ -361,7 +355,7 @@ private struct LpspPayPalPayPalRootTabView: View {
             ActivityView() .tabItem { Label("Activity", systemImage: "clock") }
             FinancesView() .tabItem { Label("Finances", systemImage: "chart.line.uptrend.xyaxis") }
         }
-        .tint(LpspPayPalTokens.payPalBlue)
+        .tint(Color.payPalBlue)
     }
 }
 

@@ -10,6 +10,25 @@ struct LpspAwesomeBanqueView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspBanqueFonts {
+    static let revBalance     = Font.system(size: 40, weight: .regular)
+    static let revTitleLarge  = Font.system(size: 28, weight: .regular)
+    static let revSection     = Font.system(size: 22, weight: .regular)
+    static let revTileBalance = Font.system(size: 22, weight: .regular)
+    static let revSubsection  = Font.system(size: 18, weight: .regular)
+    static let revAmount      = Font.system(size: 16, weight: .regular)
+    static let revMerchant    = Font.system(size: 16, weight: .regular)
+    static let revBody        = Font.system(size: 15, weight: .regular)
+    static let revButton      = Font.system(size: 16, weight: .regular)
+    static let revMeta        = Font.system(size: 13, weight: .regular)
+    static let revLabelUpper  = Font.system(size: 11, weight: .regular)
+    static let revTab         = Font.system(size: 10, weight: .regular)
+    static let revCaption     = Font.system(size: 11, weight: .regular)
+    static func rev(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspBanqueTokens {
     // MARK: - Canvas & Surfaces
     static let revCanvas   = Color(red: 0.039, green: 0.039, blue: 0.059) // #0A0A0F
@@ -40,32 +59,14 @@ private enum LpspBanqueTokens {
 
 private enum LpspBanqueGradients {
     static let revBrand = LinearGradient(
-        colors: [LpspBanqueTokens.revGradStart, LpspBanqueTokens.revGradEnd],
+        colors: [.revGradStart, .revGradEnd],
         startPoint: .topLeading, endPoint: .bottomTrailing
     )
 }
 
-private enum LpspBanqueFonts {
-    static let revBalance     = Font.system(size: 40, weight: .regular)
-    static let revTitleLarge  = Font.system(size: 28, weight: .regular)
-    static let revSection     = Font.system(size: 22, weight: .regular)
-    static let revTileBalance = Font.system(size: 22, weight: .regular)
-    static let revSubsection  = Font.system(size: 18, weight: .regular)
-    static let revAmount      = Font.system(size: 16, weight: .regular)
-    static let revMerchant    = Font.system(size: 16, weight: .regular)
-    static let revBody        = Font.system(size: 15, weight: .regular)
-    static let revButton      = Font.system(size: 16, weight: .regular)
-    static let revMeta        = Font.system(size: 13, weight: .regular)
-    static let revLabelUpper  = Font.system(size: 11, weight: .regular)
-    static let revTab         = Font.system(size: 10, weight: .regular)
-    static let revCaption     = Font.system(size: 11, weight: .regular)
-}
 
-private enum LpspBanqueFonts {
-    static func rev(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspBanqueRevPrimaryButton: View {
     let title: String
@@ -78,7 +79,7 @@ private struct LpspBanqueRevPrimaryButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(LpspBanqueGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
+                .shadow(color: Color.revBrand.opacity(0.30), radius: 14, y: 8)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: UUID())
         .buttonStyle(LpspBanqueRevPressableStyle())
@@ -103,7 +104,7 @@ private struct LpspBanqueRevSecondaryButton: View {
                 .font(LpspBanqueFonts.revButton)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
-                .background(LpspBanqueTokens.revSurface2, in: RoundedRectangle(cornerRadius: 16))
+                .background(Color.revSurface2, in: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(LpspBanqueRevPressableStyle())
     }
@@ -120,10 +121,10 @@ private struct LpspBanqueCurrencyTile: View {
             Text(flag)
                 .font(.system(size: 20))
                 .frame(width: 28, height: 28)
-                .background(Circle().fill(LpspBanqueTokens.revSurface2))
+                .background(Circle().fill(Color.revSurface2))
             VStack(alignment: .leading, spacing: 2) {
                 Text(code).font(LpspBanqueFonts.revMerchant).foregroundStyle(.white)
-                Text(name).font(LpspBanqueFonts.revMeta).foregroundStyle(LpspBanqueTokens.revTextSecondary)
+                Text(name).font(LpspBanqueFonts.revMeta).foregroundStyle(.revTextSecondary)
             }
             Spacer()
             Text(balance)
@@ -135,8 +136,8 @@ private struct LpspBanqueCurrencyTile: View {
         .frame(height: 72)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LpspBanqueTokens.revSurface1)
-                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(LpspBanqueTokens.revDivider, lineWidth: 1))
+                .fill(Color.revSurface1)
+                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Color.revDivider, lineWidth: 1))
         )
     }
 }
@@ -156,13 +157,13 @@ private struct LpspBanqueTransactionRow: View {
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2) {
                 Text(merchant).font(LpspBanqueFonts.revMerchant).foregroundStyle(.white).lineLimit(1)
-                Text(meta).font(LpspBanqueFonts.revMeta).foregroundStyle(LpspBanqueTokens.revTextSecondary).lineLimit(1)
+                Text(meta).font(LpspBanqueFonts.revMeta).foregroundStyle(.revTextSecondary).lineLimit(1)
             }
             Spacer()
             Text(amount)
                 .font(LpspBanqueFonts.revAmount)
                 .monospacedDigit()
-                .foregroundStyle(incoming ? LpspBanqueTokens.revIncome : .white)
+                .foregroundStyle(incoming ? Color.revIncome : .white)
         }
         .padding(.horizontal, 16)
         .frame(height: 64)
@@ -178,23 +179,23 @@ private struct LpspBanqueSpendDonut: View {
     var body: some View {
         VStack(spacing: 16) {
             ZStack {
-                Circle().stroke(LpspBanqueTokens.revSurface3, lineWidth: 14)
+                Circle().stroke(Color.revSurface3, lineWidth: 14)
                 Circle()
                     .trim(from: 0, to: animated)
                     .stroke(
-                        AngularGradient(colors: [LpspBanqueTokens.revGradStart, LpspBanqueTokens.revGradEnd], center: .center),
+                        AngularGradient(colors: [.revGradStart, .revGradEnd], center: .center),
                         style: StrokeStyle(lineWidth: 14, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
                 VStack(spacing: 2) {
                     Text(total).font(LpspBanqueFonts.revSection).monospacedDigit().foregroundStyle(.white)
-                    Text("this month").font(LpspBanqueFonts.revMeta).foregroundStyle(LpspBanqueTokens.revTextSecondary)
+                    Text("this month").font(LpspBanqueFonts.revMeta).foregroundStyle(.revTextSecondary)
                 }
             }
             .frame(width: 180, height: 180)
         }
         .padding(20)
-        .background(RoundedRectangle(cornerRadius: 20).fill(LpspBanqueTokens.revSurface1))
+        .background(RoundedRectangle(cornerRadius: 20).fill(Color.revSurface1))
         .onAppear {
             withAnimation(.easeOut(duration: 0.7)) { animated = progress }
         }
@@ -253,7 +254,7 @@ extension View {
 // Glow modifier for active / primary elements
 private struct LpspBanqueRevGlow: ViewModifier {
     func body(content: Content) -> some View {
-        content.shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
+        content.shadow(color: Color.revBrand.opacity(0.30), radius: 14, y: 8)
     }
 }
 
@@ -262,7 +263,7 @@ private struct LpspBanqueRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspBanqueTokens.revCanvas).withAlphaComponent(0.92)
+        appearance.backgroundColor = UIColor(Color.revCanvas).withAlphaComponent(0.92)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -274,7 +275,7 @@ private struct LpspBanqueRootTabView: View {
             LifestyleView().tabItem { Label("Lifestyle", systemImage: "sparkles") }
             CardsView().tabItem { Label("Cards", systemImage: "creditcard.fill") }
         }
-        .tint(LpspBanqueTokens.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
+        .tint(.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
     }
 }
 

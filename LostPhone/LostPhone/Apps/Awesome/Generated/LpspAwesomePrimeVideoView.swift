@@ -10,6 +10,26 @@ struct LpspAwesomePrimeVideoView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspPrimeVideoFonts {
+    static let primeDetailsTitle = Font.system(size: 30, weight: .regular)
+    static let primeTitleLarge   = Font.system(size: 28, weight: .regular)
+    static let primeRowHeader    = Font.system(size: 22, weight: .regular)
+    static let primeSectionHeader = Font.system(size: 20, weight: .regular)
+    static let primeEpisodeTitle = Font.system(size: 16, weight: .regular)
+    static let primeTileTitle    = Font.system(size: 15, weight: .regular)
+    static let primeBody         = Font.system(size: 15, weight: .regular)
+    static let primeMeta         = Font.system(size: 13, weight: .regular)
+    static let primeTileSubtitle = Font.system(size: 12, weight: .regular)
+    static let primeLabelUpper   = Font.system(size: 11, weight: .regular)
+    static let primeButton       = Font.system(size: 16, weight: .regular)
+    static let primeButtonSecondary = Font.system(size: 15, weight: .regular)
+    static let primeTab          = Font.system(size: 10, weight: .regular)
+    static let primeBadge        = Font.system(size: 11, weight: .regular)
+    static func prime(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspPrimeVideoTokens {
     // MARK: - Canvas & Surfaces
     static let primeCanvas    = Color(red: 0.059, green: 0.090, blue: 0.118) // #0F171E
@@ -31,28 +51,9 @@ private enum LpspPrimeVideoTokens {
     static let primeLiveRed     = Color(red: 0.898, green: 0.035, blue: 0.078) // #E50914
 }
 
-private enum LpspPrimeVideoFonts {
-    static let primeDetailsTitle = Font.system(size: 30, weight: .regular)
-    static let primeTitleLarge   = Font.system(size: 28, weight: .regular)
-    static let primeRowHeader    = Font.system(size: 22, weight: .regular)
-    static let primeSectionHeader = Font.system(size: 20, weight: .regular)
-    static let primeEpisodeTitle = Font.system(size: 16, weight: .regular)
-    static let primeTileTitle    = Font.system(size: 15, weight: .regular)
-    static let primeBody         = Font.system(size: 15, weight: .regular)
-    static let primeMeta         = Font.system(size: 13, weight: .regular)
-    static let primeTileSubtitle = Font.system(size: 12, weight: .regular)
-    static let primeLabelUpper   = Font.system(size: 11, weight: .regular)
-    static let primeButton       = Font.system(size: 16, weight: .regular)
-    static let primeButtonSecondary = Font.system(size: 15, weight: .regular)
-    static let primeTab          = Font.system(size: 10, weight: .regular)
-    static let primeBadge        = Font.system(size: 11, weight: .regular)
-}
 
-private enum LpspPrimeVideoFonts {
-    static func prime(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspPrimeVideoPrimePlayButton: View {
     var title: String = "Play"
@@ -64,11 +65,11 @@ private struct LpspPrimeVideoPrimePlayButton: View {
                 Image(systemName: "play.fill").font(.system(size: 18, weight: .bold))
                 Text(title).font(LpspPrimeVideoFonts.primeButton).tracking(0.2)
             }
-            .foregroundStyle(LpspPrimeVideoTokens.primeCanvas) // intentional: dark-navy on bright blue
+            .foregroundStyle(Color.primeCanvas) // intentional: dark-navy on bright blue
             .frame(maxWidth: .infinity)
             .frame(height: 52)
-            .background(RoundedRectangle(cornerRadius: 8).fill(LpspPrimeVideoTokens.primeBlue))
-            .shadow(color: LpspPrimeVideoTokens.primeBlue.opacity(0.32), radius: 24, y: 8)
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.primeBlue))
+            .shadow(color: Color.primeBlue.opacity(0.32), radius: 24, y: 8)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: title)
         .buttonStyle(LpspPrimeVideoPrimePressableStyle(pressedScale: 0.97))
@@ -98,7 +99,7 @@ private struct LpspPrimeVideoPrimeWatchlistButton: View {
                     .font(.system(size: 16, weight: .bold))
                 Text(added ? "Watchlisted" : "Watchlist").font(LpspPrimeVideoFonts.primeButtonSecondary)
             }
-            .foregroundStyle(added ? LpspPrimeVideoTokens.primeBlue : .white)
+            .foregroundStyle(added ? Color.primeBlue : .white)
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .background(RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.14)))
@@ -131,7 +132,7 @@ private struct LpspPrimeVideoPrimeContentTile: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Rectangle().fill(Color.white.opacity(0.25))
-                            Rectangle().fill(LpspPrimeVideoTokens.primeBlue).frame(width: geo.size.width * progress)
+                            Rectangle().fill(Color.primeBlue).frame(width: geo.size.width * progress)
                         }
                     }
                     .frame(height: 3)
@@ -141,7 +142,7 @@ private struct LpspPrimeVideoPrimeContentTile: View {
             if includedWithPrime {
                 Text("Included with Prime")
                     .font(LpspPrimeVideoFonts.primeTileSubtitle)
-                    .foregroundStyle(LpspPrimeVideoTokens.primeBlue)
+                    .foregroundStyle(Color.primeBlue)
             }
         }
         .frame(width: width)
@@ -163,12 +164,12 @@ private struct LpspPrimeVideoPrimeBillboard: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(height: 440)
                 .clipped()
-            LinearGradient(colors: [.clear, LpspPrimeVideoTokens.primeCanvas], startPoint: .center, endPoint: .bottom)
+            LinearGradient(colors: [.clear, .primeCanvas], startPoint: .center, endPoint: .bottom)
 
             VStack(alignment: .leading, spacing: 12) {
                 Text(title).font(LpspPrimeVideoFonts.primeDetailsTitle).foregroundStyle(.white)
-                (Text(metaLeading).foregroundColor(LpspPrimeVideoTokens.primeTextSecondary)
-                 + Text(imdb).foregroundColor(LpspPrimeVideoTokens.primeImdbYellow))
+                (Text(metaLeading).foregroundColor(.primeTextSecondary)
+                 + Text(imdb).foregroundColor(.primeImdbYellow))
                 .font(LpspPrimeVideoFonts.primeMeta)
                 HStack(spacing: 12) {
                     LpspPrimeVideoPrimePlayButton(action: onPlay).frame(width: 130)
@@ -178,7 +179,7 @@ private struct LpspPrimeVideoPrimeBillboard: View {
             .padding(16)
         }
         .frame(height: 440)
-        .background(LpspPrimeVideoTokens.primeCanvas)
+        .background(Color.primeCanvas)
     }
 }
 
@@ -194,10 +195,10 @@ private struct LpspPrimeVideoPrimeXRayOverlay: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Text("IN THIS SCENE").font(LpspPrimeVideoFonts.primeLabelUpper)
-                            .foregroundStyle(LpspPrimeVideoTokens.primeTextSecondary).tracking(0.6)
+                            .foregroundStyle(.primeTextSecondary).tracking(0.6)
                         Spacer()
                         Button { withAnimation(.easeOut(duration: 0.28)) { shown = false } } label: {
-                            Image(systemName: "chevron.down").foregroundStyle(LpspPrimeVideoTokens.primeTextSecondary)
+                            Image(systemName: "chevron.down").foregroundStyle(.primeTextSecondary)
                         }
                     }
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -206,7 +207,7 @@ private struct LpspPrimeVideoPrimeXRayOverlay: View {
                                 VStack(spacing: 6) {
                                     m.headshot.resizable().frame(width: 56, height: 56).clipShape(Circle())
                                     Text(m.name).font(LpspPrimeVideoFonts.primeTileSubtitle).foregroundStyle(.white)
-                                    Text(m.role).font(LpspPrimeVideoFonts.primeTileSubtitle).foregroundStyle(LpspPrimeVideoTokens.primeTextSecondary)
+                                    Text(m.role).font(LpspPrimeVideoFonts.primeTileSubtitle).foregroundStyle(.primeTextSecondary)
                                 }
                                 .frame(width: 80)
                             }
@@ -214,7 +215,7 @@ private struct LpspPrimeVideoPrimeXRayOverlay: View {
                     }
                     if let nowPlaying {
                         HStack(spacing: 8) {
-                            Image(systemName: "music.note").foregroundStyle(LpspPrimeVideoTokens.primeBlue)
+                            Image(systemName: "music.note").foregroundStyle(.primeBlue)
                             Text("Now playing: \(nowPlaying)").font(LpspPrimeVideoFonts.primeMeta).foregroundStyle(.white)
                         }
                     }
@@ -222,7 +223,7 @@ private struct LpspPrimeVideoPrimeXRayOverlay: View {
                 .padding(20)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.ultraThinMaterial)
-                .background(LpspPrimeVideoTokens.primeSurface2.opacity(0.96))
+                .background(Color.primeSurface2.opacity(0.96))
                 .clipShape(.rect(topLeadingRadius: 16, topTrailingRadius: 16))
                 .transition(.move(edge: .bottom))
             }
@@ -235,7 +236,7 @@ private struct LpspPrimeVideoRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspPrimeVideoTokens.primeCanvas).withAlphaComponent(0.94)
+        appearance.backgroundColor = UIColor(Color.primeCanvas).withAlphaComponent(0.94)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -247,7 +248,7 @@ private struct LpspPrimeVideoRootTabView: View {
             FindView().tabItem      { Label("Find",      systemImage: "magnifyingglass") }
             DownloadsView().tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
         }
-        .tint(LpspPrimeVideoTokens.primeBlue) // active = blue, blue is the indicator
+        .tint(.primeBlue) // active = blue, blue is the indicator
     }
 }
 

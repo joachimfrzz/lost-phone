@@ -10,6 +10,23 @@ struct LpspAwesomeShazamView: View {
 }
 
 // MARK: - Composants spec (préfixés)
+private enum LpspShazamFonts {
+    static let shazamResultLarge = Font.system(size: 28, weight: .regular)
+    static let shazamResult      = Font.system(size: 22, weight: .regular)
+    static let shazamSection     = Font.system(size: 20, weight: .regular)
+    static let shazamPrompt      = Font.system(size: 18, weight: .regular)
+    static let shazamCardTitle   = Font.system(size: 16, weight: .regular)
+    static let shazamSubtitle    = Font.system(size: 14, weight: .regular)
+    static let shazamBody        = Font.system(size: 15, weight: .regular)
+    static let shazamMeta        = Font.system(size: 13, weight: .regular)
+    static let shazamLabelUpper  = Font.system(size: 11, weight: .regular)
+    static let shazamButton      = Font.system(size: 16, weight: .regular)
+    static let shazamButtonSec   = Font.system(size: 14, weight: .regular)
+    static func shazam(_ size: CGFloat, weight: Font.Weight = .medium) -> Font {
+        .system(size: size, weight: weight, design: .default)
+    }
+}
+
 private enum LpspShazamTokens {
     // MARK: - Gradient stops
     static let shazamCore  = Color(red: 0.0,   green: 0.314, blue: 1.0)   // #0050FF
@@ -36,7 +53,7 @@ private enum LpspShazamTokens {
 extension ShapeStyle where Self == RadialGradient {
     static var shazamHero: RadialGradient {
         RadialGradient(
-            colors: [LpspShazamTokens.shazamBlue, LpspShazamTokens.shazamCore, LpspShazamTokens.shazamSpace],
+            colors: [.shazamBlue, .shazamCore, .shazamSpace],
             center: UnitPoint(x: 0.5, y: 0.42),
             startRadius: 0,
             endRadius: 520
@@ -44,25 +61,9 @@ extension ShapeStyle where Self == RadialGradient {
     }
 }
 
-private enum LpspShazamFonts {
-    static let shazamResultLarge = Font.system(size: 28, weight: .regular)
-    static let shazamResult      = Font.system(size: 22, weight: .regular)
-    static let shazamSection     = Font.system(size: 20, weight: .regular)
-    static let shazamPrompt      = Font.system(size: 18, weight: .regular)
-    static let shazamCardTitle   = Font.system(size: 16, weight: .regular)
-    static let shazamSubtitle    = Font.system(size: 14, weight: .regular)
-    static let shazamBody        = Font.system(size: 15, weight: .regular)
-    static let shazamMeta        = Font.system(size: 13, weight: .regular)
-    static let shazamLabelUpper  = Font.system(size: 11, weight: .regular)
-    static let shazamButton      = Font.system(size: 16, weight: .regular)
-    static let shazamButtonSec   = Font.system(size: 14, weight: .regular)
-}
 
-private enum LpspShazamFonts {
-    static func shazam(_ size: CGFloat, weight: Font.Weight = .medium) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
-}
+
+
 
 private struct LpspShazamShazamButton: View {
     @Binding var isListening: Bool
@@ -82,7 +83,7 @@ private struct LpspShazamShazamButton: View {
 
             // Listening glow
             Circle()
-                .fill(LpspShazamTokens.shazamBlue.opacity(isListening ? 0.5 : 0))
+                .fill(Color.shazamBlue.opacity(isListening ? 0.5 : 0))
                 .frame(width: size * 1.4, height: size * 1.4)
                 .blur(radius: 60)
                 .animation(.easeInOut(duration: 0.5), value: isListening)
@@ -100,12 +101,12 @@ private struct LpspShazamShazamButton: View {
                         )
                         .overlay(Circle().strokeBorder(Color.white.opacity(0.4), lineWidth: 1))
                     LpspShazamShazamGlyph()
-                        .fill(LpspShazamTokens.shazamBlue)
+                        .fill(Color.shazamBlue)
                         .frame(width: size * 0.4, height: size * 0.4)
                 }
                 .frame(width: size, height: size)
                 .scaleEffect(breathe && !isListening ? 1.04 : 1.0)
-                .shadow(color: LpspShazamTokens.shazamCore.opacity(0.45), radius: 48, y: 16)
+                .shadow(color: Color.shazamCore.opacity(0.45), radius: 48, y: 16)
             }
             .buttonStyle(LpspShazamShazamPressable())
             .sensoryFeedback(.impact(weight: .heavy), trigger: isListening)
@@ -210,15 +211,15 @@ private struct LpspShazamShazamResultCard: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 VStack(alignment: .leading, spacing: 6) {
                     Text(title).font(LpspShazamFonts.shazamResult).foregroundStyle(.white).lineLimit(2)
-                    Text(artist).font(LpspShazamFonts.shazamSubtitle).foregroundStyle(LpspShazamTokens.shazamTextSecondary).lineLimit(1)
+                    Text(artist).font(LpspShazamFonts.shazamSubtitle).foregroundStyle(.shazamTextSecondary).lineLimit(1)
                 }
                 Spacer(minLength: 0)
             }
 
             Button { } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: "music.note").foregroundStyle(LpspShazamTokens.appleMusicPink)
-                    Text("Open in Apple Music").font(LpspShazamFonts.shazamButton).foregroundStyle(LpspShazamTokens.shazamSpace)
+                    Image(systemName: "music.note").foregroundStyle(Color.appleMusicPink)
+                    Text("Open in Apple Music").font(LpspShazamFonts.shazamButton).foregroundStyle(Color.shazamSpace)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
@@ -235,8 +236,8 @@ private struct LpspShazamShazamResultCard: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(LpspShazamTokens.shazamGlass)
-                .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(LpspShazamTokens.shazamGlassStrong, lineWidth: 1))
+                .fill(Color.shazamGlass)
+                .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Color.shazamGlassStrong, lineWidth: 1))
         )
         .padding(.horizontal, 20)
         .transition(.scale(scale: 0.85).combined(with: .opacity))
@@ -253,7 +254,7 @@ private struct LpspShazamGlassAction: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
-        .background(Capsule().fill(LpspShazamTokens.shazamGlass))
+        .background(Capsule().fill(Color.shazamGlass))
         .overlay(Capsule().strokeBorder(Color.white.opacity(0.16), lineWidth: 1))
     }
 }
@@ -275,14 +276,14 @@ private struct LpspShazamRecentShazamsSheet: View {
                             .frame(width: 52, height: 52).clipShape(RoundedRectangle(cornerRadius: 10))
                         VStack(alignment: .leading, spacing: 2) {
                             Text(it.title).font(LpspShazamFonts.shazamCardTitle).foregroundStyle(.white).lineLimit(1)
-                            Text(it.artist).font(LpspShazamFonts.shazamSubtitle).foregroundStyle(LpspShazamTokens.shazamTextSecondary).lineLimit(1)
+                            Text(it.artist).font(LpspShazamFonts.shazamSubtitle).foregroundStyle(.shazamTextSecondary).lineLimit(1)
                         }
                         Spacer()
-                        Text(it.time).font(LpspShazamFonts.shazamMeta).foregroundStyle(LpspShazamTokens.shazamTextSecondary)
-                        Image(systemName: "chevron.right").font(.system(size: 14)).foregroundStyle(LpspShazamTokens.shazamTextSecondary)
+                        Text(it.time).font(LpspShazamFonts.shazamMeta).foregroundStyle(.shazamTextSecondary)
+                        Image(systemName: "chevron.right").font(.system(size: 14)).foregroundStyle(.shazamTextSecondary)
                     }
                     .padding(.horizontal, 16).frame(height: 68)
-                    Divider().overlay(LpspShazamTokens.shazamDivider)
+                    Divider().overlay(Color.shazamDivider)
                 }
             }
         }

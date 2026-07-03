@@ -423,7 +423,13 @@ private struct LpspTinderDatingDiscoverTabScreen: View {
     var body: some View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
-            LpspTinderTinderSwipeCard(profile: LpspTinderDemoDatingProfile.sample)
+            LpspTinderTinderSwipeCard(
+                name: "Alex",
+                age: 28,
+                distance: "5 km",
+                occupation: "Designer",
+                photoURLs: []
+            )
         }
     }
 }

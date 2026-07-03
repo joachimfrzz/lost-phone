@@ -248,7 +248,7 @@ fileprivate struct LpspBookingPricePin: View {
     let isSelected: Bool
     var body: some View {
         Text(price)
-            .font(.bk(13, weight: .bold)).monospacedDigit()
+            .font(LpspBookingFonts.bk(13, weight: .bold)).monospacedDigit()
             .foregroundStyle(isSelected ? .white : LpspBookingTokens.bkTextPrimary)
             .padding(.horizontal, 10).padding(.vertical, 6)
             .background(Capsule().fill(isSelected ? LpspBookingTokens.bkBlue : LpspBookingTokens.bkCanvas))

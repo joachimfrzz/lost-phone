@@ -508,7 +508,7 @@ private struct LpspRedditFeedTabScreen: View {
                             timestamp: post.time,
                             commentCount: post.comments,
                             title: post.title,
-                            body: post.body,
+                            postText: post.body,
                             flairs: [],
                             mediaUri: nil,
                             baseKarma: post.karma

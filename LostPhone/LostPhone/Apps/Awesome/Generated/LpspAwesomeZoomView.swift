@@ -78,7 +78,7 @@ fileprivate struct LpspZoomGalleryTile: View {
                     .fill(LpspZoomTokens.zoomBlue.opacity(0.25))
                     .frame(width: 56, height: 56)
                     .overlay(Text(initials(name))
-                        .font(.zoom(20, weight: .semibold))
+                        .font(LpspZoomFonts.zoom(20, weight: .semibold))
                         .foregroundStyle(.white))
             }
 
@@ -164,7 +164,7 @@ fileprivate struct LpspZoomControlBar: View {
 
             Button(action: onLeave) {
                 Text("Leave")
-                    .font(.zoom(15, weight: .bold))
+                    .font(LpspZoomFonts.zoom(15, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 18).padding(.vertical, 8)
                     .background(RoundedRectangle(cornerRadius: 8).fill(LpspZoomTokens.zoomRed))
@@ -215,7 +215,7 @@ fileprivate struct LpspZoomMeetingRow: View {
 
             Button(action: onJoin) {
                 Text("Join")
-                    .font(.zoom(14, weight: .bold))
+                    .font(LpspZoomFonts.zoom(14, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 18)
                     .frame(height: 32)

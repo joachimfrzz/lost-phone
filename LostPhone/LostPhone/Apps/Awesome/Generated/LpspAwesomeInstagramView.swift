@@ -206,7 +206,7 @@ fileprivate struct LpspInstagramFeedPost: View {
                         .transition(.scale.combined(with: .opacity))
                 }
             }
-            .sensoryFeedback(.impact(weight: .soft), trigger: showHeart)
+            .sensoryFeedback(.impact(weight: .light), trigger: showHeart)
 
             // Action bar
             HStack(spacing: 16) {

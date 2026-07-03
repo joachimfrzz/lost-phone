@@ -470,7 +470,13 @@ private struct LpspBumbleDatingDiscoverTabScreen: View {
     var body: some View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
-            LpspBumbleSwipeCard(profile: LpspBumbleDemoDatingProfile.sample)
+            LpspBumbleSwipeCard(
+                name: "Alex",
+                age: 28,
+                distance: "5 km",
+                occupation: "Designer",
+                photoURLs: []
+            )
         }
     }
 }

@@ -97,7 +97,7 @@ fileprivate struct LpspTeamsAvatarWithPresence: View {
         Circle()
             .fill(LpspTeamsTokens.teamsPurpleLight.opacity(0.25))
             .frame(width: size, height: size)
-            .overlay(Text(initials).font(.teamsSys(size * 0.4, weight: .semibold)))
+            .overlay(Text(initials).font(LpspTeamsFonts.teamsSys(size * 0.4, weight: .semibold)))
             .overlay(alignment: .bottomTrailing) {
                 LpspTeamsPresenceDot(presence: presence, size: size * 0.32)
             }
@@ -120,7 +120,7 @@ fileprivate struct LpspTeamsTeamTreeRow: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(LpspTeamsTokens.teamsPurpleLight.opacity(0.3))
                         .frame(width: 32, height: 32)
-                        .overlay(Text(String(team.name.prefix(1))).font(.teamsSys(14, weight: .bold)))
+                        .overlay(Text(String(team.name.prefix(1))).font(LpspTeamsFonts.teamsSys(14, weight: .bold)))
                     Text(team.name).font(LpspTeamsFonts.teamsTeamName)
                         .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
                     Spacer()
@@ -151,7 +151,7 @@ fileprivate struct LpspTeamsChannelRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Text("#")
-                .font(.teamsSys(16, weight: .semibold))
+                .font(LpspTeamsFonts.teamsSys(16, weight: .semibold))
                 .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme))
             Text(channel.name)
                 .font(LpspTeamsFonts.teamsListTitle)
@@ -237,11 +237,11 @@ fileprivate struct LpspTeamsMeetingJoinBar: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "video.fill").foregroundStyle(.white).font(.system(size: 18))
-            Text(title).font(.teamsSys(15, weight: .semibold)).foregroundStyle(.white)
+            Text(title).font(LpspTeamsFonts.teamsSys(15, weight: .semibold)).foregroundStyle(.white)
             Spacer()
             Button(action: onJoin) {
                 Text("Join")
-                    .font(.teamsSys(14, weight: .semibold))
+                    .font(LpspTeamsFonts.teamsSys(14, weight: .semibold))
                     .foregroundStyle(scheme == .dark ? LpspTeamsTokens.teamsPurpleDark : LpspTeamsTokens.teamsPurpleLight)
                     .padding(.horizontal, 18).frame(height: 30)
                     .background(Capsule().fill(.white))

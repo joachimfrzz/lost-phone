@@ -287,6 +287,10 @@ fileprivate struct LpspUberUberBottomSheet<Content: View>: View {
 import MapKit
 
 fileprivate struct LpspUberUberMapView: View {
+    private let pickup = CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522)
+    private let destination = CLLocationCoordinate2D(latitude: 48.8738, longitude: 2.2950)
+    private var route: [CLLocationCoordinate2D] { [pickup, destination] }
+
     @State private var camera: MapCameraPosition = .automatic
 
     var body: some View {

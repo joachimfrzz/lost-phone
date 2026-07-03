@@ -43,14 +43,14 @@ private enum XScreenFactory {
     }
 }
 private enum XTokens {
-    static let xCanvas = black                                   // #000000
+    static let xCanvas = Color.black                                   // #000000
     static let xSurface1 = Color(red: 0.086, green: 0.094, blue: 0.110) // #16181C
     static let xSurface2 = Color(red: 0.118, green: 0.125, blue: 0.141) // #1E2024
     static let xDivider = Color(red: 0.184, green: 0.200, blue: 0.212) // #2F3336
     static let xDimCanvas = Color(red: 0.082, green: 0.125, blue: 0.173) // #15202B
     static let xDimSurface1 = Color(red: 0.098, green: 0.153, blue: 0.204) // #192734
     static let xDimDivider = Color(red: 0.220, green: 0.267, blue: 0.302) // #38444D
-    static let xLightCanvas = white                                  // #FFFFFF
+    static let xLightCanvas = Color.white                                  // #FFFFFF
     static let xLightSurface1 = Color(red: 0.969, green: 0.976, blue: 0.976) // #F7F9F9
     static let xLightSurface2 = Color(red: 0.937, green: 0.953, blue: 0.957) // #EFF3F4
     static let xTextPrimaryDark = Color(red: 0.906, green: 0.914, blue: 0.918) // #E7E9EA

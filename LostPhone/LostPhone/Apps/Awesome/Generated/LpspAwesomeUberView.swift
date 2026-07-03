@@ -39,8 +39,8 @@ private enum UberScreenFactory {
     }
 }
 private enum UberTokens {
-    static let uberBlack = black                                 // #000000
-    static let uberWhite = white                                 // #FFFFFF
+    static let uberBlack = Color.black                                 // #000000
+    static let uberWhite = Color.white                                 // #FFFFFF
     static let uberCanvasDark = Color(red: 0.047, green: 0.047, blue: 0.047) // #0C0C0C
     static let uberGray50 = Color(red: 0.965, green: 0.965, blue: 0.965) // #F6F6F6
     static let uberGray100 = Color(red: 0.933, green: 0.933, blue: 0.933) // #EEEEEE

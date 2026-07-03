@@ -45,7 +45,7 @@ private enum MessengerTokens {
     static let msgBlue = Color(red: 0.039, green: 0.486, blue: 1.000) // #0A7CFF
     static let msgBluePressed = Color(red: 0.031, green: 0.400, blue: 0.839) // #0866D6
     static let msgCanvas = Color(red: 1, green: 1, blue: 1)             // #FFFFFF
-    static let msgCanvasDark = black                                  // #000000 (true black)
+    static let msgCanvasDark = Color.black                                  // #000000 (true black)
     static let msgSurface = Color(red: 0.945, green: 0.945, blue: 0.949) // #F1F1F2
     static let msgSurfaceDark = Color(red: 0.110, green: 0.110, blue: 0.114) // #1C1C1D
     static let msgIncoming = Color(red: 0.945, green: 0.945, blue: 0.949) // #F1F1F2

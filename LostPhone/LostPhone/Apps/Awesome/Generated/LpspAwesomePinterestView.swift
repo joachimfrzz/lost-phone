@@ -46,7 +46,7 @@ private enum PinterestTokens {
     static let pinterestRed = Color(red: 0.902, green: 0.0,   blue: 0.137)  // #E60023
     static let pinterestRedPressed = Color(red: 0.678, green: 0.031, blue: 0.106)  // #AD081B
     static let pinterestRedHover = Color(red: 0.8,   green: 0.0,   blue: 0.125)  // #CC0020
-    static let pinterestCanvasLight = white                                 // #FFFFFF
+    static let pinterestCanvasLight = Color.white                                 // #FFFFFF
     static let pinterestSurface1Light = Color(red: 0.973, green: 0.973, blue: 0.973) // #F8F8F8
     static let pinterestInputLight = Color(red: 0.937, green: 0.937, blue: 0.937) // #EFEFEF
     static let pinterestDividerLight = Color(red: 0.914, green: 0.914, blue: 0.914) // #E9E9E9
@@ -57,7 +57,7 @@ private enum PinterestTokens {
     static let pinterestTextPrimaryLight = Color(red: 0.067, green: 0.067, blue: 0.067) // #111111
     static let pinterestTextSecondaryLight = Color(red: 0.463, green: 0.463, blue: 0.463) // #767676
     static let pinterestTextTertiaryLight = Color(red: 0.710, green: 0.710, blue: 0.710) // #B5B5B5
-    static let pinterestTextPrimaryDark = white                                   // #FFFFFF
+    static let pinterestTextPrimaryDark = Color.white                                   // #FFFFFF
     static let pinterestTextSecondaryDark = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let pinterestSuccess = Color(red: 0.0, green: 0.541, blue: 0.235) // #008A3C
     static let pinterestInfo = Color(red: 0.0, green: 0.455, blue: 0.910) // #0074E8

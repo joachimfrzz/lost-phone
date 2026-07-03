@@ -33,7 +33,7 @@ private enum GeminiScreenFactory {
     }
 }
 private enum GeminiTokens {
-    static let gemCanvas = white                                     // #FFFFFF
+    static let gemCanvas = Color.white                                     // #FFFFFF
     static let gemSurface = Color(red: 0.941, green: 0.957, blue: 0.976)    // #F0F4F9
     static let gemDivider = Color(red: 0.890, green: 0.890, blue: 0.890)    // #E3E3E3
     static let gemDarkCanvas = Color(red: 0.118, green: 0.118, blue: 0.118) // #1E1E1E

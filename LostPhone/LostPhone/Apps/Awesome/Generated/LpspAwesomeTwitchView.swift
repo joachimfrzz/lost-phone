@@ -36,7 +36,7 @@ private enum TwitchScreenFactory {
 }
 private enum TwitchTokens {
     static let twitchCanvas = Color(red: 0.055, green: 0.055, blue: 0.063) // #0E0E10
-    static let twitchDeepBlack = black                                  // #000000
+    static let twitchDeepBlack = Color.black                                  // #000000
     static let twitchSurface1 = Color(red: 0.094, green: 0.094, blue: 0.106) // #18181B
     static let twitchSurface2 = Color(red: 0.122, green: 0.122, blue: 0.137) // #1F1F23
     static let twitchSurface3 = Color(red: 0.165, green: 0.165, blue: 0.176) // #2A2A2D

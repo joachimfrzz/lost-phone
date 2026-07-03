@@ -46,7 +46,7 @@ private enum HappnTokens {
     static let happnSurface2 = Color(red: 0.129, green: 0.129, blue: 0.169) // #21212B
     static let happnSurface3 = Color(red: 0.173, green: 0.173, blue: 0.220) // #2C2C38
     static let happnDivider = Color(red: 0.165, green: 0.165, blue: 0.200) // #2A2A33  (also timeline spine)
-    static let happnCanvasLight = white                                   // #FFFFFF
+    static let happnCanvasLight = Color.white                                   // #FFFFFF
     static let happnSurface1Light = Color(red: 0.965, green: 0.965, blue: 0.973) // #F6F6F8
     static let happnPink = Color(red: 1.000, green: 0.282, blue: 0.396) // #FF4865
     static let happnPinkPress = Color(red: 0.898, green: 0.208, blue: 0.310) // #E5354F
@@ -56,7 +56,7 @@ private enum HappnTokens {
     static let happnTextPrimary = Color(red: 0.957, green: 0.957, blue: 0.965) // #F4F4F6
     static let happnTextSecondary = Color(red: 0.627, green: 0.627, blue: 0.682) // #A0A0AE
     static let happnTextTertiary = Color(red: 0.424, green: 0.424, blue: 0.478) // #6C6C7A
-    static let happnOnPink = white                                  // #FFFFFF
+    static let happnOnPink = Color.white                                  // #FFFFFF
     static let happnOnGold = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
     static let happnSuccess = Color(red: 0.306, green: 0.851, blue: 0.643) // #4ED9A4
     static let happnError = Color(red: 1.000, green: 0.361, blue: 0.361) // #FF5C5C

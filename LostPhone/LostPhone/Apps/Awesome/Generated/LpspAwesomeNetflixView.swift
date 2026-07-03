@@ -45,13 +45,13 @@ private enum NetflixTokens {
     static let netflixRedPressed = Color(red: 0.718, green: 0.027, blue: 0.059)  // #B7070F
     static let netflixRedDimmed = Color(red: 0.514, green: 0.063, blue: 0.063)  // #831010
     static let netflixCanvas = Color(red: 0.078, green: 0.078, blue: 0.078) // #141414
-    static let netflixDeepBlack = black                                   // #000000
+    static let netflixDeepBlack = Color.black                                   // #000000
     static let netflixSurface1 = Color(red: 0.122, green: 0.122, blue: 0.122) // #1F1F1F
     static let netflixSurface2 = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
     static let netflixSurface3 = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
     static let netflixDivider = Color(red: 0.169, green: 0.169, blue: 0.169) // #2B2B2B
     static let netflixInput = Color(red: 0.2,   green: 0.2,   blue: 0.2)   // #333333
-    static let netflixTextPrimary = white                                // #FFFFFF
+    static let netflixTextPrimary = Color.white                                // #FFFFFF
     static let netflixTextSecondary = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let netflixTextTertiary = Color(red: 0.467, green: 0.467, blue: 0.467) // #777777
     static let netflixProfileRed = Color(red: 0.898, green: 0.035, blue: 0.078) // #E50914

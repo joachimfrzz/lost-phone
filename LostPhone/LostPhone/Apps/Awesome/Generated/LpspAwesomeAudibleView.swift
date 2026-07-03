@@ -45,7 +45,7 @@ private enum AudibleTokens {
     static let audSurface1 = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
     static let audSurface2 = Color(red: 0.204, green: 0.204, blue: 0.204) // #343434
     static let audDivider = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
-    static let audTextPrimary = white                                // #FFFFFF
+    static let audTextPrimary = Color.white                                // #FFFFFF
     static let audTextSecondary = Color(red: 0.690, green: 0.690, blue: 0.690) // #B0B0B0
     static let audTextTertiary = Color(red: 0.431, green: 0.431, blue: 0.431) // #6E6E6E
     static let audOrange = Color(red: 1.0,   green: 0.600, blue: 0.0)  // #FF9900

@@ -63,7 +63,7 @@ private enum PayPalTokens {
     static let ppDarkSurface1 = Color(red: 0.078, green: 0.102, blue: 0.165) // #141A2A
     static let ppDarkSurface2 = Color(red: 0.122, green: 0.153, blue: 0.251) // #1F2740
     static let ppDarkDivider = Color(red: 0.165, green: 0.192, blue: 0.259) // #2A3142
-    static let ppDarkTextPri = white
+    static let ppDarkTextPri = Color.white
     static let ppDarkTextSec = Color(red: 0.659, green: 0.682, blue: 0.769) // #A8AEC4
 }
 

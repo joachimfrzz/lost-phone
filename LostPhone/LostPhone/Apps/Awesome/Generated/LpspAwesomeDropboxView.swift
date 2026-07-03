@@ -35,7 +35,7 @@ private enum DropboxScreenFactory {
     }
 }
 private enum DropboxTokens {
-    static let dbxCanvas = white                                   // #FFFFFF
+    static let dbxCanvas = Color.white                                   // #FFFFFF
     static let dbxSurface = Color(red: 0.969, green: 0.961, blue: 0.949)   // #F7F5F2
     static let dbxDivider = Color(red: 0.902, green: 0.882, blue: 0.855)   // #E6E1DA
     static let dbxTextPrimary = Color(red: 0.118, green: 0.098, blue: 0.098) // #1E1919

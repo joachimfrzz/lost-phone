@@ -49,8 +49,8 @@ private enum YouTubeMusicTokens {
     static let ytmDivider = Color(red: 0.188, green: 0.188, blue: 0.188) // #303030
     static let ytmRed = Color(red: 1.0,   green: 0.0,   blue: 0.0)   // #FF0000
     static let ytmRedPressed = Color(red: 0.8,   green: 0.0,   blue: 0.0)   // #CC0000
-    static let ytmActionWhite = white                                    // #FFFFFF
-    static let ytmTextPrimary = white                                  // #FFFFFF
+    static let ytmActionWhite = Color.white                                    // #FFFFFF
+    static let ytmTextPrimary = Color.white                                  // #FFFFFF
     static let ytmTextSecondary = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let ytmTextTertiary = Color(red: 0.443, green: 0.443, blue: 0.443) // #717171
     static let ytmSuccess = Color(red: 0.169, green: 0.651, blue: 0.251) // #2BA640

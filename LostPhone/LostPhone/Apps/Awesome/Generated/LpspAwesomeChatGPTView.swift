@@ -33,7 +33,7 @@ private enum ChatGPTScreenFactory {
     }
 }
 private enum ChatGPTTokens {
-    static let gptCanvas = white                                    // #FFFFFF
+    static let gptCanvas = Color.white                                    // #FFFFFF
     static let gptDarkCanvas = Color(red: 0.129, green: 0.129, blue: 0.129)  // #212121
     static let gptSidebarLight = Color(red: 0.976, green: 0.976, blue: 0.976) // #F9F9F9
     static let gptSidebarDark = Color(red: 0.094, green: 0.094, blue: 0.094) // #181818
@@ -53,7 +53,7 @@ private enum ChatGPTTokens {
     static let gptCodeInlineLight = Color(red: 0.941, green: 0.941, blue: 0.941) // #F0F0F0
     static let gptCodeInlineDark = Color(red: 0.259, green: 0.259, blue: 0.259) // #424242
     static let gptSendLight = Color(red: 0.051, green: 0.051, blue: 0.051) // #0D0D0D
-    static let gptSendDark = white                                    // #FFFFFF
+    static let gptSendDark = Color.white                                    // #FFFFFF
     static let gptSendDisabled = Color(red: 0.800, green: 0.800, blue: 0.800) // #CCCCCC
     static let gptLinkBlue = Color(red: 0.165, green: 0.498, blue: 1.000) // #2A7FFF
     static let gptLegacyGreen = Color(red: 0.063, green: 0.639, blue: 0.498) // #10A37F (legacy, mostly retired)

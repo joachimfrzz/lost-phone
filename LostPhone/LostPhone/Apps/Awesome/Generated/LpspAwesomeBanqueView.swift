@@ -49,7 +49,7 @@ private enum BanqueTokens {
     static let revSurface3 = Color(red: 0.157, green: 0.157, blue: 0.227) // #28283A
     static let revDivider = Color(red: 0.165, green: 0.165, blue: 0.220) // #2A2A38
     static let revBorder = Color(red: 0.200, green: 0.200, blue: 0.290) // #33334A
-    static let revTextPrimary = white                                  // #FFFFFF
+    static let revTextPrimary = Color.white                                  // #FFFFFF
     static let revTextSecondary = Color(red: 0.604, green: 0.604, blue: 0.667) // #9A9AAA
     static let revTextTertiary = Color(red: 0.416, green: 0.416, blue: 0.494) // #6A6A7E
     static let revGradStart = Color(red: 0.357, green: 0.420, blue: 1.000) // #5B6BFF

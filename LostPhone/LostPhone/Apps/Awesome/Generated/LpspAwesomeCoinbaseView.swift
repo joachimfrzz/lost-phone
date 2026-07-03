@@ -68,7 +68,7 @@ private enum CoinbaseTokens {
     static let cbDarkSurface1 = Color(red: 0.075, green: 0.082, blue: 0.102) // #13151A
     static let cbDarkSurface2 = Color(red: 0.118, green: 0.125, blue: 0.149) // #1E2026
     static let cbDarkDivider = Color(red: 0.165, green: 0.180, blue: 0.212) // #2A2E36
-    static let cbDarkTextPri = white
+    static let cbDarkTextPri = Color.white
     static let cbDarkTextSec = Color(red: 0.627, green: 0.643, blue: 0.667) // #A0A4AA
 }
 

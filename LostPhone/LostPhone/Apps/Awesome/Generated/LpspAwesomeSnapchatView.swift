@@ -43,14 +43,14 @@ private enum SnapchatScreenFactory {
     }
 }
 private enum SnapchatTokens {
-    static let snapCanvas = black                                   // #000000
+    static let snapCanvas = Color.black                                   // #000000
     static let snapSurface1 = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
     static let snapSurface2 = Color(red: 0.173, green: 0.173, blue: 0.173) // #2C2C2C
     static let snapDivider = Color(red: 0.200, green: 0.200, blue: 0.200) // #333333
-    static let snapLightCanvas = white                                   // #FFFFFF
+    static let snapLightCanvas = Color.white                                   // #FFFFFF
     static let snapLightSurface1 = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
-    static let snapTextPrimary = white                                   // #FFFFFF
-    static let snapTextPrimaryLight = black                                  // #000000
+    static let snapTextPrimary = Color.white                                   // #FFFFFF
+    static let snapTextPrimaryLight = Color.black                                  // #000000
     static let snapTextSecondary = Color(red: 0.541, green: 0.541, blue: 0.561) // #8A8A8F
     static let snapTextTertiary = Color(red: 0.333, green: 0.333, blue: 0.333) // #555555
     static let snapYellow = Color(red: 1.000, green: 0.988, blue: 0.000) // #FFFC00

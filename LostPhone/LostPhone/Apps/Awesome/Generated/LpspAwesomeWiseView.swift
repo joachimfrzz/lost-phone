@@ -43,7 +43,7 @@ private enum WiseScreenFactory {
     }
 }
 private enum WiseTokens {
-    static let wiseCanvas = white                                  // #FFFFFF
+    static let wiseCanvas = Color.white                                  // #FFFFFF
     static let wiseSurface = Color(red: 0.969, green: 0.969, blue: 0.969) // #F7F7F7
     static let wiseSurfaceSunken = Color(red: 0.937, green: 0.937, blue: 0.937) // #EFEFEF
     static let wiseDivider = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5

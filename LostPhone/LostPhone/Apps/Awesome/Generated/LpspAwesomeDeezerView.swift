@@ -39,7 +39,7 @@ private enum DeezerTokens {
     static let dzSurface1 = Color(red: 0.098, green: 0.086, blue: 0.122) // #19161F
     static let dzSurface2 = Color(red: 0.133, green: 0.118, blue: 0.169) // #221E2B
     static let dzDivider = Color(red: 0.165, green: 0.149, blue: 0.200) // #2A2633
-    static let dzTextPrimary = white                                  // #FFFFFF
+    static let dzTextPrimary = Color.white                                  // #FFFFFF
     static let dzTextSecondary = Color(red: 0.635, green: 0.612, blue: 0.690) // #A29CB0
     static let dzTextTertiary = Color(red: 0.431, green: 0.408, blue: 0.502) // #6E6880
     static let dzPurple = Color(red: 0.635, green: 0.220, blue: 1.000) // #A238FF

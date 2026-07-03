@@ -43,7 +43,7 @@ private enum ExpediaScreenFactory {
     }
 }
 private enum ExpediaTokens {
-    static let expCanvas = white                                    // #FFFFFF
+    static let expCanvas = Color.white                                    // #FFFFFF
     static let expSurfaceGray = Color(red: 0.961, green: 0.969, blue: 0.980)  // #F5F7FA
     static let expSurfacePressed = Color(red: 0.925, green: 0.937, blue: 0.957) // #ECEFF4
     static let expDivider = Color(red: 0.890, green: 0.906, blue: 0.929)  // #E3E7ED

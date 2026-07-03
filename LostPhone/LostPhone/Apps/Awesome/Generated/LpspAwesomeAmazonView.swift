@@ -31,7 +31,7 @@ private enum AmazonScreenFactory {
     }
 }
 private enum AmazonTokens {
-    static let amzCanvas = white                                   // #FFFFFF
+    static let amzCanvas = Color.white                                   // #FFFFFF
     static let amzSurfaceMuted = Color(red: 0.953, green: 0.953, blue: 0.953) // #F3F3F3
     static let amzSurfaceTint = Color(red: 0.969, green: 0.973, blue: 0.973) // #F7F8F8
     static let amzDivider = Color(red: 0.867, green: 0.867, blue: 0.867) // #DDDDDD

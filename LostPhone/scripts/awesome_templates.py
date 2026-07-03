@@ -110,7 +110,10 @@ def category_from_path(rel: str) -> str:
 
 def normalize_token_expr(expr: str) -> str:
     """Design specs use Color.token — in our private enum, reference sibling static lets."""
-    m = re.match(r"Color\.(\w+)(.*)$", expr.strip())
+    expr = expr.strip()
+    if re.match(r"Color\.(white|black|clear|primary|secondary|accentColor)\b", expr):
+        return expr
+    m = re.match(r"Color\.(\w+)(.*)$", expr)
     if m:
         return m.group(1) + m.group(2)
     return expr

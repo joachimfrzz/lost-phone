@@ -46,8 +46,8 @@ private enum AppleMusicTokens {
     static let amRed = Color(red: 0.980, green: 0.176, blue: 0.282) // #FA2D48
     static let amCoral = Color(red: 0.988, green: 0.235, blue: 0.267) // #FC3C44
     static let amRedPressed = Color(red: 0.831, green: 0.129, blue: 0.231) // #D4213B
-    static let amCanvasLight = white                                  // #FFFFFF
-    static let amCanvasDark = black                                  // #000000
+    static let amCanvasLight = Color.white                                  // #FFFFFF
+    static let amCanvasDark = Color.black                                  // #000000
     static let amSurface1Light = Color(red: 0.949, green: 0.949, blue: 0.969) // #F2F2F7
     static let amSurface1Dark = Color(red: 0.110, green: 0.110, blue: 0.118) // #1C1C1E
     static let amSurface2Dark = Color(red: 0.173, green: 0.173, blue: 0.180) // #2C2C2E

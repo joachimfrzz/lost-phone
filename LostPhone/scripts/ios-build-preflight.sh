@@ -48,6 +48,10 @@ for path in sorted(root.rglob("*.swift")):
     text = path.read_text(encoding="utf-8")
     for m in pattern.finditer(text):
         start = m.start()
+        line_start = text.rfind("\n", 0, start) + 1
+        prefix = text[max(0, start - 400):start]
+        if "@ViewBuilder" in prefix:
+            continue
         brace = text.find("{", start)
         depth = 0
         for i in range(brace, len(text)):

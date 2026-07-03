@@ -24,7 +24,7 @@ struct HomeShellView: View {
 
     private var pages: [[String]] {
         if phone.isCloneShowroom {
-            return [CloneShowroomLayout.gridApps, []]
+            return CloneShowroomLayout.gridPages
         }
         return stride(from: 0, to: max(gridApps.count, 1), by: 16).map { start in
             Array(gridApps.dropFirst(start).prefix(16))
@@ -32,7 +32,7 @@ struct HomeShellView: View {
     }
 
     private var pageIndicatorCount: Int {
-        phone.isCloneShowroom ? 2 : pages.count
+        pages.count
     }
 
     var body: some View {

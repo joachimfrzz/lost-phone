@@ -19,6 +19,8 @@ enum LpspAppCatalog {
     static func iconAsset(for lpspName: String) -> String? {
         let name = LpspAppAliases.canonical(lpspName)
         if name == "Contacts" { return "contacts" }
+        if name == "Dictaphone" { return nil }
+        if name == "Wallet" { return nil }
         return cloneType(for: name)?.assetName
     }
 
@@ -39,6 +41,8 @@ enum LpspAppCatalog {
         case "Contacts": return .gray
         case "Fichiers": return .blue
         case "Rappels": return .orange
+        case "Dictaphone": return Color(red: 0.98, green: 0.23, blue: 0.19)
+        case "Wallet": return .black
         case "Spotify": return Color(red: 0.11, green: 0.73, blue: 0.33)
         case "Netflix": return .red
         case "Apple Music": return .pink

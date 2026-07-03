@@ -15,7 +15,7 @@ enum StoryCatalog {
         storyIds.compactMap { id in
             guard let package = try? LpspLoader.load(storyId: id) else { return nil }
             let subtitle: String? = if id == CloneShowroomLayout.storyId {
-                "Démo UI · 14 clones Apple seulement · pas WhatsApp/Uber/etc."
+                "Démo UI · clones Apple + tier Awesome · sans PIN"
             } else if id == "j3-louvre" {
                 "Histoire complète · 18 apps · PIN 1503"
             } else {

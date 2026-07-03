@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Routage showroom → vues Awesome (Meliwat/awesome-ios-design-md).
+/// Routage showroom → vues Awesome v3 (Spectr / Meliwat DESIGN-swiftui.md).
 enum AwesomeShowroomRouter {
     @ViewBuilder
     static func view(for appName: String) -> some View {

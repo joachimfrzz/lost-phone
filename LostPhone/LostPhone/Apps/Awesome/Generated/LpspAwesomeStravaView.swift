@@ -347,24 +347,7 @@ fileprivate struct LpspStravaAchievementBadge: View {
     }
 }
 
-fileprivate struct LpspStravaRootTabView: View {
-    @State private var tab = 0
-    var body: some View {
-        ZStack(alignment: .bottom) {
-            TabView(selection: $tab) {
-                FeedView()    .tabItem { Label("Home", systemImage: "house") }.tag(0)
-                MapsView()    .tabItem { Label("Maps", systemImage: "map") }.tag(1)
-                Color.clear   .tabItem { Label("",     systemImage: "") }.tag(2) // placeholder for Record
-                GroupsView()  .tabItem { Label("Groups", systemImage: "person.3") }.tag(3)
-                ProfileView() .tabItem { Label("You",  systemImage: "person.crop.circle") }.tag(4)
-            }
-            .tint(LpspStravaTokens.stravaOrange)
-            .sensoryFeedback(.selection, trigger: tab)
 
-            LpspStravaRecordButton(onRecord: { /* present record sheet */ })
-        }
-    }
-}
 
 // MARK: - Écrans showroom
 

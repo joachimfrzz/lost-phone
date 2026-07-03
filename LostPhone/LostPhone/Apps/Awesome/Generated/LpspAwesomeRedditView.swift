@@ -308,7 +308,7 @@ fileprivate struct LpspRedditRDCommentRow: View {
                     Text("•").font(LpspRedditFonts.rdMetadata).foregroundStyle(LpspRedditTokens.rdTextSecondary)
                     Text(comment.timestamp).font(LpspRedditFonts.rdMetadata).foregroundStyle(LpspRedditTokens.rdTextSecondary)
                     Text("•").font(LpspRedditFonts.rdMetadata).foregroundStyle(LpspRedditTokens.rdTextSecondary)
-                    Text("\(comment.karma)").font(.rdMetadata.weight(.medium)).foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                    Text("\(comment.karma)").font(LpspRedditFonts.rdMetadata.weight(.medium)).foregroundStyle(LpspRedditTokens.rdTextSecondary)
                 }
 
                 if !isCollapsed {
@@ -389,26 +389,6 @@ fileprivate struct LpspRedditRDSubredditBanner: View {
     }
 }
 
-fileprivate struct LpspRedditRDRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-
-    var body: some View {
-        TabView {
-            HomeFeedView().tabItem { Label("Home", systemImage: "house.fill") }
-            CommunitiesView().tabItem { Label("Communities", systemImage: "person.3.fill") }
-            CreatePostView().tabItem { Label("Create", systemImage: "plus.circle.fill") }
-            ChatView().tabItem { Label("Chat", systemImage: "bubble.left.and.bubble.right.fill") }
-            InboxView().tabItem { Label("Inbox", systemImage: "bell.fill") }
-                .badge(3)
-        }
-        .tint(LpspRedditTokens.rdBrandRed)
-    }
-}
 
 fileprivate struct LpspRedditRDSubredditContext {
     var accentColor: Color = LpspRedditTokens.rdSubredditDefault // #0079D3

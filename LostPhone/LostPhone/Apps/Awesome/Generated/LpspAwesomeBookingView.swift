@@ -260,33 +260,7 @@ fileprivate struct LpspBookingPricePin: View {
 // A "Map"/"List" pill toggle floats above the list; selecting a pin slides a single
 // LpspBookingPropertyCard up from the bottom (a .sheet at a low detent or a bottom overlay).
 
-fileprivate struct LpspBookingRootTabView: View {
-    init() {
-        let nav = UINavigationBarAppearance()
-        nav.configureWithOpaqueBackground()
-        nav.backgroundColor = UIColor(LpspBookingTokens.bkBlue)
-        nav.titleTextAttributes = [.foregroundColor: UIColor.white]
-        UINavigationBar.appearance().standardAppearance = nav
-        UINavigationBar.appearance().scrollEdgeAppearance = nav
 
-        let tab = UITabBarAppearance()
-        tab.configureWithOpaqueBackground()
-        tab.backgroundColor = UIColor.white
-        tab.shadowColor = UIColor(LpspBookingTokens.bkDivider)
-        UITabBar.appearance().standardAppearance = tab
-        UITabBar.appearance().scrollEdgeAppearance = tab
-    }
-    var body: some View {
-        TabView {
-            SearchView().tabItem   { Label("Search",   systemImage: "magnifyingglass") }
-            SavedView().tabItem    { Label("Saved",    systemImage: "heart") }
-            BookingsView().tabItem { Label("Bookings", systemImage: "suitcase") }
-            ProfileView().tabItem  { Label("Profile",  systemImage: "person") }
-            HelpView().tabItem     { Label("Help",     systemImage: "questionmark.circle") }
-        }
-        .tint(LpspBookingTokens.bkCTA) // active = CTA blue
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -298,7 +272,7 @@ private struct LpspBookingShowroomRoot: View {
                 .tabItem { Label("Bookings", systemImage: "suitcase") }
                 .tag(0)
         }
-        .tint(LpspBookingTokens.bkTextPrimary)
+        .tint(LpspBookingTokens.bkYellow)
         
     }
 }
@@ -312,9 +286,9 @@ private struct LpspBookingGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspBookingTokens.bkTextPrimary.opacity(0.15))
+                        .fill(LpspBookingTokens.bkYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspBookingTokens.bkTextPrimary))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspBookingTokens.bkYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

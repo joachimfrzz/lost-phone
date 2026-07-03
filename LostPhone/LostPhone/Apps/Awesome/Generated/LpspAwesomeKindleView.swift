@@ -249,17 +249,6 @@ fileprivate struct LpspKindleKindleProgress: View {
     }
 }
 
-fileprivate struct LpspKindleKindleTabView: View {
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            LibraryView().tabItem { Label("Library", systemImage: "books.vertical.fill") }
-            DiscoverView().tabItem { Label("Discover", systemImage: "magnifyingglass") }
-            MoreView().tabItem { Label("More", systemImage: "ellipsis") }
-        }
-        .tint(LpspKindleTokens.kdlOrange)   // single accent; no tint pill
-    }
-}
 
 fileprivate struct LpspKindleKindleChromeTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme

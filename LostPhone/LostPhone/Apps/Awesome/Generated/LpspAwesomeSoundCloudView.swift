@@ -178,7 +178,7 @@ fileprivate struct LpspSoundCloudSCPill: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(style == .filled ? .scButton : .scSubtitle)
+                .font(style == .filled ? LpspSoundCloudFonts.scButton : LpspSoundCloudFonts.scSubtitle)
                 .foregroundStyle(style == .filled ? .white : LpspSoundCloudTokens.scTextPrimary)
                 .padding(.vertical, 9)
                 .padding(.horizontal, style == .filled ? 24 : 20)
@@ -269,26 +269,7 @@ fileprivate struct LpspSoundCloudSCNowPlaying: View {
     }
 }
 
-fileprivate struct LpspSoundCloudRootTabView: View {
-    @Environment(\.colorScheme) private var scheme
-    init() {
-        let a = UITabBarAppearance()
-        a.configureWithTransparentBackground()
-        a.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        UITabBar.appearance().standardAppearance = a
-        UITabBar.appearance().scrollEdgeAppearance = a
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            SearchView().tabItem { Label("Search", systemImage: "magnifyingglass") }
-            LibraryView().tabItem { Label("Library", systemImage: "play.square.stack") }
-            UploadView().tabItem { Label("Upload", systemImage: "arrow.up.circle.fill") }
-            ProfileView().tabItem { Label("You", systemImage: "person.crop.circle") }
-        }
-        .tint(LpspSoundCloudTokens.scOrange) // active = orange
-    }
-}
+
 
 // MARK: - Écrans showroom
 

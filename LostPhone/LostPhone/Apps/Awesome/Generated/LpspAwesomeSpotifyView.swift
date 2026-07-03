@@ -213,25 +213,7 @@ fileprivate enum LpspSpotifyAlbumColorExtractor {
     }
 }
 
-fileprivate struct LpspSpotifyRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspSpotifyTokens.spotifyCanvas).withAlphaComponent(0.92)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            SearchView().tabItem { Label("Search", systemImage: "magnifyingglass") }
-            LibraryView().tabItem { Label("Your Library", systemImage: "books.vertical.fill") }
-            PremiumView().tabItem { Label("Premium", systemImage: "sparkles") }
-        }
-        .tint(.white) // active = white, not green
-    }
-}
+
 
 // MARK: - Écrans showroom
 
@@ -252,7 +234,7 @@ private struct LpspSpotifyShowroomRoot: View {
                 .tabItem { Label("Premium", systemImage: "sparkles") }
                 .tag(3)
         }
-        .tint(LpspSpotifyTokens.spotifyGreen)
+        .tint(LpspSpotifyTokens.spotifyErrorRed)
         .preferredColorScheme(.dark)
     }
 }
@@ -266,9 +248,9 @@ private struct LpspSpotifyGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspSpotifyTokens.spotifyGreen.opacity(0.15))
+                        .fill(LpspSpotifyTokens.spotifyErrorRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspSpotifyTokens.spotifyGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspSpotifyTokens.spotifyErrorRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -289,7 +271,7 @@ private struct LpspSpotifyMusicHomeTabScreen: View {
                     Text("Bonsoir").font(.system(size: 28, weight: .bold)).padding(.horizontal)
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         ForEach(0..<4, id: \.self) { i in
-                            RoundedRectangle(cornerRadius: 8).fill(LpspSpotifyTokens.spotifyGreen.opacity(0.15 + Double(i) * 0.05))
+                            RoundedRectangle(cornerRadius: 8).fill(LpspSpotifyTokens.spotifyErrorRed.opacity(0.15 + Double(i) * 0.05))
                                 .frame(height: 100)
                                 .overlay(alignment: .bottomLeading) {
                                     Text("Playlist \(i + 1)").font(.subheadline.bold()).padding(8)
@@ -329,7 +311,7 @@ private struct LpspSpotifyMusicLibraryTabScreen: View {
         NavigationStack {
             List(["Titres likés", "Playlists", "Albums", "Artistes"], id: \.self) { item in
                 HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(LpspSpotifyTokens.spotifyGreen.opacity(0.2)).frame(width: 48, height: 48)
+                    RoundedRectangle(cornerRadius: 4).fill(LpspSpotifyTokens.spotifyErrorRed.opacity(0.2)).frame(width: 48, height: 48)
                     Text(item).font(.body)
                 }
             }

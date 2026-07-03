@@ -466,17 +466,7 @@ fileprivate struct LpspGoogleCalendarCurrentTimeIndicator: View {
     }
 }
 
-fileprivate struct LpspGoogleCalendarRootTabView: View {
-    var body: some View {
-        TabView {
-            ScheduleView() .tabItem { Label("Schedule", systemImage: "list.bullet") }
-            DayView()      .tabItem { Label("Day",      systemImage: "calendar.day.timeline.left") }
-            WeekView()     .tabItem { Label("Week",     systemImage: "calendar") }
-            MonthView()    .tabItem { Label("Month",    systemImage: "calendar") }
-        }
-        .tint(LpspGoogleCalendarTokens.gcalBlue)
-    }
-}
+
 
 // MARK: - Écrans showroom
 
@@ -488,7 +478,7 @@ private struct LpspGoogleCalendarShowroomRoot: View {
                 .tabItem { Label("Schedule", systemImage: "list.bullet") }
                 .tag(0)
         }
-        .tint(LpspGoogleCalendarTokens.gcalEventGreen)
+        .tint(LpspGoogleCalendarTokens.gcalEventYellow)
         
     }
 }
@@ -502,9 +492,9 @@ private struct LpspGoogleCalendarGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspGoogleCalendarTokens.gcalEventGreen.opacity(0.15))
+                        .fill(LpspGoogleCalendarTokens.gcalEventYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGoogleCalendarTokens.gcalEventGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGoogleCalendarTokens.gcalEventYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

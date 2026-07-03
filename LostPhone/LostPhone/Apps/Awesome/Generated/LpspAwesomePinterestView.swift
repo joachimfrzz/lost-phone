@@ -373,7 +373,7 @@ fileprivate struct LpspPinterestSharedPinImage: View {
     let namespace: Namespace.ID
     let id: UUID
     var body: some View {
-        AsyncImage(url: imageURL) { img in img.resizable().scaledToFill() } placeholder: { LpspPinterestTokens.gray }
+        AsyncImage(url: imageURL) { img in img.resizable().scaledToFill() } placeholder: { Color.gray }
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .matchedGeometryEffect(id: id, in: namespace)
     }

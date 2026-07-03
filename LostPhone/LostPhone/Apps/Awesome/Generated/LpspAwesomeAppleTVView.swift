@@ -215,26 +215,6 @@ fileprivate struct LpspAppleTVShelfHeader: View {
     }
 }
 
-fileprivate struct LpspAppleTVAppleTVTabView: View {
-    init() {
-        let a = UITabBarAppearance()
-        a.configureWithDefaultBackground()             // translucent blur material
-        a.backgroundColor = UIColor.black.withAlphaComponent(0.92)
-        a.shadowColor = UIColor(LpspAppleTVTokens.atvDivider)
-        UITabBar.appearance().standardAppearance = a
-        UITabBar.appearance().scrollEdgeAppearance = a
-    }
-
-    var body: some View {
-        TabView {
-            WatchNowView().tabItem { Label("Watch Now", systemImage: "play.tv") }
-            TVPlusView().tabItem { Label("TV+", systemImage: "play.rectangle.on.rectangle") }
-            StoreView().tabItem { Label("Store", systemImage: "bag") }
-            SearchView().tabItem { Label("Search", systemImage: "magnifyingglass") }
-        }
-        .tint(LpspAppleTVTokens.atvBlue)   // active = system blue; standard iOS color+fill swap, no pill
-    }
-}
 
 fileprivate struct LpspAppleTVAppleTVTheme: ViewModifier {
     func body(content: Content) -> some View {

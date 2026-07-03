@@ -216,27 +216,7 @@ fileprivate struct LpspDisneyEpisodeRow: View {
     }
 }
 
-fileprivate struct LpspDisneyRootTabView: View {
-    init() {
-        let a = UITabBarAppearance()
-        a.configureWithTransparentBackground()
-        a.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        a.backgroundColor = UIColor(LpspDisneyTokens.dpCanvas).withAlphaComponent(0.96)
-        UITabBar.appearance().standardAppearance = a
-        UITabBar.appearance().scrollEdgeAppearance = a
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home", systemImage: "house.fill") }
-            SearchView().tabItem { Label("Search", systemImage: "magnifyingglass") }
-            WatchlistView().tabItem { Label("Watchlist", systemImage: "plus.rectangle.on.rectangle") }
-            DownloadsView().tabItem { Label("Downloads", systemImage: "arrow.down.circle") }
-            ProfileView().tabItem { Label("Profile", systemImage: "person.crop.circle") }
-        }
-        .tint(.white) // active = white; #0063E5 used as a dot indicator overlay
-        .preferredColorScheme(.dark)
-    }
-}
+
 
 // MARK: - Écrans showroom
 

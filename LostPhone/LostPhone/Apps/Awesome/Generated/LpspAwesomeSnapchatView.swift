@@ -412,25 +412,6 @@ fileprivate struct LpspSnapchatLensCarousel: View {
     }
 }
 
-fileprivate struct LpspSnapchatRootSwipeNav: View {
-    @State private var currentTab = 2  // Camera center
-
-    var body: some View {
-        TabView(selection: $currentTab) {
-            MapView()      .tag(0)
-            ChatListView() .tag(1)
-            LpspSnapchatSnapCameraHUD().tag(2)  // Center default
-            StoriesView()  .tag(3)
-            SpotlightView().tag(4)
-        }
-        .tabViewStyle(.page(indexDisplayMode: .never))
-        .ignoresSafeArea()
-        .overlay(alignment: .bottom) {
-            LpspSnapchatSnapNavIndicator(selected: currentTab)
-                .padding(.bottom, 0)
-        }
-    }
-}
 
 fileprivate struct LpspSnapchatSnapNavIndicator: View {
     let selected: Int
@@ -465,7 +446,7 @@ private struct LpspSnapchatShowroomRoot: View {
                 .tabItem { Label("Profil", systemImage: "person.circle") }
                 .tag(2)
         }
-        .tint(LpspSnapchatTokens.snapAudioGreen)
+        .tint(LpspSnapchatTokens.snapYellow)
         
     }
 }
@@ -479,9 +460,9 @@ private struct LpspSnapchatGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspSnapchatTokens.snapAudioGreen.opacity(0.15))
+                        .fill(LpspSnapchatTokens.snapYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspSnapchatTokens.snapAudioGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspSnapchatTokens.snapYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -518,8 +499,8 @@ private struct LpspSnapchatFeedTabScreen: View {
                         HStack(spacing: 14) {
                             ForEach(LpspSnapchatDemoStories.items) { s in
                                 VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspSnapchatTokens.snapAudioGreen, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspSnapchatTokens.snapAudioGreen.opacity(0.2)).frame(width: 58, height: 58))
+                                    Circle().strokeBorder(LpspSnapchatTokens.snapYellow, lineWidth: 2).frame(width: 66, height: 66)
+                                        .overlay(Circle().fill(LpspSnapchatTokens.snapYellow.opacity(0.2)).frame(width: 58, height: 58))
                                     Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
                                 }
                             }
@@ -529,7 +510,7 @@ private struct LpspSnapchatFeedTabScreen: View {
 
 
                     ForEach(0..<3, id: \.self) { i in
-                        LpspSnapchatGenericFeedCard(index: i, accent: LpspSnapchatTokens.snapAudioGreen)
+                        LpspSnapchatGenericFeedCard(index: i, accent: LpspSnapchatTokens.snapYellow)
                     }
 
                 }
@@ -549,7 +530,7 @@ private struct LpspSnapchatExploreTabScreen: View {
                 LazyVGrid(columns: cols, spacing: 2) {
                     ForEach(0..<15, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspSnapchatTokens.snapAudioGreen.opacity(0.08 + Double(i) * 0.04))
+                            .fill(LpspSnapchatTokens.snapYellow.opacity(0.08 + Double(i) * 0.04))
                             .aspectRatio(1, contentMode: .fit)
                     }
                 }
@@ -578,7 +559,7 @@ private struct LpspSnapchatProfileTabScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspSnapchatTokens.snapAudioGreen.gradient).frame(width: 88, height: 88)
+                    Circle().fill(LpspSnapchatTokens.snapYellow.gradient).frame(width: 88, height: 88)
                         .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
                     Text("lost.phone").font(.system(size: 20, weight: .bold))
                     Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)

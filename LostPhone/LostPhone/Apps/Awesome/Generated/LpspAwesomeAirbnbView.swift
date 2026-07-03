@@ -339,27 +339,7 @@ fileprivate struct LpspAirbnbMapPriceBubble: View {
     }
 }
 
-fileprivate struct LpspAirbnbRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        appearance.backgroundColor = UIColor.white.withAlphaComponent(0.92)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            ExploreView()   .tabItem { Label("Explore",   systemImage: "magnifyingglass") }
-            WishlistsView() .tabItem { Label("Wishlists", systemImage: "heart") }
-            TripsView()     .tabItem { Label("Trips",     systemImage: "airplane") }
-            InboxView()     .tabItem { Label("Inbox",     systemImage: "message") }
-            ProfileView()   .tabItem { Label("Profile",   systemImage: "person.circle") }
-        }
-        .tint(LpspAirbnbTokens.airbnbCoral) // active = Primary Coral
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -371,7 +351,7 @@ private struct LpspAirbnbShowroomRoot: View {
                 .tabItem { Label("Wishlists", systemImage: "heart") }
                 .tag(0)
         }
-        .tint(LpspAirbnbTokens.airbnbLargeNav)
+        .tint(LpspAirbnbTokens.airbnbCoral)
         
     }
 }
@@ -385,9 +365,9 @@ private struct LpspAirbnbGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspAirbnbTokens.airbnbLargeNav.opacity(0.15))
+                        .fill(LpspAirbnbTokens.airbnbCoral.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAirbnbTokens.airbnbLargeNav))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAirbnbTokens.airbnbCoral))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

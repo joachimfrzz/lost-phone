@@ -245,25 +245,7 @@ fileprivate struct LpspSignalEncryptionNote: View {
     }
 }
 
-fileprivate struct LpspSignalRootTabView: View {
-    init() {
-        let a = UITabBarAppearance()
-        a.configureWithOpaqueBackground()
-        a.backgroundColor = UIColor.systemBackground
-        a.shadowColor = UIColor(LpspSignalTokens.sigDivider)
-        UITabBar.appearance().standardAppearance = a
-        UITabBar.appearance().scrollEdgeAppearance = a
-    }
-    var body: some View {
-        TabView {
-            ChatsView().tabItem { Label("Chats", systemImage: "message.fill") }
-            CallsView().tabItem { Label("Calls", systemImage: "phone.fill") }
-            StoriesView().tabItem { Label("Stories", systemImage: "circle.dashed") }
-            SettingsView().tabItem { Label("Settings", systemImage: "gearshape.fill") }
-        }
-        .tint(LpspSignalTokens.sigBlue)
-    }
-}
+
 
 // MARK: - Écrans showroom
 

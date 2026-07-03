@@ -380,27 +380,7 @@ fileprivate struct LpspHingeMatchCelebration: View {
     }
 }
 
-fileprivate struct LpspHingeRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        appearance.backgroundColor = UIColor(LpspHingeTokens.hingeCream).withAlphaComponent(0.92)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            DiscoverView()  .tabItem { Label("Discover",   systemImage: "safari") }
-            LikesYouView()  .tabItem { Label("Likes You",  systemImage: "heart") }
-            StandoutsView() .tabItem { Label("Standouts",  systemImage: "star") }
-            MatchesView()   .tabItem { Label("Matches",    systemImage: "bubble.left") }
-            ProfileView()   .tabItem { Label("Profile",    systemImage: "person") }
-        }
-        .tint(LpspHingeTokens.hingeBlack) // Hinge does not use color on active tab — it uses fill + warm black
-    }
-}
 
 // MARK: - Écrans showroom
 

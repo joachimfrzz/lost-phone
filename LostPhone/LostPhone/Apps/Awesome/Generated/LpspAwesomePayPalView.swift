@@ -337,27 +337,7 @@ fileprivate struct LpspPayPalStatusPill: View {
     }
 }
 
-fileprivate struct LpspPayPalPayPalRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-        appearance.shadowColor = UIColor(red: 0.898, green: 0.910, blue: 0.929, alpha: 1)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            HomeView()     .tabItem { Label("Home",     systemImage: "house") }
-            SendView()     .tabItem { Label("Send",     systemImage: "paperplane") }
-            WalletView()   .tabItem { Label("Wallet",   systemImage: "wallet.pass") }
-            ActivityView() .tabItem { Label("Activity", systemImage: "clock") }
-            FinancesView() .tabItem { Label("Finances", systemImage: "chart.line.uptrend.xyaxis") }
-        }
-        .tint(LpspPayPalTokens.payPalBlue)
-    }
-}
 
 // MARK: - Écrans showroom
 

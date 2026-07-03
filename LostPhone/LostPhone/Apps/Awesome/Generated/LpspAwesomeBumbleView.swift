@@ -415,29 +415,7 @@ fileprivate struct LpspBumbleBumbleChatInput: View {
     }
 }
 
-fileprivate struct LpspBumbleRootTabView: View {
-    @State private var selected: Int = 0
 
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = .white
-        appearance.shadowColor = UIColor(LpspBumbleTokens.bumbleDivider)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-
-    var body: some View {
-        TabView(selection: $selected) {
-            PeopleView()  .tabItem { Label("People",  systemImage: "person.2") }.tag(0)
-            HivesView()   .tabItem { Label("Hives",   systemImage: "hexagon.fill") }.tag(1)
-            MatchesView() .tabItem { Label("Matches", systemImage: "heart.fill") }.tag(2)
-            ChatsView()   .tabItem { Label("Chats",   systemImage: "bubble.left.fill") }.tag(3)
-            ProfileView() .tabItem { Label("Profile", systemImage: "person.crop.circle") }.tag(4)
-        }
-        .tint(LpspBumbleTokens.bumbleBlack) // active = warm Bumble Black; indicator dot in yellow below
-    }
-}
 
 // MARK: - Écrans showroom
 

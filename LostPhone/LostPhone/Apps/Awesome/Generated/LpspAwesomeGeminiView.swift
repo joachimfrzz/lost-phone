@@ -355,7 +355,7 @@ private struct LpspGeminiShowroomRoot: View {
                 .tabItem { Label("Historique", systemImage: "clock") }
                 .tag(1)
         }
-        .tint(LpspGeminiTokens.gemTextPrimary)
+        .tint(LpspGeminiTokens.gemCoral)
         
     }
 }
@@ -369,9 +369,9 @@ private struct LpspGeminiGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspGeminiTokens.gemTextPrimary.opacity(0.15))
+                        .fill(LpspGeminiTokens.gemCoral.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGeminiTokens.gemTextPrimary))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGeminiTokens.gemCoral))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

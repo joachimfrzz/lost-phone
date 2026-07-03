@@ -46,7 +46,7 @@ def assemble_root(
     root = f"{prefix}ShowroomRoot"
     tokens = f"{prefix}Tokens"
     canvas = pick_color([(t, "") for t in token_names], "canvas", "Canvas", "background", "surface", default_idx=0)
-    accent = pick_color([(t, "") for t in token_names], "brand", "action", "green", "red", "primary", default_idx=0)
+    accent = pick_color([(t, "") for t in token_names], "brand", "coral", "action", "accent", "yellow", "red", "green", "primary", default_idx=0)
     dark_categories = {"video", "music", "fitness"}
     color_scheme = (
         ".preferredColorScheme(.dark)"

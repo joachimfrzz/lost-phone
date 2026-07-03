@@ -306,34 +306,7 @@ fileprivate extension View {
     }
 }
 
-fileprivate struct LpspXRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor.black.withAlphaComponent(0.85)
-        // Hide tab labels — X is icon-only
-        let iconAppearance = UITabBarItemAppearance()
-        iconAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
-        iconAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.clear]
-        appearance.stackedLayoutAppearance = iconAppearance
-        appearance.inlineLayoutAppearance = iconAppearance
-        appearance.compactInlineLayoutAppearance = iconAppearance
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            HomeView()          .tabItem { Image(systemName: "house.fill") }
-            SearchView()        .tabItem { Image(systemName: "magnifyingglass") }
-            CommunitiesView()   .tabItem { Image(systemName: "person.3.fill") }
-            NotificationsView().tabItem { Image(systemName: "bell.fill") }
-            MessagesView()      .tabItem { Image(systemName: "envelope.fill") }
-        }
-        .tint(LpspXTokens.xTextPrimaryDark)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -351,7 +324,7 @@ private struct LpspXShowroomRoot: View {
                 .tabItem { Label("Profil", systemImage: "person.circle") }
                 .tag(2)
         }
-        .tint(LpspXTokens.xActionCount)
+        .tint(LpspXTokens.xErrorRed)
         
     }
 }
@@ -365,9 +338,9 @@ private struct LpspXGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspXTokens.xActionCount.opacity(0.15))
+                        .fill(LpspXTokens.xErrorRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspXTokens.xActionCount))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspXTokens.xErrorRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -404,8 +377,8 @@ private struct LpspXFeedTabScreen: View {
                         HStack(spacing: 14) {
                             ForEach(LpspXDemoStories.items) { s in
                                 VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspXTokens.xActionCount, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspXTokens.xActionCount.opacity(0.2)).frame(width: 58, height: 58))
+                                    Circle().strokeBorder(LpspXTokens.xErrorRed, lineWidth: 2).frame(width: 66, height: 66)
+                                        .overlay(Circle().fill(LpspXTokens.xErrorRed.opacity(0.2)).frame(width: 58, height: 58))
                                     Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
                                 }
                             }
@@ -415,7 +388,7 @@ private struct LpspXFeedTabScreen: View {
 
 
                     ForEach(0..<3, id: \.self) { i in
-                        LpspXGenericFeedCard(index: i, accent: LpspXTokens.xActionCount)
+                        LpspXGenericFeedCard(index: i, accent: LpspXTokens.xErrorRed)
                     }
 
                 }
@@ -435,7 +408,7 @@ private struct LpspXExploreTabScreen: View {
                 LazyVGrid(columns: cols, spacing: 2) {
                     ForEach(0..<15, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspXTokens.xActionCount.opacity(0.08 + Double(i) * 0.04))
+                            .fill(LpspXTokens.xErrorRed.opacity(0.08 + Double(i) * 0.04))
                             .aspectRatio(1, contentMode: .fit)
                     }
                 }
@@ -464,7 +437,7 @@ private struct LpspXProfileTabScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspXTokens.xActionCount.gradient).frame(width: 88, height: 88)
+                    Circle().fill(LpspXTokens.xErrorRed.gradient).frame(width: 88, height: 88)
                         .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
                     Text("lost.phone").font(.system(size: 20, weight: .bold))
                     Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)

@@ -239,7 +239,7 @@ fileprivate struct LpspDropboxDbxUploadBar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text(label).font(.dbxMeta.weight(.semibold))
+                Text(label).font(LpspDropboxFonts.dbxMeta.weight(.semibold))
                     .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
                 Spacer()
                 if done {
@@ -263,25 +263,6 @@ fileprivate struct LpspDropboxDbxUploadBar: View {
     }
 }
 
-fileprivate struct LpspDropboxDbxRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = UIColor(LpspDropboxTokens.dbxCanvas).withAlphaComponent(0.94)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem    { Label("Home",    systemImage: "house") }
-            FilesView().tabItem   { Label("Files",   systemImage: "folder") }
-            PhotosView().tabItem  { Label("Photos",  systemImage: "photo.on.rectangle") }
-            OfflineView().tabItem { Label("Offline", systemImage: "arrow.down.circle") }
-            AccountView().tabItem { Label("Account", systemImage: "person.crop.circle") }
-        }
-        .tint(LpspDropboxTokens.dbxBlue) // active = Dropbox Blue
-    }
-}
 
 fileprivate struct LpspDropboxDbxPhotoGrid: View {
     let photos: [Image]
@@ -331,7 +312,7 @@ private struct LpspDropboxShowroomRoot: View {
                 .tabItem { Label("Account", systemImage: "person.crop.circle") }
                 .tag(1)
         }
-        .tint(LpspDropboxTokens.dbxSheetGreen)
+        .tint(LpspDropboxTokens.dbxPdfRed)
         
     }
 }
@@ -345,9 +326,9 @@ private struct LpspDropboxGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspDropboxTokens.dbxSheetGreen.opacity(0.15))
+                        .fill(LpspDropboxTokens.dbxPdfRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDropboxTokens.dbxSheetGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDropboxTokens.dbxPdfRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

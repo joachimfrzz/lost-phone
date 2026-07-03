@@ -329,35 +329,7 @@ fileprivate struct LpspThreadsThreadsComposer: View {
     }
 }
 
-fileprivate struct LpspThreadsRootTabView: View {
-    @State private var userAvatar = Image("placeholder-avatar")
 
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor.black.withAlphaComponent(0.9)
-        // Hide tab labels
-        let iconAppearance = UITabBarItemAppearance()
-        iconAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
-        iconAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.clear]
-        appearance.stackedLayoutAppearance = iconAppearance
-        appearance.inlineLayoutAppearance = iconAppearance
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-
-    var body: some View {
-        TabView {
-            HomeView()     .tabItem { Image(systemName: "house.fill") }
-            SearchView()   .tabItem { Image(systemName: "magnifyingglass") }
-            ComposeView()  .tabItem { Image(systemName: "plus.square") }
-            ActivityView() .tabItem { Image(systemName: "heart.fill") }
-            ProfileView()  .tabItem { Image(systemName: "person.circle.fill") }
-        }
-        .tint(LpspThreadsTokens.threadsTextPrimaryDark)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -375,7 +347,7 @@ private struct LpspThreadsShowroomRoot: View {
                 .tabItem { Label("Profil", systemImage: "person.circle") }
                 .tag(2)
         }
-        .tint(LpspThreadsTokens.threadsActionCount)
+        .tint(LpspThreadsTokens.threadsLikeCoral)
         
     }
 }
@@ -389,9 +361,9 @@ private struct LpspThreadsGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspThreadsTokens.threadsActionCount.opacity(0.15))
+                        .fill(LpspThreadsTokens.threadsLikeCoral.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspThreadsTokens.threadsActionCount))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspThreadsTokens.threadsLikeCoral))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -428,8 +400,8 @@ private struct LpspThreadsFeedTabScreen: View {
                         HStack(spacing: 14) {
                             ForEach(LpspThreadsDemoStories.items) { s in
                                 VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspThreadsTokens.threadsActionCount, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspThreadsTokens.threadsActionCount.opacity(0.2)).frame(width: 58, height: 58))
+                                    Circle().strokeBorder(LpspThreadsTokens.threadsLikeCoral, lineWidth: 2).frame(width: 66, height: 66)
+                                        .overlay(Circle().fill(LpspThreadsTokens.threadsLikeCoral.opacity(0.2)).frame(width: 58, height: 58))
                                     Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
                                 }
                             }
@@ -439,7 +411,7 @@ private struct LpspThreadsFeedTabScreen: View {
 
 
                     ForEach(0..<3, id: \.self) { i in
-                        LpspThreadsGenericFeedCard(index: i, accent: LpspThreadsTokens.threadsActionCount)
+                        LpspThreadsGenericFeedCard(index: i, accent: LpspThreadsTokens.threadsLikeCoral)
                     }
 
                 }
@@ -459,7 +431,7 @@ private struct LpspThreadsExploreTabScreen: View {
                 LazyVGrid(columns: cols, spacing: 2) {
                     ForEach(0..<15, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspThreadsTokens.threadsActionCount.opacity(0.08 + Double(i) * 0.04))
+                            .fill(LpspThreadsTokens.threadsLikeCoral.opacity(0.08 + Double(i) * 0.04))
                             .aspectRatio(1, contentMode: .fit)
                     }
                 }
@@ -488,7 +460,7 @@ private struct LpspThreadsProfileTabScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspThreadsTokens.threadsActionCount.gradient).frame(width: 88, height: 88)
+                    Circle().fill(LpspThreadsTokens.threadsLikeCoral.gradient).frame(width: 88, height: 88)
                         .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
                     Text("lost.phone").font(.system(size: 20, weight: .bold))
                     Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)

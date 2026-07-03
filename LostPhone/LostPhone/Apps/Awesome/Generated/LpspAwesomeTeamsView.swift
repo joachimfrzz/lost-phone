@@ -289,20 +289,7 @@ fileprivate struct LpspTeamsTeamsPressable: ButtonStyle {
     }
 }
 
-fileprivate struct LpspTeamsRootTabView: View {
-    @Environment(\.colorScheme) private var scheme
-    var body: some View {
-        TabView {
-            ActivityView().tabItem { Label("Activity", systemImage: "bell.fill") }
-                .badge(3)
-            ChatView().tabItem     { Label("Chat",     systemImage: "bubble.left.and.bubble.right.fill") }
-            TeamsView().tabItem    { Label("Teams",    systemImage: "person.3.fill") }
-            CalendarView().tabItem { Label("Calendar", systemImage: "calendar") }
-            CallsView().tabItem    { Label("Calls",    systemImage: "phone.fill") }
-        }
-        .tint(scheme == .dark ? LpspTeamsTokens.teamsPurpleDark : LpspTeamsTokens.teamsPurpleLight)
-    }
-}
+
 
 // MARK: - Écrans showroom
 
@@ -317,7 +304,7 @@ private struct LpspTeamsShowroomRoot: View {
                 .tabItem { Label("Calendar", systemImage: "calendar") }
                 .tag(1)
         }
-        .tint(LpspTeamsTokens.teamsReaction)
+        .tint(LpspTeamsTokens.teamsPurpleLight)
         
     }
 }
@@ -331,9 +318,9 @@ private struct LpspTeamsGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTeamsTokens.teamsReaction.opacity(0.15))
+                        .fill(LpspTeamsTokens.teamsPurpleLight.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTeamsTokens.teamsReaction))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTeamsTokens.teamsPurpleLight))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

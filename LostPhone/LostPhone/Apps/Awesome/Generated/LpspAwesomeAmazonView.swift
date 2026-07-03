@@ -335,28 +335,6 @@ fileprivate struct LpspAmazonAmazonQuantityStepper: View {
     }
 }
 
-fileprivate struct LpspAmazonAmazonRootTabView: View {
-    @State private var cartCount = 2
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-        appearance.shadowColor = UIColor(red: 0.867, green: 0.867, blue: 0.867, alpha: 1)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-    var body: some View {
-        TabView {
-            HomeView().tabItem { Label("Home",   systemImage: "house.fill") }
-            MenuView().tabItem { Label("Menu",   systemImage: "line.3.horizontal") }
-            CartView().tabItem { Label("Cart",   systemImage: "cart.fill") }
-                .badge(cartCount)
-            YouView().tabItem  { Label("You",    systemImage: "person.fill") }
-            SearchView().tabItem { Label("Search", systemImage: "magnifyingglass") }
-        }
-        .tint(LpspAmazonTokens.amzYellow)
-    }
-}
 
 fileprivate struct LpspAmazonAddToCartToast: View {
     @Binding var visible: Bool
@@ -384,7 +362,7 @@ private struct LpspAmazonShowroomRoot: View {
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
         }
-        .tint(LpspAmazonTokens.amzSuccessGreen)
+        .tint(LpspAmazonTokens.amzYellow)
         
     }
 }
@@ -398,9 +376,9 @@ private struct LpspAmazonGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspAmazonTokens.amzSuccessGreen.opacity(0.15))
+                        .fill(LpspAmazonTokens.amzYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAmazonTokens.amzSuccessGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAmazonTokens.amzYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

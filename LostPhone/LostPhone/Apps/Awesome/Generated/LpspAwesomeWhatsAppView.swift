@@ -370,27 +370,7 @@ fileprivate struct LpspWhatsAppWADoodleWallpaper: View {
     var body: some View { Color.clear }
 }
 
-fileprivate struct LpspWhatsAppWARootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            UpdatesView().tabItem { Label("Updates", systemImage: "circle.dashed") }
-            CallsView().tabItem { Label("Calls", systemImage: "phone.fill") }
-            CommunitiesView().tabItem { Label("Communities", systemImage: "person.3.fill") }
-            ChatsView().tabItem { Label("Chats", systemImage: "message.fill") }
-                .badge(3)
-            SettingsView().tabItem { Label("Settings", systemImage: "gearshape.fill") }
-        }
-        .tint(LpspWhatsAppTokens.waGreen)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -414,7 +394,7 @@ private struct LpspWhatsAppShowroomRoot: View {
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(4)
         }
-        .tint(LpspWhatsAppTokens.waGreen)
+        .tint(LpspWhatsAppTokens.waErrorRed)
         
     }
 }
@@ -428,9 +408,9 @@ private struct LpspWhatsAppGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspWhatsAppTokens.waGreen.opacity(0.15))
+                        .fill(LpspWhatsAppTokens.waErrorRed.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspWhatsAppTokens.waGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspWhatsAppTokens.waErrorRed))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -506,8 +486,8 @@ private struct LpspWhatsAppCallsTabScreen: View {
         NavigationStack {
             List(LpspWhatsAppDemoChats.chats) { chat in
                 HStack {
-                    Circle().fill(LpspWhatsAppTokens.waGreen.opacity(0.15)).frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspWhatsAppTokens.waGreen))
+                    Circle().fill(LpspWhatsAppTokens.waErrorRed.opacity(0.15)).frame(width: 40, height: 40)
+                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspWhatsAppTokens.waErrorRed))
                     VStack(alignment: .leading) {
                         Text(chat.name).font(.system(size: 17, weight: .semibold))
                         Text("Appel vocal · Hier").font(.subheadline).foregroundStyle(.secondary)
@@ -536,7 +516,7 @@ private struct LpspWhatsAppDemoBubble: View {
                 .font(.system(size: 17))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspWhatsAppTokens.waGreen.opacity(0.2) : Color(.systemGray5)))
+                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspWhatsAppTokens.waErrorRed.opacity(0.2) : Color(.systemGray5)))
             if !outgoing { Spacer(minLength: 60) }
         }
         .padding(.horizontal, 8)
@@ -551,7 +531,7 @@ private struct LpspWhatsAppDemoComposeBar: View {
                 .padding(10)
                 .background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
             Image(systemName: "paperplane.fill")
-                .foregroundStyle(LpspWhatsAppTokens.waGreen)
+                .foregroundStyle(LpspWhatsAppTokens.waErrorRed)
                 .font(.title2)
         }
         .padding(8)

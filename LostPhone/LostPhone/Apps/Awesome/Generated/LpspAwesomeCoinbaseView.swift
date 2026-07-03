@@ -349,27 +349,7 @@ fileprivate struct LpspCoinbaseWalletAddressView: View {
     }
 }
 
-fileprivate struct LpspCoinbaseCoinbaseRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-        appearance.shadowColor = UIColor(red: 0.882, green: 0.894, blue: 0.910, alpha: 1)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            HomeView()    .tabItem { Label("Home",    systemImage: "house") }
-            TradeView()   .tabItem { Label("Trade",   systemImage: "arrow.left.arrow.right") }
-            CardsView()   .tabItem { Label("Cards",   systemImage: "creditcard") }
-            EarnView()    .tabItem { Label("Earn",    systemImage: "percent") }
-            WalletView()  .tabItem { Label("Wallet",  systemImage: "wallet.pass") }
-        }
-        .tint(LpspCoinbaseTokens.cbBlue)
-    }
-}
 
 // MARK: - Écrans showroom
 

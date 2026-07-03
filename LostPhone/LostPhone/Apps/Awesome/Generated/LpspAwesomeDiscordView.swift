@@ -365,7 +365,7 @@ fileprivate struct LpspDiscordDCChannelRow: View {
                 .frame(width: 20)
 
             Text(name)
-                .font(isActive ? .dcChannelActive : .dcChannelInactive)
+                .font(isActive ? LpspDiscordFonts.dcChannelActive : LpspDiscordFonts.dcChannelInactive)
                 .foregroundStyle(textColor)
 
             Spacer()
@@ -464,27 +464,6 @@ fileprivate struct LpspDiscordDCReactionChip: View {
     }
 }
 
-fileprivate struct LpspDiscordDCRootTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(LpspDiscordTokens.dcServerRail)
-        appearance.shadowColor = UIColor(LpspDiscordTokens.dcDivider)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-
-    var body: some View {
-        TabView {
-            ServersView().tabItem { Label("Servers", systemImage: "square.grid.2x2.fill") }
-            MessagesView().tabItem { Label("Messages", systemImage: "bubble.left.and.bubble.right.fill") }
-            NotificationsView().tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .badge(5)
-            ProfileView().tabItem { Label("You", systemImage: "person.crop.circle.fill") }
-        }
-        .tint(LpspDiscordTokens.dcTextPrimary)
-    }
-}
 
 fileprivate struct LpspDiscordDCMobileShell: View {
     @State private var drawerOpen: Bool = true
@@ -539,7 +518,7 @@ private struct LpspDiscordShowroomRoot: View {
                 .tabItem { Label("You", systemImage: "person.crop.circle.fill") }
                 .tag(3)
         }
-        .tint(LpspDiscordTokens.dcOnlineGreen)
+        .tint(LpspDiscordTokens.dcIdleYellow)
         
     }
 }
@@ -553,9 +532,9 @@ private struct LpspDiscordGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspDiscordTokens.dcOnlineGreen.opacity(0.15))
+                        .fill(LpspDiscordTokens.dcIdleYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDiscordTokens.dcOnlineGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDiscordTokens.dcIdleYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
@@ -574,8 +553,8 @@ private struct LpspDiscordPlaceholderChatRow: View {
     let time: String
     var body: some View {
         HStack(spacing: 12) {
-            Circle().fill(LpspDiscordTokens.dcOnlineGreen.opacity(0.2)).frame(width: 48, height: 48)
-                .overlay(Text(String(name.prefix(1))).font(.headline).foregroundStyle(LpspDiscordTokens.dcOnlineGreen))
+            Circle().fill(LpspDiscordTokens.dcIdleYellow.opacity(0.2)).frame(width: 48, height: 48)
+                .overlay(Text(String(name.prefix(1))).font(.headline).foregroundStyle(LpspDiscordTokens.dcIdleYellow))
             VStack(alignment: .leading) {
                 Text(name).font(.system(size: 17, weight: .semibold))
                 Text(preview).font(.system(size: 15)).foregroundStyle(.secondary).lineLimit(1)
@@ -651,8 +630,8 @@ private struct LpspDiscordCallsTabScreen: View {
         NavigationStack {
             List(LpspDiscordDemoChats.chats) { chat in
                 HStack {
-                    Circle().fill(LpspDiscordTokens.dcOnlineGreen.opacity(0.15)).frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspDiscordTokens.dcOnlineGreen))
+                    Circle().fill(LpspDiscordTokens.dcIdleYellow.opacity(0.15)).frame(width: 40, height: 40)
+                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspDiscordTokens.dcIdleYellow))
                     VStack(alignment: .leading) {
                         Text(chat.name).font(.system(size: 17, weight: .semibold))
                         Text("Appel vocal · Hier").font(.subheadline).foregroundStyle(.secondary)
@@ -681,7 +660,7 @@ private struct LpspDiscordDemoBubble: View {
                 .font(.system(size: 17))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspDiscordTokens.dcOnlineGreen.opacity(0.2) : Color(.systemGray5)))
+                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspDiscordTokens.dcIdleYellow.opacity(0.2) : Color(.systemGray5)))
             if !outgoing { Spacer(minLength: 60) }
         }
         .padding(.horizontal, 8)
@@ -696,7 +675,7 @@ private struct LpspDiscordDemoComposeBar: View {
                 .padding(10)
                 .background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
             Image(systemName: "paperplane.fill")
-                .foregroundStyle(LpspDiscordTokens.dcOnlineGreen)
+                .foregroundStyle(LpspDiscordTokens.dcIdleYellow)
                 .font(.title2)
         }
         .padding(8)

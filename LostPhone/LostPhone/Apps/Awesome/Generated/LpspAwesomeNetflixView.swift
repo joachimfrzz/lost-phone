@@ -325,31 +325,7 @@ fileprivate struct LpspNetflixNetflixHeader: View {
     }
 }
 
-fileprivate struct LpspNetflixNetflixTabView: View {
-    init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(LpspNetflixTokens.netflixCanvas).withAlphaComponent(0.92)
-        appearance.shadowColor = UIColor(LpspNetflixTokens.netflixDivider)
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
 
-    var body: some View {
-        TabView {
-            HomeView()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-            NewHotView()
-                .tabItem { Label("New & Hot", systemImage: "play.rectangle.on.rectangle.fill") }
-            MyNetflixView()
-                .tabItem { Label("My Netflix", systemImage: "person.crop.circle.fill") }
-            DownloadsView()
-                .tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
-        }
-        .tint(.white)
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -370,7 +346,7 @@ private struct LpspNetflixShowroomRoot: View {
                 .tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
                 .tag(3)
         }
-        .tint(LpspNetflixTokens.netflixProfileGreen)
+        .tint(LpspNetflixTokens.netflixProfileYellow)
         .preferredColorScheme(.dark)
     }
 }
@@ -384,9 +360,9 @@ private struct LpspNetflixGenericTabScreen: View {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspNetflixTokens.netflixProfileGreen.opacity(0.15))
+                        .fill(LpspNetflixTokens.netflixProfileYellow.opacity(0.15))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspNetflixTokens.netflixProfileGreen))
+                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspNetflixTokens.netflixProfileYellow))
                     VStack(alignment: .leading) {
                         Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
                         Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)

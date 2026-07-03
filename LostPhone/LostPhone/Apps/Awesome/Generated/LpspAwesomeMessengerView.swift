@@ -233,7 +233,7 @@ fileprivate struct LpspMessengerConversationRow: View {
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text(name)
-                    .font(unread ? .msgConvoUnread : .msgConvoName)
+                    .font(unread ? LpspMessengerFonts.msgConvoUnread : LpspMessengerFonts.msgConvoName)
                     .foregroundStyle(LpspMessengerTokens.msgTextPrimary)
                 Text(preview).font(LpspMessengerFonts.msgPreview)
                     .foregroundStyle(LpspMessengerTokens.msgTextSecondary).lineLimit(1)
@@ -268,24 +268,7 @@ fileprivate struct LpspMessengerTypingBubble: View {
     }
 }
 
-fileprivate struct LpspMessengerRootTabView: View {
-    init() {
-        let a = UITabBarAppearance()
-        a.configureWithOpaqueBackground()
-        a.backgroundColor = UIColor.systemBackground
-        a.shadowColor = UIColor(LpspMessengerTokens.msgDivider)
-        UITabBar.appearance().standardAppearance = a
-        UITabBar.appearance().scrollEdgeAppearance = a
-    }
-    var body: some View {
-        TabView {
-            ChatsView().tabItem { Label("Chats", systemImage: "message.fill") }
-            MarketplaceView().tabItem { Label("Marketplace", systemImage: "storefront.fill") }
-            StoriesView().tabItem { Label("Stories", systemImage: "play.circle.fill") }
-        }
-        .tint(LpspMessengerTokens.msgBlue)
-    }
-}
+
 
 // MARK: - Écrans showroom
 

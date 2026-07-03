@@ -186,7 +186,7 @@ fileprivate struct LpspShazamShazamHome: View {
                 }
 
                 Text(isListening ? "Listening for music…" : "Tap to Shazam")
-                    .font(isListening ? .shazamButton : .shazamPrompt)
+                    .font(isListening ? LpspShazamFonts.shazamButton : LpspShazamFonts.shazamPrompt)
                     .foregroundStyle(.white)
                     .padding(.top, 24)
 
@@ -305,16 +305,7 @@ fileprivate enum LpspShazamShazamState { case idle, listening, matched(track: St
     }
 }
 
-fileprivate struct LpspShazamRootView: View {
-    @State private var showLibrary = false
-    var body: some View {
-        LpspShazamShazamHome()
-            .sheet(isPresented: $showLibrary) {
-                LpspShazamRecentShazamsSheet(items: [])
-            }
-            .preferredColorScheme(.dark)
-    }
-}
+
 
 // MARK: - Écrans showroom
 

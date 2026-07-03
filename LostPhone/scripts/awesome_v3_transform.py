@@ -5,6 +5,15 @@ from __future__ import annotations
 import re
 from typing import Sequence
 
+SYSTEM_COLOR_MEMBERS = frozenset(
+    {"white", "black", "clear", "primary", "secondary", "accentColor", "red", "blue", "green"}
+)
+
+
+def is_system_color_ref(name: str) -> bool:
+    return name in SYSTEM_COLOR_MEMBERS
+
+
 SWIFT_KEYWORDS = frozenset(
     {
         "View",
@@ -237,7 +246,7 @@ def apply_token_and_font_refs(
         code = re.sub(rf"\.font\(\.{re.escape(f)}\)", f".font({fonts_enum}.{f})", code)
         code = re.sub(rf"Font\.{re.escape(f)}\b", f"{fonts_enum}.{f}", code)
     for t in token_names:
-        if t in font_names:
+        if t in font_names or is_system_color_ref(t):
             continue
         code = re.sub(rf"\bColor\.{re.escape(t)}\b", f"{tokens_enum}.{t}", code)
         code = re.sub(rf"\.foregroundStyle\(\.{re.escape(t)}\)", f".foregroundStyle({tokens_enum}.{t})", code)
@@ -263,7 +272,98 @@ def fix_linear_gradient_refs(code: str, grad_enum: str) -> str:
     grad_names = re.findall(r"static (?:let|var) (\w+)", grad_block)
     for g in grad_names:
         code = re.sub(rf"\bLinearGradient\.{re.escape(g)}\b", f"{grad_enum}.{g}", code)
+        code = re.sub(rf"\bLinearGradient\s*=\s*\.{re.escape(g)}\b", f"LinearGradient = {grad_enum}.{g}", code)
     return code
+
+
+def fix_misplaced_gradient_token_refs(code: str, grad_enum: str, tokens_enum: str) -> str:
+    """Corrige LpspXxxTokens.foo quand foo est un gradient (ex. dzArtwork)."""
+    if grad_enum not in code:
+        return code
+    grad_block = code.split(f"private enum {grad_enum}", 1)[1].split("\nprivate ", 1)[0]
+    for g in re.findall(r"static (?:let|var) (\w+)", grad_block):
+        code = re.sub(rf"\b{re.escape(tokens_enum)}\.{re.escape(g)}\b", f"{grad_enum}.{g}", code)
+    return code
+
+
+def fix_self_referential_tokens(code: str, tokens_enum: str) -> str:
+    """Répare `static let foo = LpspXxxTokens.foo` et tokens.white → Color.white."""
+    for member in SYSTEM_COLOR_MEMBERS:
+        code = re.sub(rf"\b{re.escape(tokens_enum)}\.{member}\b", f"Color.{member}", code)
+    code = re.sub(
+        rf"static let (\w+)\s*=\s*{re.escape(tokens_enum)}\.\1\b",
+        r"static let \1 = Color.clear // unresolved token ref",
+        code,
+    )
+    return code
+
+
+def fix_view_body_property_conflict(code: str) -> str:
+    """Renomme `let body: String` dans les structs View (conflit avec `var body`)."""
+    out: list[str] = []
+    i = 0
+    lines = code.splitlines(keepends=True)
+    while i < len(lines):
+        line = lines[i]
+        m = re.match(r"(private |fileprivate )?struct (\w+).*:\s*View\b", line.strip())
+        if m:
+            block = [line]
+            i += 1
+            depth = line.count("{") - line.count("}")
+            while i < len(lines) and depth > 0:
+                block.append(lines[i])
+                depth += lines[i].count("{") - lines[i].count("}")
+                i += 1
+            block_text = "".join(block)
+            if re.search(r"\blet body:\s*String", block_text) and re.search(r"\bvar body:\s*some View", block_text):
+                block_text = re.sub(r"\blet body:", "let postText:", block_text)
+                block_text = re.sub(r"\bText\(body\)", "Text(postText)", block_text)
+                block_text = re.sub(r"\bif let body\b", "if let postText", block_text)
+                block_text = re.sub(r"\bbody\?\.", "postText?.", block_text)
+                block_text = re.sub(r"\bbody,\s", "postText, ", block_text)
+            out.append(block_text)
+            continue
+        out.append(line)
+        i += 1
+    return "".join(out)
+
+
+def add_missing_stub_types(code: str, prefix: str) -> str:
+    """Types référencés dans la spec mais jamais définis."""
+    stubs: list[str] = []
+    if re.search(r"\bCastMember\b", code) and not re.search(rf"\bstruct\s+{re.escape(prefix)}CastMember\b", code):
+        code = re.sub(r"\bCastMember\b", f"{prefix}CastMember", code)
+        stubs.append(
+            f"fileprivate struct {prefix}CastMember: Identifiable {{\n"
+            f"    let id = UUID()\n"
+            f"    let name: String\n"
+            f"    let role: String\n"
+            f"    var headshot: Image {{ Image(systemName: \"person.circle.fill\") }}\n"
+            f"}}"
+        )
+    if re.search(r"\bChatLine\b", code) and not re.search(rf"\bstruct\s+{re.escape(prefix)}ChatLine\b", code):
+        code = re.sub(r"\bChatLine\b", f"{prefix}ChatLine", code)
+        stubs.append(
+            f"fileprivate struct {prefix}ChatLine: Identifiable {{\n"
+            f"    let id = UUID()\n"
+            f"    let username: String\n"
+            f"    let message: String\n"
+            f"    let color: Color\n"
+            f"}}"
+        )
+    if stubs:
+        code = code.rstrip() + "\n\n" + "\n\n".join(stubs) + "\n"
+    return code
+
+
+def privatize_file_scoped_extensions(code: str) -> str:
+    """Extensions View/Text/Font scoped au fichier (évite collisions Banque/Revolut, etc.)."""
+    return re.sub(
+        r"^extension (View|Text|Font|Image)\b",
+        r"fileprivate extension \1",
+        code,
+        flags=re.MULTILINE,
+    )
 
 
 def strip_orphan_motion_lines(code: str) -> str:
@@ -354,7 +454,7 @@ def dedupe_extension_view(code: str) -> str:
     lines = code.splitlines(keepends=True)
     while i < len(lines):
         line = lines[i]
-        if re.match(r"extension (View|Text|Font|Image)\b", line.strip()):
+        if re.match(r"(fileprivate )?extension (View|Text|Font|Image)\b", line.strip()):
             block_lines = [line]
             i += 1
             depth = line.count("{") - line.count("}")
@@ -447,15 +547,30 @@ def finalize_component_swift(code: str, prefix: str) -> str:
         font_names = list(dict.fromkeys(re.findall(r"static let (\w+)\s*=", fb)))
     code = apply_token_and_font_refs(code, token_names, font_names, tokens_enum, fonts_enum)
     code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names)
-    code = re.sub(rf"\bColor\.(\w+)\b", rf"{tokens_enum}.\1", code)
+    code = fix_misplaced_gradient_token_refs(code, grad_enum, tokens_enum)
+    code = fix_self_referential_tokens(code, tokens_enum)
 
+    def _color_to_token(m: re.Match[str]) -> str:
+        name = m.group(1)
+        if is_system_color_ref(name):
+            return m.group(0)
+        return f"{tokens_enum}.{name}"
+
+    code = re.sub(rf"\bColor\.(\w+)\b", _color_to_token, code)
+
+    code = dedupe_extension_view(code)
+    code = fix_view_body_property_conflict(code)
+    code = add_missing_stub_types(code, prefix)
+    code = privatize_file_scoped_extensions(code)
     code = dedupe_private_types(code, prefix)
 
-    # Structs extraites = private (sauf déjà private)
-    code = re.sub(r"\nstruct Lpsp", r"\nprivate struct Lpsp", code)
-    code = re.sub(r"\nenum Lpsp", r"\nprivate enum Lpsp", code)
+    # Structs extraites = fileprivate (sauf déjà private/fileprivate)
+    code = re.sub(r"\nstruct Lpsp", r"\nfileprivate struct Lpsp", code)
+    code = re.sub(r"\nenum Lpsp", r"\nfileprivate enum Lpsp", code)
+    code = re.sub(r"\n@Observable final class Lpsp", r"\n@Observable fileprivate final class Lpsp", code)
     # Ne pas privatiser Tokens/Fonts/Gradients déjà private enum
     code = code.replace("private private ", "private ")
+    code = code.replace("fileprivate fileprivate ", "fileprivate ")
 
     if "UIFont" in code and "import UIKit" not in code:
         code = "import UIKit\n" + code
@@ -517,7 +632,7 @@ def transform_blocks(
 
     components = {
         m.group(1)
-        for m in re.finditer(rf"\bprivate struct\s+({re.escape(prefix)}\w+)", merged)
+        for m in re.finditer(rf"\b(?:private|fileprivate) struct\s+({re.escape(prefix)}\w+)", merged)
         if not m.group(1).endswith("Style") and "ShowroomRoot" not in m.group(1) and "TabScreen" not in m.group(1) and "Demo" not in m.group(1)
     }
 

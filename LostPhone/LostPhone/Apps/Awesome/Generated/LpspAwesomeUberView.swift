@@ -37,8 +37,8 @@ private enum LpspUberFonts {
 
 private enum LpspUberTokens {
     // MARK: - Canvas & Brand
-    static let uberBlack          = LpspUberTokens.black                                 // #000000
-    static let uberWhite          = LpspUberTokens.white                                 // #FFFFFF
+    static let uberBlack          = Color.black                                 // #000000
+    static let uberWhite          = Color.white                                 // #FFFFFF
     static let uberCanvasDark     = Color(red: 0.047, green: 0.047, blue: 0.047) // #0C0C0C
 
     // MARK: - Gray Ramp
@@ -70,7 +70,7 @@ private enum LpspUberTokens {
 // System fallback when Uber Move isn't bundled:
 
 
-private struct LpspUberUberPrimaryButton: View {
+fileprivate struct LpspUberUberPrimaryButton: View {
     let title: String
     var isLoading: Bool = false
     let action: () -> Void
@@ -95,7 +95,7 @@ private struct LpspUberUberPrimaryButton: View {
     }
 }
 
-private struct LpspUberUberPressableStyle: ButtonStyle {
+fileprivate struct LpspUberUberPressableStyle: ButtonStyle {
     var pressedFill: Color? = nil
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
@@ -105,7 +105,7 @@ private struct LpspUberUberPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspUberWhereToInput: View {
+fileprivate struct LpspUberWhereToInput: View {
     var body: some View {
         HStack(spacing: 14) {
             VStack(spacing: 4) {
@@ -141,7 +141,7 @@ private struct LpspUberWhereToInput: View {
     }
 }
 
-private struct LpspUberRideOptionCard: View {
+fileprivate struct LpspUberRideOptionCard: View {
     let name: String
     let eta: String
     let capacity: Int
@@ -197,7 +197,7 @@ private struct LpspUberRideOptionCard: View {
     }
 }
 
-private struct LpspUberActiveTripCard: View {
+fileprivate struct LpspUberActiveTripCard: View {
     let driverName: String
     let rating: Double
     let carModel: String
@@ -257,7 +257,7 @@ private struct LpspUberActiveTripCard: View {
     }
 }
 
-private struct LpspUberUberBottomSheet<Content: View>: View {
+fileprivate struct LpspUberUberBottomSheet<Content: View>: View {
     @State private var selectedDetent: PresentationDetent = .medium
     @ViewBuilder var content: () -> Content
 
@@ -286,7 +286,7 @@ private struct LpspUberUberBottomSheet<Content: View>: View {
 
 import MapKit
 
-private struct LpspUberUberMapView: View {
+fileprivate struct LpspUberUberMapView: View {
     @State private var camera: MapCameraPosition = .automatic
 
     var body: some View {
@@ -304,10 +304,10 @@ private struct LpspUberUberMapView: View {
     }
 }
 
-private struct LpspUberDestinationPin: View {
+fileprivate struct LpspUberDestinationPin: View {
     var body: some View {
         ZStack(alignment: .bottom) {
-            Ellipse().fill(LpspUberTokens.black.opacity(0.25))
+            Ellipse().fill(Color.black.opacity(0.25))
                 .frame(width: 28, height: 8)
                 .offset(y: 4)
                 .blur(radius: 3)
@@ -318,7 +318,7 @@ private struct LpspUberDestinationPin: View {
     }
 }
 
-private struct LpspUberFloatingMapButton: View {
+fileprivate struct LpspUberFloatingMapButton: View {
     let systemImage: String
     let action: () -> Void
 
@@ -334,7 +334,7 @@ private struct LpspUberFloatingMapButton: View {
     }
 }
 
-private struct LpspUberDriverBeacon: View {
+fileprivate struct LpspUberDriverBeacon: View {
     @State private var animate = false
 
     var body: some View {
@@ -362,7 +362,7 @@ private struct LpspUberDriverBeacon: View {
     }
 }
 
-private struct LpspUberRootTabView: View {
+fileprivate struct LpspUberRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()

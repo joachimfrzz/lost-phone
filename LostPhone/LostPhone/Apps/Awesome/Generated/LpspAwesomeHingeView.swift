@@ -71,7 +71,7 @@ private enum LpspHingeTokens {
 // If Sailec/Inter aren't bundled, this fallback keeps the warm system substitute:
 
 
-private struct LpspHingeHeartTap: View {
+fileprivate struct LpspHingeHeartTap: View {
     @Binding var isFilled: Bool
     var onTap: () -> Void
 
@@ -99,7 +99,7 @@ private struct LpspHingeHeartTap: View {
     }
 }
 
-private struct LpspHingePromptCard: View {
+fileprivate struct LpspHingePromptCard: View {
     let question: String
     let answer: String
     @State private var isLiked = false
@@ -138,7 +138,7 @@ private struct LpspHingePromptCard: View {
     }
 }
 
-private struct LpspHingePhotoCard: View {
+fileprivate struct LpspHingePhotoCard: View {
     let image: Image
     @State private var isLiked = false
     var onCommentTap: () -> Void
@@ -156,7 +156,7 @@ private struct LpspHingePhotoCard: View {
     }
 }
 
-private struct LpspHingeAttributeChip: View {
+fileprivate struct LpspHingeAttributeChip: View {
     let glyph: String          // SF Symbol
     let label: String
     var isVerified: Bool = false
@@ -181,7 +181,7 @@ private struct LpspHingeAttributeChip: View {
     }
 }
 
-private struct LpspHingeStandoutsCard: View {
+fileprivate struct LpspHingeStandoutsCard: View {
     let photo: Image
     let answer: String
     var onSendRose: () -> Void
@@ -232,7 +232,7 @@ private struct LpspHingeStandoutsCard: View {
     }
 }
 
-private struct LpspHingeRoseCTA: View {
+fileprivate struct LpspHingeRoseCTA: View {
     var label: String = "Send a Rose"
     var action: () -> Void
 
@@ -259,7 +259,7 @@ private struct LpspHingeRoseCTA: View {
     }
 }
 
-private struct LpspHingeHingePrimaryButton: View {
+fileprivate struct LpspHingeHingePrimaryButton: View {
     let label: String
     var action: () -> Void
 
@@ -277,7 +277,7 @@ private struct LpspHingeHingePrimaryButton: View {
     }
 }
 
-private struct LpspHingeCommentSheet: View {
+fileprivate struct LpspHingeCommentSheet: View {
     let source: AnyView                // The pinned prompt card or photo
     @State private var comment: String = ""
     var onSend: (String) -> Void
@@ -321,7 +321,7 @@ private struct LpspHingeCommentSheet: View {
     }
 }
 
-private struct LpspHingeMatchCelebration: View {
+fileprivate struct LpspHingeMatchCelebration: View {
     let myAvatar: Image
     let theirName: String
     let theirAvatar: Image
@@ -380,7 +380,7 @@ private struct LpspHingeMatchCelebration: View {
     }
 }
 
-private struct LpspHingeRootTabView: View {
+fileprivate struct LpspHingeRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()

@@ -13,15 +13,15 @@ struct LpspAwesomeLinkedInView: View {
 private enum LpspLinkedInTokens {
     // MARK: - Canvas & Surfaces
     static let liCanvas         = Color(red: 0.953, green: 0.949, blue: 0.937)  // #F3F2EF
-    static let liCardSurface    = LpspLinkedInTokens.white                                    // #FFFFFF
+    static let liCardSurface    = Color.white                                    // #FFFFFF
     static let liElevated       = Color(red: 0.976, green: 0.976, blue: 0.976)  // #F9F9F9
     static let liDivider        = Color(red: 0.878, green: 0.875, blue: 0.863)  // #E0DFDC
     static let liDividerSubtle  = Color(red: 0.929, green: 0.929, blue: 0.929)  // #EDEDED
 
     // MARK: - Text
-    static let liTextPrimary    = LpspLinkedInTokens.black.opacity(0.9)                      // #000000E6
-    static let liTextSecondary  = LpspLinkedInTokens.black.opacity(0.6)                      // #00000099
-    static let liTextTertiary   = LpspLinkedInTokens.black.opacity(0.4)                      // #00000066
+    static let liTextPrimary    = Color.black.opacity(0.9)                      // #000000E6
+    static let liTextSecondary  = Color.black.opacity(0.6)                      // #00000099
+    static let liTextTertiary   = Color.black.opacity(0.4)                      // #00000066
 
     // MARK: - Brand
     static let liBlue           = Color(red: 0.039, green: 0.400, blue: 0.761)  // #0A66C2
@@ -67,7 +67,7 @@ private enum LpspLinkedInFonts {
     static let liBadge           = Font.system(size: 11, weight: .bold)
 }
 
-private struct LpspLinkedInLinkedInPillButton: View {
+fileprivate struct LpspLinkedInLinkedInPillButton: View {
     enum Variant { case filled, outline }
     let title: String
     let systemImage: String?
@@ -84,14 +84,14 @@ private struct LpspLinkedInLinkedInPillButton: View {
                 Text(title)
                     .font(variant == .filled ? .liButtonPrimary : .liButtonSecondary)
             }
-            .foregroundStyle(variant == .filled ? LpspLinkedInTokens.white : LpspLinkedInTokens.liBlue)
+            .foregroundStyle(variant == .filled ? Color.white : LpspLinkedInTokens.liBlue)
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
             .background(
-                Capsule().fill(variant == .filled ? LpspLinkedInTokens.liBlue : LpspLinkedInTokens.clear)
+                Capsule().fill(variant == .filled ? LpspLinkedInTokens.liBlue : Color.clear)
             )
             .overlay(
-                Capsule().strokeBorder(variant == .outline ? LpspLinkedInTokens.liBlue : LpspLinkedInTokens.clear, lineWidth: 1)
+                Capsule().strokeBorder(variant == .outline ? LpspLinkedInTokens.liBlue : Color.clear, lineWidth: 1)
             )
         }
         .buttonStyle(LpspLinkedInLinkedInPressableStyle())
@@ -99,7 +99,7 @@ private struct LpspLinkedInLinkedInPillButton: View {
     }
 }
 
-private struct LpspLinkedInLinkedInPressableStyle: ButtonStyle {
+fileprivate struct LpspLinkedInLinkedInPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
@@ -107,12 +107,12 @@ private struct LpspLinkedInLinkedInPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspLinkedInFeedPostCard: View {
+fileprivate struct LpspLinkedInFeedPostCard: View {
     let authorName: String
     let connectionDegree: String           // "1st", "2nd", "3rd+"
     let headline: String                   // job title + company
     let timeAgo: String                    // "3d •"
-    let body: String
+    let postText: String
     let mediaImage: Image?
     let isPremium: Bool
     let isOpenToWork: Bool
@@ -149,7 +149,7 @@ private struct LpspLinkedInFeedPostCard: View {
             .padding(.horizontal, 16)
             .padding(.top, 12)
 
-            Text(body)
+            Text(postText)
                 .font(LpspLinkedInFonts.liPostBody)
                 .foregroundStyle(LpspLinkedInTokens.liTextPrimary)
                 .lineSpacing(4)
@@ -179,7 +179,7 @@ private struct LpspLinkedInFeedPostCard: View {
     }
 }
 
-private struct LpspLinkedInAvatarView: View {
+fileprivate struct LpspLinkedInAvatarView: View {
     let size: CGFloat
     let isPremium: Bool
     let isOpenToWork: Bool
@@ -217,7 +217,7 @@ private struct LpspLinkedInAvatarView: View {
     }
 }
 
-private struct LpspLinkedInReactionPicker: View {
+fileprivate struct LpspLinkedInReactionPicker: View {
     @Binding var isShown: Bool
     let onSelect: (LpspLinkedInReaction) -> Void
 
@@ -266,7 +266,7 @@ private struct LpspLinkedInReactionPicker: View {
     }
 }
 
-private struct LpspLinkedInReactionFooterRow: View {
+fileprivate struct LpspLinkedInReactionFooterRow: View {
     let reactionCount: Int
     let commentCount: Int
 
@@ -301,7 +301,7 @@ private struct LpspLinkedInReactionFooterRow: View {
     }
 }
 
-private struct LpspLinkedInActionBar: View {
+fileprivate struct LpspLinkedInActionBar: View {
     @State private var isLiked = false
 
     var body: some View {
@@ -330,7 +330,7 @@ private struct LpspLinkedInActionBar: View {
     }
 }
 
-private struct LpspLinkedInRootTabView: View {
+fileprivate struct LpspLinkedInRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -351,7 +351,7 @@ private struct LpspLinkedInRootTabView: View {
     }
 }
 
-private struct LpspLinkedInLinkedInTopNav: View {
+fileprivate struct LpspLinkedInLinkedInTopNav: View {
     @State private var searchText = ""
 
     var body: some View {

@@ -13,7 +13,7 @@ struct LpspAwesomeFacebookView: View {
 private enum LpspFacebookTokens {
     // MARK: - Canvas & Surfaces (Light)
     static let fbCanvas           = Color(red: 0.941, green: 0.949, blue: 0.961) // #F0F2F5
-    static let fbCard             = LpspFacebookTokens.white                                   // #FFFFFF
+    static let fbCard             = Color.white                                   // #FFFFFF
     static let fbSurfaceTint      = Color(red: 0.969, green: 0.973, blue: 0.980) // #F7F8FA
     static let fbDivider          = Color(red: 0.894, green: 0.902, blue: 0.922) // #E4E6EB
     static let fbSeparator        = Color(red: 0.808, green: 0.816, blue: 0.831) // #CED0D4
@@ -72,12 +72,12 @@ private enum LpspFacebookFonts {
     static let fbLiveBadge     = Font.system(size: 10, weight: .bold)
 }
 
-private struct LpspFacebookFBPostCard: View {
+fileprivate struct LpspFacebookFBPostCard: View {
     let displayName: String
     let timestamp: String
     let audience: String // "Public", "Friends"
     let avatar: Image
-    let body: String
+    let postText: String
     let media: Image?
     @State private var userReaction: LpspFacebookFBReaction? = nil
     @State private var showReactions = false
@@ -110,7 +110,7 @@ private struct LpspFacebookFBPostCard: View {
             .padding(12)
 
             // Body
-            Text(body)
+            Text(postText)
                 .font(LpspFacebookFonts.fbPostBody)
                 .foregroundStyle(LpspFacebookTokens.fbTextPrimaryLight)
                 .padding(.horizontal, 12)
@@ -161,7 +161,7 @@ private struct LpspFacebookFBPostCard: View {
     }
 }
 
-private struct LpspFacebookFBActionButton: View {
+fileprivate struct LpspFacebookFBActionButton: View {
     let icon: String
     let label: String
     let color: Color
@@ -186,7 +186,7 @@ private struct LpspFacebookFBActionButton: View {
     }
 }
 
-private enum LpspFacebookFBReaction: String, CaseIterable, Identifiable {
+fileprivate enum LpspFacebookFBReaction: String, CaseIterable, Identifiable {
     case like, love, care, haha, wow, sad, angry
     var id: String { rawValue }
     var label: String {
@@ -216,7 +216,7 @@ private enum LpspFacebookFBReaction: String, CaseIterable, Identifiable {
     }
 }
 
-private struct LpspFacebookReactionsPopover: View {
+fileprivate struct LpspFacebookReactionsPopover: View {
     @Binding var selected: LpspFacebookFBReaction?
     @Binding var isShown: Bool
     @State private var hoveredIndex: Int? = nil
@@ -247,7 +247,7 @@ private struct LpspFacebookReactionsPopover: View {
     }
 }
 
-private struct LpspFacebookFBTopNav: View {
+fileprivate struct LpspFacebookFBTopNav: View {
     var body: some View {
         HStack {
             // Blue "f" logo in rounded square
@@ -277,7 +277,7 @@ private struct LpspFacebookFBTopNav: View {
     }
 }
 
-private struct LpspFacebookFBCircleIconButton: View {
+fileprivate struct LpspFacebookFBCircleIconButton: View {
     let system: String
     var body: some View {
         Button { } label: {
@@ -290,7 +290,7 @@ private struct LpspFacebookFBCircleIconButton: View {
     }
 }
 
-private struct LpspFacebookReactionsLongPressModifier: ViewModifier {
+fileprivate struct LpspFacebookReactionsLongPressModifier: ViewModifier {
     @Binding var selection: LpspFacebookFBReaction?
     @State private var showPopover = false
     @State private var dragIndex: Int? = nil
@@ -333,13 +333,13 @@ private struct LpspFacebookReactionsLongPressModifier: ViewModifier {
     }
 }
 
-extension View {
+fileprivate extension View {
     func fbReactions(selection: Binding<LpspFacebookFBReaction?>) -> some View {
         modifier(LpspFacebookReactionsLongPressModifier(selection: selection))
     }
 }
 
-private struct LpspFacebookRootTabView: View {
+fileprivate struct LpspFacebookRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

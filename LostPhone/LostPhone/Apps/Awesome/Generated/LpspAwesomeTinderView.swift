@@ -12,7 +12,7 @@ struct LpspAwesomeTinderView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspTinderTokens {
     // MARK: - Canvas (Light)
-    static let tdrCanvas        = LpspTinderTokens.white                                    // #FFFFFF
+    static let tdrCanvas        = Color.white                                    // #FFFFFF
     static let tdrSurfaceMuted  = Color(red: 0.961, green: 0.961, blue: 0.961)  // #F5F5F5
     static let tdrSurfaceTint   = Color(red: 0.980, green: 0.980, blue: 0.980)  // #FAFAFA
     static let tdrDivider       = Color(red: 0.898, green: 0.898, blue: 0.898)  // #E5E5E5
@@ -76,7 +76,7 @@ private enum LpspTinderFonts {
     static let tdrSuperStamp    = Font.system(size: 32, weight: .regular)
 }
 
-private struct LpspTinderTinderSwipeCard: View {
+fileprivate struct LpspTinderTinderSwipeCard: View {
     let name: String
     let age: Int
     let distance: String
@@ -103,7 +103,7 @@ private struct LpspTinderTinderSwipeCard: View {
 
             // Bottom gradient for legibility
             LinearGradient(
-                colors: [.clear, LpspTinderTokens.black.opacity(0.7)],
+                colors: [.clear, Color.black.opacity(0.7)],
                 startPoint: UnitPoint(x: 0.5, y: 0.5),
                 endPoint: .bottom
             )
@@ -126,8 +126,8 @@ private struct LpspTinderTinderSwipeCard: View {
                     ForEach(0..<photoURLs.count, id: \.self) { idx in
                         RoundedRectangle(cornerRadius: 1.5)
                             .fill(idx == currentPhoto
-                                ? LpspTinderTokens.white
-                                : LpspTinderTokens.white.opacity(0.4))
+                                ? Color.white
+                                : Color.white.opacity(0.4))
                             .frame(height: 3)
                     }
                 }
@@ -183,9 +183,9 @@ private struct LpspTinderTinderSwipeCard: View {
     }
 }
 
-private enum LpspTinderSwipeDirection { case left, right, up }
+fileprivate enum LpspTinderSwipeDirection { case left, right, up }
 
-private struct LpspTinderTinderStamp: View {
+fileprivate struct LpspTinderTinderStamp: View {
     let text: String
     let color: Color
     let rotation: Double
@@ -203,7 +203,7 @@ private struct LpspTinderTinderStamp: View {
     }
 }
 
-private struct LpspTinderTinderActionBar: View {
+fileprivate struct LpspTinderTinderActionBar: View {
     let onRewind: () -> Void
     let onNope:   () -> Void
     let onSuper:  () -> Void
@@ -221,7 +221,7 @@ private struct LpspTinderTinderActionBar: View {
     }
 }
 
-private struct LpspTinderTinderActionButton: View {
+fileprivate struct LpspTinderTinderActionButton: View {
     let size: CGFloat
     let color: Color
     let symbol: String
@@ -235,7 +235,7 @@ private struct LpspTinderTinderActionButton: View {
                 .foregroundStyle(color)
                 .frame(width: size, height: size)
                 .background(
-                    Circle().fill(LpspTinderTokens.white)
+                    Circle().fill(Color.white)
                         .overlay(Circle().strokeBorder(color, lineWidth: 2))
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 2)
                 )
@@ -251,7 +251,7 @@ private struct LpspTinderTinderActionButton: View {
     }
 }
 
-private struct LpspTinderTinderBrandPillButton: View {
+fileprivate struct LpspTinderTinderBrandPillButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
@@ -270,7 +270,7 @@ private struct LpspTinderTinderBrandPillButton: View {
     }
 }
 
-private struct LpspTinderTinderMatchScreen: View {
+fileprivate struct LpspTinderTinderMatchScreen: View {
     let yourPhotoURL: URL
     let theirPhotoURL: URL
     let theirName: String
@@ -302,7 +302,7 @@ private struct LpspTinderTinderMatchScreen: View {
                             .foregroundStyle(LpspTinderGradients.tdrBrand)
                             .padding(.vertical, 14).padding(.horizontal, 32)
                             .frame(maxWidth: .infinity)
-                            .background(Capsule().fill(LpspTinderTokens.white))
+                            .background(Capsule().fill(Color.white))
                     }
                     Button {
                         // keep playing
@@ -323,7 +323,7 @@ private struct LpspTinderTinderMatchScreen: View {
     }
 }
 
-private struct LpspTinderMatchAvatar: View {
+fileprivate struct LpspTinderMatchAvatar: View {
     let url: URL
     var body: some View {
         AsyncImage(url: url) { img in
@@ -337,7 +337,7 @@ private struct LpspTinderMatchAvatar: View {
     }
 }
 
-private struct LpspTinderTinderChatBubble: View {
+fileprivate struct LpspTinderTinderChatBubble: View {
     enum LpspTinderSender { case me, them }
     let text: String
     let sender: LpspTinderSender
@@ -365,7 +365,7 @@ private struct LpspTinderTinderChatBubble: View {
     }
 }
 
-private struct LpspTinderTinderRootTabView: View {
+fileprivate struct LpspTinderTinderRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

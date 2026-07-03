@@ -18,7 +18,7 @@ private enum LpspDeezerTokens {
     static let dzDivider     = Color(red: 0.165, green: 0.149, blue: 0.200) // #2A2633
 
     // MARK: - Text
-    static let dzTextPrimary   = LpspDeezerTokens.white                                  // #FFFFFF
+    static let dzTextPrimary   = Color.white                                  // #FFFFFF
     static let dzTextSecondary = Color(red: 0.635, green: 0.612, blue: 0.690) // #A29CB0
     static let dzTextTertiary  = Color(red: 0.431, green: 0.408, blue: 0.502) // #6E6880
 
@@ -55,7 +55,7 @@ private enum LpspDeezerGradients {
     )
 }
 
-private enum LpspDeezerDZFont {
+fileprivate enum LpspDeezerDZFont {
     // Swap "DeezerSans" → "Inter" if the brand face isn't bundled.
     static let brand = "DeezerSans"
     static let read  = "Inter"
@@ -85,11 +85,11 @@ private enum LpspDeezerFonts {
 }
 
 // Tabular numerals for all timestamps
-extension View {
+fileprivate extension View {
     func dzTabularNumbers() -> some View { self.monospacedDigit() }
 }
 
-private struct LpspDeezerFlowArtwork: View {
+fileprivate struct LpspDeezerFlowArtwork: View {
     var isPlaying: Bool = true
     @State private var drift = false
 
@@ -127,7 +127,7 @@ private struct LpspDeezerFlowArtwork: View {
                 HStack(alignment: .bottom, spacing: 4) {
                     ForEach(bars.indices, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(LpspDeezerTokens.white.opacity(0.62))
+                            .fill(Color.white.opacity(0.62))
                             .frame(height: geo.size.height * 0.46 * bars[i])
                     }
                 }
@@ -145,7 +145,7 @@ private struct LpspDeezerFlowArtwork: View {
     }
 }
 
-private struct LpspDeezerPlayButton: View {
+fileprivate struct LpspDeezerPlayButton: View {
     @Binding var isPlaying: Bool
 
     var body: some View {
@@ -167,7 +167,7 @@ private struct LpspDeezerPlayButton: View {
     }
 }
 
-private struct LpspDeezerPressScale: ButtonStyle {
+fileprivate struct LpspDeezerPressScale: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.94 : 1)
@@ -175,7 +175,7 @@ private struct LpspDeezerPressScale: ButtonStyle {
     }
 }
 
-private struct LpspDeezerGradientScrubber: View {
+fileprivate struct LpspDeezerGradientScrubber: View {
     @Binding var progress: Double      // 0...1
     let elapsed: String                // "1:48"
     let remaining: String              // "-2:31"
@@ -216,11 +216,11 @@ private struct LpspDeezerGradientScrubber: View {
     }
 }
 
-private struct LpspDeezerSongRow: View {
+fileprivate struct LpspDeezerSongRow: View {
     let title: String
     let artist: String
     let isPlaying: Bool
-    var artworkGradient: LinearGradient = LpspDeezerTokens.dzArtwork
+    var artworkGradient: LinearGradient = LpspDeezerGradients.dzArtwork
 
     var body: some View {
         HStack(spacing: 12) {
@@ -248,7 +248,7 @@ private struct LpspDeezerSongRow: View {
     }
 }
 
-private struct LpspDeezerEqualizerMark: View {
+fileprivate struct LpspDeezerEqualizerMark: View {
     @State private var animate = false
     private let base: [CGFloat] = [7, 14, 5, 11]
     var body: some View {
@@ -266,7 +266,7 @@ private struct LpspDeezerEqualizerMark: View {
     }
 }
 
-private struct LpspDeezerNowPlayingTopBar: View {
+fileprivate struct LpspDeezerNowPlayingTopBar: View {
     var body: some View {
         HStack {
             Image(systemName: "chevron.down").font(.system(size: 22, weight: .bold))
@@ -285,7 +285,7 @@ private struct LpspDeezerNowPlayingTopBar: View {
     }
 }
 
-private struct LpspDeezerPrimaryButton: View {
+fileprivate struct LpspDeezerPrimaryButton: View {
     let title: String
     var action: () -> Void = {}
     var body: some View {
@@ -302,7 +302,7 @@ private struct LpspDeezerPrimaryButton: View {
     }
 }
 
-private struct LpspDeezerDZTabView: View {
+fileprivate struct LpspDeezerDZTabView: View {
     var body: some View {
         TabView {
             HomeView().tabItem    { Label("Home",    systemImage: "house.fill") }
@@ -323,7 +323,7 @@ private struct LpspDeezerDZTabView: View {
     }
 }
 
-private struct LpspDeezerDZTheme: ViewModifier {
+fileprivate struct LpspDeezerDZTheme: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(LpspDeezerTokens.dzCanvas)
@@ -331,7 +331,7 @@ private struct LpspDeezerDZTheme: ViewModifier {
             .preferredColorScheme(.dark)   // force dark — Deezer's identity
     }
 }
-extension View { func dzTheme() -> some View { modifier(LpspDeezerDZTheme()) } }
+fileprivate extension View { func dzTheme() -> some View { modifier(LpspDeezerDZTheme()) } }
 
 // MARK: - Écrans showroom
 

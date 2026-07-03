@@ -17,7 +17,7 @@ private enum LpspYouTubeTokens {
     static let ytRedHover   = Color(red: 0.902, green: 0.0,   blue: 0.0)   // #E60000
 
     // MARK: - Light Canvas
-    static let ytCanvasLight   = LpspYouTubeTokens.white                                  // #FFFFFF
+    static let ytCanvasLight   = Color.white                                  // #FFFFFF
     static let ytSurface1Light = Color(red: 0.976, green: 0.976, blue: 0.976) // #F9F9F9
     static let ytSurface2Light = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
     static let ytDividerLight  = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
@@ -35,7 +35,7 @@ private enum LpspYouTubeTokens {
     static let ytTextTertiaryLight  = Color(red: 0.565, green: 0.565, blue: 0.565) // #909090
 
     // MARK: - Text (Dark)
-    static let ytTextPrimaryDark   = LpspYouTubeTokens.white
+    static let ytTextPrimaryDark   = Color.white
     static let ytTextSecondaryDark = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
     static let ytTextTertiaryDark  = Color(red: 0.443, green: 0.443, blue: 0.443) // #717171
 
@@ -67,7 +67,7 @@ private enum LpspYouTubeFonts {
     }
 }
 
-private struct LpspYouTubeSubscribeButton: View {
+fileprivate struct LpspYouTubeSubscribeButton: View {
     @Binding var isSubscribed: Bool
     @State private var bellOn = false
 
@@ -114,7 +114,7 @@ private struct LpspYouTubeSubscribeButton: View {
     }
 }
 
-private struct LpspYouTubeVideoCard: View {
+fileprivate struct LpspYouTubeVideoCard: View {
     let thumbnailURL: URL
     let duration: String         // "12:34"
     let isLive: Bool
@@ -136,7 +136,7 @@ private struct LpspYouTubeVideoCard: View {
 
                 if isLive {
                     HStack(spacing: 4) {
-                        Circle().fill(LpspYouTubeTokens.white).frame(width: 6, height: 6)
+                        Circle().fill(Color.white).frame(width: 6, height: 6)
                         Text("LIVE")
                             .font(.custom("Roboto-Bold", size: 11))
                             .foregroundStyle(.white)
@@ -150,7 +150,7 @@ private struct LpspYouTubeVideoCard: View {
                         .font(LpspYouTubeFonts.ytDurationTag)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 6).padding(.vertical, 4)
-                        .background(RoundedRectangle(cornerRadius: 4).fill(LpspYouTubeTokens.black.opacity(0.75)))
+                        .background(RoundedRectangle(cornerRadius: 4).fill(Color.black.opacity(0.75)))
                         .padding(6)
                 }
             }
@@ -188,7 +188,7 @@ private struct LpspYouTubeVideoCard: View {
     }
 }
 
-private struct LpspYouTubeActionPill: View {
+fileprivate struct LpspYouTubeActionPill: View {
     let systemIcon: String
     let label: String?
     let isActive: Bool
@@ -215,7 +215,7 @@ private struct LpspYouTubeActionPill: View {
     }
 }
 
-private struct LpspYouTubeMiniPlayer: View {
+fileprivate struct LpspYouTubeMiniPlayer: View {
     let thumbnailURL: URL
     let title: String
     let channelName: String
@@ -265,7 +265,7 @@ private struct LpspYouTubeMiniPlayer: View {
     }
 }
 
-private struct LpspYouTubeFilterChip: View {
+fileprivate struct LpspYouTubeFilterChip: View {
     let label: String
     let isSelected: Bool
     let action: () -> Void
@@ -286,7 +286,7 @@ private struct LpspYouTubeFilterChip: View {
     }
 }
 
-private struct LpspYouTubeFilterChipRow: View {
+fileprivate struct LpspYouTubeFilterChipRow: View {
     let chips: [String]
     @State private var selected: String = "All"
 
@@ -304,7 +304,7 @@ private struct LpspYouTubeFilterChipRow: View {
     }
 }
 
-private struct LpspYouTubeShortsActionRail: View {
+fileprivate struct LpspYouTubeShortsActionRail: View {
     let creatorAvatarURL: URL
     let likeCount: String
     let commentCount: String
@@ -367,7 +367,7 @@ private struct LpspYouTubeShortsActionRail: View {
     }
 }
 
-private struct LpspYouTubeYouTubeTabView: View {
+fileprivate struct LpspYouTubeYouTubeTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

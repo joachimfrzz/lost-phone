@@ -58,14 +58,14 @@ private enum LpspSoundCloudTokens {
 // System fallback if Interstate / Inter are unavailable
 
 
-private struct LpspSoundCloudWaveformComment: Identifiable {
+fileprivate struct LpspSoundCloudWaveformComment: Identifiable {
     let id = UUID()
     let position: Double      // 0...1 along the track
     let avatar: Image
     let text: String
 }
 
-private struct LpspSoundCloudWaveformScrubber: View {
+fileprivate struct LpspSoundCloudWaveformScrubber: View {
     let samples: [CGFloat]        // 0...1 normalized amplitudes
     let progress: Double          // 0...1 current playback position
     let comments: [LpspSoundCloudWaveformComment]
@@ -141,7 +141,7 @@ private struct LpspSoundCloudWaveformScrubber: View {
     }
 }
 
-private struct LpspSoundCloudSCPlayButton: View {
+fileprivate struct LpspSoundCloudSCPlayButton: View {
     let isPlaying: Bool
     var size: CGFloat = 64
     let action: () -> Void
@@ -160,7 +160,7 @@ private struct LpspSoundCloudSCPlayButton: View {
     }
 }
 
-private struct LpspSoundCloudSCPressable: ButtonStyle {
+fileprivate struct LpspSoundCloudSCPressable: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -169,7 +169,7 @@ private struct LpspSoundCloudSCPressable: ButtonStyle {
     }
 }
 
-private struct LpspSoundCloudSCPill: View {
+fileprivate struct LpspSoundCloudSCPill: View {
     let title: String
     var style: LpspSoundCloudStyle = .filled
     let action: () -> Void
@@ -189,7 +189,7 @@ private struct LpspSoundCloudSCPill: View {
     }
 }
 
-private struct LpspSoundCloudSCTrackRow: View {
+fileprivate struct LpspSoundCloudSCTrackRow: View {
     let title: String
     let uploader: String
     let artwork: Image
@@ -228,7 +228,7 @@ private struct LpspSoundCloudSCTrackRow: View {
     }
 }
 
-private struct LpspSoundCloudSCNowPlaying: View {
+fileprivate struct LpspSoundCloudSCNowPlaying: View {
     let title: String
     let uploader: String
     let artwork: Image
@@ -269,7 +269,7 @@ private struct LpspSoundCloudSCNowPlaying: View {
     }
 }
 
-private struct LpspSoundCloudRootTabView: View {
+fileprivate struct LpspSoundCloudRootTabView: View {
     @Environment(\.colorScheme) private var scheme
     init() {
         let a = UITabBarAppearance()

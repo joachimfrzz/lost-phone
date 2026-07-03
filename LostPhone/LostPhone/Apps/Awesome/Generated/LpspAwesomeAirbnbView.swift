@@ -69,7 +69,7 @@ private enum LpspAirbnbTokens {
 // If Cereal isn't bundled, this fallback keeps the warm system substitute:
 
 
-private struct LpspAirbnbSaveHeart: View {
+fileprivate struct LpspAirbnbSaveHeart: View {
     @Binding var isSaved: Bool
 
     var body: some View {
@@ -95,7 +95,7 @@ private struct LpspAirbnbSaveHeart: View {
     }
 }
 
-private struct LpspAirbnbRatingRow: View {
+fileprivate struct LpspAirbnbRatingRow: View {
     let rating: Double
     let reviewCount: Int
 
@@ -114,7 +114,7 @@ private struct LpspAirbnbRatingRow: View {
     }
 }
 
-private struct LpspAirbnbStayCard: View {
+fileprivate struct LpspAirbnbStayCard: View {
     let photos: [Image]
     let title: String
     let host: String
@@ -183,7 +183,7 @@ private struct LpspAirbnbStayCard: View {
     }
 }
 
-private struct LpspAirbnbSearchPill: View {
+fileprivate struct LpspAirbnbSearchPill: View {
     var action: () -> Void
 
     var body: some View {
@@ -221,7 +221,7 @@ private struct LpspAirbnbSearchPill: View {
     }
 }
 
-private struct LpspAirbnbCategoryBar: View {
+fileprivate struct LpspAirbnbCategoryBar: View {
     let categories: [(icon: String, label: String)]
     @Binding var selected: Int
     @Namespace private var underlineNS
@@ -244,7 +244,7 @@ private struct LpspAirbnbCategoryBar: View {
                                 .matchedGeometryEffect(id: "underline", in: underlineNS)
                         } else {
                             Rectangle()
-                                .fill(LpspAirbnbTokens.clear)
+                                .fill(Color.clear)
                                 .frame(height: 2)
                         }
                     }
@@ -265,7 +265,7 @@ private struct LpspAirbnbCategoryBar: View {
     }
 }
 
-private struct LpspAirbnbBookingFooter: View {
+fileprivate struct LpspAirbnbBookingFooter: View {
     let totalPrice: Int
     let dateRange: String
     var onReserve: () -> Void
@@ -309,7 +309,7 @@ private struct LpspAirbnbBookingFooter: View {
     }
 }
 
-private struct LpspAirbnbMapPriceBubble: View {
+fileprivate struct LpspAirbnbMapPriceBubble: View {
     let price: Int
     var state: LpspAirbnbBubbleState = .default
 
@@ -339,7 +339,7 @@ private struct LpspAirbnbMapPriceBubble: View {
     }
 }
 
-private struct LpspAirbnbRootTabView: View {
+fileprivate struct LpspAirbnbRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()

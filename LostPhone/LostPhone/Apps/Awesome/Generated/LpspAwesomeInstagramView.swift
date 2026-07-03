@@ -12,8 +12,8 @@ struct LpspAwesomeInstagramView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspInstagramTokens {
     // Canvas & surfaces
-    static let igCanvasLight   = LpspInstagramTokens.white
-    static let igCanvasDark    = LpspInstagramTokens.black  // true #000000 for OLED
+    static let igCanvasLight   = Color.white
+    static let igCanvasDark    = Color.black  // true #000000 for OLED
     static let igElevatedDark  = Color(red: 0.071, green: 0.071, blue: 0.071)  // #121212
     static let igSurfaceInputL = Color(red: 0.937, green: 0.937, blue: 0.937)  // #EFEFEF
     static let igSurfaceInputD = Color(red: 0.149, green: 0.149, blue: 0.149)  // #262626
@@ -88,7 +88,7 @@ private enum LpspInstagramFonts {
     static let igLogotype = Font.system(size: 28, weight: .regular)
 }
 
-private struct LpspInstagramStoryRing: View {
+fileprivate struct LpspInstagramStoryRing: View {
     let avatar: Image
     let isUnread: Bool
     var size: CGFloat = 66
@@ -122,7 +122,7 @@ private struct LpspInstagramStoryRing: View {
     }
 }
 
-private struct LpspInstagramIGPrimaryButton: View {
+fileprivate struct LpspInstagramIGPrimaryButton: View {
     let title: String
     var variant: Variant = .primary
     let action: () -> Void
@@ -157,7 +157,7 @@ private struct LpspInstagramIGPrimaryButton: View {
     }
 }
 
-private struct LpspInstagramIGPressableStyle: ButtonStyle {
+fileprivate struct LpspInstagramIGPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
@@ -165,7 +165,7 @@ private struct LpspInstagramIGPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspInstagramFeedPost: View {
+fileprivate struct LpspInstagramFeedPost: View {
     let username: String
     let avatar: Image
     let photo: Image
@@ -245,7 +245,7 @@ private struct LpspInstagramFeedPost: View {
     }
 }
 
-private struct LpspInstagramIGRootTabView: View {
+fileprivate struct LpspInstagramIGRootTabView: View {
     @State private var selection = 0
 
     init() {

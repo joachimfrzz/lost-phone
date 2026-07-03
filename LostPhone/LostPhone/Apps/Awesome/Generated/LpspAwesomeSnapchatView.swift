@@ -12,18 +12,18 @@ struct LpspAwesomeSnapchatView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspSnapchatTokens {
     // MARK: - Canvas & Surfaces
-    static let snapCanvas          = LpspSnapchatTokens.black                                   // #000000
+    static let snapCanvas          = Color.black                                   // #000000
     static let snapSurface1        = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
     static let snapSurface2        = Color(red: 0.173, green: 0.173, blue: 0.173) // #2C2C2C
     static let snapDivider         = Color(red: 0.200, green: 0.200, blue: 0.200) // #333333
 
     // MARK: - Canvas (Light, limited use)
-    static let snapLightCanvas     = LpspSnapchatTokens.white                                   // #FFFFFF
+    static let snapLightCanvas     = Color.white                                   // #FFFFFF
     static let snapLightSurface1   = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
 
     // MARK: - Text
-    static let snapTextPrimary     = LpspSnapchatTokens.white                                   // #FFFFFF
-    static let snapTextPrimaryLight = LpspSnapchatTokens.black                                  // #000000
+    static let snapTextPrimary     = Color.white                                   // #FFFFFF
+    static let snapTextPrimaryLight = Color.black                                  // #000000
     static let snapTextSecondary   = Color(red: 0.541, green: 0.541, blue: 0.561) // #8A8A8F
     static let snapTextTertiary    = Color(red: 0.333, green: 0.333, blue: 0.333) // #555555
 
@@ -61,7 +61,7 @@ private enum LpspSnapchatFonts {
     static let snapDiscoverTitle  = Font.system(size: 16, weight: .regular)
 }
 
-private struct LpspSnapchatSnapCaptureButton: View {
+fileprivate struct LpspSnapchatSnapCaptureButton: View {
     @Binding var isRecording: Bool
     @Binding var recordProgress: Double  // 0...1 over 60s
     let onPhoto: () -> Void
@@ -90,7 +90,7 @@ private struct LpspSnapchatSnapCaptureButton: View {
 
             // Inner white (or yellow when recording) circle
             Circle()
-                .fill(isRecording ? LpspSnapchatTokens.snapYellow : LpspSnapchatTokens.white)
+                .fill(isRecording ? LpspSnapchatTokens.snapYellow : Color.white)
                 .frame(width: 64, height: 64)
                 .scaleEffect(innerScale)
         }
@@ -136,7 +136,7 @@ private struct LpspSnapchatSnapCaptureButton: View {
     }
 }
 
-private struct LpspSnapchatSnapChatRow: View {
+fileprivate struct LpspSnapchatSnapChatRow: View {
     enum LpspSnapchatSnapType { case photo, video, chat, audio, none }
     enum LpspSnapchatDirection { case incoming, outgoing }
 
@@ -195,7 +195,7 @@ private struct LpspSnapchatSnapChatRow: View {
     }
 }
 
-private struct LpspSnapchatSnapTypeIndicator: View {
+fileprivate struct LpspSnapchatSnapTypeIndicator: View {
     let type: LpspSnapchatSnapChatRow.LpspSnapchatSnapType
     let direction: LpspSnapchatSnapChatRow.LpspSnapchatDirection
     let isUnread: Bool
@@ -226,7 +226,7 @@ private struct LpspSnapchatSnapTypeIndicator: View {
     }
 }
 
-private struct LpspSnapchatSnapStoryThumb: View {
+fileprivate struct LpspSnapchatSnapStoryThumb: View {
     enum ReadState { case unread, read, live }
 
     let creatorName: String
@@ -252,7 +252,7 @@ private struct LpspSnapchatSnapStoryThumb: View {
                 .resizable()
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(LpspSnapchatTokens.white, lineWidth: 2))
+                .overlay(Circle().stroke(Color.white, lineWidth: 2))
                 .padding(8)
 
             VStack {
@@ -283,7 +283,7 @@ private struct LpspSnapchatSnapStoryThumb: View {
     }
 }
 
-private struct LpspSnapchatSnapChatBubble: View {
+fileprivate struct LpspSnapchatSnapChatBubble: View {
     enum LpspSnapchatSender { case me, them }
     let text: String
     let sender: LpspSnapchatSender
@@ -307,7 +307,7 @@ private struct LpspSnapchatSnapChatBubble: View {
     }
 }
 
-private struct LpspSnapchatSnapCameraHUD: View {
+fileprivate struct LpspSnapchatSnapCameraHUD: View {
     @State private var isRecording = false
     @State private var recordProgress: Double = 0
     @State private var selectedLens: Int = 2  // center of carousel
@@ -319,7 +319,7 @@ private struct LpspSnapchatSnapCameraHUD: View {
         GeometryReader { geo in
             ZStack {
                 // Live camera feed placeholder
-                LpspSnapchatTokens.black
+                Color.black
                     .overlay(
                         Image(systemName: "camera.viewfinder")
                             .font(.system(size: 80))
@@ -365,7 +365,7 @@ private struct LpspSnapchatSnapCameraHUD: View {
     }
 }
 
-private struct LpspSnapchatHUDIcon: View {
+fileprivate struct LpspSnapchatHUDIcon: View {
     let system: String
     var size: CGFloat = 28
     var tint: Color = .white
@@ -382,7 +382,7 @@ private struct LpspSnapchatHUDIcon: View {
     }
 }
 
-private struct LpspSnapchatLensCarousel: View {
+fileprivate struct LpspSnapchatLensCarousel: View {
     let lenses: [String]
     @Binding var selected: Int
 
@@ -412,7 +412,7 @@ private struct LpspSnapchatLensCarousel: View {
     }
 }
 
-private struct LpspSnapchatRootSwipeNav: View {
+fileprivate struct LpspSnapchatRootSwipeNav: View {
     @State private var currentTab = 2  // Camera center
 
     var body: some View {
@@ -432,7 +432,7 @@ private struct LpspSnapchatRootSwipeNav: View {
     }
 }
 
-private struct LpspSnapchatSnapNavIndicator: View {
+fileprivate struct LpspSnapchatSnapNavIndicator: View {
     let selected: Int
     private let icons = ["map.fill", "bubble.left.fill", "camera.fill", "play.rectangle.fill", "diamond.fill"]
 
@@ -441,7 +441,7 @@ private struct LpspSnapchatSnapNavIndicator: View {
             ForEach(Array(icons.enumerated()), id: \.offset) { i, icon in
                 Image(systemName: icon)
                     .font(.system(size: 28))
-                    .foregroundStyle(i == selected ? LpspSnapchatTokens.white : LpspSnapchatTokens.snapTextTertiary)
+                    .foregroundStyle(i == selected ? Color.white : LpspSnapchatTokens.snapTextTertiary)
                     .frame(maxWidth: .infinity, minHeight: 56)
             }
         }

@@ -31,7 +31,7 @@ private enum LpspWiseFonts {
 
 private enum LpspWiseTokens {
     // MARK: - Canvas & Surfaces
-    static let wiseCanvas       = LpspWiseTokens.white                                  // #FFFFFF
+    static let wiseCanvas       = Color.white                                  // #FFFFFF
     static let wiseSurface      = Color(red: 0.969, green: 0.969, blue: 0.969) // #F7F7F7
     static let wiseSurfaceSunken = Color(red: 0.937, green: 0.937, blue: 0.937) // #EFEFEF
     static let wiseDivider      = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
@@ -59,7 +59,7 @@ private enum LpspWiseTokens {
 
 
 
-private struct LpspWiseWisePrimaryButton: View {
+fileprivate struct LpspWiseWisePrimaryButton: View {
     let title: String
     let action: () -> Void
 
@@ -76,7 +76,7 @@ private struct LpspWiseWisePrimaryButton: View {
     }
 }
 
-private struct LpspWiseWiseForestButton: View {
+fileprivate struct LpspWiseWiseForestButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
@@ -91,7 +91,7 @@ private struct LpspWiseWiseForestButton: View {
     }
 }
 
-private struct LpspWiseWisePressableStyle: ButtonStyle {
+fileprivate struct LpspWiseWisePressableStyle: ButtonStyle {
     var pressedFill: Color
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -101,7 +101,7 @@ private struct LpspWiseWisePressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspWiseForestAccountHero: View {
+fileprivate struct LpspWiseForestAccountHero: View {
     let total: String
 
     var body: some View {
@@ -129,7 +129,7 @@ private struct LpspWiseForestAccountHero: View {
     }
 }
 
-private struct LpspWiseCurrencyRow: View {
+fileprivate struct LpspWiseCurrencyRow: View {
     let flag: String
     let code: String
     let name: String
@@ -158,7 +158,7 @@ private struct LpspWiseCurrencyRow: View {
     }
 }
 
-private struct LpspWiseFeeBreakdownCard: View {
+fileprivate struct LpspWiseFeeBreakdownCard: View {
     struct LpspWiseLine: Identifiable { let id = UUID(); let label: String; let value: String; var emphasized = false }
     let lines: [LpspWiseLine]
 
@@ -196,7 +196,7 @@ private struct LpspWiseFeeBreakdownCard: View {
     }
 }
 
-private struct LpspWiseSendStepper: View {
+fileprivate struct LpspWiseSendStepper: View {
     let steps: [String]      // ["Recipient","Amount","Review","Pay"]
     let current: Int
 
@@ -230,7 +230,7 @@ private struct LpspWiseSendStepper: View {
     }
 }
 
-private struct LpspWiseRollingBalance: View {
+fileprivate struct LpspWiseRollingBalance: View {
     let value: Double
     var body: some View {
         Text(value, format: .currency(code: "GBP"))
@@ -241,7 +241,7 @@ private struct LpspWiseRollingBalance: View {
     }
 }
 
-private struct LpspWiseRootTabView: View {
+fileprivate struct LpspWiseRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -262,7 +262,7 @@ private struct LpspWiseRootTabView: View {
     }
 }
 
-private struct LpspWiseLiveDot: View {
+fileprivate struct LpspWiseLiveDot: View {
     @State private var on = false
     var body: some View {
         Circle().fill(LpspWiseTokens.wiseSuccess).frame(width: 6, height: 6)

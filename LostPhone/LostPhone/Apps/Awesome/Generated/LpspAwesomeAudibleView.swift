@@ -39,7 +39,7 @@ private enum LpspAudibleTokens {
     static let audDivider  = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
 
     // MARK: - Text
-    static let audTextPrimary   = LpspAudibleTokens.white                                // #FFFFFF
+    static let audTextPrimary   = Color.white                                // #FFFFFF
     static let audTextSecondary = Color(red: 0.690, green: 0.690, blue: 0.690) // #B0B0B0
     static let audTextTertiary  = Color(red: 0.431, green: 0.431, blue: 0.431) // #6E6E6E
 
@@ -57,7 +57,7 @@ extension ShapeStyle where Self == Color {
 
 
 
-private struct LpspAudibleCoverProgressRing: View {
+fileprivate struct LpspAudibleCoverProgressRing: View {
     let artwork: Image
     let progress: Double          // 0...1
     var size: CGFloat = 280
@@ -81,7 +81,7 @@ private struct LpspAudibleCoverProgressRing: View {
     }
 }
 
-private struct LpspAudibleAudiblePlayButton: View {
+fileprivate struct LpspAudibleAudiblePlayButton: View {
     let isPlaying: Bool
     var size: CGFloat = 72
     let action: () -> Void
@@ -100,7 +100,7 @@ private struct LpspAudibleAudiblePlayButton: View {
     }
 }
 
-private struct LpspAudibleSkipButton: View {
+fileprivate struct LpspAudibleSkipButton: View {
     enum LpspAudibleDir { case back, forward }
     let dir: LpspAudibleDir
     let action: () -> Void
@@ -122,7 +122,7 @@ private struct LpspAudibleSkipButton: View {
     }
 }
 
-private struct LpspAudibleAudPressable: ButtonStyle {
+fileprivate struct LpspAudibleAudPressable: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -131,7 +131,7 @@ private struct LpspAudibleAudPressable: ButtonStyle {
     }
 }
 
-private struct LpspAudibleSpeedDialSheet: View {
+fileprivate struct LpspAudibleSpeedDialSheet: View {
     @Binding var speed: Double      // 0.5 ... 3.5
     private let presets: [Double] = [1.0, 1.25, 1.5, 2.0]
 
@@ -175,7 +175,7 @@ private struct LpspAudibleSpeedDialSheet: View {
     }
 }
 
-private struct LpspAudibleAudiblePlayer: View {
+fileprivate struct LpspAudibleAudiblePlayer: View {
     let title: String
     let author: String
     let narrator: String
@@ -224,7 +224,7 @@ private struct LpspAudibleAudiblePlayer: View {
     }
 }
 
-private struct LpspAudibleContinueRow: View {
+fileprivate struct LpspAudibleContinueRow: View {
     let title: String
     let author: String
     let remaining: String
@@ -249,7 +249,7 @@ private struct LpspAudibleContinueRow: View {
     }
 }
 
-private struct LpspAudibleChapterListSheet: View {
+fileprivate struct LpspAudibleChapterListSheet: View {
     let chapters: [(n: Int, title: String, dur: String, state: LpspAudibleChapterState)]
     enum LpspAudibleChapterState { case playing, finished, upcoming }
 
@@ -264,7 +264,7 @@ private struct LpspAudibleChapterListSheet: View {
                         if c.state == .playing {
                             Rectangle().fill(LpspAudibleTokens.audOrange).frame(width: 3, height: 28)
                         } else {
-                            LpspAudibleTokens.clear.frame(width: 3, height: 28)
+                            Color.clear.frame(width: 3, height: 28)
                         }
                         Text("\(c.n).").font(LpspAudibleFonts.audChapter).foregroundStyle(LpspAudibleTokens.audTextSecondary)
                         Text(c.title)
@@ -287,7 +287,7 @@ private struct LpspAudibleChapterListSheet: View {
     }
 }
 
-private struct LpspAudibleCaptionsPanel: View {
+fileprivate struct LpspAudibleCaptionsPanel: View {
     let line: String
     let activeWordIndex: Int
     var body: some View {
@@ -306,7 +306,7 @@ private struct LpspAudibleCaptionsPanel: View {
 }
 // FlowLayout: a simple wrapping Layout (omitted for brevity).
 
-private struct LpspAudibleRootTabView: View {
+fileprivate struct LpspAudibleRootTabView: View {
     init() {
         let a = UITabBarAppearance()
         a.configureWithTransparentBackground()

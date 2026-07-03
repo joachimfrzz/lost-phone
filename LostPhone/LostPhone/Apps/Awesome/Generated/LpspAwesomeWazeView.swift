@@ -115,7 +115,7 @@ private enum LpspWazeFonts {
     static let wazeTab            = Font.system(size: 10, weight: .medium)
 }
 
-private enum LpspWazeHazardType {
+fileprivate enum LpspWazeHazardType {
     case police, traffic, closure, cleared, pothole, camera
 
     var color: Color {
@@ -152,7 +152,7 @@ private enum LpspWazeHazardType {
     }
 }
 
-private struct LpspWazeHazardSpeechBubble: View {
+fileprivate struct LpspWazeHazardSpeechBubble: View {
     let type: LpspWazeHazardType
     let timeAgo: String?
     @State private var appearScale: CGFloat = 0
@@ -195,7 +195,7 @@ private struct LpspWazeHazardSpeechBubble: View {
     }
 }
 
-private struct LpspWazeHazardTail: Shape {
+fileprivate struct LpspWazeHazardTail: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
         p.move(to: CGPoint(x: rect.minX, y: rect.minY))
@@ -206,7 +206,7 @@ private struct LpspWazeHazardTail: Shape {
     }
 }
 
-private struct LpspWazeWazeFAB: View {
+fileprivate struct LpspWazeWazeFAB: View {
     var action: () -> Void
     @State private var pressed = false
 
@@ -230,7 +230,7 @@ private struct LpspWazeWazeFAB: View {
     }
 }
 
-extension View {
+fileprivate extension View {
     func pressEvents(onPress: @escaping () -> Void, onRelease: @escaping () -> Void) -> some View {
         simultaneousGesture(
             DragGesture(minimumDistance: 0)
@@ -240,7 +240,7 @@ extension View {
     }
 }
 
-private struct LpspWazeWazeLocationPuck: View {
+fileprivate struct LpspWazeWazeLocationPuck: View {
     let heading: Double
     @State private var pulse = false
 
@@ -258,7 +258,7 @@ private struct LpspWazeWazeLocationPuck: View {
                 .fill(LpspWazeTokens.wazeCyan)
                 .frame(width: 32, height: 36)
                 .overlay(
-                    LpspWazeWazeArrowShape().stroke(LpspWazeTokens.white, lineWidth: 3)
+                    LpspWazeWazeArrowShape().stroke(Color.white, lineWidth: 3)
                 )
                 .shadow(color: .black.opacity(0.30), radius: 8, y: 3)
                 .rotationEffect(.degrees(heading))
@@ -267,7 +267,7 @@ private struct LpspWazeWazeLocationPuck: View {
     }
 }
 
-private struct LpspWazeWazeArrowShape: Shape {
+fileprivate struct LpspWazeWazeArrowShape: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
         let w = rect.width
@@ -282,7 +282,7 @@ private struct LpspWazeWazeArrowShape: Shape {
     }
 }
 
-private struct LpspWazeNextTurnCard: View {
+fileprivate struct LpspWazeNextTurnCard: View {
     let arrowSymbol: String          // e.g., "arrow.turn.up.right"
     let arrowRotation: Double
     let distance: String             // "0.4 mi"
@@ -328,7 +328,7 @@ private struct LpspWazeNextTurnCard: View {
     }
 }
 
-private struct LpspWazeWazeETABar: View {
+fileprivate struct LpspWazeWazeETABar: View {
     let duration: String       // "12 min"
     let distance: String       // "5.2 mi"
     let arrival: String        // "6:14 PM"
@@ -374,7 +374,7 @@ private struct LpspWazeWazeETABar: View {
     }
 }
 
-private struct LpspWazeSpeedTile: View {
+fileprivate struct LpspWazeSpeedTile: View {
     let limit: Int             // 35
     let current: Int           // 42
     var isSpeeding: Bool { current > limit }
@@ -389,7 +389,7 @@ private struct LpspWazeSpeedTile: View {
                 ZStack {
                     Circle()
                         .strokeBorder(LpspWazeTokens.wazeInk, lineWidth: 2)
-                        .background(Circle().fill(LpspWazeTokens.white))
+                        .background(Circle().fill(Color.white))
                         .frame(width: 40, height: 40)
                     Text("\(limit)")
                         .font(LpspWazeFonts.wazeSpeedLimitNum)
@@ -418,7 +418,7 @@ private struct LpspWazeSpeedTile: View {
     }
 }
 
-private struct LpspWazeWazeGoButton: View {
+fileprivate struct LpspWazeWazeGoButton: View {
     var action: () -> Void
     @State private var pressed = false
 
@@ -443,7 +443,7 @@ private struct LpspWazeWazeGoButton: View {
     }
 }
 
-private struct LpspWazeAnimatedRoute: Shape {
+fileprivate struct LpspWazeAnimatedRoute: Shape {
     var phase: CGFloat = 0
     var animatableData: CGFloat {
         get { phase }
@@ -456,7 +456,7 @@ private struct LpspWazeAnimatedRoute: Shape {
     }
 }
 
-extension View {
+fileprivate extension View {
     func wazeRouteStyle(phase: CGFloat) -> some View {
         self
             .stroke(LpspWazeTokens.wazePurple, style: StrokeStyle(
@@ -469,7 +469,7 @@ extension View {
     }
 }
 
-private struct LpspWazeWazerAvatar: View {
+fileprivate struct LpspWazeWazerAvatar: View {
     let emoji: String   // 🙂 / 😴 / 🤩 etc.
     @State private var pop: CGFloat = 1
 
@@ -477,8 +477,8 @@ private struct LpspWazeWazerAvatar: View {
         Text(emoji)
             .font(.system(size: 20))
             .frame(width: 24, height: 24)
-            .background(Circle().fill(LpspWazeTokens.white))
-            .overlay(Circle().strokeBorder(LpspWazeTokens.white, lineWidth: 2))
+            .background(Circle().fill(Color.white))
+            .overlay(Circle().strokeBorder(Color.white, lineWidth: 2))
             .scaleEffect(pop)
             .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
             .onTapGesture {

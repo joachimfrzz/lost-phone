@@ -42,7 +42,7 @@ private enum LpspMessengerTokens {
 
     // MARK: - Canvas & Surfaces
     static let msgCanvas       = Color(red: 1, green: 1, blue: 1)             // #FFFFFF
-    static let msgCanvasDark   = LpspMessengerTokens.black                                  // #000000 (true black)
+    static let msgCanvasDark   = Color.black                                  // #000000 (true black)
     static let msgSurface      = Color(red: 0.945, green: 0.945, blue: 0.949) // #F1F1F2
     static let msgSurfaceDark  = Color(red: 0.110, green: 0.110, blue: 0.114) // #1C1C1D
     static let msgIncoming     = Color(red: 0.945, green: 0.945, blue: 0.949) // #F1F1F2
@@ -74,7 +74,7 @@ private enum LpspMessengerGradients {
 
 
 
-private struct LpspMessengerOutgoingBubble: View {
+fileprivate struct LpspMessengerOutgoingBubble: View {
     let text: String
     let isLastInRun: Bool
     let threadHeight: CGFloat   // total visible thread height
@@ -105,7 +105,7 @@ private struct LpspMessengerOutgoingBubble: View {
     }
 }
 
-private struct LpspMessengerBubbleShape: Shape {
+fileprivate struct LpspMessengerBubbleShape: Shape {
     var radius: CGFloat
     var tightCorner: UIRectCorner
     var tight: CGFloat
@@ -120,7 +120,7 @@ private struct LpspMessengerBubbleShape: Shape {
     }
 }
 
-private struct LpspMessengerReactionsPopover: View {
+fileprivate struct LpspMessengerReactionsPopover: View {
     let onPick: (String) -> Void
     @State private var shown = false
     private let emoji = ["👍", "❤️", "😆", "😮", "😢", "😡"]
@@ -152,7 +152,7 @@ private struct LpspMessengerReactionsPopover: View {
 }
 
 // Corner reaction badge that lands with a bounce
-private struct LpspMessengerReactionBadge: View {
+fileprivate struct LpspMessengerReactionBadge: View {
     let emoji: String
     let count: Int
     @State private var landed = false
@@ -170,7 +170,7 @@ private struct LpspMessengerReactionBadge: View {
     }
 }
 
-private struct LpspMessengerComposerBar: View {
+fileprivate struct LpspMessengerComposerBar: View {
     @State private var text = ""
     private var hasText: Bool { !text.trimmingCharacters(in: .whitespaces).isEmpty }
 
@@ -214,7 +214,7 @@ private struct LpspMessengerComposerBar: View {
     }
 }
 
-private struct LpspMessengerConversationRow: View {
+fileprivate struct LpspMessengerConversationRow: View {
     let name: String
     let preview: String
     let time: String
@@ -249,7 +249,7 @@ private struct LpspMessengerConversationRow: View {
     }
 }
 
-private struct LpspMessengerTypingBubble: View {
+fileprivate struct LpspMessengerTypingBubble: View {
     @State private var phase = 0.0
     var body: some View {
         HStack(spacing: 4) {
@@ -268,7 +268,7 @@ private struct LpspMessengerTypingBubble: View {
     }
 }
 
-private struct LpspMessengerRootTabView: View {
+fileprivate struct LpspMessengerRootTabView: View {
     init() {
         let a = UITabBarAppearance()
         a.configureWithOpaqueBackground()

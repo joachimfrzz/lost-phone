@@ -87,7 +87,7 @@ private enum LpspPerplexityTokens {
 // Fallback when fonts aren't bundled — SF Pro is the closest geometric humanist substitute
 
 
-private struct LpspPerplexityPerplexityMark: Shape {
+fileprivate struct LpspPerplexityPerplexityMark: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         let c = CGPoint(x: rect.midX, y: rect.midY)
@@ -104,7 +104,7 @@ private struct LpspPerplexityPerplexityMark: Shape {
     }
 }
 
-private struct LpspPerplexityPerplexityAvatar: View {
+fileprivate struct LpspPerplexityPerplexityAvatar: View {
     var size: CGFloat = 20
     var color: Color = LpspPerplexityTokens.pplxTeal
 
@@ -115,7 +115,7 @@ private struct LpspPerplexityPerplexityAvatar: View {
     }
 }
 
-private struct LpspPerplexitySearchInput: View {
+fileprivate struct LpspPerplexitySearchInput: View {
     @Binding var text: String
     @FocusState private var focused: Bool
     var onSubmit: () -> Void
@@ -170,7 +170,7 @@ private struct LpspPerplexitySearchInput: View {
     }
 }
 
-private struct LpspPerplexitySourceCard: View {
+fileprivate struct LpspPerplexitySourceCard: View {
     let number: Int
     let faviconURL: URL?
     let domain: String
@@ -217,7 +217,7 @@ private struct LpspPerplexitySourceCard: View {
     }
 }
 
-private struct LpspPerplexityCitationChip: View {
+fileprivate struct LpspPerplexityCitationChip: View {
     let number: Int
     @State private var focused = false
     var onTap: () -> Void
@@ -254,7 +254,7 @@ private struct LpspPerplexityCitationChip: View {
     }
 }
 
-private struct LpspPerplexityAnswerBlock: View {
+fileprivate struct LpspPerplexityAnswerBlock: View {
     let content: AttributedString  // pre-rendered markdown with citation references
     let isStreaming: Bool
 
@@ -287,7 +287,7 @@ private struct LpspPerplexityAnswerBlock: View {
     }
 }
 
-private struct LpspPerplexityActionPill: View {
+fileprivate struct LpspPerplexityActionPill: View {
     let icon: String
     let label: String
 
@@ -306,7 +306,7 @@ private struct LpspPerplexityActionPill: View {
     }
 }
 
-private struct LpspPerplexityStreamingCursor: View {
+fileprivate struct LpspPerplexityStreamingCursor: View {
     @State private var visible = true
 
     var body: some View {
@@ -322,7 +322,7 @@ private struct LpspPerplexityStreamingCursor: View {
     }
 }
 
-private struct LpspPerplexityProSearchToggle: View {
+fileprivate struct LpspPerplexityProSearchToggle: View {
     @Binding var isOn: Bool
 
     var body: some View {
@@ -343,7 +343,7 @@ private struct LpspPerplexityProSearchToggle: View {
             .padding(.horizontal, 14)
             .background(
                 Capsule().fill(isOn ? LpspPerplexityTokens.pplxTeal : LpspPerplexityTokens.pplxSurface2)
-                    .overlay(Capsule().strokeBorder(isOn ? LpspPerplexityTokens.clear : LpspPerplexityTokens.pplxSurface3, lineWidth: 1))
+                    .overlay(Capsule().strokeBorder(isOn ? Color.clear : LpspPerplexityTokens.pplxSurface3, lineWidth: 1))
             )
         }
         .buttonStyle(.plain)
@@ -351,7 +351,7 @@ private struct LpspPerplexityProSearchToggle: View {
     }
 }
 
-private struct LpspPerplexitySearchingIndicator: View {
+fileprivate struct LpspPerplexitySearchingIndicator: View {
     @State private var phase = 0
 
     var body: some View {
@@ -377,7 +377,7 @@ private struct LpspPerplexitySearchingIndicator: View {
     }
 }
 
-private struct LpspPerplexityProStepsCard: View {
+fileprivate struct LpspPerplexityProStepsCard: View {
     let steps: [String]
     @State private var expanded = false
 
@@ -417,7 +417,7 @@ private struct LpspPerplexityProStepsCard: View {
     }
 }
 
-private struct LpspPerplexityRelatedQuestionsCard: View {
+fileprivate struct LpspPerplexityRelatedQuestionsCard: View {
     let questions: [String]
     var onSelect: (String) -> Void
 
@@ -454,7 +454,7 @@ private struct LpspPerplexityRelatedQuestionsCard: View {
     }
 }
 
-private struct LpspPerplexityRootTabView: View {
+fileprivate struct LpspPerplexityRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()

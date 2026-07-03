@@ -28,7 +28,7 @@ private enum LpspRedditTokens {
     // MARK: - Canvas & Surface (Light)
     static let rdCanvasLight        = Color(red: 0.965, green: 0.969, blue: 0.973) // #F6F7F8
     static let rdCanvasClassicLight = Color(red: 0.855, green: 0.878, blue: 0.902) // #DAE0E6
-    static let rdCardLight          = LpspRedditTokens.white                                    // #FFFFFF
+    static let rdCardLight          = Color.white                                    // #FFFFFF
     static let rdSurface2Light      = Color(red: 0.949, green: 0.953, blue: 0.961)  // #F2F3F5
     static let rdDividerLight       = Color(red: 0.929, green: 0.937, blue: 0.945)  // #EDEFF1
 
@@ -86,7 +86,7 @@ private enum LpspRedditFonts {
     static let rdCode         = Font.system(size: 13, weight: .regular)
 }
 
-private struct LpspRedditRDVoteColumn: View {
+fileprivate struct LpspRedditRDVoteColumn: View {
     enum VoteState { case none, up, down }
 
     @Binding var state: VoteState
@@ -156,14 +156,14 @@ private struct LpspRedditRDVoteColumn: View {
     }
 }
 
-private struct LpspRedditRDPostCard: View {
+fileprivate struct LpspRedditRDPostCard: View {
     let subredditName: String
     let subredditAvatar: Image?
     let subredditAccent: Color
     let timestamp: String
     let commentCount: Int
     let title: String
-    let body: String?
+    let postText: String?
     let flairs: [LpspRedditRDFlair]
     let mediaUri: String?
     @State private var voteState: LpspRedditRDVoteColumn.VoteState = .none
@@ -243,7 +243,7 @@ private struct LpspRedditRDPostCard: View {
     }
 }
 
-private struct LpspRedditRDFlair: Identifiable {
+fileprivate struct LpspRedditRDFlair: Identifiable {
     let id = UUID()
     let text: String
     let background: Color
@@ -251,7 +251,7 @@ private struct LpspRedditRDFlair: Identifiable {
     let emoji: String?
 }
 
-private struct LpspRedditRDFlairPillView: View {
+fileprivate struct LpspRedditRDFlairPillView: View {
     let flair: LpspRedditRDFlair
     var body: some View {
         HStack(spacing: 4) {
@@ -274,7 +274,7 @@ extension LpspRedditRDFlair {
     static let oc      = LpspRedditRDFlair(text: "OC",      background: LpspRedditTokens.rdSuccessGreen, foreground: .white, emoji: nil)
 }
 
-private struct LpspRedditRDComment: Identifiable {
+fileprivate struct LpspRedditRDComment: Identifiable {
     let id = UUID()
     let username: String
     let karma: Int
@@ -284,7 +284,7 @@ private struct LpspRedditRDComment: Identifiable {
     let replies: [LpspRedditRDComment]
 }
 
-private struct LpspRedditRDCommentRow: View {
+fileprivate struct LpspRedditRDCommentRow: View {
     let comment: LpspRedditRDComment
     @State private var isCollapsed = false
 
@@ -333,7 +333,7 @@ private struct LpspRedditRDCommentRow: View {
     }
 }
 
-private struct LpspRedditRDSubredditBanner: View {
+fileprivate struct LpspRedditRDSubredditBanner: View {
     let subredditName: String
     let memberCount: String
     let bannerUri: String?
@@ -361,7 +361,7 @@ private struct LpspRedditRDSubredditBanner: View {
                 }
                 .frame(width: 72, height: 72)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(LpspRedditTokens.white, lineWidth: 3))
+                .overlay(Circle().stroke(Color.white, lineWidth: 3))
                 .offset(x: 16, y: 36)
             }
             .frame(height: 160)
@@ -371,7 +371,7 @@ private struct LpspRedditRDSubredditBanner: View {
                         .font(LpspRedditFonts.rdButton)
                         .foregroundStyle(joined ? accentColor : .white)
                         .padding(.horizontal, 16).padding(.vertical, 6)
-                        .background(Capsule().fill(joined ? LpspRedditTokens.white : accentColor))
+                        .background(Capsule().fill(joined ? Color.white : accentColor))
                         .overlay(Capsule().stroke(accentColor, lineWidth: joined ? 1.5 : 0))
                 }
                 .padding(16)
@@ -389,7 +389,7 @@ private struct LpspRedditRDSubredditBanner: View {
     }
 }
 
-private struct LpspRedditRDRootTabView: View {
+fileprivate struct LpspRedditRDRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
@@ -410,7 +410,7 @@ private struct LpspRedditRDRootTabView: View {
     }
 }
 
-private struct LpspRedditRDSubredditContext {
+fileprivate struct LpspRedditRDSubredditContext {
     var accentColor: Color = LpspRedditTokens.rdSubredditDefault // #0079D3
     var displayName: String
     var isDark: Bool = false

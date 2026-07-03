@@ -70,7 +70,7 @@ private enum LpspPayPalTokens {
     static let ppDarkSurface1  = Color(red: 0.078, green: 0.102, blue: 0.165) // #141A2A
     static let ppDarkSurface2  = Color(red: 0.122, green: 0.153, blue: 0.251) // #1F2740
     static let ppDarkDivider   = Color(red: 0.165, green: 0.192, blue: 0.259) // #2A3142
-    static let ppDarkTextPri   = LpspPayPalTokens.white
+    static let ppDarkTextPri   = Color.white
     static let ppDarkTextSec   = Color(red: 0.659, green: 0.682, blue: 0.769) // #A8AEC4
 }
 
@@ -79,7 +79,7 @@ private enum LpspPayPalTokens {
 // Fallback if PayPal Sans isn't bundled — SF Pro:
 
 
-private struct LpspPayPalBalanceCard: View {
+fileprivate struct LpspPayPalBalanceCard: View {
     let balance: Double
 
     var body: some View {
@@ -121,7 +121,7 @@ private struct LpspPayPalBalanceCard: View {
     }
 }
 
-private struct LpspPayPalActivityRow: View {
+fileprivate struct LpspPayPalActivityRow: View {
     let name: String
     let subtitle: String
     let amount: Double
@@ -187,7 +187,7 @@ private struct LpspPayPalActivityRow: View {
     }
 }
 
-private struct LpspPayPalPayPalPrimaryButton: View {
+fileprivate struct LpspPayPalPayPalPrimaryButton: View {
     let label: String
     var action: () -> Void
 
@@ -204,7 +204,7 @@ private struct LpspPayPalPayPalPrimaryButton: View {
     }
 }
 
-private struct LpspPayPalPayPalSecondaryButton: View {
+fileprivate struct LpspPayPalPayPalSecondaryButton: View {
     let label: String
     var action: () -> Void
 
@@ -220,7 +220,7 @@ private struct LpspPayPalPayPalSecondaryButton: View {
     }
 }
 
-private struct LpspPayPalSendMoneyScreen: View {
+fileprivate struct LpspPayPalSendMoneyScreen: View {
     @State private var amount: String = "0"
 
     private var sendLabel: String {
@@ -259,7 +259,7 @@ private struct LpspPayPalSendMoneyScreen: View {
     }
 }
 
-private struct LpspPayPalPayPalWordmark: View {
+fileprivate struct LpspPayPalPayPalWordmark: View {
     var size: CGFloat = 32
 
     var body: some View {
@@ -279,7 +279,7 @@ private struct LpspPayPalPayPalWordmark: View {
     }
 }
 
-private struct LpspPayPalActivityFilterChip: View {
+fileprivate struct LpspPayPalActivityFilterChip: View {
     let label: String
     let isSelected: Bool
     var action: () -> Void
@@ -298,7 +298,7 @@ private struct LpspPayPalActivityFilterChip: View {
     }
 }
 
-private struct LpspPayPalStatusPill: View {
+fileprivate struct LpspPayPalStatusPill: View {
     enum LpspPayPalStatus { case completed, pending, failed, refunded }
     let status: LpspPayPalStatus
 
@@ -337,7 +337,7 @@ private struct LpspPayPalStatusPill: View {
     }
 }
 
-private struct LpspPayPalPayPalRootTabView: View {
+fileprivate struct LpspPayPalPayPalRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

@@ -30,14 +30,14 @@ private enum LpspThreadsFonts {
 
 private enum LpspThreadsTokens {
     // MARK: - Canvas & Surfaces (Dark / Default)
-    static let threadsCanvas          = LpspThreadsTokens.black                                   // #000000
+    static let threadsCanvas          = Color.black                                   // #000000
     static let threadsSurface1        = Color(red: 0.063, green: 0.063, blue: 0.063) // #101010
     static let threadsSurface2        = Color(red: 0.094, green: 0.094, blue: 0.094) // #181818
     static let threadsDivider         = Color(red: 0.133, green: 0.133, blue: 0.133) // #222222
     static let threadsLine            = Color(red: 0.200, green: 0.200, blue: 0.200) // #333333
 
     // MARK: - Canvas & Surfaces (Light)
-    static let threadsLightCanvas     = LpspThreadsTokens.white                                   // #FFFFFF
+    static let threadsLightCanvas     = Color.white                                   // #FFFFFF
     static let threadsLightSurface1   = Color(red: 0.980, green: 0.980, blue: 0.980) // #FAFAFA
     static let threadsLightSurface2   = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let threadsLightDivider    = Color(red: 0.859, green: 0.859, blue: 0.859) // #DBDBDB
@@ -45,7 +45,7 @@ private enum LpspThreadsTokens {
 
     // MARK: - Text
     static let threadsTextPrimaryDark  = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
-    static let threadsTextPrimaryLight = LpspThreadsTokens.black                                   // #000000
+    static let threadsTextPrimaryLight = Color.black                                   // #000000
     static let threadsTextSecondary    = Color(red: 0.467, green: 0.467, blue: 0.467) // #777777
     static let threadsTextTertiaryDark = Color(red: 0.302, green: 0.302, blue: 0.302) // #4D4D4D
     static let threadsTextTertiaryLight = Color(red: 0.600, green: 0.600, blue: 0.600) // #999999
@@ -63,12 +63,12 @@ private enum LpspThreadsTokens {
 // System fallback if Instagram Sans isn't bundled:
 
 
-private struct LpspThreadsThreadPostRow: View {
+fileprivate struct LpspThreadsThreadPostRow: View {
     let displayName: String
     let handle: String
     let timestamp: String
     let avatar: Image
-    let body: String
+    let postText: String
     let hasReplies: Bool  // if true, render the thread line
     var likeCount: Int = 0
     var commentCount: Int = 0
@@ -117,7 +117,7 @@ private struct LpspThreadsThreadPostRow: View {
                     }
 
                     // Body
-                    Text(body)
+                    Text(postText)
                         .font(LpspThreadsFonts.threadsPostBody)
                         .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
                         .lineSpacing(6)  // approximates 1.4 line-height at 15pt
@@ -152,7 +152,7 @@ private struct LpspThreadsThreadPostRow: View {
     }
 }
 
-private struct LpspThreadsActionBtn: View {
+fileprivate struct LpspThreadsActionBtn: View {
     let icon: String
     let count: Int?
     let tint: Color
@@ -175,7 +175,7 @@ private struct LpspThreadsActionBtn: View {
     }
 }
 
-private struct LpspThreadsThreadsPostPill: View {
+fileprivate struct LpspThreadsThreadsPostPill: View {
     let title: String
     let isEnabled: Bool
     let action: () -> Void
@@ -195,7 +195,7 @@ private struct LpspThreadsThreadsPostPill: View {
     }
 }
 
-private struct LpspThreadsThreadsPressableStyle: ButtonStyle {
+fileprivate struct LpspThreadsThreadsPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.8 : 1)
@@ -203,7 +203,7 @@ private struct LpspThreadsThreadsPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspThreadsThreadsFollowPill: View {
+fileprivate struct LpspThreadsThreadsFollowPill: View {
     @Binding var isFollowing: Bool
     let action: () -> Void
 
@@ -216,7 +216,7 @@ private struct LpspThreadsThreadsFollowPill: View {
                 .padding(.horizontal, 20)
                 .frame(minWidth: 92)
                 .background(
-                    Capsule().fill(isFollowing ? LpspThreadsTokens.clear : LpspThreadsTokens.threadsTextPrimaryDark)
+                    Capsule().fill(isFollowing ? Color.clear : LpspThreadsTokens.threadsTextPrimaryDark)
                 )
                 .overlay(
                     Capsule().strokeBorder(isFollowing ? LpspThreadsTokens.threadsTextSecondary : .clear, lineWidth: 1)
@@ -226,7 +226,7 @@ private struct LpspThreadsThreadsFollowPill: View {
     }
 }
 
-private struct LpspThreadsActivityFilterRow: View {
+fileprivate struct LpspThreadsActivityFilterRow: View {
     @Binding var selected: String
     private let chips = ["All", "Follows", "Replies", "Mentions", "Quotes", "Reposts", "Verified"]
 
@@ -248,7 +248,7 @@ private struct LpspThreadsActivityFilterRow: View {
                                 Capsule().fill(isOn ? LpspThreadsTokens.threadsTextPrimaryDark : .clear)
                             )
                             .overlay(
-                                Capsule().strokeBorder(isOn ? LpspThreadsTokens.clear : LpspThreadsTokens.threadsLine, lineWidth: 1)
+                                Capsule().strokeBorder(isOn ? Color.clear : LpspThreadsTokens.threadsLine, lineWidth: 1)
                             )
                     }
                 }
@@ -258,7 +258,7 @@ private struct LpspThreadsActivityFilterRow: View {
     }
 }
 
-private struct LpspThreadsThreadsComposer: View {
+fileprivate struct LpspThreadsThreadsComposer: View {
     @State private var drafts: [String] = [""]
     @State private var currentIndex: Int = 0
     @Environment(\.dismiss) private var dismiss
@@ -329,7 +329,7 @@ private struct LpspThreadsThreadsComposer: View {
     }
 }
 
-private struct LpspThreadsRootTabView: View {
+fileprivate struct LpspThreadsRootTabView: View {
     @State private var userAvatar = Image("placeholder-avatar")
 
     init() {

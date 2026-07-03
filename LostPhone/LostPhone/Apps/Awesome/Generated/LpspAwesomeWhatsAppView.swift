@@ -21,13 +21,13 @@ private enum LpspWhatsAppTokens {
     // MARK: - Bubbles
     static let waOutgoingLight = Color(red: 0.851, green: 0.992, blue: 0.827) // #D9FDD3
     static let waOutgoingDark  = Color(red: 0.000, green: 0.361, blue: 0.294) // #005C4B
-    static let waIncomingLight = LpspWhatsAppTokens.white
+    static let waIncomingLight = Color.white
     static let waIncomingDark  = Color(red: 0.122, green: 0.173, blue: 0.204) // #1F2C34
 
     // MARK: - Canvas
     static let waWallpaperLight = Color(red: 0.925, green: 0.898, blue: 0.867) // #ECE5DD
     static let waWallpaperDark  = Color(red: 0.043, green: 0.078, blue: 0.102) // #0B141A
-    static let waCanvasLight    = LpspWhatsAppTokens.white                                   // #FFFFFF
+    static let waCanvasLight    = Color.white                                   // #FFFFFF
     static let waCanvasDark     = Color(red: 0.067, green: 0.106, blue: 0.129) // #111B21
     static let waSurface1Light  = Color(red: 0.969, green: 0.973, blue: 0.980) // #F7F8FA
     static let waSurface1Dark   = Color(red: 0.125, green: 0.173, blue: 0.200) // #202C33
@@ -63,7 +63,7 @@ private enum LpspWhatsAppFonts {
     static let waInputPlaceholder = Font.system(size: 16, weight: .regular)
 }
 
-private struct LpspWhatsAppWASendButton: View {
+fileprivate struct LpspWhatsAppWASendButton: View {
     let hasText: Bool
     let action: () -> Void
 
@@ -81,7 +81,7 @@ private struct LpspWhatsAppWASendButton: View {
     }
 }
 
-private struct LpspWhatsAppWAPressableStyle: ButtonStyle {
+fileprivate struct LpspWhatsAppWAPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -90,7 +90,7 @@ private struct LpspWhatsAppWAPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspWhatsAppWAOutgoingBubble: View {
+fileprivate struct LpspWhatsAppWAOutgoingBubble: View {
     let text: String
     let timestamp: String
     let readState: ReadState
@@ -151,7 +151,7 @@ private struct LpspWhatsAppWAOutgoingBubble: View {
     }
 }
 
-private struct LpspWhatsAppWAChatListRow: View {
+fileprivate struct LpspWhatsAppWAChatListRow: View {
     let avatar: Image
     let name: String
     let preview: String
@@ -207,7 +207,7 @@ private struct LpspWhatsAppWAChatListRow: View {
     }
 }
 
-private struct LpspWhatsAppWAVoiceWaveformBubble: View {
+fileprivate struct LpspWhatsAppWAVoiceWaveformBubble: View {
     let duration: String
     @State private var isPlaying = false
     @State private var progress: Double = 0.0
@@ -258,7 +258,7 @@ private struct LpspWhatsAppWAVoiceWaveformBubble: View {
     }
 }
 
-private struct LpspWhatsAppWAComposeBar: View {
+fileprivate struct LpspWhatsAppWAComposeBar: View {
     @State private var text: String = ""
 
     var body: some View {
@@ -286,7 +286,7 @@ private struct LpspWhatsAppWAComposeBar: View {
             }
             .padding(.vertical, 8)
             .padding(.horizontal, 14)
-            .background(Capsule().fill(LpspWhatsAppTokens.white))
+            .background(Capsule().fill(Color.white))
 
             LpspWhatsAppWASendButton(hasText: !text.isEmpty) {
                 text = ""
@@ -298,7 +298,7 @@ private struct LpspWhatsAppWAComposeBar: View {
     }
 }
 
-private struct LpspWhatsAppWAChatScreen: View {
+fileprivate struct LpspWhatsAppWAChatScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             // Top nav handled by NavigationStack
@@ -324,7 +324,7 @@ private struct LpspWhatsAppWAChatScreen: View {
     }
 }
 
-private struct LpspWhatsAppWAEncryptionBanner: View {
+fileprivate struct LpspWhatsAppWAEncryptionBanner: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: "lock.fill").font(.system(size: 10))
@@ -340,7 +340,7 @@ private struct LpspWhatsAppWAEncryptionBanner: View {
     }
 }
 
-private struct LpspWhatsAppWAIncomingBubble: View {
+fileprivate struct LpspWhatsAppWAIncomingBubble: View {
     let text: String
     var body: some View {
         HStack {
@@ -356,7 +356,7 @@ private struct LpspWhatsAppWAIncomingBubble: View {
                     bottomTrailingRadius: 12,
                     topTrailingRadius: 12
                 )
-                .fill(LpspWhatsAppTokens.white)
+                .fill(Color.white)
                 .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
             )
             Spacer(minLength: UIScreen.main.bounds.width * 0.2)
@@ -365,12 +365,12 @@ private struct LpspWhatsAppWAIncomingBubble: View {
     }
 }
 
-private struct LpspWhatsAppWADoodleWallpaper: View {
+fileprivate struct LpspWhatsAppWADoodleWallpaper: View {
     // Decorative doodle tile — use an Image asset in production
-    var body: some View { LpspWhatsAppTokens.clear }
+    var body: some View { Color.clear }
 }
 
-private struct LpspWhatsAppWARootTabView: View {
+fileprivate struct LpspWhatsAppWARootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()

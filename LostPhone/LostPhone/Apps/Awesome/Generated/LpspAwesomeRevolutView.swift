@@ -39,7 +39,7 @@ private enum LpspRevolutTokens {
     static let revBorder   = Color(red: 0.200, green: 0.200, blue: 0.290) // #33334A
 
     // MARK: - Text
-    static let revTextPrimary   = LpspRevolutTokens.white                                  // #FFFFFF
+    static let revTextPrimary   = Color.white                                  // #FFFFFF
     static let revTextSecondary = Color(red: 0.604, green: 0.604, blue: 0.667) // #9A9AAA
     static let revTextTertiary  = Color(red: 0.416, green: 0.416, blue: 0.494) // #6A6A7E
 
@@ -68,7 +68,7 @@ private enum LpspRevolutGradients {
 
 
 
-private struct LpspRevolutRevPrimaryButton: View {
+fileprivate struct LpspRevolutRevPrimaryButton: View {
     let title: String
     let action: () -> Void
 
@@ -79,14 +79,14 @@ private struct LpspRevolutRevPrimaryButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(LpspRevolutGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: LpspRevolutTokens.revBrand.opacity(0.30), radius: 14, y: 8)
+                .shadow(color: LpspRevolutGradients.revBrand.opacity(0.30), radius: 14, y: 8)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: UUID())
         .buttonStyle(LpspRevolutRevPressableStyle())
     }
 }
 
-private struct LpspRevolutRevPressableStyle: ButtonStyle {
+fileprivate struct LpspRevolutRevPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.85 : 1)
@@ -95,7 +95,7 @@ private struct LpspRevolutRevPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspRevolutRevSecondaryButton: View {
+fileprivate struct LpspRevolutRevSecondaryButton: View {
     let title: String
     let action: () -> Void
     var body: some View {
@@ -110,7 +110,7 @@ private struct LpspRevolutRevSecondaryButton: View {
     }
 }
 
-private struct LpspRevolutCurrencyTile: View {
+fileprivate struct LpspRevolutCurrencyTile: View {
     let flag: String      // emoji or asset
     let code: String
     let name: String
@@ -142,7 +142,7 @@ private struct LpspRevolutCurrencyTile: View {
     }
 }
 
-private struct LpspRevolutTransactionRow: View {
+fileprivate struct LpspRevolutTransactionRow: View {
     let merchant: String
     let meta: String
     let amount: String
@@ -171,7 +171,7 @@ private struct LpspRevolutTransactionRow: View {
     }
 }
 
-private struct LpspRevolutSpendDonut: View {
+fileprivate struct LpspRevolutSpendDonut: View {
     let total: String
     let progress: Double // 0...1
     @State private var animated: Double = 0
@@ -202,7 +202,7 @@ private struct LpspRevolutSpendDonut: View {
     }
 }
 
-private struct LpspRevolutMetalCardHero: View {
+fileprivate struct LpspRevolutMetalCardHero: View {
     @State private var flipped = false
     @State private var sheen: CGFloat = -1
 
@@ -216,7 +216,7 @@ private struct LpspRevolutMetalCardHero: View {
             // diagonal sheen band
             RoundedRectangle(cornerRadius: 16)
                 .fill(
-                    LinearGradient(colors: [.clear, LpspRevolutTokens.white.opacity(0.18), .clear],
+                    LinearGradient(colors: [.clear, Color.white.opacity(0.18), .clear],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
                 .offset(x: sheen * 260)
@@ -244,7 +244,7 @@ private struct LpspRevolutMetalCardHero: View {
     }
 }
 
-extension View {
+fileprivate extension View {
     /// Apply the brand gradient as a foreground (e.g., active icon tint).
     func revGradientForeground() -> some View {
         self.overlay(LpspRevolutGradients.revBrand).mask(self)
@@ -252,13 +252,13 @@ extension View {
 }
 
 // Glow modifier for active / primary elements
-private struct LpspRevolutRevGlow: ViewModifier {
+fileprivate struct LpspRevolutRevGlow: ViewModifier {
     func body(content: Content) -> some View {
-        content.shadow(color: LpspRevolutTokens.revBrand.opacity(0.30), radius: 14, y: 8)
+        content.shadow(color: LpspRevolutGradients.revBrand.opacity(0.30), radius: 14, y: 8)
     }
 }
 
-private struct LpspRevolutRootTabView: View {
+fileprivate struct LpspRevolutRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
@@ -275,11 +275,11 @@ private struct LpspRevolutRootTabView: View {
             LifestyleView().tabItem { Label("Lifestyle", systemImage: "sparkles") }
             CardsView().tabItem { Label("Cards", systemImage: "creditcard.fill") }
         }
-        .tint(LpspRevolutTokens.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
+        .tint(LpspRevolutGradients.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
     }
 }
 
-private struct LpspRevolutBalanceReveal: ViewModifier {
+fileprivate struct LpspRevolutBalanceReveal: ViewModifier {
     let hidden: Bool
     func body(content: Content) -> some View {
         content.blur(radius: hidden ? 12 : 0)

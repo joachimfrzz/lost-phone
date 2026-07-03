@@ -30,14 +30,14 @@ private enum LpspSpotifyFonts {
 private enum LpspSpotifyTokens {
     // MARK: - Canvas & Surfaces
     static let spotifyCanvas       = Color(red: 0.07, green: 0.07, blue: 0.07)   // #121212
-    static let spotifyDeepBlack    = LpspSpotifyTokens.black                                 // #000000
+    static let spotifyDeepBlack    = Color.black                                 // #000000
     static let spotifySurface1     = Color(red: 0.094, green: 0.094, blue: 0.094) // #181818
     static let spotifySurface2     = Color(red: 0.157, green: 0.157, blue: 0.157) // #282828
     static let spotifySurface3     = Color(red: 0.243, green: 0.243, blue: 0.243) // #3E3E3E
     static let spotifyDivider      = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
 
     // MARK: - Text
-    static let spotifyTextPrimary   = LpspSpotifyTokens.white                                // #FFFFFF
+    static let spotifyTextPrimary   = Color.white                                // #FFFFFF
     static let spotifyTextSecondary = Color(red: 0.702, green: 0.702, blue: 0.702) // #B3B3B3
     static let spotifyTextTertiary  = Color(red: 0.416, green: 0.416, blue: 0.416) // #6A6A6A
 
@@ -53,7 +53,7 @@ private enum LpspSpotifyTokens {
 // If Spotify Mix is unavailable, register a system fallback once:
 
 
-private struct LpspSpotifySpotifyPlayButton: View {
+fileprivate struct LpspSpotifySpotifyPlayButton: View {
     let isPlaying: Bool
     let size: CGFloat
     let action: () -> Void
@@ -71,7 +71,7 @@ private struct LpspSpotifySpotifyPlayButton: View {
     }
 }
 
-private struct LpspSpotifySpotifyPressableStyle: ButtonStyle {
+fileprivate struct LpspSpotifySpotifyPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -80,7 +80,7 @@ private struct LpspSpotifySpotifyPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspSpotifySpotifyPillButton: View {
+fileprivate struct LpspSpotifySpotifyPillButton: View {
     let title: String
     var style: LpspSpotifyStyle = .filled
     let action: () -> Void
@@ -105,7 +105,7 @@ private struct LpspSpotifySpotifyPillButton: View {
     }
 }
 
-private struct LpspSpotifyTrackRow: View {
+fileprivate struct LpspSpotifyTrackRow: View {
     let title: String
     let artist: String
     let artwork: Image
@@ -144,7 +144,7 @@ private struct LpspSpotifyTrackRow: View {
     }
 }
 
-private struct LpspSpotifyNowPlayingScreen: View {
+fileprivate struct LpspSpotifyNowPlayingScreen: View {
     let trackTitle: String
     let artist: String
     let artwork: Image
@@ -188,7 +188,7 @@ private struct LpspSpotifyNowPlayingScreen: View {
 import UIKit
 import CoreImage
 
-private enum LpspSpotifyAlbumColorExtractor {
+fileprivate enum LpspSpotifyAlbumColorExtractor {
     static func dominantColor(from image: UIImage) -> Color {
         guard let ciImage = CIImage(image: image) else { return LpspSpotifyTokens.spotifyCanvas }
         let extentVector = CIVector(
@@ -213,7 +213,7 @@ private enum LpspSpotifyAlbumColorExtractor {
     }
 }
 
-private struct LpspSpotifyRootTabView: View {
+fileprivate struct LpspSpotifyRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()

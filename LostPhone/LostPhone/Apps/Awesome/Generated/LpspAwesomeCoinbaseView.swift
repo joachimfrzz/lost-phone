@@ -51,7 +51,7 @@ private enum LpspCoinbaseTokens {
     static let cbDarkSurface1  = Color(red: 0.075, green: 0.082, blue: 0.102) // #13151A
     static let cbDarkSurface2  = Color(red: 0.118, green: 0.125, blue: 0.149) // #1E2026
     static let cbDarkDivider   = Color(red: 0.165, green: 0.180, blue: 0.212) // #2A2E36
-    static let cbDarkTextPri   = LpspCoinbaseTokens.white
+    static let cbDarkTextPri   = Color.white
     static let cbDarkTextSec   = Color(red: 0.627, green: 0.643, blue: 0.667) // #A0A4AA
 }
 
@@ -60,7 +60,7 @@ private enum LpspCoinbaseTokens {
 // Fallback if Coinbase fonts aren't bundled — SF Pro / SF Mono:
 
 
-private struct LpspCoinbasePortfolioHero: View {
+fileprivate struct LpspCoinbasePortfolioHero: View {
     let value: Double
     let dayChange: Double
     let dayChangePct: Double
@@ -97,7 +97,7 @@ private struct LpspCoinbasePortfolioHero: View {
     }
 }
 
-private struct LpspCoinbaseAssetRow: View {
+fileprivate struct LpspCoinbaseAssetRow: View {
     let assetName: String       // "Bitcoin"
     let ticker: String          // "BTC"
     let holdings: String        // "0.1842 BTC"
@@ -160,7 +160,7 @@ private struct LpspCoinbaseAssetRow: View {
     }
 }
 
-private struct LpspCoinbaseMiniSparkline: View {
+fileprivate struct LpspCoinbaseMiniSparkline: View {
     let points: [(Double, Double)]  // (timestamp, price)
     let color: Color
 
@@ -187,7 +187,7 @@ private struct LpspCoinbaseMiniSparkline: View {
     }
 }
 
-private struct LpspCoinbaseAssetActionRow: View {
+fileprivate struct LpspCoinbaseAssetActionRow: View {
     var onBuy: () -> Void
     var onSell: () -> Void
     var onSend: () -> Void
@@ -253,7 +253,7 @@ private struct LpspCoinbaseActionButton: View {
     }
 }
 
-private struct LpspCoinbaseCBPrimaryButton: View {
+fileprivate struct LpspCoinbaseCBPrimaryButton: View {
     let label: String
     var action: () -> Void
 
@@ -270,7 +270,7 @@ private struct LpspCoinbaseCBPrimaryButton: View {
     }
 }
 
-private struct LpspCoinbaseCBSecondaryButton: View {
+fileprivate struct LpspCoinbaseCBSecondaryButton: View {
     let label: String
     var action: () -> Void
 
@@ -286,7 +286,7 @@ private struct LpspCoinbaseCBSecondaryButton: View {
     }
 }
 
-private struct LpspCoinbaseCoinbaseCMark: View {
+fileprivate struct LpspCoinbaseCoinbaseCMark: View {
     var size: CGFloat = 28
     var color: Color = LpspCoinbaseTokens.cbBlue
 
@@ -303,7 +303,7 @@ private struct LpspCoinbaseCoinbaseCMark: View {
 }
 
 // Animated loading variant
-private struct LpspCoinbaseCoinbaseCMarkLoading: View {
+fileprivate struct LpspCoinbaseCoinbaseCMarkLoading: View {
     @State private var rotate = 0.0
 
     var body: some View {
@@ -317,7 +317,7 @@ private struct LpspCoinbaseCoinbaseCMarkLoading: View {
     }
 }
 
-private struct LpspCoinbaseWalletAddressView: View {
+fileprivate struct LpspCoinbaseWalletAddressView: View {
     let address: String  // full address
     @State private var copied = false
 
@@ -349,7 +349,7 @@ private struct LpspCoinbaseWalletAddressView: View {
     }
 }
 
-private struct LpspCoinbaseCoinbaseRootTabView: View {
+fileprivate struct LpspCoinbaseCoinbaseRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()

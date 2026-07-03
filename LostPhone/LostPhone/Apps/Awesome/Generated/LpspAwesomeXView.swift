@@ -30,7 +30,7 @@ private enum LpspXFonts {
 
 private enum LpspXTokens {
     // MARK: - Canvas & Surfaces (Dark / Default)
-    static let xCanvas           = LpspXTokens.black                                   // #000000
+    static let xCanvas           = Color.black                                   // #000000
     static let xSurface1          = Color(red: 0.086, green: 0.094, blue: 0.110) // #16181C
     static let xSurface2          = Color(red: 0.118, green: 0.125, blue: 0.141) // #1E2024
     static let xDivider           = Color(red: 0.184, green: 0.200, blue: 0.212) // #2F3336
@@ -39,7 +39,7 @@ private enum LpspXTokens {
     static let xDimDivider        = Color(red: 0.220, green: 0.267, blue: 0.302) // #38444D
 
     // MARK: - Canvas & Surfaces (Light)
-    static let xLightCanvas       = LpspXTokens.white                                  // #FFFFFF
+    static let xLightCanvas       = Color.white                                  // #FFFFFF
     static let xLightSurface1     = Color(red: 0.969, green: 0.976, blue: 0.976) // #F7F9F9
     static let xLightSurface2     = Color(red: 0.937, green: 0.953, blue: 0.957) // #EFF3F4
 
@@ -64,13 +64,13 @@ private enum LpspXTokens {
 // System fallback if Chirp isn't bundled:
 
 
-private struct LpspXXPostRow: View {
+fileprivate struct LpspXXPostRow: View {
     let displayName: String
     let handle: String
     let timestamp: String
     let isVerified: Bool
     let avatar: Image
-    let body: String
+    let postText: String
     var replyCount: Int = 0
     var repostCount: Int = 0
     var likeCount: Int = 0
@@ -116,7 +116,7 @@ private struct LpspXXPostRow: View {
                     }
 
                     // Body
-                    Text(body)
+                    Text(postText)
                         .font(LpspXFonts.xPostBody)
                         .foregroundStyle(LpspXTokens.xTextPrimaryDark)
                         .lineSpacing(4)
@@ -152,7 +152,7 @@ private struct LpspXXPostRow: View {
     }
 }
 
-private struct LpspXXActionIcon: View {
+fileprivate struct LpspXXActionIcon: View {
     let systemName: String
     let count: Int
     let color: Color
@@ -182,7 +182,7 @@ private struct LpspXXActionIcon: View {
     }
 }
 
-private struct LpspXXPostFAB: View {
+fileprivate struct LpspXXPostFAB: View {
     let action: () -> Void
 
     var body: some View {
@@ -191,7 +191,7 @@ private struct LpspXXPostFAB: View {
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundStyle(.black)
                 .frame(width: 56, height: 56)
-                .background(Circle().fill(LpspXTokens.white))
+                .background(Circle().fill(Color.white))
                 .shadow(color: .black.opacity(0.4), radius: 12, y: 4)
         }
         .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
@@ -201,7 +201,7 @@ private struct LpspXXPostFAB: View {
     }
 }
 
-private struct LpspXXPressableStyle: ButtonStyle {
+fileprivate struct LpspXXPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -210,7 +210,7 @@ private struct LpspXXPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspXXFollowPill: View {
+fileprivate struct LpspXXFollowPill: View {
     @Binding var isFollowing: Bool
     let action: () -> Void
 
@@ -223,7 +223,7 @@ private struct LpspXXFollowPill: View {
                 .padding(.horizontal, 16)
                 .frame(minWidth: 80)
                 .background(
-                    Capsule().fill(isFollowing ? LpspXTokens.clear : LpspXTokens.xTextPrimaryDark)
+                    Capsule().fill(isFollowing ? Color.clear : LpspXTokens.xTextPrimaryDark)
                 )
                 .overlay(
                     Capsule().strokeBorder(isFollowing ? LpspXTokens.xTextSecondaryDark : .clear, lineWidth: 1)
@@ -233,7 +233,7 @@ private struct LpspXXFollowPill: View {
     }
 }
 
-private struct LpspXXFeedFilter: View {
+fileprivate struct LpspXXFeedFilter: View {
     @Binding var selection: Int // 0 = For you, 1 = Following
     private let titles = ["For you", "Following"]
     @Namespace private var indicator
@@ -251,7 +251,7 @@ private struct LpspXXFeedFilter: View {
                             .frame(width: 40, height: 4)
                             .matchedGeometryEffect(id: "indicator", in: indicator)
                     } else {
-                        LpspXTokens.clear.frame(height: 4)
+                        Color.clear.frame(height: 4)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -270,7 +270,7 @@ private struct LpspXXFeedFilter: View {
     }
 }
 
-private struct LpspXLikeBurstModifier: ViewModifier {
+fileprivate struct LpspXLikeBurstModifier: ViewModifier {
     @Binding var isLiked: Bool
     @State private var particles: [CGPoint] = []
 
@@ -300,13 +300,13 @@ private struct LpspXLikeBurstModifier: ViewModifier {
     }
 }
 
-extension View {
+fileprivate extension View {
     func xLikeBurst(isLiked: Binding<Bool>) -> some View {
         modifier(LpspXLikeBurstModifier(isLiked: isLiked))
     }
 }
 
-private struct LpspXRootTabView: View {
+fileprivate struct LpspXRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()

@@ -31,7 +31,7 @@ private enum LpspGeminiFonts {
 
 private enum LpspGeminiTokens {
     // MARK: - Canvas & Surfaces (Light)
-    static let gemCanvas   = LpspGeminiTokens.white                                     // #FFFFFF
+    static let gemCanvas   = Color.white                                     // #FFFFFF
     static let gemSurface  = Color(red: 0.941, green: 0.957, blue: 0.976)    // #F0F4F9
     static let gemDivider  = Color(red: 0.890, green: 0.890, blue: 0.890)    // #E3E3E3
 
@@ -71,7 +71,7 @@ private enum LpspGeminiGradients {
 
 
 
-private struct LpspGeminiGemSparkle: View {
+fileprivate struct LpspGeminiGemSparkle: View {
     var size: CGFloat = 20
 
     var body: some View {
@@ -82,7 +82,7 @@ private struct LpspGeminiGemSparkle: View {
     }
 }
 
-private struct LpspGeminiGemUserTurn: View {
+fileprivate struct LpspGeminiGemUserTurn: View {
     let text: String
 
     var body: some View {
@@ -105,7 +105,7 @@ private struct LpspGeminiGemUserTurn: View {
     }
 }
 
-private struct LpspGeminiGemAssistantTurn: View {
+fileprivate struct LpspGeminiGemAssistantTurn: View {
     let markdown: AttributedString
     let isStreaming: Bool
 
@@ -142,7 +142,7 @@ private struct LpspGeminiGemAssistantTurn: View {
     }
 }
 
-private struct LpspGeminiGemStreamingText: View {
+fileprivate struct LpspGeminiGemStreamingText: View {
     let text: String
     @State private var phase: CGFloat = -0.3
 
@@ -169,7 +169,7 @@ private struct LpspGeminiGemStreamingText: View {
 }
 
 // Thinking indicator (before first token)
-private struct LpspGeminiGemThinking: View {
+fileprivate struct LpspGeminiGemThinking: View {
     @State private var t = false
     var body: some View {
         HStack(spacing: 6) {
@@ -185,7 +185,7 @@ private struct LpspGeminiGemThinking: View {
     }
 }
 
-private struct LpspGeminiGemPromptBar: View {
+fileprivate struct LpspGeminiGemPromptBar: View {
     @Binding var text: String
     @FocusState private var focused: Bool
     var isStreaming: Bool = false
@@ -244,7 +244,7 @@ private struct LpspGeminiGemPromptBar: View {
     }
 }
 
-private struct LpspGeminiGemSuggestionChip: View {
+fileprivate struct LpspGeminiGemSuggestionChip: View {
     let label: String
     var featured: Bool = false
     let action: () -> Void
@@ -269,7 +269,7 @@ private struct LpspGeminiGemSuggestionChip: View {
     }
 }
 
-private struct LpspGeminiGemPressableStyle: ButtonStyle {
+fileprivate struct LpspGeminiGemPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
@@ -277,7 +277,7 @@ private struct LpspGeminiGemPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspGeminiGemDrawer: View {
+fileprivate struct LpspGeminiGemDrawer: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // New chat pill
@@ -307,7 +307,7 @@ private struct LpspGeminiGemDrawer: View {
     }
 }
 
-private struct LpspGeminiGemRoot: View {
+fileprivate struct LpspGeminiGemRoot: View {
     @State private var drawerOpen = false
     var body: some View {
         ZStack {
@@ -331,7 +331,7 @@ private struct LpspGeminiGemRoot: View {
                     .background(LpspGeminiTokens.gemCanvas)
                 }
             if drawerOpen {
-                LpspGeminiTokens.black.opacity(0.4).ignoresSafeArea()
+                Color.black.opacity(0.4).ignoresSafeArea()
                     .onTapGesture { drawerOpen = false }
                 LpspGeminiGemDrawer().frame(width: UIScreen.main.bounds.width * 0.82)
                     .frame(maxWidth: .infinity, alignment: .leading)

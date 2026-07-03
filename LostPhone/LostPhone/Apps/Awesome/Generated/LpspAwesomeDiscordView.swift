@@ -86,7 +86,7 @@ private enum LpspDiscordFonts {
     static let dcCode           = Font.system(size: 14, weight: .regular)
 }
 
-private struct LpspDiscordDCServerRail: View {
+fileprivate struct LpspDiscordDCServerRail: View {
     let servers: [LpspDiscordServer]
     @Binding var activeServerId: String?
 
@@ -119,7 +119,7 @@ private struct LpspDiscordDCServerRail: View {
     }
 }
 
-private struct LpspDiscordServer: Identifiable {
+fileprivate struct LpspDiscordServer: Identifiable {
     let id: String
     let name: String
     let imageUri: String?
@@ -128,7 +128,7 @@ private struct LpspDiscordServer: Identifiable {
     let mentionCount: Int
 }
 
-private struct LpspDiscordDCServerIcon: View {
+fileprivate struct LpspDiscordDCServerIcon: View {
     let server: LpspDiscordServer
     let isActive: Bool
     let action: () -> Void
@@ -183,7 +183,7 @@ private struct LpspDiscordDCServerIcon: View {
     }
 }
 
-private struct LpspDiscordDCHomeButton: View {
+fileprivate struct LpspDiscordDCHomeButton: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 16)
             .fill(LpspDiscordGradients.dcNitroGradient)
@@ -196,7 +196,7 @@ private struct LpspDiscordDCHomeButton: View {
     }
 }
 
-private struct LpspDiscordDCAddServerButton: View {
+fileprivate struct LpspDiscordDCAddServerButton: View {
     var body: some View {
         Circle()
             .fill(LpspDiscordTokens.dcChannelList)
@@ -209,7 +209,7 @@ private struct LpspDiscordDCAddServerButton: View {
     }
 }
 
-private struct LpspDiscordDCExploreButton: View {
+fileprivate struct LpspDiscordDCExploreButton: View {
     var body: some View {
         Circle()
             .fill(LpspDiscordTokens.dcChannelList)
@@ -222,7 +222,7 @@ private struct LpspDiscordDCExploreButton: View {
     }
 }
 
-private struct LpspDiscordDCMessageRow: View {
+fileprivate struct LpspDiscordDCMessageRow: View {
     let avatar: Image
     let username: String
     let roleColor: Color
@@ -294,7 +294,7 @@ private struct LpspDiscordDCMessageRow: View {
     }
 }
 
-private struct LpspDiscordDCComposeBar: View {
+fileprivate struct LpspDiscordDCComposeBar: View {
     let channelName: String
     @State private var text: String = ""
     @FocusState private var isFocused: Bool
@@ -348,7 +348,7 @@ private struct LpspDiscordDCComposeBar: View {
     }
 }
 
-private struct LpspDiscordDCChannelRow: View {
+fileprivate struct LpspDiscordDCChannelRow: View {
     let name: String
     let type: LpspDiscordChannelType
     let isActive: Bool
@@ -410,7 +410,7 @@ private struct LpspDiscordDCChannelRow: View {
     }
 }
 
-private struct LpspDiscordDCSpeakingRing<Avatar: View>: View {
+fileprivate struct LpspDiscordDCSpeakingRing<Avatar: View>: View {
     let isActiveSpeaker: Bool
     @ViewBuilder let avatar: Avatar
     @State private var pulseScale: CGFloat = 1.0
@@ -435,7 +435,7 @@ private struct LpspDiscordDCSpeakingRing<Avatar: View>: View {
     }
 }
 
-private struct LpspDiscordDCReactionChip: View {
+fileprivate struct LpspDiscordDCReactionChip: View {
     let emoji: String
     let count: Int
     let didYouReact: Bool
@@ -464,7 +464,7 @@ private struct LpspDiscordDCReactionChip: View {
     }
 }
 
-private struct LpspDiscordDCRootTabView: View {
+fileprivate struct LpspDiscordDCRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -486,7 +486,7 @@ private struct LpspDiscordDCRootTabView: View {
     }
 }
 
-private struct LpspDiscordDCMobileShell: View {
+fileprivate struct LpspDiscordDCMobileShell: View {
     @State private var drawerOpen: Bool = true
     @State private var activeServerId: String? = nil
 

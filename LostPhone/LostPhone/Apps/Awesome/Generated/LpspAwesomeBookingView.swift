@@ -30,7 +30,7 @@ private enum LpspBookingFonts {
 
 private enum LpspBookingTokens {
     // MARK: - Canvas & Surfaces
-    static let bkCanvas      = LpspBookingTokens.white                                  // #FFFFFF
+    static let bkCanvas      = Color.white                                  // #FFFFFF
     static let bkSurface     = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
     static let bkSurfaceDeep = Color(red: 0.902, green: 0.902, blue: 0.902) // #E6E6E6
     static let bkDivider     = Color(red: 0.878, green: 0.878, blue: 0.878) // #E0E0E0
@@ -57,7 +57,7 @@ private enum LpspBookingTokens {
 
 
 
-private struct LpspBookingReviewScoreBadge: View {
+fileprivate struct LpspBookingReviewScoreBadge: View {
     let score: Double          // 8.9
     let reviews: Int           // 1284
 
@@ -87,7 +87,7 @@ private struct LpspBookingReviewScoreBadge: View {
     }
 }
 
-private struct LpspBookingPropertyCard: View {
+fileprivate struct LpspBookingPropertyCard: View {
     let photo: Image
     let name: String
     let area: String
@@ -143,7 +143,7 @@ private struct LpspBookingPropertyCard: View {
     }
 }
 
-private struct LpspBookingBookingCTA: View {
+fileprivate struct LpspBookingBookingCTA: View {
     let label: String     // "Search" / "Reserve"
     let action: () -> Void
     var body: some View {
@@ -159,7 +159,7 @@ private struct LpspBookingBookingCTA: View {
     }
 }
 
-private struct LpspBookingBKPressableStyle: ButtonStyle {
+fileprivate struct LpspBookingBKPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -169,7 +169,7 @@ private struct LpspBookingBKPressableStyle: ButtonStyle {
     }
 }
 
-private struct LpspBookingSearchFormCard: View {
+fileprivate struct LpspBookingSearchFormCard: View {
     var body: some View {
         VStack(spacing: 0) {
             LpspBookingFormRow(system: "mappin.and.ellipse", text: "Where are you going?")
@@ -202,7 +202,7 @@ private struct LpspBookingSearchFormCard: View {
     }
 }
 
-private struct LpspBookingGeniusBanner: View {
+fileprivate struct LpspBookingGeniusBanner: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
@@ -221,7 +221,7 @@ private struct LpspBookingGeniusBanner: View {
     }
 }
 
-private struct LpspBookingFilterChip: View {
+fileprivate struct LpspBookingFilterChip: View {
     let label: String
     let isSelected: Bool
     let tap: () -> Void
@@ -243,7 +243,7 @@ private struct LpspBookingFilterChip: View {
     }
 }
 
-private struct LpspBookingPricePin: View {
+fileprivate struct LpspBookingPricePin: View {
     let price: String
     let isSelected: Bool
     var body: some View {
@@ -260,7 +260,7 @@ private struct LpspBookingPricePin: View {
 // A "Map"/"List" pill toggle floats above the list; selecting a pin slides a single
 // LpspBookingPropertyCard up from the bottom (a .sheet at a low detent or a bottom overlay).
 
-private struct LpspBookingRootTabView: View {
+fileprivate struct LpspBookingRootTabView: View {
     init() {
         let nav = UINavigationBarAppearance()
         nav.configureWithOpaqueBackground()

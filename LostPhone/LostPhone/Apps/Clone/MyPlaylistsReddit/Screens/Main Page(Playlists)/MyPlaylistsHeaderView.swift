@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HeaderView: UICollectionReusableView {
+class MyPlaylistsHeaderView: UICollectionReusableView {
     
     let titleLabel: UILabel = {
        

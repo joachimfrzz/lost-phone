@@ -31,7 +31,7 @@ extension Color {
         }
     }
     
-    init(hex: String) {
+    init(rappelsHex hex: String) {
             // Remove '#' if exists
             var cleanedHex = hex
             if hex.hasPrefix("#") {

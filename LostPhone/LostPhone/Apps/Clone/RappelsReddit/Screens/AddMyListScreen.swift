@@ -32,7 +32,7 @@ struct AddMyListScreen: View {
         .onAppear(perform: {
             if let myList {
                 listName = myList.name
-                color = Color(hex: myList.colorCode)
+                color = Color(rappelsHex: myList.colorCode)
             }
         })
         .navigationTitle(myList == nil ? "New List": "Edit List")

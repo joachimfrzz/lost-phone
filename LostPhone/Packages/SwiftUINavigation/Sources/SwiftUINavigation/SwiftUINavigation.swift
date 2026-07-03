@@ -4,7 +4,6 @@
 import SwiftUI
 
 // MARK: - Generic Coordinator
-@MainActor
 @Observable
 public final class NavigationCoordinator<Destination: Hashable> {
 

@@ -358,9 +358,6 @@ private struct LpspAmazonAmazonRootTabView: View {
     }
 }
 
-// Add to cart — success haptic on release
-.sensoryFeedback(.success, trigger: cartCount)
-
 // Cart badge bump
 .scaleEffect(bumping ? 1.3 : 1.0)
 .animation(.spring(response: 0.25, dampingFraction: 0.55), value: bumping)

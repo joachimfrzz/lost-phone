@@ -92,30 +92,41 @@ def extract_swift_blocks(md: str) -> list[str]:
     return blocks
 
 
+def strip_leading_orphan_modifiers(code: str) -> str:
+    """Retire les lignes motion (.sensoryFeedback, etc.) avant le premier type Swift."""
+    lines = code.splitlines()
+    while lines:
+        s = lines[0].strip()
+        if s.startswith("//") or (s.startswith(".") and "struct " not in s and "enum " not in s):
+            lines.pop(0)
+            continue
+        break
+    return "\n".join(lines)
+
+
 def block_is_useful(code: str) -> bool:
     if "import AVKit" in code or "AVPlayer" in code or "VideoPlayer" in code:
         return False
-    if re.search(r"\b(struct|enum|class)\s+\w+", code):
-        return True
-    if "extension Color" in code or "extension Font" in code or "extension LinearGradient" in code:
+    if "import Lottie" in code or "LottieView" in code:
+        return False
+    if not re.search(r"\b(struct|enum|class|extension)\s+", code):
+        return False
+    if re.search(r"\b(struct|enum|class|extension)\s+", code):
         return True
     return False
 
 
 def _font_custom_to_system(line: str) -> str:
+    if "static let" not in line and "static var" not in line:
+        return line
     size_m = re.search(r"size:\s*(\d+(?:\.\d+)?)", line)
     weight_m = re.search(r"weight:\s*(\.\w+)", line)
     size = size_m.group(1) if size_m else "17"
     weight = weight_m.group(1) if weight_m else ".regular"
-    if "static let" in line or "static var" in line:
-        name_m = re.match(r"(\s*static (?:let|var) \w+\s*=).*", line)
-        if name_m:
-            return f"{name_m.group(1)} Font.system(size: {size}, weight: {weight})"
-    return re.sub(
-        r"Font\.custom\([^)]+\)(?:\.weight\([^)]+\))?",
-        f"Font.system(size: {size}, weight: {weight})",
-        line,
-    )
+    name_m = re.match(r"(\s*static (?:let|var) \w+\s*=).*", line)
+    if name_m:
+        return f"{name_m.group(1)} Font.system(size: {size}, weight: {weight})"
+    return line
 
 
 def transform_color_extension(code: str, tokens_name: str) -> tuple[str, list[str]]:
@@ -209,25 +220,36 @@ def apply_token_and_font_refs(
     tokens_enum: str,
     fonts_enum: str,
 ) -> str:
-    for t in token_names:
-        code = re.sub(rf"\bColor\.{re.escape(t)}\b", f"{tokens_enum}.{t}", code)
-        code = re.sub(rf"\.foregroundStyle\(\.{re.escape(t)}\)", f".foregroundStyle({tokens_enum}.{t})", code)
-        code = re.sub(rf"\.foregroundStyle\(\.{re.escape(t)}\.", f".foregroundStyle({tokens_enum}.{t}.", code)
-        code = re.sub(rf"\.fill\(\.{re.escape(t)}\)", f".fill({tokens_enum}.{t})", code)
-        code = re.sub(rf"\.fill\(\.{re.escape(t)}\.", f".fill({tokens_enum}.{t}.", code)
-        code = re.sub(rf"\.stroke\(\.{re.escape(t)}\)", f".stroke({tokens_enum}.{t})", code)
-        code = re.sub(rf"\.strokeBorder\(\.{re.escape(t)}\)", f".strokeBorder({tokens_enum}.{t})", code)
-        code = re.sub(rf": \.{re.escape(t)}\b", f": {tokens_enum}.{t}", code)
-        code = re.sub(rf"return \.{re.escape(t)}\b", f"return {tokens_enum}.{t}", code)
     for f in font_names:
         code = re.sub(rf"\.font\(\.{re.escape(f)}\)", f".font({fonts_enum}.{f})", code)
         code = re.sub(rf"Font\.{re.escape(f)}\b", f"{fonts_enum}.{f}", code)
+    for t in token_names:
+        if t in font_names:
+            continue
+        code = re.sub(rf"\bColor\.{re.escape(t)}\b", f"{tokens_enum}.{t}", code)
+        code = re.sub(rf"\.foregroundStyle\(\.{re.escape(t)}\)", f".foregroundStyle({tokens_enum}.{t})", code)
+        code = re.sub(rf"\.fill\(\.{re.escape(t)}\)", f".fill({tokens_enum}.{t})", code)
+        code = re.sub(rf"\.stroke\(\.{re.escape(t)}\)", f".stroke({tokens_enum}.{t})", code)
+        code = re.sub(rf"\.strokeBorder\(\.{re.escape(t)}\)", f".strokeBorder({tokens_enum}.{t})", code)
     return code
 
 
-def fix_gradient_token_refs(code: str, token_names: Sequence[str], tokens_enum: str) -> str:
+def fix_gradient_token_refs(code: str, token_names: Sequence[str], tokens_enum: str, font_names: Sequence[str]) -> str:
+    skip = set(font_names)
     for t in sorted(set(token_names), key=len, reverse=True):
-        code = re.sub(rf"(?<![\w\.])\.{re.escape(t)}\b", f"{tokens_enum}.{t}", code)
+        if t in skip:
+            continue
+        code = re.sub(rf"(?<!\w)\.{re.escape(t)}\b(?!\()", f"{tokens_enum}.{t}", code)
+    return code
+
+
+def fix_linear_gradient_refs(code: str, grad_enum: str) -> str:
+    if grad_enum not in code:
+        return code
+    grad_block = code.split(f"private enum {grad_enum}", 1)[1].split("\nprivate ", 1)[0]
+    grad_names = re.findall(r"static (?:let|var) (\w+)", grad_block)
+    for g in grad_names:
+        code = re.sub(rf"\bLinearGradient\.{re.escape(g)}\b", f"{grad_enum}.{g}", code)
     return code
 
 
@@ -258,7 +280,8 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     font_names = re.findall(r"static let (\w+)\s*=", code.split(f"private enum {fonts_enum}", 1)[-1] if fonts_enum in code else "")
 
     code = apply_token_and_font_refs(code, token_names, font_names, tokens_enum, fonts_enum)
-    code = fix_gradient_token_refs(code, token_names, tokens_enum)
+    code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names)
+    code = fix_linear_gradient_refs(code, grad_enum)
 
     # Structs extraites = private (sauf déjà private)
     code = re.sub(r"\nstruct Lpsp", r"\nprivate struct Lpsp", code)
@@ -311,6 +334,7 @@ def transform_blocks(
             code = code.replace("import SwiftUI\n", "").replace("import SwiftUI", "")
 
         code = apply_type_renames(code, type_map)
+        code = strip_leading_orphan_modifiers(code)
         parts.append(code.strip())
 
     merged = "\n\n".join(parts)

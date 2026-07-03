@@ -130,7 +130,7 @@ private struct LpspExpediaPropertyCard: View {
                         .font(LpspExpediaFonts.expScoreNum).foregroundStyle(.white)
                         .padding(.vertical, 3).padding(.horizontal, 7)
                         .background(RoundedRectangle(cornerRadius: 6).fill(expReviewBadgeColor(score)))
-                    Text(scoreWord).font(LpspExpediaTokens.expBadge.weight(.bold)).foregroundStyle(LpspExpediaTokens.expTextPrimary)
+                    Text(scoreWord).font(.expBadge.weight(.bold)).foregroundStyle(LpspExpediaTokens.expTextPrimary)
                     Text("· \(reviewCount.formatted()) reviews")
                         .font(LpspExpediaFonts.expBadge).foregroundStyle(LpspExpediaTokens.expTextSecondary)
                 }
@@ -173,7 +173,7 @@ private struct LpspExpediaModeSwitch: View {
             ForEach(modes.indices, id: \.self) { i in
                 let active = selection == i
                 Text(modes[i])
-                    .font(LpspExpediaTokens.expBadge.weight(.semibold))
+                    .font(.expBadge.weight(.semibold))
                     .foregroundStyle(active ? LpspExpediaTokens.expNavy : LpspExpediaTokens.expTextSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 9)

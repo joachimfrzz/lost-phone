@@ -238,7 +238,7 @@ private struct LpspDropboxDbxUploadBar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text(label).font(LpspDropboxTokens.dbxMeta.weight(.semibold))
+                Text(label).font(.dbxMeta.weight(.semibold))
                     .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
                 Spacer()
                 if done {

@@ -76,7 +76,7 @@ private struct LpspGeminiGemSparkle: View {
     var body: some View {
         Image(systemName: "sparkle")
             .font(.system(size: size, weight: .semibold))
-            .foregroundStyle(LinearGradient.gemini) // gradient-filled glyph
+            .foregroundStyle(LpspGeminiGradients.gemini) // gradient-filled glyph
             .frame(width: size, height: size)
     }
 }
@@ -174,7 +174,7 @@ private struct LpspGeminiGemThinking: View {
         HStack(spacing: 6) {
             ForEach(0..<3) { i in
                 Circle()
-                    .fill(LinearGradient.gemini)
+                    .fill(LpspGeminiGradients.gemini)
                     .frame(width: 7, height: 7)
                     .scaleEffect(t ? 1 : 0.5)
                     .animation(.easeInOut(duration: 0.5).repeatForever().delay(Double(i) * 0.15), value: t)
@@ -213,7 +213,7 @@ private struct LpspGeminiGemPromptBar: View {
         .background(Capsule(style: .continuous).fill(LpspGeminiTokens.gemSurface))
         .overlay(
             Capsule(style: .continuous)
-                .strokeBorder(LinearGradient.gemini, lineWidth: focused ? 1.5 : 0)
+                .strokeBorder(LpspGeminiGradients.gemini, lineWidth: focused ? 1.5 : 0)
                 .animation(.easeOut(duration: 0.18), value: focused)
         )
         .padding(.horizontal, 16)
@@ -259,7 +259,7 @@ private struct LpspGeminiGemSuggestionChip: View {
             .background(Capsule().fill(LpspGeminiTokens.gemSurface))
             .overlay(
                 Capsule().strokeBorder(
-                    featured ? AnyShapeStyle(LinearGradient.gemini)
+                    featured ? AnyShapeStyle(LpspGeminiGradients.gemini)
                              : AnyShapeStyle(LpspGeminiTokens.gemDivider),
                     lineWidth: 1)
             )

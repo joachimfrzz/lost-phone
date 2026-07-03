@@ -69,7 +69,7 @@ private struct LpspTwitchTwitchFollowButton: View {
                     .font(.system(size: 14, weight: .bold))
                 Text(isFollowing ? (subscribe ? "Subscribed" : "Following")
                                   : (subscribe ? "Subscribe" : "Follow"))
-                    .font(isFollowing ? LpspTwitchTokens.twitchButtonSecondary : LpspTwitchTokens.twitchButton)
+                    .font(isFollowing ? .twitchButtonSecondary : .twitchButton)
                     .tracking(isFollowing ? 0 : 0.2)
             }
             .foregroundStyle(isFollowing ? LpspTwitchTokens.twitchTextPrimary : .white)

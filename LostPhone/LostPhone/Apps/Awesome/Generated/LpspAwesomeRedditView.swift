@@ -308,7 +308,7 @@ private struct LpspRedditRDCommentRow: View {
                     Text("•").font(LpspRedditFonts.rdMetadata).foregroundStyle(LpspRedditTokens.rdTextSecondary)
                     Text(comment.timestamp).font(LpspRedditFonts.rdMetadata).foregroundStyle(LpspRedditTokens.rdTextSecondary)
                     Text("•").font(LpspRedditFonts.rdMetadata).foregroundStyle(LpspRedditTokens.rdTextSecondary)
-                    Text("\(comment.karma)").font(LpspRedditTokens.rdMetadata.weight(.medium)).foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                    Text("\(comment.karma)").font(.rdMetadata.weight(.medium)).foregroundStyle(LpspRedditTokens.rdTextSecondary)
                 }
 
                 if !isCollapsed {

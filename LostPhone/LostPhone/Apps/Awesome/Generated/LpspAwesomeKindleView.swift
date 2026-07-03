@@ -261,10 +261,6 @@ private struct LpspKindleKindleTabView: View {
     }
 }
 
-// Two distinct contexts:
-// (1) Reading surface — obeys the USER's LpspKindleKindleReadingTheme, NOT the OS.
-// (2) App chrome — follows system colorScheme.
-
 private struct LpspKindleKindleChromeTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme
     func body(content: Content) -> some View {

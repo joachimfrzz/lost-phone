@@ -119,7 +119,7 @@ private struct LpspTripAdvisorTAPillButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(style == .filled ? LpspTripAdvisorTokens.taButton : LpspTripAdvisorTokens.taButtonSec)
+                .font(style == .filled ? .taButton : .taButtonSec)
                 .foregroundStyle(.black)
                 .padding(.vertical, style == .filled ? 14 : 12)
                 .padding(.horizontal, style == .filled ? 28 : 24)

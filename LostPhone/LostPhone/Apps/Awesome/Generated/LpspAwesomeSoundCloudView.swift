@@ -184,7 +184,7 @@ private struct LpspSoundCloudSCPill: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(style == .filled ? LpspSoundCloudTokens.scButton : LpspSoundCloudTokens.scSubtitle)
+                .font(style == .filled ? .scButton : .scSubtitle)
                 .foregroundStyle(style == .filled ? .white : LpspSoundCloudTokens.scTextPrimary)
                 .padding(.vertical, 9)
                 .padding(.horizontal, style == .filled ? 24 : 20)

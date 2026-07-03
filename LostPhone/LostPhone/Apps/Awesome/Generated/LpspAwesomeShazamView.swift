@@ -185,7 +185,7 @@ private struct LpspShazamShazamHome: View {
                 }
 
                 Text(isListening ? "Listening for music…" : "Tap to Shazam")
-                    .font(isListening ? LpspShazamTokens.shazamButton : LpspShazamTokens.shazamPrompt)
+                    .font(isListening ? .shazamButton : .shazamPrompt)
                     .foregroundStyle(.white)
                     .padding(.top, 24)
 

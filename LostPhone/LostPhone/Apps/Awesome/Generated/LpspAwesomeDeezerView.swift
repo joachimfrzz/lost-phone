@@ -63,10 +63,10 @@ private enum LpspDeezerDZFont {
 
 private enum LpspDeezerFonts {
     static func dzBrand(_ size: CGFloat, _ weight: Font.Weight = .bold) -> Font {
-        Font.system(size: 17, weight: .regular)
+        Font.custom(LpspDeezerDZFont.brand, size: size).weight(weight)
     }
     static func dzRead(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
-        Font.system(size: 17, weight: .regular)
+        Font.custom(LpspDeezerDZFont.read, size: size).weight(weight)
     }
 
     static let dzScreenTitle    = Font.system(size: 32, weight: .regular)
@@ -99,7 +99,7 @@ private struct LpspDeezerFlowArtwork: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .topLeading) {
-                LinearGradient.dzArtwork
+                LpspDeezerGradients.dzArtwork
                     .overlay(
                         RadialGradient(colors: [.white.opacity(0.22), .clear],
                                        center: .init(x: 0.78, y: 0.22),
@@ -153,7 +153,7 @@ private struct LpspDeezerPlayButton: View {
             isPlaying.toggle()
         } label: {
             ZStack {
-                Circle().fill(LinearGradient.dzPlayButton)
+                Circle().fill(LpspDeezerGradients.dzPlayButton)
                 Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                     .font(.system(size: 26, weight: .bold))
                     .foregroundStyle(.white)
@@ -186,7 +186,7 @@ private struct LpspDeezerGradientScrubber: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(LpspDeezerTokens.dzSurface2).frame(height: 4)
-                    Capsule().fill(LinearGradient.dzFlow)
+                    Capsule().fill(LpspDeezerGradients.dzFlow)
                         .frame(width: geo.size.width * progress, height: 4)
                     Circle().fill(.white)
                         .frame(width: dragging ? 17 : 13, height: dragging ? 17 : 13)
@@ -296,7 +296,7 @@ private struct LpspDeezerPrimaryButton: View {
             }
             .foregroundStyle(.white)
             .padding(.vertical, 14).padding(.horizontal, 30)
-            .background(LinearGradient.dzFlow, in: Capsule())
+            .background(LpspDeezerGradients.dzFlow, in: Capsule())
         }
         .buttonStyle(LpspDeezerPressScale())
     }

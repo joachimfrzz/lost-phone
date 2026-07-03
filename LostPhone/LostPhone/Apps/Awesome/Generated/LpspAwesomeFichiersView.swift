@@ -238,7 +238,7 @@ private struct LpspFichiersDbxUploadBar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text(label).font(LpspFichiersTokens.dbxMeta.weight(.semibold))
+                Text(label).font(.dbxMeta.weight(.semibold))
                     .foregroundStyle(LpspFichiersTokens.dbxTextPrimary)
                 Spacer()
                 if done {

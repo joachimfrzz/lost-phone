@@ -110,7 +110,7 @@ private struct LpspTikTokTikTokFollowButton: View {
             isFollowing.toggle()
         } label: {
             Text(isFollowing ? "Following" : "Follow")
-                .font(isFollowing ? LpspTikTokTokens.tiktokButtonSecondary : LpspTikTokTokens.tiktokFollow)
+                .font(isFollowing ? .tiktokButtonSecondary : .tiktokFollow)
                 .foregroundStyle(.white)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 16)

@@ -145,7 +145,7 @@ private struct LpspDeliverooMenuItemRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(name).font(LpspDeliverooFonts.rooMenuName).foregroundStyle(LpspDeliverooTokens.rooTextPrimary)
                 Text(desc)
-                    .font(LpspDeliverooTokens.rooBody.weight(.regular))
+                    .font(.rooBody.weight(.regular))
                     .foregroundStyle(LpspDeliverooTokens.rooTextSecondary)
                     .lineLimit(2)
                 Text(price).font(LpspDeliverooFonts.rooPrice).foregroundStyle(LpspDeliverooTokens.rooTextPrimary).padding(.top, 4)
@@ -240,7 +240,7 @@ private struct LpspDeliverooCategoryRow: View {
                             .background(i == selected ? LpspDeliverooTokens.rooTeal : LpspDeliverooTokens.rooSurface1,
                                         in: RoundedRectangle(cornerRadius: 16))
                         Text(c.label)
-                            .font(LpspDeliverooTokens.rooCaption.weight(.semibold))
+                            .font(.rooCaption.weight(.semibold))
                             .foregroundStyle(i == selected ? LpspDeliverooTokens.rooTextPrimary : LpspDeliverooTokens.rooTextSecondary)
                     }
                     .onTapGesture { withAnimation(.easeOut(duration: 0.15)) { selected = i } }
@@ -260,7 +260,7 @@ private struct LpspDeliverooRooButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(style == .teal ? LpspDeliverooTokens.rooButton : LpspDeliverooTokens.rooButton)
+                .font(style == .teal ? .rooButton : .rooButton)
                 .foregroundStyle(style == .teal ? LpspDeliverooTokens.rooTealInk : .white)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(style == .teal ? LpspDeliverooTokens.rooTeal : LpspDeliverooTokens.rooTextPrimary, in: Capsule())

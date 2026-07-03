@@ -77,7 +77,7 @@ private struct LpspRevolutRevPrimaryButton: View {
                 .font(LpspRevolutFonts.revButton)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
-                .background(LinearGradient.revBrand, in: RoundedRectangle(cornerRadius: 16))
+                .background(LpspRevolutGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
                 .shadow(color: LpspRevolutTokens.revBrand.opacity(0.30), radius: 14, y: 8)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: UUID())
@@ -246,7 +246,7 @@ private struct LpspRevolutMetalCardHero: View {
 extension View {
     /// Apply the brand gradient as a foreground (e.g., active icon tint).
     func revGradientForeground() -> some View {
-        self.overlay(LinearGradient.revBrand).mask(self)
+        self.overlay(LpspRevolutGradients.revBrand).mask(self)
     }
 }
 
@@ -277,8 +277,6 @@ private struct LpspRevolutRootTabView: View {
         .tint(LpspRevolutTokens.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
     }
 }
-
-// Card flip — see LpspRevolutMetalCardHero: rotation3DEffect + .impact(weight: .medium)
 
 // Gradient CTA press — LpspRevolutRevPressableStyle: opacity 0.85 + scale 0.98, 150ms
 

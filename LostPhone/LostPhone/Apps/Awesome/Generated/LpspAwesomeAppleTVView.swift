@@ -70,7 +70,7 @@ private enum LpspAppleTVFonts {
     static let atvChannelTag = Font.system(size: 9, weight: .bold)
 
     // Non-Apple build (Inter substitute):
-    // static let atvLargeTitle = Font.system(size: 34, weight: .regular)
+    // static let atvLargeTitle = Font.custom("Inter-ExtraBold", size: 34)
 }
 
 // Eyebrow modifier — 11pt uppercase tracked, secondary
@@ -103,10 +103,10 @@ private struct LpspAppleTVHeroCard: View {
             .frame(height: 380)
             .clipped()
 
-            LinearGradient.atvHeroScrim
+            LpspAppleTVGradients.atvHeroScrim
 
             VStack(alignment: .leading, spacing: 7) {
-                Text(eyebrow)LpspAppleTVTokens.atvEyebrow()
+                Text(eyebrow).atvEyebrow()
                 Text(title).font(LpspAppleTVFonts.atvHeroTitle).foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
                 Text(meta).font(LpspAppleTVFonts.atvCaption).foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
                 HStack(spacing: 10) {

@@ -263,7 +263,7 @@ private struct LpspTinderTinderBrandPillButton: View {
                 .padding(.vertical, 14)
                 .padding(.horizontal, 32)
                 .frame(maxWidth: .infinity, minHeight: 52)
-                .background(Capsule().fill(LinearGradient.tdrBrand))
+                .background(Capsule().fill(LpspTinderGradients.tdrBrand))
                 .shadow(color: LpspTinderTokens.tdrPink.opacity(0.3), radius: 16, y: 4)
         }
         .buttonStyle(.plain)
@@ -277,7 +277,7 @@ private struct LpspTinderTinderMatchScreen: View {
 
     var body: some View {
         ZStack {
-            LinearGradient.tdrBrand.ignoresSafeArea()
+            LpspTinderGradients.tdrBrand.ignoresSafeArea()
 
             VStack(spacing: 24) {
                 Text("It's a Match!")
@@ -299,7 +299,7 @@ private struct LpspTinderTinderMatchScreen: View {
                     } label: {
                         Text("Send Message")
                             .font(LpspTinderFonts.tdrButton)
-                            .foregroundStyle(LinearGradient.tdrBrand)
+                            .foregroundStyle(LpspTinderGradients.tdrBrand)
                             .padding(.vertical, 14).padding(.horizontal, 32)
                             .frame(maxWidth: .infinity)
                             .background(Capsule().fill(Color.white))
@@ -352,7 +352,7 @@ private struct LpspTinderTinderChatBubble: View {
                 .background(
                     Group {
                         if sender == .them {
-                            LinearGradient.tdrBrand
+                            LpspTinderGradients.tdrBrand
                         } else {
                             LpspTinderTokens.tdrSurfaceMuted
                         }

@@ -308,21 +308,6 @@ private struct LpspTelegramTgSwipeToReply<Content: View>: View {
     }
 }
 
-// Use lottie-ios SPM package. Render large emoji as Lottie animations.
-import Lottie
-
-private struct LpspTelegramTgAnimatedEmoji: View {
-    let animationName: String
-    @State private var play = false
-
-    var body: some View {
-        LottieView(animation: .named(animationName))
-            .playing(loopMode: .playOnce)
-            .frame(width: 72, height: 72)
-            .onTapGesture { play.toggle() }
-    }
-}
-
 private struct LpspTelegramTgChatListRow: View {
     let avatar: Image
     let name: String

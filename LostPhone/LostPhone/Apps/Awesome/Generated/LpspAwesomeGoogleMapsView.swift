@@ -263,7 +263,7 @@ private struct LpspGoogleMapsGMPlaceCard: View {
                         .foregroundStyle(LpspGoogleMapsTokens.gmTextSecondary)
                     if isOpen {
                         Text("Open now")
-                            .font(LpspGoogleMapsTokens.gmMeta.weight(.medium))
+                            .font(.gmMeta.weight(.medium))
                             .foregroundStyle(LpspGoogleMapsTokens.gmGreen)
                     }
                 }

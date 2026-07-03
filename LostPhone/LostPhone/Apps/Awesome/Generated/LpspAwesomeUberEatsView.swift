@@ -119,7 +119,7 @@ private struct LpspUberEatsUERestaurantCard: View {
                     .scaleEffect(pressed ? 0.98 : 1)
                 if freeDelivery {
                     Text("$0 Delivery Fee")
-                        .font(LpspUberEatsTokens.ueCaption.weight(.bold))
+                        .font(.ueCaption.weight(.bold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
                         .background(Capsule().fill(LpspUberEatsTokens.ueGreen))

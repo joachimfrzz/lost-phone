@@ -166,11 +166,11 @@ private struct LpspWiseFeeBreakdownCard: View {
             ForEach(Array(lines.enumerated()), id: \.element.id) { idx, line in
                 HStack {
                     Text(line.label)
-                        .font(line.emphasized ? LpspWiseTokens.wiseTitle : LpspWiseTokens.wiseBody)
+                        .font(line.emphasized ? .wiseTitle : .wiseBody)
                         .foregroundStyle(line.emphasized ? LpspWiseTokens.wiseForest : LpspWiseTokens.wiseTextSecondary)
                     Spacer()
                     Text(line.value)
-                        .font(line.emphasized ? LpspWiseTokens.wiseSubsection : LpspWiseTokens.wiseAmount)
+                        .font(line.emphasized ? .wiseSubsection : .wiseAmount)
                         .monospacedDigit()
                         .foregroundStyle(line.emphasized ? LpspWiseTokens.wiseForest : LpspWiseTokens.wiseTextPrimary)
                 }
@@ -229,7 +229,6 @@ private struct LpspWiseSendStepper: View {
     }
 }
 
-// Use SwiftUI's contentTransition(.numericText()) and animate the value change:
 private struct LpspWiseRollingBalance: View {
     let value: Double
     var body: some View {
@@ -261,8 +260,6 @@ private struct LpspWiseRootTabView: View {
         .tint(LpspWiseTokens.wiseForest) // active = forest; pair with a bright-green active marker if desired
     }
 }
-
-// Number roll-up — contentTransition(.numericText()) + .animation(.easeOut(0.5))
 
 // CTA press — LpspWiseWisePressableStyle: scale 0.98 + brightness -0.03, 150ms
 

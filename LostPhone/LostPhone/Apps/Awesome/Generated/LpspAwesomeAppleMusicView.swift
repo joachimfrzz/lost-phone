@@ -384,7 +384,7 @@ private struct LpspAppleMusicLyricsView: View {
                 LazyVStack(alignment: .leading, spacing: 24) {
                     ForEach(lines) { line in
                         Text(line.text)
-                            .font(isCurrent(line) ? LpspAppleMusicTokens.amLyricsCurrent : LpspAppleMusicTokens.amLyricsOther)
+                            .font(isCurrent(line) ? .amLyricsCurrent : .amLyricsOther)
                             .foregroundStyle(.white.opacity(opacity(for: line)))
                             .id(line.id)
                             .animation(.spring(response: 0.3, dampingFraction: 0.85), value: isCurrent(line))

@@ -75,7 +75,7 @@ private enum LpspChatGPTFonts {
 
     // Inter fallback
     static func gptInter(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        Font.system(size: 17, weight: .regular)", size: size).weight(weight)
+        Font.custom("Inter-\(weight == .medium ? "Medium" : weight == .semibold ? "SemiBold" : "Regular")", size: size).weight(weight)
     }
 
     // System fallback (SF Pro)

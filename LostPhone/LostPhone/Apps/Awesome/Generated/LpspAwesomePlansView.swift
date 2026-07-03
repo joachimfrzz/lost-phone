@@ -263,7 +263,7 @@ private struct LpspPlansGMPlaceCard: View {
                         .foregroundStyle(LpspPlansTokens.gmTextSecondary)
                     if isOpen {
                         Text("Open now")
-                            .font(LpspPlansTokens.gmMeta.weight(.medium))
+                            .font(.gmMeta.weight(.medium))
                             .foregroundStyle(LpspPlansTokens.gmGreen)
                     }
                 }

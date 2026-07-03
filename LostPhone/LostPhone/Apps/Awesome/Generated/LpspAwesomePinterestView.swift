@@ -368,8 +368,6 @@ private struct LpspPinterestPinterestRefreshSpinner: View {
     }
 }
 
-// Save button morph — described in LpspPinterestPinterestSaveButton above. Key: 0.25s spring damping 0.8 + .sensoryFeedback(.success)
-
 // Shared-element pin tap → detail
 // Use matchedGeometryEffect on the pin image between the grid tile and the detail hero
 private struct LpspPinterestSharedPinImage: View {

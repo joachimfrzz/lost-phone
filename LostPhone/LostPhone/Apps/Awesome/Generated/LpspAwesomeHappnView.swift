@@ -196,7 +196,7 @@ private struct LpspHappnCrushCelebration: View {
                     Text("Start chatting")
                         .font(LpspHappnFonts.happnButton).foregroundStyle(LpspHappnTokens.happnOnPink)
                         .padding(.vertical, 15).padding(.horizontal, 30)
-                        .background(Capsule().fill(LinearGradient.happnHero))
+                        .background(Capsule().fill(LpspHappnGradients.happnHero))
                 }
             }
             // Gold sparkle layer — the only place gold appears (besides premium)
@@ -229,7 +229,7 @@ private struct LpspHappnCrossingPin: View {
     private var fill: AnyShapeStyle {
         switch kind {
         case .standard: return AnyShapeStyle(LpspHappnTokens.happnPink)
-        case .mutual:   return AnyShapeStyle(LinearGradient.happnHero)
+        case .mutual:   return AnyShapeStyle(LpspHappnGradients.happnHero)
         case .ghost:    return AnyShapeStyle(LpspHappnTokens.happnSurface2)
         }
     }
@@ -262,7 +262,7 @@ private struct LpspHappnHappnGradientButton: View {
         Button(action: action) {
             Text(title).font(LpspHappnFonts.happnButton).foregroundStyle(LpspHappnTokens.happnOnPink)
                 .padding(.vertical, 15).padding(.horizontal, 30).frame(maxWidth: .infinity)
-                .background(Capsule().fill(LinearGradient.happnHero))
+                .background(Capsule().fill(LpspHappnGradients.happnHero))
         }
         .buttonStyle(LpspHappnPressScale())
     }

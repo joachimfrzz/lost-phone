@@ -45,7 +45,7 @@ private enum LpspYouTubeMusicFonts {
             default:        return "Roboto-Regular"
             }
         }()
-        return Font.system(size: 17, weight: .regular)
+        return Font.custom(face, size: size)
     }
 
     static let ytmScreenTitle = Font.system(size: 32, weight: .regular)

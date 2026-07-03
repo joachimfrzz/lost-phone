@@ -82,7 +82,7 @@ private struct LpspLinkedInLinkedInPillButton: View {
                         .font(.system(size: 16, weight: .semibold))
                 }
                 Text(title)
-                    .font(variant == .filled ? LpspLinkedInTokens.liButtonPrimary : LpspLinkedInTokens.liButtonSecondary)
+                    .font(variant == .filled ? .liButtonPrimary : .liButtonSecondary)
             }
             .foregroundStyle(variant == .filled ? Color.white : LpspLinkedInTokens.liBlue)
             .padding(.vertical, 8)

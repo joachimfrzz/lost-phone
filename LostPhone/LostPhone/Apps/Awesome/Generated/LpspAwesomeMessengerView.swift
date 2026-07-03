@@ -232,7 +232,7 @@ private struct LpspMessengerConversationRow: View {
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text(name)
-                    .font(unread ? LpspMessengerTokens.msgConvoUnread : LpspMessengerTokens.msgConvoName)
+                    .font(unread ? .msgConvoUnread : .msgConvoName)
                     .foregroundStyle(LpspMessengerTokens.msgTextPrimary)
                 Text(preview).font(LpspMessengerFonts.msgPreview)
                     .foregroundStyle(LpspMessengerTokens.msgTextSecondary).lineLimit(1)

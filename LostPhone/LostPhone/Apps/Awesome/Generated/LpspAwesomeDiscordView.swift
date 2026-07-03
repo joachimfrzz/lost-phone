@@ -186,7 +186,7 @@ private struct LpspDiscordDCServerIcon: View {
 private struct LpspDiscordDCHomeButton: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 16)
-            .fill(LinearGradient.dcNitroGradient)
+            .fill(LpspDiscordGradients.dcNitroGradient)
             .frame(width: 48, height: 48)
             .overlay(
                 Image(systemName: "house.fill")
@@ -365,7 +365,7 @@ private struct LpspDiscordDCChannelRow: View {
                 .frame(width: 20)
 
             Text(name)
-                .font(isActive ? LpspDiscordTokens.dcChannelActive : LpspDiscordTokens.dcChannelInactive)
+                .font(isActive ? .dcChannelActive : .dcChannelInactive)
                 .foregroundStyle(textColor)
 
             Spacer()

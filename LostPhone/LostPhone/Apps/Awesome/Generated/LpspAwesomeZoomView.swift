@@ -106,7 +106,6 @@ private struct LpspZoomGalleryTile: View {
             RoundedRectangle(cornerRadius: 8)
                 .strokeBorder(LpspZoomTokens.zoomBlue, lineWidth: isActiveSpeaker ? 3 : 0)
         )
-        .animation(.easeInOut(duration: 0.22), value: isActiveSpeaker)
     }
 
     private func initials(_ s: String) -> String {
@@ -128,7 +127,6 @@ private struct LpspZoomJoinButton: View {
                 .background(RoundedRectangle(cornerRadius: 8).fill(LpspZoomTokens.zoomBlue))
         }
         .buttonStyle(LpspZoomZoomPressable(pressedColor: LpspZoomTokens.zoomBluePressed))
-        .sensoryFeedback(.impact(weight: .medium), trigger: title)
     }
 }
 
@@ -136,11 +134,9 @@ private struct LpspZoomZoomPressable: ButtonStyle {
     var pressedColor: Color
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .overlay(configuration.isPressed
                 ? RoundedRectangle(cornerRadius: 8).fill(pressedColor).blendMode(.multiply)
                 : nil)
-            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 
@@ -234,8 +230,6 @@ private struct LpspZoomRecordingIndicator: View {
             Circle()
                 .fill(LpspZoomTokens.zoomRed)
                 .frame(width: 10, height: 10)
-                .scaleEffect(pulse ? 0.7 : 1.0)
-                .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: pulse)
             Text("RECORDING")
                 .font(LpspZoomFonts.zoomTinyUpper)
                 .foregroundStyle(.white)
@@ -258,7 +252,6 @@ private struct LpspZoomGalleryGrid: View {
             }
         }
         .padding(4)
-        .animation(.easeInOut(duration: 0.3), value: participants.count)
     }
 
     private func gridColumns(for n: Int) -> [GridItem] {

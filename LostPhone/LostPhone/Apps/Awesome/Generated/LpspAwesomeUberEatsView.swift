@@ -83,7 +83,6 @@ private struct LpspUberEatsUEPrimaryButton: View {
             .padding(.horizontal, trailing == nil ? 0 : 20)
             .background(RoundedRectangle(cornerRadius: 12).fill(LpspUberEatsTokens.ueGreen))
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: title)
         .buttonStyle(LpspUberEatsUEPressableStyle(pressedScale: 0.98))
     }
 }
@@ -92,8 +91,6 @@ private struct LpspUberEatsUEPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -116,7 +113,6 @@ private struct LpspUberEatsUERestaurantCard: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 180)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .scaleEffect(pressed ? 0.98 : 1)
                 if freeDelivery {
                     Text("$0 Delivery Fee")
                         .font(.ueCaption.weight(.bold))
@@ -204,7 +200,6 @@ private struct LpspUberEatsUEMenuItemRow: View {
                         .frame(width: 28, height: 28)
                         .background(Circle().fill(LpspUberEatsTokens.ueGreen))
                 }
-                .sensoryFeedback(.impact(weight: .light), trigger: price)
                 .offset(x: 6, y: 6)
             }
         }
@@ -222,7 +217,6 @@ private struct LpspUberEatsCartCountBadge: View {
             .font(LpspUberEatsFonts.ueCartBadge).foregroundStyle(.white)
             .frame(width: 18, height: 18)
             .background(Circle().fill(LpspUberEatsTokens.ueGreen))
-            .scaleEffect(bump ? 1.25 : 1)
             .onChange(of: count) { _, _ in
                 withAnimation(.spring(response: 0.28, dampingFraction: 0.5)) { bump = true }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {

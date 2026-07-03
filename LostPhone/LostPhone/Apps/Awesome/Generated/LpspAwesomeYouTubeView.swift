@@ -211,7 +211,6 @@ private struct LpspYouTubeActionPill: View {
             .background(RoundedRectangle(cornerRadius: 18).fill(LpspYouTubeTokens.ytSurface2Light))
         }
         .buttonStyle(.plain)
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: isActive)
     }
 }
 
@@ -282,7 +281,6 @@ private struct LpspYouTubeFilterChip: View {
                 )
         }
         .buttonStyle(.plain)
-        .sensoryFeedback(.selection, trigger: isSelected)
     }
 }
 

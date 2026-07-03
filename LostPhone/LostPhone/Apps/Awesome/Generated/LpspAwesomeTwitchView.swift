@@ -81,7 +81,6 @@ private struct LpspTwitchTwitchFollowButton: View {
             )
             .shadow(color: isFollowing ? .clear : LpspTwitchTokens.twitchPurple.opacity(0.35), radius: 18, y: 6)
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: isFollowing)
         .buttonStyle(LpspTwitchTwitchPressableStyle(pressedScale: 0.97))
     }
 }
@@ -90,8 +89,6 @@ private struct LpspTwitchTwitchPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -100,9 +97,7 @@ private struct LpspTwitchTwitchLivePill: View {
     var body: some View {
         HStack(spacing: 5) {
             Circle().fill(.white).frame(width: 6, height: 6)
-                .scaleEffect(pulse ? 0.6 : 1)
                 .opacity(pulse ? 0.5 : 1)
-                .animation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true), value: pulse)
             Text("LIVE").font(LpspTwitchFonts.twitchBadge).tracking(0.4)
         }
         .foregroundStyle(.white)

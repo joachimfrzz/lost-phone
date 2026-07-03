@@ -80,7 +80,6 @@ private struct LpspBanqueRevPrimaryButton: View {
                 .background(LpspBanqueGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
                 .shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: UUID())
         .buttonStyle(LpspBanqueRevPressableStyle())
     }
 }
@@ -89,8 +88,6 @@ private struct LpspBanqueRevPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.85 : 1)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
-            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -236,7 +233,6 @@ private struct LpspBanqueMetalCardHero: View {
         .onTapGesture {
             withAnimation(.easeInOut(duration: 0.45)) { flipped.toggle() }
         }
-        .sensoryFeedback(.impact(weight: .medium), trigger: flipped)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.2).delay(0.2)) { sheen = 1 }
         }
@@ -287,7 +283,6 @@ private struct LpspBanqueBalanceReveal: ViewModifier {
     let hidden: Bool
     func body(content: Content) -> some View {
         content.blur(radius: hidden ? 12 : 0)
-            .animation(.easeInOut(duration: 0.25), value: hidden)
     }
 }
 

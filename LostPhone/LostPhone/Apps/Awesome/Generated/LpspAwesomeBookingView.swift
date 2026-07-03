@@ -162,9 +162,7 @@ private struct LpspBookingBKPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.98
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
             .brightness(configuration.isPressed ? -0.04 : 0)
-            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 
@@ -238,7 +236,6 @@ private struct LpspBookingFilterChip: View {
                 )
         }
         .buttonStyle(.plain)
-        .animation(.easeOut(duration: 0.15), value: isSelected)
     }
 }
 
@@ -252,8 +249,6 @@ private struct LpspBookingPricePin: View {
             .padding(.horizontal, 10).padding(.vertical, 6)
             .background(Capsule().fill(isSelected ? LpspBookingTokens.bkBlue : LpspBookingTokens.bkCanvas))
             .shadow(color: LpspBookingTokens.bkTextPrimary.opacity(0.16), radius: 6, y: 2)
-            .scaleEffect(isSelected ? 1.12 : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
     }
 }
 // A "Map"/"List" pill toggle floats above the list; selecting a pin slides a single

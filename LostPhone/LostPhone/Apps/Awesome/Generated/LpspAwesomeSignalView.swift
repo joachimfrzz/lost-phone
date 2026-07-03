@@ -150,7 +150,6 @@ private struct LpspSignalComposerBar: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .animation(.spring(response: 0.18, dampingFraction: 0.8), value: hasText)
     }
 }
 
@@ -170,11 +169,9 @@ private struct LpspSignalSendCircle: View {
                     .foregroundStyle(.white)
             }
             .frame(width: 32, height: 32)
-            .scaleEffect(pressed ? 0.90 : 1)
             .opacity(showSend ? 1 : 0.92)
             .offset(y: showSend ? 0 : 4) // slides up into place when text appears
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: showSend)
         .simultaneousGesture(DragGesture(minimumDistance: 0)
             .onChanged { _ in pressed = true }
             .onEnded { _ in pressed = false })

@@ -240,9 +240,6 @@ private struct LpspTinderTinderActionButton: View {
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 2)
                 )
         }
-        .scaleEffect(pressed ? 0.92 : 1)
-        .animation(.spring(response: 0.25, dampingFraction: 0.5), value: pressed)
-        .sensoryFeedback(.impact(weight: .medium), trigger: pressed)
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in pressed = true }
@@ -319,7 +316,6 @@ private struct LpspTinderTinderMatchScreen: View {
                 .padding(.top, 12)
             }
         }
-        .sensoryFeedback(.success, trigger: true)
     }
 }
 

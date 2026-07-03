@@ -69,7 +69,6 @@ private struct LpspDisneyDPPlayButton: View {
             .frame(height: 48)
             .background(RoundedRectangle(cornerRadius: 8).fill(.white))
         }
-        .sensoryFeedback(.impact(weight: .medium), trigger: label)
         .buttonStyle(LpspDisneyDPPressable())
     }
 }
@@ -97,8 +96,6 @@ private struct LpspDisneyDPSecondaryButton: View {
 private struct LpspDisneyDPPressable: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 
@@ -121,9 +118,7 @@ private struct LpspDisneyBrandPortalTile: View {
                     .strokeBorder(focused ? LpspDisneyTokens.dpGlowBlue : LpspDisneyTokens.dpDivider,
                                   lineWidth: focused ? 2 : 1)
             )
-            .scaleEffect(focused ? 1.04 : 1)
             .shadow(color: focused ? LpspDisneyTokens.dpGlowBlue.opacity(0.35) : .clear, radius: 24)
-            .animation(.easeOut(duration: 0.18), value: focused)
             .onTapGesture { /* open universe hub */ }
             .onLongPressGesture(minimumDuration: 0, pressing: { focused = $0 }, perform: {})
     }
@@ -134,13 +129,11 @@ private struct LpspDisneyDPFocusable: ViewModifier {
     @State private var focused = false
     func body(content: Content) -> some View {
         content
-            .scaleEffect(focused ? 1.04 : 1)
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
                     .strokeBorder(focused ? LpspDisneyTokens.dpGlowBlue : .clear, lineWidth: 2)
             )
             .shadow(color: focused ? Color.dpFocusGlow : .clear, radius: 24)
-            .animation(.easeOut(duration: 0.18), value: focused)
             .onLongPressGesture(minimumDuration: 0, pressing: { focused = $0 }, perform: {})
     }
 }

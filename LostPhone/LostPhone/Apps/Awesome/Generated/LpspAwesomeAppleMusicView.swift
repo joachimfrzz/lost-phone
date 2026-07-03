@@ -74,7 +74,6 @@ private struct LpspAppleMusicApplePlayButton: View {
                 .frame(width: size, height: size)
                 .background(Circle().fill(LpspAppleMusicTokens.amRed))
         }
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: isPlaying)
         .buttonStyle(LpspAppleMusicAMPressableStyle(pressedScale: 0.92))
     }
 }
@@ -83,8 +82,6 @@ private struct LpspAppleMusicAMPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.75), value: configuration.isPressed)
     }
 }
 
@@ -107,7 +104,6 @@ private struct LpspAppleMusicAMPillButton: View {
             .padding(.horizontal, 24)
             .background(RoundedRectangle(cornerRadius: 8).fill(tint))
         }
-        .sensoryFeedback(.impact(flexibility: .soft), trigger: title)
         .buttonStyle(LpspAppleMusicAMPressableStyle())
     }
 }
@@ -144,7 +140,6 @@ private struct LpspAppleMusicAlbumTile: View {
             }
         }
         .buttonStyle(.plain)
-        .sensoryFeedback(.selection, trigger: title)
     }
 }
 
@@ -387,7 +382,6 @@ private struct LpspAppleMusicLyricsView: View {
                             .font(isCurrent(line) ? .amLyricsCurrent : .amLyricsOther)
                             .foregroundStyle(.white.opacity(opacity(for: line)))
                             .id(line.id)
-                            .animation(.spring(response: 0.3, dampingFraction: 0.85), value: isCurrent(line))
                     }
                 }
                 .padding(.horizontal, 24)

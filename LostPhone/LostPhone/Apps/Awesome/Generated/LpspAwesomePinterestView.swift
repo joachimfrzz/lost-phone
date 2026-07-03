@@ -81,7 +81,6 @@ private struct LpspPinterestPinterestSaveButton: View {
                     Capsule().fill(isSaved ? LpspPinterestTokens.pinterestTextPrimaryLight : LpspPinterestTokens.pinterestRed)
                 )
         }
-        .sensoryFeedback(.success, trigger: isSaved)
         .buttonStyle(LpspPinterestPinterestPressableStyle(pressedScale: 0.97))
     }
 }
@@ -90,8 +89,6 @@ private struct LpspPinterestPinterestPressableStyle: ButtonStyle {
     var pressedScale: CGFloat = 0.97
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
-            .animation(.spring(response: 0.2, dampingFraction: 0.75),
                        value: configuration.isPressed)
     }
 }

@@ -175,8 +175,6 @@ private struct LpspAppleTVUpNextThumb: View {
             Text(subhead).font(LpspAppleTVFonts.atvSubhead).foregroundStyle(LpspAppleTVTokens.atvTextSecondary).lineLimit(1)
         }
         .frame(width: 196)
-        .scaleEffect(pressed ? 0.97 : 1)
-        .animation(.easeOut(duration: 0.12), value: pressed)
         ._onButtonGesture { pressed = $0 } perform: {}
     }
 }
@@ -187,7 +185,6 @@ private struct LpspAppleTVLiveBadge: View {
         HStack(spacing: 6) {
             Circle().fill(.white).frame(width: 7, height: 7)
                 .opacity(dim ? 0.4 : 1)
-                .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: dim)
             Text("LIVE").font(LpspAppleTVFonts.atvEyebrow).tracking(0.6).foregroundStyle(.white)
         }
         .padding(.horizontal, 10).padding(.vertical, 5)

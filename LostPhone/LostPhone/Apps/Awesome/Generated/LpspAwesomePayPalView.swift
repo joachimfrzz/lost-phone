@@ -99,7 +99,6 @@ private struct LpspPayPalBalanceCard: View {
                 .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
                 .monospacedDigit()
                 .contentTransition(.numericText())
-                .animation(.snappy, value: balance)
 
             HStack(spacing: 12) {
                 Button(action: {}) {
@@ -206,7 +205,6 @@ private struct LpspPayPalPayPalPrimaryButton: View {
                 .frame(height: 48)
                 .background(Capsule().fill(LpspPayPalTokens.payPalBlue))
         }
-        .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
     }
 }
 

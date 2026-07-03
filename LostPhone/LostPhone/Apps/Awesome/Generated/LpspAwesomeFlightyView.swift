@@ -229,7 +229,6 @@ private struct LpspFlightyFltPrimaryButton: View {
                 .padding(.vertical, 15)
                 .background(RoundedRectangle(cornerRadius: 14).fill(LpspFlightyTokens.fltBlue))
         }
-        .sensoryFeedback(.impact(weight: .medium), trigger: title)
         .buttonStyle(LpspFlightyFltPressableStyle())
     }
 }
@@ -237,8 +236,6 @@ private struct LpspFlightyFltPrimaryButton: View {
 private struct LpspFlightyFltPressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
-            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 

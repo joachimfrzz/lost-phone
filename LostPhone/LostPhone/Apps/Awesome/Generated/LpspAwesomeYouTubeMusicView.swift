@@ -79,7 +79,6 @@ private struct LpspYouTubeMusicNowPlayingView: View {
             AsyncImage(url: URL(string: artworkURL)) { img in
                 img.resizable().scaledToFill()
             } placeholder: { LpspYouTubeMusicTokens.ytmCanvas }
-            .scaleEffect(1.4)
             .blur(radius: 40)
             .opacity(0.85)
             .overlay(
@@ -157,7 +156,6 @@ private struct LpspYouTubeMusicSongVideoToggle: View {
             .onTapGesture {
                 withAnimation(.easeOut(duration: 0.2)) { tap() }
             }
-            .sensoryFeedback(.impact(weight: .light), trigger: active)
     }
 }
 
@@ -196,7 +194,6 @@ private struct LpspYouTubeMusicScrubber: View {
                             withAnimation(.easeOut(duration: 0.15)) { scrubbing = false }
                         }
                 )
-                .sensoryFeedback(.impact(weight: .light), trigger: scrubbing)
             }
             .frame(height: 16)
 

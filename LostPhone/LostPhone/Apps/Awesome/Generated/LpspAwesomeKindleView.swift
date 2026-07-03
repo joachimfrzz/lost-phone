@@ -179,7 +179,6 @@ private struct LpspKindleAaPanel: View {
                                 .padding(-4)
                                 .opacity(settings.theme == theme ? 1 : 0)
                         )
-                        .scaleEffect(settings.theme == theme ? 1.0 : 1.0)
                         .onTapGesture {
                             withAnimation(.easeInOut(duration: 0.15)) { settings.theme = theme }
                             UIImpactFeedbackGenerator(style: .soft).impactOccurred()

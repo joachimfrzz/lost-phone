@@ -70,7 +70,6 @@ private struct LpspWiseWisePrimaryButton: View {
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(LpspWiseTokens.wiseBright, in: RoundedRectangle(cornerRadius: 16))
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: UUID())
         .buttonStyle(LpspWiseWisePressableStyle(pressedFill: LpspWiseTokens.wiseBrightPressed))
     }
 }
@@ -94,9 +93,7 @@ private struct LpspWiseWisePressableStyle: ButtonStyle {
     var pressedFill: Color
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .brightness(configuration.isPressed ? -0.03 : 0)
-            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -236,7 +233,6 @@ private struct LpspWiseRollingBalance: View {
             .font(LpspWiseFonts.wiseBalance)
             .monospacedDigit()
             .contentTransition(.numericText(value: value))
-            .animation(.easeOut(duration: 0.5), value: value)
     }
 }
 

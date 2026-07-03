@@ -253,6 +253,19 @@ def fix_linear_gradient_refs(code: str, grad_enum: str) -> str:
     return code
 
 
+def strip_orphan_motion_lines(code: str) -> str:
+    """Supprime les fragments motion Spectr (section 5) hors contexte View."""
+    out: list[str] = []
+    for line in code.splitlines():
+        s = line.strip()
+        if re.match(r"^\.(sensoryFeedback|scaleEffect|animation)\(", s):
+            continue
+        if re.match(r"^// (Add to cart|Cart badge|Add-to-cart|Mic record|Read receipt)", s, re.I):
+            continue
+        out.append(line)
+    return "\n".join(out)
+
+
 def finalize_component_swift(code: str, prefix: str) -> str:
     """Post-traitement : extensions restantes → enums, struct → private struct."""
     tokens_enum = f"{prefix}Tokens"
@@ -292,7 +305,7 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     if "UIFont" in code and "import UIKit" not in code:
         code = "import UIKit\n" + code
 
-    return code
+    return strip_orphan_motion_lines(code)
 
 
 def _replace_braced_block(code: str, start: int, open_repl: str, close_marker: str) -> tuple[str, str]:

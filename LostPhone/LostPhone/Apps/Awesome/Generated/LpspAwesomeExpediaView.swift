@@ -12,7 +12,7 @@ struct LpspAwesomeExpediaView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspExpediaTokens {
     // MARK: - Canvas & Surfaces (Light)
-    static let expCanvas        = Color.white                                    // #FFFFFF
+    static let expCanvas        = LpspExpediaTokens.white                                    // #FFFFFF
     static let expSurfaceGray   = Color(red: 0.961, green: 0.969, blue: 0.980)  // #F5F7FA
     static let expSurfacePressed = Color(red: 0.925, green: 0.937, blue: 0.957) // #ECEFF4
     static let expDivider       = Color(red: 0.890, green: 0.906, blue: 0.929)  // #E3E7ED
@@ -113,7 +113,7 @@ private struct LpspExpediaPropertyCard: View {
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(saved ? LpspExpediaTokens.expActionBlue : .white)
                         .padding(7)
-                        .background(Circle().fill(Color.black.opacity(0.4)))
+                        .background(Circle().fill(LpspExpediaTokens.black.opacity(0.4)))
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(10)
@@ -183,7 +183,7 @@ private struct LpspExpediaModeSwitch: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(active ? Color.clear : LpspExpediaTokens.expDivider, lineWidth: 0.5)
+                            .strokeBorder(active ? LpspExpediaTokens.clear : LpspExpediaTokens.expDivider, lineWidth: 0.5)
                     )
                     .onTapGesture {
                         withAnimation(.easeOut(duration: 0.2)) { selection = i }

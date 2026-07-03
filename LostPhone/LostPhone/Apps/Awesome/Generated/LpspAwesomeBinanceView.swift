@@ -16,7 +16,7 @@ private enum LpspBinanceTokens {
     static let bnSurface2  = Color(red: 0.118, green: 0.125, blue: 0.149) // #1E2026
     static let bnSurface3  = Color(red: 0.169, green: 0.192, blue: 0.224) // #2B3139
     static let bnDivider   = Color(red: 0.169, green: 0.192, blue: 0.224) // #2B3139
-    static let bnCanvasLight   = Color.white                                  // #FFFFFF
+    static let bnCanvasLight   = LpspBinanceTokens.white                                  // #FFFFFF
     static let bnSurface1Light = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let bnDividerLight  = Color(red: 0.918, green: 0.925, blue: 0.937) // #EAECEF
     static let bnYellow        = Color(red: 0.941, green: 0.725, blue: 0.043) // #F0B90B

@@ -19,7 +19,7 @@ private enum LpspKindleTokens {
     static let kdlBlue          = Color(red: 0.310, green: 0.702, blue: 0.851) // #4FB3D9
 
     // MARK: - Reading Themes (page / ink)
-    static let kdlWhitePage  = Color.white                                     // #FFFFFF
+    static let kdlWhitePage  = LpspKindleTokens.white                                     // #FFFFFF
     static let kdlWhiteInk   = Color(red: 0.102, green: 0.102, blue: 0.102)    // #1A1A1A
     static let kdlSepiaPage  = Color(red: 0.984, green: 0.941, blue: 0.851)    // #FBF0D9
     static let kdlSepiaInk   = Color(red: 0.373, green: 0.294, blue: 0.196)    // #5F4B32
@@ -27,11 +27,11 @@ private enum LpspKindleTokens {
     static let kdlGreenInk   = Color(red: 0.200, green: 0.286, blue: 0.184)    // #33492F
     static let kdlDarkPage   = Color(red: 0.165, green: 0.165, blue: 0.165)    // #2A2A2A
     static let kdlDarkInk    = Color(red: 0.847, green: 0.847, blue: 0.847)    // #D8D8D8
-    static let kdlBlackPage  = Color.black                                     // #000000
+    static let kdlBlackPage  = LpspKindleTokens.black                                     // #000000
     static let kdlBlackInk   = Color(red: 0.784, green: 0.784, blue: 0.784)    // #C8C8C8
 
     // MARK: - App Chrome (Light)
-    static let kdlChromeCanvas  = Color.white                                  // #FFFFFF
+    static let kdlChromeCanvas  = LpspKindleTokens.white                                  // #FFFFFF
     static let kdlSurfaceSubtle = Color(red: 0.957, green: 0.949, blue: 0.933) // #F4F2EE
     static let kdlDivider       = Color(red: 0.894, green: 0.886, blue: 0.867) // #E4E2DD
 

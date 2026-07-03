@@ -42,7 +42,7 @@ private enum LpspMessengerTokens {
 
     // MARK: - Canvas & Surfaces
     static let msgCanvas       = Color(red: 1, green: 1, blue: 1)             // #FFFFFF
-    static let msgCanvasDark   = Color.black                                  // #000000 (true black)
+    static let msgCanvasDark   = LpspMessengerTokens.black                                  // #000000 (true black)
     static let msgSurface      = Color(red: 0.945, green: 0.945, blue: 0.949) // #F1F1F2
     static let msgSurfaceDark  = Color(red: 0.110, green: 0.110, blue: 0.114) // #1C1C1D
     static let msgIncoming     = Color(red: 0.945, green: 0.945, blue: 0.949) // #F1F1F2
@@ -65,7 +65,7 @@ private enum LpspMessengerTokens {
 private enum LpspMessengerGradients {
     // The signature outgoing-bubble ribbon (≈135°)
     static let msgBubble = LinearGradient(
-        colors: [.msgGradBlue, .msgGradViolet, .msgGradPink],
+        colors: [LpspMessengerTokens.msgGradBlue, LpspMessengerTokens.msgGradViolet, LpspMessengerTokens.msgGradPink],
         startPoint: .topLeading, endPoint: .bottomTrailing
     )
 }
@@ -90,7 +90,7 @@ private struct LpspMessengerOutgoingBubble: View {
                 .padding(.horizontal, 14)
                 .background(
                     // Gradient anchored to the conversation, not the bubble:
-                    LinearGradient(colors: [.msgGradBlue, .msgGradViolet, .msgGradPink],
+                    LinearGradient(colors: [LpspMessengerTokens.msgGradBlue, LpspMessengerTokens.msgGradViolet, LpspMessengerTokens.msgGradPink],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                         .frame(height: threadHeight)
                         .offset(y: -bubbleOriginY)
@@ -137,12 +137,12 @@ private struct LpspMessengerReactionsPopover: View {
             }
             Image(systemName: "plus")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color.msgTextSecondary)
+                .foregroundStyle(LpspMessengerTokens.msgTextSecondary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(
-            Capsule().fill(Color.msgCanvas)
+            Capsule().fill(LpspMessengerTokens.msgCanvas)
                 .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
         )
         .scaleEffect(shown ? 1 : 0.7)
@@ -159,11 +159,11 @@ private struct LpspMessengerReactionBadge: View {
     var body: some View {
         HStack(spacing: 3) {
             Text(emoji).font(.system(size: 14))
-            if count > 1 { Text("\(count)").font(LpspMessengerFonts.msgReactCount).foregroundStyle(Color.msgTextSecondary) }
+            if count > 1 { Text("\(count)").font(LpspMessengerFonts.msgReactCount).foregroundStyle(LpspMessengerTokens.msgTextSecondary) }
         }
         .padding(.horizontal, 6).padding(.vertical, 3)
-        .background(Capsule().fill(Color.msgCanvas)
-            .overlay(Capsule().strokeBorder(Color.msgDivider, lineWidth: 1)))
+        .background(Capsule().fill(LpspMessengerTokens.msgCanvas)
+            .overlay(Capsule().strokeBorder(LpspMessengerTokens.msgDivider, lineWidth: 1)))
         .scaleEffect(landed ? 1 : 1.25)
         .animation(.spring(response: 0.25, dampingFraction: 0.5), value: landed)
         .onAppear { landed = true }
@@ -180,7 +180,7 @@ private struct LpspMessengerComposerBar: View {
                 HStack(spacing: 16) {
                     ForEach(["camera", "photo", "mic", "face.smiling"], id: \.self) {
                         Image(systemName: $0).font(.system(size: 22))
-                            .foregroundStyle(Color.msgBlue)
+                            .foregroundStyle(LpspMessengerTokens.msgBlue)
                     }
                 }
                 .transition(.opacity.combined(with: .scale))
@@ -189,10 +189,10 @@ private struct LpspMessengerComposerBar: View {
                 TextField("Aa", text: $text, axis: .vertical)
                     .font(LpspMessengerFonts.msgMessageBody).lineLimit(1...5)
                 Image(systemName: "face.smiling").font(.system(size: 20))
-                    .foregroundStyle(Color.msgTextSecondary)
+                    .foregroundStyle(LpspMessengerTokens.msgTextSecondary)
             }
             .padding(.horizontal, 12).frame(minHeight: 36)
-            .background(Capsule().fill(Color.msgSurface))
+            .background(Capsule().fill(LpspMessengerTokens.msgSurface))
 
             // Big-thumb: 👍 when empty (one-tap like), filled send when text exists
             Button { text = "" } label: {
@@ -200,10 +200,10 @@ private struct LpspMessengerComposerBar: View {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 16, weight: .bold)).foregroundStyle(.white)
                         .frame(width: 32, height: 32)
-                        .background(Circle().fill(Color.msgBlue))
+                        .background(Circle().fill(LpspMessengerTokens.msgBlue))
                 } else {
                     Image(systemName: "hand.thumbsup.fill")
-                        .font(.system(size: 22)).foregroundStyle(Color.msgBlue)
+                        .font(.system(size: 22)).foregroundStyle(LpspMessengerTokens.msgBlue)
                         .frame(width: 32, height: 32)
                 }
             }
@@ -224,24 +224,24 @@ private struct LpspMessengerConversationRow: View {
     var body: some View {
         HStack(spacing: 12) {
             ZStack(alignment: .bottomTrailing) {
-                Circle().fill(Color.msgSurface).frame(width: 56, height: 56)
+                Circle().fill(LpspMessengerTokens.msgSurface).frame(width: 56, height: 56)
                 if activeNow {
-                    Circle().fill(Color.msgActiveGreen)
+                    Circle().fill(LpspMessengerTokens.msgActiveGreen)
                         .frame(width: 14, height: 14)
-                        .overlay(Circle().strokeBorder(Color.msgCanvas, lineWidth: 2))
+                        .overlay(Circle().strokeBorder(LpspMessengerTokens.msgCanvas, lineWidth: 2))
                 }
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text(name)
                     .font(unread ? .msgConvoUnread : .msgConvoName)
-                    .foregroundStyle(Color.msgTextPrimary)
+                    .foregroundStyle(LpspMessengerTokens.msgTextPrimary)
                 Text(preview).font(LpspMessengerFonts.msgPreview)
-                    .foregroundStyle(Color.msgTextSecondary).lineLimit(1)
+                    .foregroundStyle(LpspMessengerTokens.msgTextSecondary).lineLimit(1)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 6) {
-                Text(time).font(LpspMessengerFonts.msgTimestamp).foregroundStyle(Color.msgTextSecondary)
-                if unread { Circle().fill(Color.msgBlue).frame(width: 8, height: 8) }
+                Text(time).font(LpspMessengerFonts.msgTimestamp).foregroundStyle(LpspMessengerTokens.msgTextSecondary)
+                if unread { Circle().fill(LpspMessengerTokens.msgBlue).frame(width: 8, height: 8) }
             }
         }
         .padding(.vertical, 12).padding(.horizontal, 16)
@@ -254,12 +254,12 @@ private struct LpspMessengerTypingBubble: View {
     var body: some View {
         HStack(spacing: 4) {
             ForEach(0..<3) { i in
-                Circle().fill(Color.msgTextSecondary).frame(width: 7, height: 7)
+                Circle().fill(LpspMessengerTokens.msgTextSecondary).frame(width: 7, height: 7)
                     .offset(y: sin(phase + Double(i) * 0.6) * 3)
             }
         }
         .padding(.vertical, 12).padding(.horizontal, 14)
-        .background(Capsule().fill(Color.msgIncoming))
+        .background(Capsule().fill(LpspMessengerTokens.msgIncoming))
         .onAppear {
             withAnimation(.linear(duration: 0.9).repeatForever(autoreverses: false)) {
                 phase = .pi * 2
@@ -273,7 +273,7 @@ private struct LpspMessengerRootTabView: View {
         let a = UITabBarAppearance()
         a.configureWithOpaqueBackground()
         a.backgroundColor = UIColor.systemBackground
-        a.shadowColor = UIColor(Color.msgDivider)
+        a.shadowColor = UIColor(LpspMessengerTokens.msgDivider)
         UITabBar.appearance().standardAppearance = a
         UITabBar.appearance().scrollEdgeAppearance = a
     }
@@ -283,7 +283,7 @@ private struct LpspMessengerRootTabView: View {
             MarketplaceView().tabItem { Label("Marketplace", systemImage: "storefront.fill") }
             StoriesView().tabItem { Label("Stories", systemImage: "play.circle.fill") }
         }
-        .tint(.msgBlue)
+        .tint(LpspMessengerTokens.msgBlue)
     }
 }
 

@@ -12,18 +12,18 @@ struct LpspAwesomeSnapchatView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspSnapchatTokens {
     // MARK: - Canvas & Surfaces
-    static let snapCanvas          = Color.black                                   // #000000
+    static let snapCanvas          = LpspSnapchatTokens.black                                   // #000000
     static let snapSurface1        = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
     static let snapSurface2        = Color(red: 0.173, green: 0.173, blue: 0.173) // #2C2C2C
     static let snapDivider         = Color(red: 0.200, green: 0.200, blue: 0.200) // #333333
 
     // MARK: - Canvas (Light, limited use)
-    static let snapLightCanvas     = Color.white                                   // #FFFFFF
+    static let snapLightCanvas     = LpspSnapchatTokens.white                                   // #FFFFFF
     static let snapLightSurface1   = Color(red: 0.949, green: 0.949, blue: 0.949) // #F2F2F2
 
     // MARK: - Text
-    static let snapTextPrimary     = Color.white                                   // #FFFFFF
-    static let snapTextPrimaryLight = Color.black                                  // #000000
+    static let snapTextPrimary     = LpspSnapchatTokens.white                                   // #FFFFFF
+    static let snapTextPrimaryLight = LpspSnapchatTokens.black                                  // #000000
     static let snapTextSecondary   = Color(red: 0.541, green: 0.541, blue: 0.561) // #8A8A8F
     static let snapTextTertiary    = Color(red: 0.333, green: 0.333, blue: 0.333) // #555555
 
@@ -90,7 +90,7 @@ private struct LpspSnapchatSnapCaptureButton: View {
 
             // Inner white (or yellow when recording) circle
             Circle()
-                .fill(isRecording ? LpspSnapchatTokens.snapYellow : Color.white)
+                .fill(isRecording ? LpspSnapchatTokens.snapYellow : LpspSnapchatTokens.white)
                 .frame(width: 64, height: 64)
                 .scaleEffect(innerScale)
         }
@@ -252,7 +252,7 @@ private struct LpspSnapchatSnapStoryThumb: View {
                 .resizable()
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                .overlay(Circle().stroke(LpspSnapchatTokens.white, lineWidth: 2))
                 .padding(8)
 
             VStack {
@@ -319,7 +319,7 @@ private struct LpspSnapchatSnapCameraHUD: View {
         GeometryReader { geo in
             ZStack {
                 // Live camera feed placeholder
-                Color.black
+                LpspSnapchatTokens.black
                     .overlay(
                         Image(systemName: "camera.viewfinder")
                             .font(.system(size: 80))
@@ -441,7 +441,7 @@ private struct LpspSnapchatSnapNavIndicator: View {
             ForEach(Array(icons.enumerated()), id: \.offset) { i, icon in
                 Image(systemName: icon)
                     .font(.system(size: 28))
-                    .foregroundStyle(i == selected ? Color.white : LpspSnapchatTokens.snapTextTertiary)
+                    .foregroundStyle(i == selected ? LpspSnapchatTokens.white : LpspSnapchatTokens.snapTextTertiary)
                     .frame(maxWidth: .infinity, minHeight: 56)
             }
         }

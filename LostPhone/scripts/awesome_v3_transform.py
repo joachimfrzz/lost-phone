@@ -347,14 +347,14 @@ def merge_duplicate_private_enums(code: str, enum_name: str) -> str:
 
 
 def dedupe_extension_view(code: str) -> str:
-    """Supprime les fonctions dupliquées dans les extension View répétées."""
+    """Supprime les extensions dupliquées (View, Text, Font…) avec les mêmes fonctions."""
     seen: set[str] = set()
     out: list[str] = []
     i = 0
     lines = code.splitlines(keepends=True)
     while i < len(lines):
         line = lines[i]
-        if line.strip().startswith("extension View"):
+        if re.match(r"extension (View|Text|Font|Image)\b", line.strip()):
             block_lines = [line]
             i += 1
             depth = line.count("{") - line.count("}")
@@ -369,6 +369,35 @@ def dedupe_extension_view(code: str) -> str:
             for f in funcs:
                 seen.add(f)
             out.append(block)
+            continue
+        out.append(line)
+        i += 1
+    return "".join(out)
+
+
+def dedupe_private_types(code: str, prefix: str) -> str:
+    """Garde la première déclaration de chaque private struct/enum (hors Tokens/Fonts/Gradients)."""
+    seen: set[str] = set()
+    skip_enums = {f"{prefix}Tokens", f"{prefix}Fonts", f"{prefix}Gradients"}
+    out: list[str] = []
+    i = 0
+    lines = code.splitlines(keepends=True)
+    while i < len(lines):
+        line = lines[i]
+        m = re.match(r"private (struct|enum) (\w+)", line.strip())
+        if m and m.group(2) not in skip_enums:
+            name = m.group(2)
+            block_lines = [line]
+            i += 1
+            depth = line.count("{") - line.count("}")
+            while i < len(lines) and depth > 0:
+                block_lines.append(lines[i])
+                depth += lines[i].count("{") - lines[i].count("}")
+                i += 1
+            if name in seen:
+                continue
+            seen.add(name)
+            out.extend(block_lines)
             continue
         out.append(line)
         i += 1
@@ -409,6 +438,18 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     code = apply_token_and_font_refs(code, token_names, font_names, tokens_enum, fonts_enum)
     code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names)
     code = fix_linear_gradient_refs(code, grad_enum)
+
+    # Second passe après fusion des enums
+    token_names = re.findall(r"static let (\w+)\s*=", code.split(f"private enum {tokens_enum}", 1)[1].split("\nprivate enum", 1)[0] if f"private enum {tokens_enum}" in code else "")
+    token_names = list(dict.fromkeys(token_names))
+    if f"private enum {fonts_enum}" in code:
+        fb = code.split(f"private enum {fonts_enum}", 1)[1].split("\nprivate enum", 1)[0]
+        font_names = list(dict.fromkeys(re.findall(r"static let (\w+)\s*=", fb)))
+    code = apply_token_and_font_refs(code, token_names, font_names, tokens_enum, fonts_enum)
+    code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names)
+    code = re.sub(rf"\bColor\.(\w+)\b", rf"{tokens_enum}.\1", code)
+
+    code = dedupe_private_types(code, prefix)
 
     # Structs extraites = private (sauf déjà private)
     code = re.sub(r"\nstruct Lpsp", r"\nprivate struct Lpsp", code)

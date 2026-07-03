@@ -34,7 +34,7 @@ private enum LpspTwitchFonts {
 private enum LpspTwitchTokens {
     // MARK: - Canvas & Surfaces
     static let twitchCanvas    = Color(red: 0.055, green: 0.055, blue: 0.063) // #0E0E10
-    static let twitchDeepBlack = Color.black                                  // #000000
+    static let twitchDeepBlack = LpspTwitchTokens.black                                  // #000000
     static let twitchSurface1  = Color(red: 0.094, green: 0.094, blue: 0.106) // #18181B
     static let twitchSurface2  = Color(red: 0.122, green: 0.122, blue: 0.137) // #1F1F23
     static let twitchSurface3  = Color(red: 0.165, green: 0.165, blue: 0.176) // #2A2A2D
@@ -73,14 +73,14 @@ private struct LpspTwitchTwitchFollowButton: View {
                     .font(isFollowing ? .twitchButtonSecondary : .twitchButton)
                     .tracking(isFollowing ? 0 : 0.2)
             }
-            .foregroundStyle(isFollowing ? Color.twitchTextPrimary : .white)
+            .foregroundStyle(isFollowing ? LpspTwitchTokens.twitchTextPrimary : .white)
             .padding(.horizontal, 16)
             .frame(height: 40)
             .background(
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(isFollowing ? Color.twitchSurface2 : Color.twitchPurple)
+                    .fill(isFollowing ? LpspTwitchTokens.twitchSurface2 : LpspTwitchTokens.twitchPurple)
             )
-            .shadow(color: isFollowing ? .clear : Color.twitchPurple.opacity(0.35), radius: 18, y: 6)
+            .shadow(color: isFollowing ? .clear : LpspTwitchTokens.twitchPurple.opacity(0.35), radius: 18, y: 6)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: isFollowing)
         .buttonStyle(LpspTwitchTwitchPressableStyle(pressedScale: 0.97))
@@ -109,7 +109,7 @@ private struct LpspTwitchTwitchLivePill: View {
         .foregroundStyle(.white)
         .padding(.horizontal, 8)
         .frame(height: 22)
-        .background(RoundedRectangle(cornerRadius: 4).fill(Color.twitchLiveRed))
+        .background(RoundedRectangle(cornerRadius: 4).fill(LpspTwitchTokens.twitchLiveRed))
         .onAppear { pulse = true }
     }
 }
@@ -153,9 +153,9 @@ private struct LpspTwitchTwitchLiveCard: View {
             HStack(alignment: .top, spacing: 8) {
                 avatar.resizable().frame(width: 32, height: 32).clipShape(Circle())
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(LpspTwitchFonts.twitchStreamTitle).foregroundStyle(.twitchTextPrimary).lineLimit(2)
-                    Text(channel).font(LpspTwitchFonts.twitchMeta).foregroundStyle(.twitchTextSecondary)
-                    Text(game).font(LpspTwitchFonts.twitchCardSubtitle).foregroundStyle(.twitchTextSecondary)
+                    Text(title).font(LpspTwitchFonts.twitchStreamTitle).foregroundStyle(LpspTwitchTokens.twitchTextPrimary).lineLimit(2)
+                    Text(channel).font(LpspTwitchFonts.twitchMeta).foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                    Text(game).font(LpspTwitchFonts.twitchCardSubtitle).foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
                 }
             }
         }
@@ -172,7 +172,7 @@ private struct LpspTwitchTwitchChatRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             (Text(username + " ").font(LpspTwitchFonts.twitchChatUsername).foregroundColor(userColor)
-             + Text(message).font(LpspTwitchFonts.twitchChatMessage).foregroundColor(.twitchTextPrimary))
+             + Text(message).font(LpspTwitchFonts.twitchChatMessage).foregroundColor(LpspTwitchTokens.twitchTextPrimary))
             .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
         }
@@ -180,8 +180,8 @@ private struct LpspTwitchTwitchChatRow: View {
         .padding(.horizontal, 12)
         .background(
             mentioned
-            ? Color.twitchPurple.opacity(0.20)
-                .overlay(Rectangle().fill(Color.twitchPurple).frame(width: 2), alignment: .leading)
+            ? LpspTwitchTokens.twitchPurple.opacity(0.20)
+                .overlay(Rectangle().fill(LpspTwitchTokens.twitchPurple).frame(width: 2), alignment: .leading)
             : nil
         )
     }
@@ -196,7 +196,7 @@ private struct LpspTwitchTwitchAvatarRing: View {
             .resizable()
             .frame(width: size, height: size)
             .clipShape(Circle())
-            .overlay(Circle().strokeBorder(isLive ? Color.twitchLiveRed : Color.twitchPurple, lineWidth: 2))
+            .overlay(Circle().strokeBorder(isLive ? LpspTwitchTokens.twitchLiveRed : LpspTwitchTokens.twitchPurple, lineWidth: 2))
             .padding(2)
     }
 }
@@ -216,11 +216,11 @@ private struct LpspTwitchTwitchTheaterChatOverlay: View {
                 }}
                 TextField("Send a message", text: .constant(""))
                     .padding(12)
-                    .background(Color.twitchSurface2)
+                    .background(LpspTwitchTokens.twitchSurface2)
             }
             .frame(width: 320)
             .background(.ultraThinMaterial)
-            .background(Color.twitchCanvas.opacity(0.72))
+            .background(LpspTwitchTokens.twitchCanvas.opacity(0.72))
             .transition(.move(edge: .trailing).combined(with: .opacity))
         }
     }
@@ -231,7 +231,7 @@ private struct LpspTwitchRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(Color.twitchCanvas).withAlphaComponent(0.94)
+        appearance.backgroundColor = UIColor(LpspTwitchTokens.twitchCanvas).withAlphaComponent(0.94)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -243,7 +243,7 @@ private struct LpspTwitchRootTabView: View {
             NotificationsView().tabItem { Label("Notifications", systemImage: "bell.fill") }
             ProfileView().tabItem       { Label("Profile",       systemImage: "person.crop.circle.fill") }
         }
-        .tint(.twitchPurple) // active = purple, purple is the indicator
+        .tint(LpspTwitchTokens.twitchPurple) // active = purple, purple is the indicator
     }
 }
 

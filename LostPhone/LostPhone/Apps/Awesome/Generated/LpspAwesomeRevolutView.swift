@@ -39,7 +39,7 @@ private enum LpspRevolutTokens {
     static let revBorder   = Color(red: 0.200, green: 0.200, blue: 0.290) // #33334A
 
     // MARK: - Text
-    static let revTextPrimary   = Color.white                                  // #FFFFFF
+    static let revTextPrimary   = LpspRevolutTokens.white                                  // #FFFFFF
     static let revTextSecondary = Color(red: 0.604, green: 0.604, blue: 0.667) // #9A9AAA
     static let revTextTertiary  = Color(red: 0.416, green: 0.416, blue: 0.494) // #6A6A7E
 
@@ -59,7 +59,7 @@ private enum LpspRevolutTokens {
 
 private enum LpspRevolutGradients {
     static let revBrand = LinearGradient(
-        colors: [.revGradStart, .revGradEnd],
+        colors: [LpspRevolutTokens.revGradStart, LpspRevolutTokens.revGradEnd],
         startPoint: .topLeading, endPoint: .bottomTrailing
     )
 }
@@ -79,7 +79,7 @@ private struct LpspRevolutRevPrimaryButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
                 .background(LpspRevolutGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: Color.revBrand.opacity(0.30), radius: 14, y: 8)
+                .shadow(color: LpspRevolutTokens.revBrand.opacity(0.30), radius: 14, y: 8)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: UUID())
         .buttonStyle(LpspRevolutRevPressableStyle())
@@ -104,7 +104,7 @@ private struct LpspRevolutRevSecondaryButton: View {
                 .font(LpspRevolutFonts.revButton)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
-                .background(Color.revSurface2, in: RoundedRectangle(cornerRadius: 16))
+                .background(LpspRevolutTokens.revSurface2, in: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(LpspRevolutRevPressableStyle())
     }
@@ -121,10 +121,10 @@ private struct LpspRevolutCurrencyTile: View {
             Text(flag)
                 .font(.system(size: 20))
                 .frame(width: 28, height: 28)
-                .background(Circle().fill(Color.revSurface2))
+                .background(Circle().fill(LpspRevolutTokens.revSurface2))
             VStack(alignment: .leading, spacing: 2) {
                 Text(code).font(LpspRevolutFonts.revMerchant).foregroundStyle(.white)
-                Text(name).font(LpspRevolutFonts.revMeta).foregroundStyle(.revTextSecondary)
+                Text(name).font(LpspRevolutFonts.revMeta).foregroundStyle(LpspRevolutTokens.revTextSecondary)
             }
             Spacer()
             Text(balance)
@@ -136,8 +136,8 @@ private struct LpspRevolutCurrencyTile: View {
         .frame(height: 72)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.revSurface1)
-                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Color.revDivider, lineWidth: 1))
+                .fill(LpspRevolutTokens.revSurface1)
+                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(LpspRevolutTokens.revDivider, lineWidth: 1))
         )
     }
 }
@@ -157,13 +157,13 @@ private struct LpspRevolutTransactionRow: View {
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2) {
                 Text(merchant).font(LpspRevolutFonts.revMerchant).foregroundStyle(.white).lineLimit(1)
-                Text(meta).font(LpspRevolutFonts.revMeta).foregroundStyle(.revTextSecondary).lineLimit(1)
+                Text(meta).font(LpspRevolutFonts.revMeta).foregroundStyle(LpspRevolutTokens.revTextSecondary).lineLimit(1)
             }
             Spacer()
             Text(amount)
                 .font(LpspRevolutFonts.revAmount)
                 .monospacedDigit()
-                .foregroundStyle(incoming ? Color.revIncome : .white)
+                .foregroundStyle(incoming ? LpspRevolutTokens.revIncome : .white)
         }
         .padding(.horizontal, 16)
         .frame(height: 64)
@@ -179,23 +179,23 @@ private struct LpspRevolutSpendDonut: View {
     var body: some View {
         VStack(spacing: 16) {
             ZStack {
-                Circle().stroke(Color.revSurface3, lineWidth: 14)
+                Circle().stroke(LpspRevolutTokens.revSurface3, lineWidth: 14)
                 Circle()
                     .trim(from: 0, to: animated)
                     .stroke(
-                        AngularGradient(colors: [.revGradStart, .revGradEnd], center: .center),
+                        AngularGradient(colors: [LpspRevolutTokens.revGradStart, LpspRevolutTokens.revGradEnd], center: .center),
                         style: StrokeStyle(lineWidth: 14, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
                 VStack(spacing: 2) {
                     Text(total).font(LpspRevolutFonts.revSection).monospacedDigit().foregroundStyle(.white)
-                    Text("this month").font(LpspRevolutFonts.revMeta).foregroundStyle(.revTextSecondary)
+                    Text("this month").font(LpspRevolutFonts.revMeta).foregroundStyle(LpspRevolutTokens.revTextSecondary)
                 }
             }
             .frame(width: 180, height: 180)
         }
         .padding(20)
-        .background(RoundedRectangle(cornerRadius: 20).fill(Color.revSurface1))
+        .background(RoundedRectangle(cornerRadius: 20).fill(LpspRevolutTokens.revSurface1))
         .onAppear {
             withAnimation(.easeOut(duration: 0.7)) { animated = progress }
         }
@@ -216,7 +216,7 @@ private struct LpspRevolutMetalCardHero: View {
             // diagonal sheen band
             RoundedRectangle(cornerRadius: 16)
                 .fill(
-                    LinearGradient(colors: [.clear, Color.white.opacity(0.18), .clear],
+                    LinearGradient(colors: [.clear, LpspRevolutTokens.white.opacity(0.18), .clear],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
                 .offset(x: sheen * 260)
@@ -254,7 +254,7 @@ extension View {
 // Glow modifier for active / primary elements
 private struct LpspRevolutRevGlow: ViewModifier {
     func body(content: Content) -> some View {
-        content.shadow(color: Color.revBrand.opacity(0.30), radius: 14, y: 8)
+        content.shadow(color: LpspRevolutTokens.revBrand.opacity(0.30), radius: 14, y: 8)
     }
 }
 
@@ -263,7 +263,7 @@ private struct LpspRevolutRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialDark)
-        appearance.backgroundColor = UIColor(Color.revCanvas).withAlphaComponent(0.92)
+        appearance.backgroundColor = UIColor(LpspRevolutTokens.revCanvas).withAlphaComponent(0.92)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -275,7 +275,7 @@ private struct LpspRevolutRootTabView: View {
             LifestyleView().tabItem { Label("Lifestyle", systemImage: "sparkles") }
             CardsView().tabItem { Label("Cards", systemImage: "creditcard.fill") }
         }
-        .tint(.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
+        .tint(LpspRevolutTokens.revBrand) // gradient applied per-icon where possible; brand solid as TabView tint
     }
 }
 

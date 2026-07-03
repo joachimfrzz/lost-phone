@@ -18,7 +18,7 @@ private enum LpspDeezerTokens {
     static let dzDivider     = Color(red: 0.165, green: 0.149, blue: 0.200) // #2A2633
 
     // MARK: - Text
-    static let dzTextPrimary   = Color.white                                  // #FFFFFF
+    static let dzTextPrimary   = LpspDeezerTokens.white                                  // #FFFFFF
     static let dzTextSecondary = Color(red: 0.635, green: 0.612, blue: 0.690) // #A29CB0
     static let dzTextTertiary  = Color(red: 0.431, green: 0.408, blue: 0.502) // #6E6880
 
@@ -127,7 +127,7 @@ private struct LpspDeezerFlowArtwork: View {
                 HStack(alignment: .bottom, spacing: 4) {
                     ForEach(bars.indices, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(Color.white.opacity(0.62))
+                            .fill(LpspDeezerTokens.white.opacity(0.62))
                             .frame(height: geo.size.height * 0.46 * bars[i])
                     }
                 }

@@ -106,7 +106,7 @@ private struct LpspPerplexityPerplexityMark: Shape {
 
 private struct LpspPerplexityPerplexityAvatar: View {
     var size: CGFloat = 20
-    var color: Color = .pplxTeal
+    var color: Color = LpspPerplexityTokens.pplxTeal
 
     var body: some View {
         LpspPerplexityPerplexityMark()
@@ -128,14 +128,14 @@ private struct LpspPerplexitySearchInput: View {
             TextField("Ask anything…", text: $text, axis: .vertical)
                 .focused($focused)
                 .font(LpspPerplexityFonts.pplxSearch)
-                .foregroundStyle(Color.pplxTextPrimary)
+                .foregroundStyle(LpspPerplexityTokens.pplxTextPrimary)
                 .padding(.vertical, 14)
                 .lineLimit(1...8)
 
             Button(action: onAttach) {
                 Image(systemName: "paperclip")
                     .font(.system(size: 18))
-                    .foregroundStyle(Color.pplxTextSecondary)
+                    .foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
             }
             .padding(.bottom, 14)
 
@@ -144,9 +144,9 @@ private struct LpspPerplexitySearchInput: View {
             }) {
                 Image(systemName: "arrow.up")
                     .font(.system(size: 14, weight: .heavy))
-                    .foregroundStyle(canSend ? Color.pplxCanvas : Color.pplxTextTertiary)
+                    .foregroundStyle(canSend ? LpspPerplexityTokens.pplxCanvas : LpspPerplexityTokens.pplxTextTertiary)
                     .frame(width: 36, height: 36)
-                    .background(Circle().fill(canSend ? Color.pplxTeal : Color.pplxSurface3))
+                    .background(Circle().fill(canSend ? LpspPerplexityTokens.pplxTeal : LpspPerplexityTokens.pplxSurface3))
             }
             .disabled(!canSend)
             .padding(.bottom, 10)
@@ -155,15 +155,15 @@ private struct LpspPerplexitySearchInput: View {
         .padding(.horizontal, 18)
         .background(
             RoundedRectangle(cornerRadius: 24)
-                .fill(Color.pplxSurface1)
+                .fill(LpspPerplexityTokens.pplxSurface1)
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
-                        .strokeBorder(focused ? Color.pplxTeal : Color.pplxSurface3, lineWidth: focused ? 1.5 : 1)
+                        .strokeBorder(focused ? LpspPerplexityTokens.pplxTeal : LpspPerplexityTokens.pplxSurface3, lineWidth: focused ? 1.5 : 1)
                 )
-                .shadow(color: focused ? Color.pplxTeal.opacity(0.25) : .clear, radius: 0, x: 0, y: 0)
+                .shadow(color: focused ? LpspPerplexityTokens.pplxTeal.opacity(0.25) : .clear, radius: 0, x: 0, y: 0)
                 .overlay(
                     RoundedRectangle(cornerRadius: 24)
-                        .strokeBorder(Color.pplxTeal.opacity(focused ? 0.25 : 0), lineWidth: 4)
+                        .strokeBorder(LpspPerplexityTokens.pplxTeal.opacity(focused ? 0.25 : 0), lineWidth: 4)
                         .blur(radius: focused ? 4 : 0)
                 )
         )
@@ -181,14 +181,14 @@ private struct LpspPerplexitySourceCard: View {
             HStack(spacing: 6) {
                 AsyncImage(url: faviconURL) { phase in
                     if let img = phase.image { img.resizable() }
-                    else { Color.pplxSurface3 }
+                    else { LpspPerplexityTokens.pplxSurface3 }
                 }
                 .frame(width: 16, height: 16)
                 .clipShape(RoundedRectangle(cornerRadius: 3))
 
                 Text(domain)
                     .font(LpspPerplexityFonts.pplxSourceDomain)
-                    .foregroundStyle(Color.pplxTextSecondary)
+                    .foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
                     .lineLimit(1)
 
                 Spacer()
@@ -196,14 +196,14 @@ private struct LpspPerplexitySourceCard: View {
                 // Number badge
                 Text("\(number)")
                     .font(.system(size: 10, weight: .bold, design: .monospaced))
-                    .foregroundStyle(Color.pplxTextSecondary)
+                    .foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
                     .padding(.horizontal, 5).padding(.vertical, 1)
-                    .background(RoundedRectangle(cornerRadius: 3).fill(Color.pplxSurface2))
+                    .background(RoundedRectangle(cornerRadius: 3).fill(LpspPerplexityTokens.pplxSurface2))
             }
 
             Text(title)
                 .font(LpspPerplexityFonts.pplxSourceTitle)
-                .foregroundStyle(Color.pplxTextPrimary)
+                .foregroundStyle(LpspPerplexityTokens.pplxTextPrimary)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
         }
@@ -211,8 +211,8 @@ private struct LpspPerplexitySourceCard: View {
         .frame(width: 200, height: 80, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.pplxSurface1)
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.pplxSurface3, lineWidth: 1))
+                .fill(LpspPerplexityTokens.pplxSurface1)
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(LpspPerplexityTokens.pplxSurface3, lineWidth: 1))
         )
     }
 }
@@ -234,15 +234,15 @@ private struct LpspPerplexityCitationChip: View {
         }) {
             Text("\(number)")
                 .font(LpspPerplexityFonts.pplxCitation)
-                .foregroundStyle(focused ? Color.pplxTeal : Color.pplxTextSecondary)
+                .foregroundStyle(focused ? LpspPerplexityTokens.pplxTeal : LpspPerplexityTokens.pplxTextSecondary)
                 .padding(.horizontal, 5)
                 .frame(height: 18)
                 .background(
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(focused ? Color.pplxTealSoft : Color.pplxSurface2)
+                        .fill(focused ? LpspPerplexityTokens.pplxTealSoft : LpspPerplexityTokens.pplxSurface2)
                         .overlay(
                             RoundedRectangle(cornerRadius: 4).strokeBorder(
-                                focused ? Color.pplxTeal : Color.pplxSurface3,
+                                focused ? LpspPerplexityTokens.pplxTeal : LpspPerplexityTokens.pplxSurface3,
                                 lineWidth: 1
                             )
                         )
@@ -264,12 +264,12 @@ private struct LpspPerplexityAnswerBlock: View {
                 LpspPerplexityPerplexityAvatar(size: 18)
                 Text("Answer")
                     .font(LpspPerplexityFonts.pplxSenderLabel)
-                    .foregroundStyle(Color.pplxTextSecondary)
+                    .foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
             }
 
             Text(content)
                 .font(LpspPerplexityFonts.pplxBody)
-                .foregroundStyle(Color.pplxTextPrimary)
+                .foregroundStyle(LpspPerplexityTokens.pplxTextPrimary)
                 .lineSpacing(6) // ~1.5x line-height
 
             if isStreaming { LpspPerplexityStreamingCursor() }
@@ -293,15 +293,15 @@ private struct LpspPerplexityActionPill: View {
 
     var body: some View {
         HStack(spacing: 6) {
-            Image(systemName: icon).font(.system(size: 13)).foregroundStyle(Color.pplxTextSecondary)
-            Text(label).font(LpspPerplexityFonts.pplxChip).foregroundStyle(Color.pplxTextPrimary)
+            Image(systemName: icon).font(.system(size: 13)).foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
+            Text(label).font(LpspPerplexityFonts.pplxChip).foregroundStyle(LpspPerplexityTokens.pplxTextPrimary)
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 14)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.pplxSurface2)
-                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.pplxSurface3, lineWidth: 1))
+                .fill(LpspPerplexityTokens.pplxSurface2)
+                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(LpspPerplexityTokens.pplxSurface3, lineWidth: 1))
         )
     }
 }
@@ -311,7 +311,7 @@ private struct LpspPerplexityStreamingCursor: View {
 
     var body: some View {
         Rectangle()
-            .fill(Color.pplxTealBright)
+            .fill(LpspPerplexityTokens.pplxTealBright)
             .frame(width: 6, height: 16)
             .cornerRadius(1)
             .opacity(visible ? 1 : 0)
@@ -334,16 +334,16 @@ private struct LpspPerplexityProSearchToggle: View {
             HStack(spacing: 6) {
                 Image(systemName: "sparkles")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(isOn ? Color.pplxCanvas : Color.pplxTextSecondary)
+                    .foregroundStyle(isOn ? LpspPerplexityTokens.pplxCanvas : LpspPerplexityTokens.pplxTextSecondary)
                 Text("Pro")
                     .font(LpspPerplexityFonts.pplxProBadge)
-                    .foregroundStyle(isOn ? Color.pplxCanvas : Color.pplxTextSecondary)
+                    .foregroundStyle(isOn ? LpspPerplexityTokens.pplxCanvas : LpspPerplexityTokens.pplxTextSecondary)
             }
             .padding(.vertical, 6)
             .padding(.horizontal, 14)
             .background(
-                Capsule().fill(isOn ? Color.pplxTeal : Color.pplxSurface2)
-                    .overlay(Capsule().strokeBorder(isOn ? Color.clear : Color.pplxSurface3, lineWidth: 1))
+                Capsule().fill(isOn ? LpspPerplexityTokens.pplxTeal : LpspPerplexityTokens.pplxSurface2)
+                    .overlay(Capsule().strokeBorder(isOn ? LpspPerplexityTokens.clear : LpspPerplexityTokens.pplxSurface3, lineWidth: 1))
             )
         }
         .buttonStyle(.plain)
@@ -359,7 +359,7 @@ private struct LpspPerplexitySearchingIndicator: View {
             HStack(spacing: 6) {
                 ForEach(0..<3, id: \.self) { i in
                     Circle()
-                        .fill(Color.pplxTeal)
+                        .fill(LpspPerplexityTokens.pplxTeal)
                         .frame(width: 6, height: 6)
                         .scaleEffect(phase == i ? 1.3 : 1.0)
                         .animation(.easeInOut(duration: 0.4).delay(Double(i) * 0.15), value: phase)
@@ -367,7 +367,7 @@ private struct LpspPerplexitySearchingIndicator: View {
             }
             Text("Searching the web…")
                 .font(LpspPerplexityFonts.pplxSenderLabel)
-                .foregroundStyle(Color.pplxTextSecondary)
+                .foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
         }
         .onAppear {
             Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { _ in
@@ -387,13 +387,13 @@ private struct LpspPerplexityProStepsCard: View {
                 withAnimation(.easeOut(duration: 0.3)) { expanded.toggle() }
             } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: "sparkles").font(.system(size: 14)).foregroundStyle(Color.pplxTeal)
-                    Text("Steps").font(LpspPerplexityFonts.pplxSenderLabel).foregroundStyle(Color.pplxTextPrimary)
-                    Text("(\(steps.count))").font(LpspPerplexityFonts.pplxMeta).foregroundStyle(Color.pplxTextSecondary)
+                    Image(systemName: "sparkles").font(.system(size: 14)).foregroundStyle(LpspPerplexityTokens.pplxTeal)
+                    Text("Steps").font(LpspPerplexityFonts.pplxSenderLabel).foregroundStyle(LpspPerplexityTokens.pplxTextPrimary)
+                    Text("(\(steps.count))").font(LpspPerplexityFonts.pplxMeta).foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
                     Spacer()
                     Image(systemName: expanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12))
-                        .foregroundStyle(Color.pplxTextSecondary)
+                        .foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
                 }
             }
 
@@ -403,8 +403,8 @@ private struct LpspPerplexityProStepsCard: View {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 14))
-                                .foregroundStyle(Color.pplxTeal)
-                            Text(step).font(LpspPerplexityFonts.pplxBodySmall).foregroundStyle(Color.pplxTextPrimary)
+                                .foregroundStyle(LpspPerplexityTokens.pplxTeal)
+                            Text(step).font(LpspPerplexityFonts.pplxBodySmall).foregroundStyle(LpspPerplexityTokens.pplxTextPrimary)
                             Spacer()
                         }
                     }
@@ -413,7 +413,7 @@ private struct LpspPerplexityProStepsCard: View {
             }
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color.pplxTealSoft))
+        .background(RoundedRectangle(cornerRadius: 12).fill(LpspPerplexityTokens.pplxTealSoft))
     }
 }
 
@@ -425,18 +425,18 @@ private struct LpspPerplexityRelatedQuestionsCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Related")
                 .font(LpspPerplexityFonts.pplxSenderLabel)
-                .foregroundStyle(Color.pplxTextSecondary)
+                .foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
                 .padding(.bottom, 8)
 
             ForEach(Array(questions.enumerated()), id: \.offset) { idx, q in
                 Button { onSelect(q) } label: {
                     HStack {
-                        Text(q).font(LpspPerplexityFonts.pplxBodySmall).foregroundStyle(Color.pplxTextPrimary)
+                        Text(q).font(LpspPerplexityFonts.pplxBodySmall).foregroundStyle(LpspPerplexityTokens.pplxTextPrimary)
                             .lineLimit(1)
                         Spacer()
                         Image(systemName: "arrow.right")
                             .font(.system(size: 14))
-                            .foregroundStyle(Color.pplxTextSecondary)
+                            .foregroundStyle(LpspPerplexityTokens.pplxTextSecondary)
                     }
                     .padding(.vertical, 14)
                     .padding(.horizontal, 16)
@@ -445,7 +445,7 @@ private struct LpspPerplexityRelatedQuestionsCard: View {
                 .sensoryFeedback(.selection, trigger: idx)
 
                 if idx < questions.count - 1 {
-                    Rectangle().fill(Color.pplxSurface3).frame(height: 1).padding(.horizontal, 16)
+                    Rectangle().fill(LpspPerplexityTokens.pplxSurface3).frame(height: 1).padding(.horizontal, 16)
                 }
             }
         }
@@ -458,8 +458,8 @@ private struct LpspPerplexityRootTabView: View {
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = UIColor(Color.pplxCanvas)
-        appearance.shadowColor = UIColor(Color.pplxSurface3)
+        appearance.backgroundColor = UIColor(LpspPerplexityTokens.pplxCanvas)
+        appearance.shadowColor = UIColor(LpspPerplexityTokens.pplxSurface3)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -471,7 +471,7 @@ private struct LpspPerplexityRootTabView: View {
             LibraryView()  .tabItem { Label("Library",  systemImage: "books.vertical") }
             SpacesView()   .tabItem { Label("Spaces",   systemImage: "square.stack.3d.down.right") }
         }
-        .tint(Color.pplxTextPrimary)
+        .tint(LpspPerplexityTokens.pplxTextPrimary)
     }
 }
 

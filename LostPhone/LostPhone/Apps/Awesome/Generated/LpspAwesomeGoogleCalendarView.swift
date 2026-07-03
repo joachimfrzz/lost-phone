@@ -373,7 +373,7 @@ private struct LpspGoogleCalendarDrawerRow: View {
             }
             .padding(.horizontal, 16)
             .frame(height: 48)
-            .background(isSelected ? LpspGoogleCalendarTokens.gcalBlueTint : Color.clear)
+            .background(isSelected ? LpspGoogleCalendarTokens.gcalBlueTint : LpspGoogleCalendarTokens.clear)
         }
         .buttonStyle(.plain)
     }
@@ -440,11 +440,11 @@ private struct LpspGoogleCalendarRSVPPills: View {
                         .frame(height: 40)
                         .background(
                             RoundedRectangle(cornerRadius: 500)
-                                .fill(isSelected ? LpspGoogleCalendarTokens.gcalBlue : Color.clear)
+                                .fill(isSelected ? LpspGoogleCalendarTokens.gcalBlue : LpspGoogleCalendarTokens.clear)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 500)
-                                .strokeBorder(isSelected ? Color.clear : LpspGoogleCalendarTokens.gcalDivider, lineWidth: 1)
+                                .strokeBorder(isSelected ? LpspGoogleCalendarTokens.clear : LpspGoogleCalendarTokens.gcalDivider, lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)

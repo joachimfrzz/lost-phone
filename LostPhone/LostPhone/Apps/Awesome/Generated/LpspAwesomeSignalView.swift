@@ -40,8 +40,8 @@ private enum LpspSignalTokens {
     static let sigDividerDark  = Color(red: 0.227, green: 0.227, blue: 0.227)    // #3A3A3A
 
     // MARK: - Text
-    static let sigTextPrimary   = Color.black                                    // #000000
-    static let sigTextPrimaryD  = Color.white                                    // #FFFFFF
+    static let sigTextPrimary   = LpspSignalTokens.black                                    // #000000
+    static let sigTextPrimaryD  = LpspSignalTokens.white                                    // #FFFFFF
     static let sigTextSecondary = Color(red: 0.420, green: 0.420, blue: 0.420)   // #6B6B6B
     static let sigTextTertiary  = Color(red: 0.604, green: 0.604, blue: 0.604)   // #9A9A9A
 
@@ -82,18 +82,18 @@ private struct LpspSignalMessageBubble: View {
             VStack(alignment: .trailing, spacing: 2) {
                 Text(text)
                     .font(LpspSignalFonts.sigMessageBody)
-                    .foregroundStyle(isOutgoing ? .white : Color.sigTextPrimary)
+                    .foregroundStyle(isOutgoing ? .white : LpspSignalTokens.sigTextPrimary)
                 HStack(spacing: 3) {
                     Text(time).font(LpspSignalFonts.sigBubbleMeta)
                     if isOutgoing {
                         Image(systemName: "checkmark").font(.system(size: 10, weight: .bold))
                     }
                 }
-                .foregroundStyle(isOutgoing ? Color.sigOutMeta : Color.sigTextSecondary)
+                .foregroundStyle(isOutgoing ? LpspSignalTokens.sigOutMeta : LpspSignalTokens.sigTextSecondary)
             }
             .padding(.vertical, 9)
             .padding(.horizontal, 13)
-            .background(isOutgoing ? Color.sigBlue : Color.sigIncoming)
+            .background(isOutgoing ? LpspSignalTokens.sigBlue : LpspSignalTokens.sigIncoming)
             .clipShape(tail)
             .frame(maxWidth: 280, alignment: isOutgoing ? .trailing : .leading)
             if !isOutgoing { Spacer(minLength: 0) }
@@ -133,16 +133,16 @@ private struct LpspSignalComposerBar: View {
         HStack(spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "plus")
-                    .font(.system(size: 22)).foregroundStyle(Color.sigTextSecondary)
+                    .font(.system(size: 22)).foregroundStyle(LpspSignalTokens.sigTextSecondary)
                 TextField("Signal message", text: $text, axis: .vertical)
                     .font(LpspSignalFonts.sigMessageBody)
                     .lineLimit(1...5)
                 Image(systemName: "camera")
-                    .font(.system(size: 20)).foregroundStyle(Color.sigTextSecondary)
+                    .font(.system(size: 20)).foregroundStyle(LpspSignalTokens.sigTextSecondary)
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 36)
-            .background(Capsule().fill(Color.sigSurface))
+            .background(Capsule().fill(LpspSignalTokens.sigSurface))
 
             // Send circle: only when text exists; mic when empty
             LpspSignalSendCircle(showSend: hasText) {
@@ -165,7 +165,7 @@ private struct LpspSignalSendCircle: View {
             action()
         } label: {
             ZStack {
-                Circle().fill(pressed ? Color.sigBluePressed : Color.sigBlue)
+                Circle().fill(pressed ? LpspSignalTokens.sigBluePressed : LpspSignalTokens.sigBlue)
                 Image(systemName: showSend ? "arrow.up" : "mic.fill")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(.white)
@@ -191,26 +191,26 @@ private struct LpspSignalConversationRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Circle().fill(Color.sigSurface).frame(width: 48, height: 48)
+            Circle().fill(LpspSignalTokens.sigSurface).frame(width: 48, height: 48)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 5) {
-                    Text(name).font(LpspSignalFonts.sigConvoName).foregroundStyle(Color.sigTextPrimary)
+                    Text(name).font(LpspSignalFonts.sigConvoName).foregroundStyle(LpspSignalTokens.sigTextPrimary)
                     if disappearing {
                         Image(systemName: "timer").font(.system(size: 12))
-                            .foregroundStyle(Color.sigTextSecondary)
+                            .foregroundStyle(LpspSignalTokens.sigTextSecondary)
                     }
                 }
-                Text(preview).font(LpspSignalFonts.sigPreview).foregroundStyle(Color.sigTextSecondary)
+                Text(preview).font(LpspSignalFonts.sigPreview).foregroundStyle(LpspSignalTokens.sigTextSecondary)
                     .lineLimit(1)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 6) {
-                Text(time).font(LpspSignalFonts.sigTimestamp).foregroundStyle(Color.sigTextSecondary)
+                Text(time).font(LpspSignalFonts.sigTimestamp).foregroundStyle(LpspSignalTokens.sigTextSecondary)
                 if unread > 0 {
                     Text("\(unread)")
                         .font(LpspSignalFonts.sigBubbleMeta).foregroundStyle(.white)
                         .frame(minWidth: 20, minHeight: 20)
-                        .background(Circle().fill(Color.sigBlue))
+                        .background(Circle().fill(LpspSignalTokens.sigBlue))
                 }
             }
         }
@@ -228,7 +228,7 @@ private struct LpspSignalTimerChip: View {
             Image(systemName: "timer").font(.system(size: 12))
             Text(duration).font(LpspSignalFonts.sigTimerChip)
         }
-        .foregroundStyle(Color.sigTextSecondary) // privacy is quiet — neutral, never blue/red
+        .foregroundStyle(LpspSignalTokens.sigTextSecondary) // privacy is quiet — neutral, never blue/red
     }
 }
 
@@ -239,7 +239,7 @@ private struct LpspSignalEncryptionNote: View {
             Text("Messages and calls are end-to-end encrypted.")
                 .font(LpspSignalFonts.sigSystemNote)
         }
-        .foregroundStyle(Color.sigTextSecondary)
+        .foregroundStyle(LpspSignalTokens.sigTextSecondary)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
     }
@@ -250,7 +250,7 @@ private struct LpspSignalRootTabView: View {
         let a = UITabBarAppearance()
         a.configureWithOpaqueBackground()
         a.backgroundColor = UIColor.systemBackground
-        a.shadowColor = UIColor(Color.sigDivider)
+        a.shadowColor = UIColor(LpspSignalTokens.sigDivider)
         UITabBar.appearance().standardAppearance = a
         UITabBar.appearance().scrollEdgeAppearance = a
     }
@@ -261,7 +261,7 @@ private struct LpspSignalRootTabView: View {
             StoriesView().tabItem { Label("Stories", systemImage: "circle.dashed") }
             SettingsView().tabItem { Label("Settings", systemImage: "gearshape.fill") }
         }
-        .tint(.sigBlue)
+        .tint(LpspSignalTokens.sigBlue)
     }
 }
 

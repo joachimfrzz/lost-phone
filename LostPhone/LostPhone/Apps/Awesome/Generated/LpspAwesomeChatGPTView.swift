@@ -12,7 +12,7 @@ struct LpspAwesomeChatGPTView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspChatGPTTokens {
     // MARK: - Canvas
-    static let gptCanvas          = Color.white                                    // #FFFFFF
+    static let gptCanvas          = LpspChatGPTTokens.white                                    // #FFFFFF
     static let gptDarkCanvas      = Color(red: 0.129, green: 0.129, blue: 0.129)  // #212121
 
     // MARK: - Sidebar
@@ -42,7 +42,7 @@ private enum LpspChatGPTTokens {
 
     // MARK: - Send Button
     static let gptSendLight       = Color(red: 0.051, green: 0.051, blue: 0.051) // #0D0D0D
-    static let gptSendDark        = Color.white                                    // #FFFFFF
+    static let gptSendDark        = LpspChatGPTTokens.white                                    // #FFFFFF
     static let gptSendDisabled    = Color(red: 0.800, green: 0.800, blue: 0.800) // #CCCCCC
 
     // MARK: - Semantic
@@ -226,7 +226,7 @@ private struct LpspChatGPTFeedbackIconButton: View {
                 .font(.system(size: 16))
                 .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
                 .frame(width: 32, height: 32)
-                .background(Circle().fill(Color.clear))
+                .background(Circle().fill(LpspChatGPTTokens.clear))
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.impact(flexibility: .soft), trigger: UUID())
@@ -299,7 +299,7 @@ private struct LpspChatGPTModelSelectorChip: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(Capsule().fill(Color.clear))
+            .background(Capsule().fill(LpspChatGPTTokens.clear))
             .overlay(Capsule().strokeBorder(LpspChatGPTTokens.gptDivider, lineWidth: 1))
         }
     }
@@ -367,7 +367,7 @@ private struct LpspChatGPTVoiceModeView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            LpspChatGPTTokens.black.ignoresSafeArea()
 
             Circle()
                 .fill(
@@ -492,7 +492,7 @@ private struct LpspChatGPTChatSidebarRow: View {
         }
         .padding(.horizontal, 12)
         .frame(height: 40)
-        .background(isActive ? LpspChatGPTTokens.gptSidebarActive : Color.clear)
+        .background(isActive ? LpspChatGPTTokens.gptSidebarActive : LpspChatGPTTokens.clear)
     }
 }
 

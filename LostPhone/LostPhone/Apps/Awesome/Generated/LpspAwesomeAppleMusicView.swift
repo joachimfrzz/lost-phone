@@ -17,8 +17,8 @@ private enum LpspAppleMusicTokens {
     static let amRedPressed  = Color(red: 0.831, green: 0.129, blue: 0.231) // #D4213B
 
     // MARK: - Canvas
-    static let amCanvasLight   = Color.white                                  // #FFFFFF
-    static let amCanvasDark    = Color.black                                  // #000000
+    static let amCanvasLight   = LpspAppleMusicTokens.white                                  // #FFFFFF
+    static let amCanvasDark    = LpspAppleMusicTokens.black                                  // #000000
     static let amSurface1Light = Color(red: 0.949, green: 0.949, blue: 0.969) // #F2F2F7
     static let amSurface1Dark  = Color(red: 0.110, green: 0.110, blue: 0.118) // #1C1C1E
     static let amSurface2Dark  = Color(red: 0.173, green: 0.173, blue: 0.180) // #2C2C2E
@@ -133,13 +133,13 @@ private struct LpspAppleMusicAlbumTile: View {
 
                 Text(title)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(Color.primary)
+                    .foregroundStyle(LpspAppleMusicTokens.primary)
                     .lineLimit(2)
                     .frame(width: width, alignment: .leading)
 
                 Text(subtitle)
                     .font(.system(size: 13, weight: .regular))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(LpspAppleMusicTokens.secondary)
                     .lineLimit(1)
             }
         }
@@ -167,7 +167,7 @@ private struct LpspAppleMusicTrackRow: View {
                 if isPlaying {
                     LpspAppleMusicEqualizerBars(color: LpspAppleMusicTokens.amRed)
                         .frame(width: 18, height: 18)
-                        .background(Color.black.opacity(0.5))
+                        .background(LpspAppleMusicTokens.black.opacity(0.5))
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                 }
             }
@@ -179,11 +179,11 @@ private struct LpspAppleMusicTrackRow: View {
                             .font(.system(size: 11, weight: .bold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 4)
-                            .background(RoundedRectangle(cornerRadius: 3).fill(Color.gray))
+                            .background(RoundedRectangle(cornerRadius: 3).fill(LpspAppleMusicTokens.gray))
                     }
                     Text(title)
                         .font(.system(size: 17))
-                        .foregroundStyle(Color.primary)
+                        .foregroundStyle(LpspAppleMusicTokens.primary)
                         .lineLimit(1)
                     if hasAtmos {
                         LpspAppleMusicAtmosBadge()
@@ -191,7 +191,7 @@ private struct LpspAppleMusicTrackRow: View {
                 }
                 Text(artist)
                     .font(.system(size: 15))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(LpspAppleMusicTokens.secondary)
                     .lineLimit(1)
             }
 
@@ -200,7 +200,7 @@ private struct LpspAppleMusicTrackRow: View {
             Button {} label: {
                 Image(systemName: "ellipsis")
                     .font(.system(size: 20))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(LpspAppleMusicTokens.secondary)
             }
         }
         .padding(.horizontal, 16)
@@ -306,7 +306,7 @@ private struct LpspAppleMusicAMScrubber: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Capsule().fill(Color.white.opacity(0.2)).frame(height: 4)
+                Capsule().fill(LpspAppleMusicTokens.white.opacity(0.2)).frame(height: 4)
                 Capsule().fill(LpspAppleMusicTokens.amRed).frame(width: geo.size.width * progress, height: 4)
                 Circle()
                     .fill(.white)
@@ -337,11 +337,11 @@ private struct LpspAppleMusicMiniPlayer: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(trackTitle)
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(Color.primary)
+                    .foregroundStyle(LpspAppleMusicTokens.primary)
                     .lineLimit(1)
                 Text(artist)
                     .font(.system(size: 13))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(LpspAppleMusicTokens.secondary)
                     .lineLimit(1)
             }
 
@@ -350,13 +350,13 @@ private struct LpspAppleMusicMiniPlayer: View {
             Button { isPlaying.toggle() } label: {
                 Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                     .font(.system(size: 22))
-                    .foregroundStyle(Color.primary)
+                    .foregroundStyle(LpspAppleMusicTokens.primary)
             }
 
             Button {} label: {
                 Image(systemName: "forward.fill")
                     .font(.system(size: 22))
-                    .foregroundStyle(Color.primary)
+                    .foregroundStyle(LpspAppleMusicTokens.primary)
             }
             .padding(.trailing, 12)
         }

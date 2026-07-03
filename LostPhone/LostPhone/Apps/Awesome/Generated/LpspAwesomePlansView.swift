@@ -12,7 +12,7 @@ struct LpspAwesomePlansView: View {
 // MARK: - Composants spec (préfixés)
 private enum LpspPlansTokens {
     // MARK: - Canvas & Surfaces (Light)
-    static let gmCanvas        = Color.white                                   // #FFFFFF
+    static let gmCanvas        = LpspPlansTokens.white                                   // #FFFFFF
     static let gmSurfaceMuted  = Color(red: 0.945, green: 0.953, blue: 0.957) // #F1F3F4
     static let gmDivider       = Color(red: 0.855, green: 0.863, blue: 0.878) // #DADCE0
 
@@ -31,7 +31,7 @@ private enum LpspPlansTokens {
     static let gmOrange        = Color(red: 0.984, green: 0.549, blue: 0.000) // #FB8C00
 
     // MARK: - Map Tiles (Light)
-    static let gmRoadWhite     = Color.white                                   // #FFFFFF
+    static let gmRoadWhite     = LpspPlansTokens.white                                   // #FFFFFF
     static let gmHighwayYellow = Color(red: 0.992, green: 0.965, blue: 0.890) // #FDF6E3
     static let gmWaterBlue     = Color(red: 0.667, green: 0.855, blue: 1.000) // #AADAFF
     static let gmParkGreen     = Color(red: 0.784, green: 0.902, blue: 0.788) // #C8E6C9
@@ -82,7 +82,7 @@ private struct LpspPlansGMSearchBar: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(Color.gray.opacity(0.3))
+                .fill(LpspPlansTokens.gray.opacity(0.3))
                 .frame(width: 28, height: 28)
                 .overlay(Image(systemName: "person.fill").foregroundStyle(.white).font(.system(size: 14)))
             Text("Search here")
@@ -299,8 +299,8 @@ private struct LpspPlansGMPillButton: View {
         .padding(.horizontal, 16)
         .frame(height: 36)
         .background(
-            Capsule().fill(filled ? LpspPlansTokens.gmBlue : Color.clear)
-                .overlay(Capsule().stroke(filled ? Color.clear : LpspPlansTokens.gmDivider, lineWidth: 1))
+            Capsule().fill(filled ? LpspPlansTokens.gmBlue : LpspPlansTokens.clear)
+                .overlay(Capsule().stroke(filled ? LpspPlansTokens.clear : LpspPlansTokens.gmDivider, lineWidth: 1))
         )
     }
 }

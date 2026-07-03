@@ -121,7 +121,7 @@ private struct LpspClaudeClaudeMark: Shape {
 
 private struct LpspClaudeClaudeAvatar: View {
     var size: CGFloat = 18
-    var color: Color = .claudeOrange
+    var color: Color = LpspClaudeTokens.claudeOrange
 
     var body: some View {
         LpspClaudeClaudeMark()
@@ -143,12 +143,12 @@ private struct LpspClaudeAssistantMessage: View {
                 HStack(spacing: 6) {
                     Text("Claude")
                         .font(LpspClaudeFonts.claudeSenderLabel)
-                        .foregroundStyle(Color.claudeGraphite)
+                        .foregroundStyle(LpspClaudeTokens.claudeGraphite)
                     Text("·")
-                        .foregroundStyle(Color.claudeStone)
+                        .foregroundStyle(LpspClaudeTokens.claudeStone)
                     Text(modelName)
                         .font(LpspClaudeFonts.claudeChip)
-                        .foregroundStyle(Color.claudeStone)
+                        .foregroundStyle(LpspClaudeTokens.claudeStone)
                 }
             }
             .padding(.leading, 4)
@@ -156,7 +156,7 @@ private struct LpspClaudeAssistantMessage: View {
             // Body — markdown-rendered Tiempos prose
             Text(content)
                 .font(LpspClaudeFonts.claudeBody)
-                .foregroundStyle(Color.claudeInk)
+                .foregroundStyle(LpspClaudeTokens.claudeInk)
                 .lineSpacing(8) // Approximates 1.55 line-height
 
             if isStreaming {
@@ -173,7 +173,7 @@ private struct LpspClaudeStreamingCursor: View {
 
     var body: some View {
         Rectangle()
-            .fill(Color.claudeOrange)
+            .fill(LpspClaudeTokens.claudeOrange)
             .frame(width: 8, height: 18)
             .cornerRadius(1)
             .opacity(visible ? 1 : 0)
@@ -194,12 +194,12 @@ private struct LpspClaudeUserMessage: View {
             Spacer(minLength: 40)
             Text(text)
                 .font(LpspClaudeFonts.claudeUser)
-                .foregroundStyle(Color.claudeInk)
+                .foregroundStyle(LpspClaudeTokens.claudeInk)
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 18)
-                        .fill(Color.claudeSurface1)
+                        .fill(LpspClaudeTokens.claudeSurface1)
                 )
                 .frame(maxWidth: UIScreen.main.bounds.width * 0.8, alignment: .trailing)
         }
@@ -222,7 +222,7 @@ private struct LpspClaudeChatInput: View {
                 Button(action: onAttach) {
                     Image(systemName: "plus.circle")
                         .font(.system(size: 24))
-                        .foregroundStyle(Color.claudeGraphite)
+                        .foregroundStyle(LpspClaudeTokens.claudeGraphite)
                 }
                 .padding(.bottom, 14)
 
@@ -230,7 +230,7 @@ private struct LpspClaudeChatInput: View {
                 TextField("Reply to Claude…", text: $text, axis: .vertical)
                     .focused($focused)
                     .font(LpspClaudeFonts.claudeUser)
-                    .foregroundStyle(Color.claudeInk)
+                    .foregroundStyle(LpspClaudeTokens.claudeInk)
                     .padding(.vertical, 14)
                     .lineLimit(1...8)
 
@@ -243,10 +243,10 @@ private struct LpspClaudeChatInput: View {
                 }) {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(canSend ? Color.claudePaper : Color.claudeStone)
+                        .foregroundStyle(canSend ? LpspClaudeTokens.claudePaper : LpspClaudeTokens.claudeStone)
                         .frame(width: 40, height: 40)
                         .background(
-                            Circle().fill(canSend ? Color.claudeOrange : Color.claudeSurface2)
+                            Circle().fill(canSend ? LpspClaudeTokens.claudeOrange : LpspClaudeTokens.claudeSurface2)
                         )
                 }
                 .disabled(!canSend)
@@ -257,11 +257,11 @@ private struct LpspClaudeChatInput: View {
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.claudePaper)
+                    .fill(LpspClaudeTokens.claudePaper)
                     .overlay(
                         RoundedRectangle(cornerRadius: 24)
                             .strokeBorder(
-                                focused ? Color.claudeOrange : Color.claudeSand,
+                                focused ? LpspClaudeTokens.claudeOrange : LpspClaudeTokens.claudeSand,
                                 lineWidth: focused ? 1.5 : 1
                             )
                     )
@@ -282,16 +282,16 @@ private struct LpspClaudeModelPickerChip: View {
                 LpspClaudeClaudeAvatar(size: 14)
                 Text(modelName)
                     .font(LpspClaudeFonts.claudeChip)
-                    .foregroundStyle(Color.claudeInk)
+                    .foregroundStyle(LpspClaudeTokens.claudeInk)
                 Image(systemName: "chevron.down")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(Color.claudeStone)
+                    .foregroundStyle(LpspClaudeTokens.claudeStone)
             }
             .padding(.vertical, 6)
             .padding(.horizontal, 12)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.claudeSurface1)
+                    .fill(LpspClaudeTokens.claudeSurface1)
             )
         }
         .buttonStyle(.plain)
@@ -313,12 +313,12 @@ private struct LpspClaudeModelPickerSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Select Model").font(LpspClaudeFonts.claudeAction).foregroundStyle(Color.claudeInk)
+                Text("Select Model").font(LpspClaudeFonts.claudeAction).foregroundStyle(LpspClaudeTokens.claudeInk)
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 22))
-                        .foregroundStyle(Color.claudeStone)
+                        .foregroundStyle(LpspClaudeTokens.claudeStone)
                 }
             }
             .padding(.horizontal, 20)
@@ -332,26 +332,26 @@ private struct LpspClaudeModelPickerSheet: View {
                     }
                 } label: {
                     HStack(spacing: 16) {
-                        LpspClaudeClaudeAvatar(size: 24, color: model.available ? .claudeOrange : .claudeBone)
+                        LpspClaudeClaudeAvatar(size: 24, color: model.available ? LpspClaudeTokens.claudeOrange : LpspClaudeTokens.claudeBone)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(model.name).font(.system(size: 16, weight: .medium)).foregroundStyle(Color.claudeInk)
-                            Text(model.subtitle).font(LpspClaudeFonts.claudeChip).foregroundStyle(Color.claudeGraphite)
+                            Text(model.name).font(.system(size: 16, weight: .medium)).foregroundStyle(LpspClaudeTokens.claudeInk)
+                            Text(model.subtitle).font(LpspClaudeFonts.claudeChip).foregroundStyle(LpspClaudeTokens.claudeGraphite)
                         }
                         Spacer()
                         if model.name == selectedModel {
-                            Circle().fill(Color.claudeOrange).frame(width: 12, height: 12)
+                            Circle().fill(LpspClaudeTokens.claudeOrange).frame(width: 12, height: 12)
                         }
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 14)
                 }
                 .buttonStyle(.plain)
-                Rectangle().fill(Color.claudeSurface1).frame(height: 1).padding(.leading, 60)
+                Rectangle().fill(LpspClaudeTokens.claudeSurface1).frame(height: 1).padding(.leading, 60)
             }
         }
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.claudePaper)
+                .fill(LpspClaudeTokens.claudePaper)
         )
         .sensoryFeedback(.selection, trigger: selectedModel)
     }
@@ -366,7 +366,7 @@ private struct LpspClaudeCodeBlock: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text(language).font(LpspClaudeFonts.claudeCodeLang).foregroundStyle(Color.claudeStone)
+                Text(language).font(LpspClaudeFonts.claudeCodeLang).foregroundStyle(LpspClaudeTokens.claudeStone)
                 Spacer()
                 Button {
                     UIPasteboard.general.string = code
@@ -377,28 +377,28 @@ private struct LpspClaudeCodeBlock: View {
                 } label: {
                     Image(systemName: copied ? "checkmark" : "doc.on.doc")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(Color.claudeCodeFg)
+                        .foregroundStyle(LpspClaudeTokens.claudeCodeFg)
                         .frame(width: 32, height: 32)
-                        .background(Color.white.opacity(0.05).clipShape(Circle()))
+                        .background(LpspClaudeTokens.white.opacity(0.05).clipShape(Circle()))
                 }
                 .sensoryFeedback(.impact(weight: .light), trigger: copied)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(Rectangle().fill(Color.claudeDarkSurface2.opacity(0.4)))
+            .background(Rectangle().fill(LpspClaudeTokens.claudeDarkSurface2.opacity(0.4)))
 
             // Body
             ScrollView(.horizontal, showsIndicators: false) {
                 Text(code)
                     .font(LpspClaudeFonts.claudeCodeBlock)
-                    .foregroundStyle(Color.claudeCodeFg)
+                    .foregroundStyle(LpspClaudeTokens.claudeCodeFg)
                     .padding(16)
             }
         }
-        .background(Color.claudeCodeBg)
+        .background(LpspClaudeTokens.claudeCodeBg)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
-            RoundedRectangle(cornerRadius: 12).strokeBorder(Color.claudeSand, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 12).strokeBorder(LpspClaudeTokens.claudeSand, lineWidth: 1)
         )
     }
 }
@@ -414,11 +414,11 @@ private struct LpspClaudeThinkingIndicator: View {
                 .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: pulse)
             Text(elapsedSeconds.map { "Thought for \($0)s" } ?? "Thinking…")
                 .font(LpspClaudeFonts.claudeChip)
-                .foregroundStyle(Color.claudeGraphite)
+                .foregroundStyle(LpspClaudeTokens.claudeGraphite)
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 12)
-        .background(Capsule().fill(Color.claudeOrangeSoft))
+        .background(Capsule().fill(LpspClaudeTokens.claudeOrangeSoft))
         .onAppear { pulse = true }
     }
 }
@@ -443,32 +443,32 @@ private struct LpspClaudeArtifactCard: View {
         Button(action: onOpen) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
-                    Image(systemName: icon).font(.system(size: 14)).foregroundStyle(Color.claudeGraphite)
-                    Text(title).font(.system(size: 17, weight: .medium)).foregroundStyle(Color.claudeInk)
+                    Image(systemName: icon).font(.system(size: 14)).foregroundStyle(LpspClaudeTokens.claudeGraphite)
+                    Text(title).font(.system(size: 17, weight: .medium)).foregroundStyle(LpspClaudeTokens.claudeInk)
                     Spacer()
-                    Image(systemName: "arrow.up.right").font(.system(size: 12)).foregroundStyle(Color.claudeStone)
+                    Image(systemName: "arrow.up.right").font(.system(size: 12)).foregroundStyle(LpspClaudeTokens.claudeStone)
                 }
 
                 Text(preview)
                     .font(LpspClaudeFonts.claudeCodeBlockSm)
-                    .foregroundStyle(Color.claudeGraphite)
+                    .foregroundStyle(LpspClaudeTokens.claudeGraphite)
                     .lineLimit(6)
                     .multilineTextAlignment(.leading)
                     .padding(.horizontal, 8).padding(.vertical, 6)
                     .background(
-                        RoundedRectangle(cornerRadius: 8).fill(Color.claudeSurface1)
+                        RoundedRectangle(cornerRadius: 8).fill(LpspClaudeTokens.claudeSurface1)
                     )
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.claudePaper)
+                    .fill(LpspClaudeTokens.claudePaper)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12).strokeBorder(Color.claudeSand, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 12).strokeBorder(LpspClaudeTokens.claudeSand, lineWidth: 1)
                     )
             )
-            .shadow(color: Color.black.opacity(0.06), radius: 8, y: 2)
+            .shadow(color: LpspClaudeTokens.black.opacity(0.06), radius: 8, y: 2)
         }
         .buttonStyle(.plain)
     }
@@ -484,18 +484,18 @@ private struct LpspClaudeConversationView: View {
             // Top header
             HStack {
                 Button { /* open sidebar */ } label: {
-                    Image(systemName: "line.3.horizontal").font(.system(size: 18)).foregroundStyle(Color.claudeInk)
+                    Image(systemName: "line.3.horizontal").font(.system(size: 18)).foregroundStyle(LpspClaudeTokens.claudeInk)
                 }
                 Spacer()
-                Text("Untitled chat").font(LpspClaudeFonts.claudeConvTitle).foregroundStyle(Color.claudeInk)
+                Text("Untitled chat").font(LpspClaudeFonts.claudeConvTitle).foregroundStyle(LpspClaudeTokens.claudeInk)
                 Spacer()
                 Button { /* ... */ } label: {
-                    Image(systemName: "ellipsis").font(.system(size: 18)).foregroundStyle(Color.claudeInk)
+                    Image(systemName: "ellipsis").font(.system(size: 18)).foregroundStyle(LpspClaudeTokens.claudeInk)
                 }
             }
             .padding(.horizontal, 16)
             .frame(height: 52)
-            .background(Color.claudeCream)
+            .background(LpspClaudeTokens.claudeCream)
 
             // Model chip
             HStack {
@@ -515,11 +515,11 @@ private struct LpspClaudeConversationView: View {
                 }
                 .padding(.horizontal, 16).padding(.vertical, 16)
             }
-            .background(Color.claudeCream)
+            .background(LpspClaudeTokens.claudeCream)
 
             LpspClaudeChatInput(text: $input, onSend: {}, onAttach: {})
         }
-        .background(Color.claudeCream.ignoresSafeArea())
+        .background(LpspClaudeTokens.claudeCream.ignoresSafeArea())
         .sheet(isPresented: $showingModelPicker) {
             LpspClaudeModelPickerSheet(
                 selectedModel: $modelName,

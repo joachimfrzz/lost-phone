@@ -31,7 +31,7 @@ private enum LpspWiseFonts {
 
 private enum LpspWiseTokens {
     // MARK: - Canvas & Surfaces
-    static let wiseCanvas       = Color.white                                  // #FFFFFF
+    static let wiseCanvas       = LpspWiseTokens.white                                  // #FFFFFF
     static let wiseSurface      = Color(red: 0.969, green: 0.969, blue: 0.969) // #F7F7F7
     static let wiseSurfaceSunken = Color(red: 0.937, green: 0.937, blue: 0.937) // #EFEFEF
     static let wiseDivider      = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
@@ -67,12 +67,12 @@ private struct LpspWiseWisePrimaryButton: View {
         Button(action: action) {
             Text(title)
                 .font(LpspWiseFonts.wiseButton)
-                .foregroundStyle(Color.wiseForest) // forest on bright green, never white
+                .foregroundStyle(LpspWiseTokens.wiseForest) // forest on bright green, never white
                 .frame(maxWidth: .infinity, minHeight: 52)
-                .background(Color.wiseBright, in: RoundedRectangle(cornerRadius: 16))
+                .background(LpspWiseTokens.wiseBright, in: RoundedRectangle(cornerRadius: 16))
         }
         .sensoryFeedback(.impact(weight: .light), trigger: UUID())
-        .buttonStyle(LpspWiseWisePressableStyle(pressedFill: .wiseBrightPressed))
+        .buttonStyle(LpspWiseWisePressableStyle(pressedFill: LpspWiseTokens.wiseBrightPressed))
     }
 }
 
@@ -85,9 +85,9 @@ private struct LpspWiseWiseForestButton: View {
                 .font(LpspWiseFonts.wiseButton)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 52)
-                .background(Color.wiseForest, in: RoundedRectangle(cornerRadius: 16))
+                .background(LpspWiseTokens.wiseForest, in: RoundedRectangle(cornerRadius: 16))
         }
-        .buttonStyle(LpspWiseWisePressableStyle(pressedFill: .wiseForestHover))
+        .buttonStyle(LpspWiseWisePressableStyle(pressedFill: LpspWiseTokens.wiseForestHover))
     }
 }
 
@@ -108,7 +108,7 @@ private struct LpspWiseForestAccountHero: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("TOTAL BALANCE")
                 .font(LpspWiseFonts.wiseLabelUpper)
-                .foregroundStyle(Color.wiseBright)
+                .foregroundStyle(LpspWiseTokens.wiseBright)
             Text(total)
                 .font(LpspWiseFonts.wiseBalance)
                 .monospacedDigit()
@@ -119,13 +119,13 @@ private struct LpspWiseForestAccountHero: View {
                     .font(.system(size: 14, weight: .bold))
                 Text("Add money").font(LpspWiseFonts.wiseTitle)
             }
-            .foregroundStyle(Color.wiseBright)
+            .foregroundStyle(LpspWiseTokens.wiseBright)
             .padding(.top, 4)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(24)
-        .background(RoundedRectangle(cornerRadius: 20).fill(Color.wiseForestHover))
-        .shadow(color: Color.wiseForestHover.opacity(0.25), radius: 16, y: 12)
+        .background(RoundedRectangle(cornerRadius: 20).fill(LpspWiseTokens.wiseForestHover))
+        .shadow(color: LpspWiseTokens.wiseForestHover.opacity(0.25), radius: 16, y: 12)
     }
 }
 
@@ -140,21 +140,21 @@ private struct LpspWiseCurrencyRow: View {
             Text(flag)
                 .font(.system(size: 22))
                 .frame(width: 32, height: 32)
-                .background(Circle().fill(Color.wiseSurface))
+                .background(Circle().fill(LpspWiseTokens.wiseSurface))
             VStack(alignment: .leading, spacing: 2) {
-                Text(code).font(LpspWiseFonts.wiseTitle).foregroundStyle(.wiseTextPrimary)
-                Text(name).font(LpspWiseFonts.wiseMeta).foregroundStyle(.wiseTextSecondary)
+                Text(code).font(LpspWiseFonts.wiseTitle).foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+                Text(name).font(LpspWiseFonts.wiseMeta).foregroundStyle(LpspWiseTokens.wiseTextSecondary)
             }
             Spacer()
             Text(balance)
                 .font(LpspWiseFonts.wiseCurrency)
                 .monospacedDigit()
-                .foregroundStyle(.wiseTextPrimary)
+                .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
         }
         .padding(.horizontal, 16)
         .frame(height: 64)
         .contentShape(Rectangle())
-        .overlay(Divider().background(Color.wiseDivider), alignment: .bottom)
+        .overlay(Divider().background(LpspWiseTokens.wiseDivider), alignment: .bottom)
     }
 }
 
@@ -168,30 +168,30 @@ private struct LpspWiseFeeBreakdownCard: View {
                 HStack {
                     Text(line.label)
                         .font(line.emphasized ? .wiseTitle : .wiseBody)
-                        .foregroundStyle(line.emphasized ? Color.wiseForest : .wiseTextSecondary)
+                        .foregroundStyle(line.emphasized ? LpspWiseTokens.wiseForest : LpspWiseTokens.wiseTextSecondary)
                     Spacer()
                     Text(line.value)
                         .font(line.emphasized ? .wiseSubsection : .wiseAmount)
                         .monospacedDigit()
-                        .foregroundStyle(line.emphasized ? Color.wiseForest : .wiseTextPrimary)
+                        .foregroundStyle(line.emphasized ? LpspWiseTokens.wiseForest : LpspWiseTokens.wiseTextPrimary)
                 }
                 .padding(.vertical, 12)
                 .padding(.horizontal, line.emphasized ? 12 : 0)
                 .background(
                     line.emphasized
-                        ? RoundedRectangle(cornerRadius: 10).fill(Color.wiseBrightTint)
+                        ? RoundedRectangle(cornerRadius: 10).fill(LpspWiseTokens.wiseBrightTint)
                         : nil
                 )
                 if idx < lines.count - 1 && !line.emphasized {
-                    Divider().background(Color.wiseDivider)
+                    Divider().background(LpspWiseTokens.wiseDivider)
                 }
             }
         }
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.wiseCanvas)
-                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Color.wiseDivider, lineWidth: 1))
+                .fill(LpspWiseTokens.wiseCanvas)
+                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(LpspWiseTokens.wiseDivider, lineWidth: 1))
         )
     }
 }
@@ -206,21 +206,21 @@ private struct LpspWiseSendStepper: View {
                 HStack(spacing: 0) {
                     ZStack {
                         Circle()
-                            .fill(i < current ? Color.wiseBright : (i == current ? Color.wiseForest : Color.wiseDivider))
+                            .fill(i < current ? LpspWiseTokens.wiseBright : (i == current ? LpspWiseTokens.wiseForest : LpspWiseTokens.wiseDivider))
                             .frame(width: 28, height: 28)
                         if i < current {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 12, weight: .bold))
-                                .foregroundStyle(Color.wiseForest)
+                                .foregroundStyle(LpspWiseTokens.wiseForest)
                         } else {
                             Text("\(i + 1)")
                                 .font(.system(size: 13, weight: .bold))
-                                .foregroundStyle(i == current ? .white : .wiseTextSecondary)
+                                .foregroundStyle(i == current ? .white : LpspWiseTokens.wiseTextSecondary)
                         }
                     }
                     if i < steps.count - 1 {
                         Rectangle()
-                            .fill(i < current ? Color.wiseForest : Color.wiseDivider)
+                            .fill(i < current ? LpspWiseTokens.wiseForest : LpspWiseTokens.wiseDivider)
                             .frame(height: 2)
                             .frame(maxWidth: .infinity)
                     }
@@ -246,7 +246,7 @@ private struct LpspWiseRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.white
-        appearance.shadowColor = UIColor(Color.wiseDivider)
+        appearance.shadowColor = UIColor(LpspWiseTokens.wiseDivider)
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -258,14 +258,14 @@ private struct LpspWiseRootTabView: View {
             PaymentsView().tabItem { Label("Payments", systemImage: "arrow.left.arrow.right") }
             AccountView().tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
         }
-        .tint(.wiseForest) // active = forest; pair with a bright-green active marker if desired
+        .tint(LpspWiseTokens.wiseForest) // active = forest; pair with a bright-green active marker if desired
     }
 }
 
 private struct LpspWiseLiveDot: View {
     @State private var on = false
     var body: some View {
-        Circle().fill(Color.wiseSuccess).frame(width: 6, height: 6)
+        Circle().fill(LpspWiseTokens.wiseSuccess).frame(width: 6, height: 6)
             .opacity(on ? 1 : 0.3)
             .onAppear { withAnimation(.easeInOut(duration: 1).repeatForever()) { on = true } }
     }

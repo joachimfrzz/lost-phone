@@ -21,13 +21,13 @@ private enum LpspWhatsAppTokens {
     // MARK: - Bubbles
     static let waOutgoingLight = Color(red: 0.851, green: 0.992, blue: 0.827) // #D9FDD3
     static let waOutgoingDark  = Color(red: 0.000, green: 0.361, blue: 0.294) // #005C4B
-    static let waIncomingLight = Color.white
+    static let waIncomingLight = LpspWhatsAppTokens.white
     static let waIncomingDark  = Color(red: 0.122, green: 0.173, blue: 0.204) // #1F2C34
 
     // MARK: - Canvas
     static let waWallpaperLight = Color(red: 0.925, green: 0.898, blue: 0.867) // #ECE5DD
     static let waWallpaperDark  = Color(red: 0.043, green: 0.078, blue: 0.102) // #0B141A
-    static let waCanvasLight    = Color.white                                   // #FFFFFF
+    static let waCanvasLight    = LpspWhatsAppTokens.white                                   // #FFFFFF
     static let waCanvasDark     = Color(red: 0.067, green: 0.106, blue: 0.129) // #111B21
     static let waSurface1Light  = Color(red: 0.969, green: 0.973, blue: 0.980) // #F7F8FA
     static let waSurface1Dark   = Color(red: 0.125, green: 0.173, blue: 0.200) // #202C33
@@ -286,7 +286,7 @@ private struct LpspWhatsAppWAComposeBar: View {
             }
             .padding(.vertical, 8)
             .padding(.horizontal, 14)
-            .background(Capsule().fill(Color.white))
+            .background(Capsule().fill(LpspWhatsAppTokens.white))
 
             LpspWhatsAppWASendButton(hasText: !text.isEmpty) {
                 text = ""
@@ -356,7 +356,7 @@ private struct LpspWhatsAppWAIncomingBubble: View {
                     bottomTrailingRadius: 12,
                     topTrailingRadius: 12
                 )
-                .fill(Color.white)
+                .fill(LpspWhatsAppTokens.white)
                 .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
             )
             Spacer(minLength: UIScreen.main.bounds.width * 0.2)
@@ -367,7 +367,7 @@ private struct LpspWhatsAppWAIncomingBubble: View {
 
 private struct LpspWhatsAppWADoodleWallpaper: View {
     // Decorative doodle tile — use an Image asset in production
-    var body: some View { Color.clear }
+    var body: some View { LpspWhatsAppTokens.clear }
 }
 
 private struct LpspWhatsAppWARootTabView: View {

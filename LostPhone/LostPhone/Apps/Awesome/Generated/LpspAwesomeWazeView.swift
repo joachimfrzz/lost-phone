@@ -258,7 +258,7 @@ private struct LpspWazeWazeLocationPuck: View {
                 .fill(LpspWazeTokens.wazeCyan)
                 .frame(width: 32, height: 36)
                 .overlay(
-                    LpspWazeWazeArrowShape().stroke(Color.white, lineWidth: 3)
+                    LpspWazeWazeArrowShape().stroke(LpspWazeTokens.white, lineWidth: 3)
                 )
                 .shadow(color: .black.opacity(0.30), radius: 8, y: 3)
                 .rotationEffect(.degrees(heading))
@@ -389,7 +389,7 @@ private struct LpspWazeSpeedTile: View {
                 ZStack {
                     Circle()
                         .strokeBorder(LpspWazeTokens.wazeInk, lineWidth: 2)
-                        .background(Circle().fill(Color.white))
+                        .background(Circle().fill(LpspWazeTokens.white))
                         .frame(width: 40, height: 40)
                     Text("\(limit)")
                         .font(LpspWazeFonts.wazeSpeedLimitNum)
@@ -477,8 +477,8 @@ private struct LpspWazeWazerAvatar: View {
         Text(emoji)
             .font(.system(size: 20))
             .frame(width: 24, height: 24)
-            .background(Circle().fill(Color.white))
-            .overlay(Circle().strokeBorder(Color.white, lineWidth: 2))
+            .background(Circle().fill(LpspWazeTokens.white))
+            .overlay(Circle().strokeBorder(LpspWazeTokens.white, lineWidth: 2))
             .scaleEffect(pop)
             .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
             .onTapGesture {

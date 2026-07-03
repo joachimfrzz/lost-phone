@@ -36,12 +36,12 @@ private enum LpspZoomTokens {
     static let zoomDivider   = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
 
     // MARK: - Light surfaces (outside call)
-    static let zoomLightCanvas  = Color.white                                // #FFFFFF
+    static let zoomLightCanvas  = LpspZoomTokens.white                                // #FFFFFF
     static let zoomLightSurface = Color(red: 0.961, green: 0.961, blue: 0.961) // #F5F5F5
     static let zoomLightDivider = Color(red: 0.898, green: 0.898, blue: 0.898) // #E5E5E5
 
     // MARK: - Text (dark)
-    static let zoomTextPrimary   = Color.white                                // #FFFFFF
+    static let zoomTextPrimary   = LpspZoomTokens.white                                // #FFFFFF
     static let zoomTextSecondary = Color(red: 0.690, green: 0.690, blue: 0.690) // #B0B0B0
     static let zoomTextTertiary  = Color(red: 0.478, green: 0.478, blue: 0.478) // #7A7A7A
 
@@ -71,11 +71,11 @@ private struct LpspZoomGalleryTile: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 8).fill(Color.zoomSurface2)
+            RoundedRectangle(cornerRadius: 8).fill(LpspZoomTokens.zoomSurface2)
 
             if !hasVideo {
                 Circle()
-                    .fill(Color.zoomBlue.opacity(0.25))
+                    .fill(LpspZoomTokens.zoomBlue.opacity(0.25))
                     .frame(width: 56, height: 56)
                     .overlay(Text(initials(name))
                         .font(.zoom(20, weight: .semibold))
@@ -90,13 +90,13 @@ private struct LpspZoomGalleryTile: View {
                             .font(.system(size: 12))
                             .foregroundStyle(.white)
                             .frame(width: 22, height: 22)
-                            .background(Circle().fill(Color.zoomRed))
+                            .background(Circle().fill(LpspZoomTokens.zoomRed))
                     }
                     Text(name)
                         .font(LpspZoomFonts.zoomTileName)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 6).padding(.vertical, 3)
-                        .background(RoundedRectangle(cornerRadius: 4).fill(Color.black.opacity(0.45)))
+                        .background(RoundedRectangle(cornerRadius: 4).fill(LpspZoomTokens.black.opacity(0.45)))
                     Spacer()
                 }
                 .padding(8)
@@ -105,7 +105,7 @@ private struct LpspZoomGalleryTile: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(Color.zoomBlue, lineWidth: isActiveSpeaker ? 3 : 0)
+                .strokeBorder(LpspZoomTokens.zoomBlue, lineWidth: isActiveSpeaker ? 3 : 0)
         )
         .animation(.easeInOut(duration: 0.22), value: isActiveSpeaker)
     }
@@ -126,9 +126,9 @@ private struct LpspZoomJoinButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(RoundedRectangle(cornerRadius: 8).fill(Color.zoomBlue))
+                .background(RoundedRectangle(cornerRadius: 8).fill(LpspZoomTokens.zoomBlue))
         }
-        .buttonStyle(LpspZoomZoomPressable(pressedColor: .zoomBluePressed))
+        .buttonStyle(LpspZoomZoomPressable(pressedColor: LpspZoomTokens.zoomBluePressed))
         .sensoryFeedback(.impact(weight: .medium), trigger: title)
     }
 }
@@ -154,7 +154,7 @@ private struct LpspZoomControlBar: View {
         HStack(spacing: 0) {
             LpspZoomControlButton(icon: micOn ? "mic.fill" : "mic.slash.fill",
                           label: micOn ? "Mute" : "Unmute",
-                          tint: micOn ? .white : .zoomRed) { micOn.toggle() }
+                          tint: micOn ? .white : LpspZoomTokens.zoomRed) { micOn.toggle() }
             LpspZoomControlButton(icon: videoOn ? "video.fill" : "video.slash.fill",
                           label: videoOn ? "Stop Video" : "Start Video",
                           tint: .white) { videoOn.toggle() }
@@ -167,13 +167,13 @@ private struct LpspZoomControlBar: View {
                     .font(.zoom(15, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 18).padding(.vertical, 8)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(Color.zoomRed))
+                    .background(RoundedRectangle(cornerRadius: 8).fill(LpspZoomTokens.zoomRed))
             }
             .padding(.leading, 4)
         }
         .padding(.horizontal, 12)
         .frame(height: 72)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color.zoomSurface1.opacity(0.96)))
+        .background(RoundedRectangle(cornerRadius: 16).fill(LpspZoomTokens.zoomSurface1.opacity(0.96)))
         .shadow(color: .black.opacity(0.4), radius: 24, y: 8)
         .padding(.horizontal, 12)
     }
@@ -202,13 +202,13 @@ private struct LpspZoomMeetingRow: View {
         HStack(spacing: 12) {
             Text(time)
                 .font(LpspZoomFonts.zoomMetadata)
-                .foregroundStyle(.zoomTextSecondary)
+                .foregroundStyle(LpspZoomTokens.zoomTextSecondary)
                 .frame(width: 64, alignment: .leading)
                 .zoomTabular()
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(topic).font(LpspZoomFonts.zoomListTitle).foregroundStyle(.white)
-                Text(subtitle).font(LpspZoomFonts.zoomMetadata).foregroundStyle(.zoomTextSecondary)
+                Text(subtitle).font(LpspZoomFonts.zoomMetadata).foregroundStyle(LpspZoomTokens.zoomTextSecondary)
             }
 
             Spacer()
@@ -219,12 +219,12 @@ private struct LpspZoomMeetingRow: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 18)
                     .frame(height: 32)
-                    .background(Capsule().fill(Color.zoomBlue))
+                    .background(Capsule().fill(LpspZoomTokens.zoomBlue))
             }
         }
         .padding(.horizontal, 16)
         .frame(height: 72)
-        .background(Color.zoomSurface1)
+        .background(LpspZoomTokens.zoomSurface1)
     }
 }
 
@@ -233,7 +233,7 @@ private struct LpspZoomRecordingIndicator: View {
     var body: some View {
         HStack(spacing: 6) {
             Circle()
-                .fill(Color.zoomRed)
+                .fill(LpspZoomTokens.zoomRed)
                 .frame(width: 10, height: 10)
                 .scaleEffect(pulse ? 0.7 : 1.0)
                 .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: pulse)
@@ -243,7 +243,7 @@ private struct LpspZoomRecordingIndicator: View {
                 .tracking(0.4)
         }
         .padding(.horizontal, 10).padding(.vertical, 6)
-        .background(Capsule().fill(Color.black.opacity(0.45)))
+        .background(Capsule().fill(LpspZoomTokens.black.opacity(0.45)))
         .onAppear { pulse = true }
     }
 }
@@ -275,7 +275,7 @@ private struct LpspZoomRootTabView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor { $0.userInterfaceStyle == .dark
-            ? UIColor(Color.zoomSurface1) : UIColor.white }
+            ? UIColor(LpspZoomTokens.zoomSurface1) : UIColor.white }
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
@@ -287,7 +287,7 @@ private struct LpspZoomRootTabView: View {
             PhoneView().tabItem     { Label("Phone",     systemImage: "phone.fill") }
             MoreView().tabItem      { Label("More",      systemImage: "ellipsis") }
         }
-        .tint(.zoomBlue)
+        .tint(LpspZoomTokens.zoomBlue)
     }
 }
 

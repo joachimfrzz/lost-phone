@@ -19,7 +19,7 @@ private enum LpspHappnTokens {
     static let happnDivider  = Color(red: 0.165, green: 0.165, blue: 0.200) // #2A2A33  (also timeline spine)
 
     // MARK: - Canvas & Surfaces (Light)
-    static let happnCanvasLight  = Color.white                                   // #FFFFFF
+    static let happnCanvasLight  = LpspHappnTokens.white                                   // #FFFFFF
     static let happnSurface1Light = Color(red: 0.965, green: 0.965, blue: 0.973) // #F6F6F8
 
     // MARK: - Brand
@@ -33,7 +33,7 @@ private enum LpspHappnTokens {
     static let happnTextPrimary   = Color(red: 0.957, green: 0.957, blue: 0.965) // #F4F4F6
     static let happnTextSecondary = Color(red: 0.627, green: 0.627, blue: 0.682) // #A0A0AE
     static let happnTextTertiary  = Color(red: 0.424, green: 0.424, blue: 0.478) // #6C6C7A
-    static let happnOnPink        = Color.white                                  // #FFFFFF
+    static let happnOnPink        = LpspHappnTokens.white                                  // #FFFFFF
     static let happnOnGold        = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
 
     // MARK: - Semantic
@@ -165,7 +165,7 @@ private struct LpspHappnCharmButton: View {
                     Circle().fill(charmed ? LpspHappnTokens.happnPink : LpspHappnTokens.happnSurface2)
                 )
                 .overlay(
-                    Circle().strokeBorder(charmed ? Color.clear : LpspHappnTokens.happnDivider, lineWidth: 1)
+                    Circle().strokeBorder(charmed ? LpspHappnTokens.clear : LpspHappnTokens.happnDivider, lineWidth: 1)
                 )
                 .shadow(color: charmed ? LpspHappnTokens.happnPink.opacity(0.5) : .clear, radius: 8, x: 0, y: 6)
                 .scaleEffect(scale)
@@ -182,7 +182,7 @@ private struct LpspHappnCrushCelebration: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.92).ignoresSafeArea()
+            LpspHappnTokens.black.opacity(0.92).ignoresSafeArea()
             VStack(spacing: 28) {
                 ZStack {
                     Circle().fill(leftAvatar).frame(width: 96, height: 96)
@@ -220,7 +220,7 @@ private struct LpspHappnCrossingPin: View {
                 .frame(width: 44, height: 44)
                 .clipShape(LpspHappnTeardropShape())
             Circle()
-                .fill(kind == .ghost ? LpspHappnTokens.happnTextTertiary : Color.white)
+                .fill(kind == .ghost ? LpspHappnTokens.happnTextTertiary : LpspHappnTokens.white)
                 .frame(width: 30, height: 30)
         }
         .overlay(kind == .ghost ? AnyView(LpspHappnTeardropShape().stroke(LpspHappnTokens.happnDivider, lineWidth: 1)) : AnyView(EmptyView()))

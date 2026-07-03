@@ -37,11 +37,11 @@ class MediaContentManager: ObservableObject {
     private var preFilteredSongs = [trackIcon]()
     
     //Current Playing Items Properties
-    @Published var currentPlayingItem: Track? = nil
+    @Published var currentPlayingItem: MusicKit.Track? = nil
     @Published var currentPlayingItemsTitle: String? = "No Item"
     @Published var currentPlayingItemsArtist: String? = ""
     @Published var currentPlayingItemsArtwork: UIImage? = UIImage(named: "playlist_artwork_placeholder")!
-    @Published var currentQueueArray = [Track]()
+    @Published var currentQueueArray = [MusicKit.Track]()
     @Published var isCurrenPlayingItemFirstInQuery: Bool = true
     @Published var selectedSongsBgColors: [Color]? = []
     @Published var isPlaying: Bool = false

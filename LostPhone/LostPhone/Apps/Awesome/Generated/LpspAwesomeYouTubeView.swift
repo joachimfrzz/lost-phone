@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/youtube/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/youtube
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/youtube
+// Meliwat/awesome-ios-design-md/video/youtube/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeYouTubeView: View {
     var body: some View {
@@ -375,7 +375,7 @@ private struct LpspYouTubeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspYouTubeYoutubeTabScreen(title: "Home", tabIndex: 0)
+            LpspYouTubeSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspYouTubeYoutubeTabScreen(title: "Shorts", tabIndex: 1)
@@ -480,6 +480,13 @@ private struct LpspYouTubeYoutubeTabScreen: View {
         else if low.contains("abonn") || low.contains("subscri") { LpspYouTubeYoutubeSubscriptionsTabScreen() }
         else if low.contains("biblio") || low.contains("library") { LpspYouTubeYoutubeLibraryTabScreen() }
         else { LpspYouTubeYoutubeHomeTabScreen() }
+    }
+}
+
+
+private struct LpspYouTubeSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspYouTubeYoutubeHomeTabScreen()
     }
 }
 

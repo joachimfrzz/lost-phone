@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/deezer/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/deezer
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/deezer
+// Meliwat/awesome-ios-design-md/music/deezer/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDeezerView: View {
     var body: some View {
@@ -319,7 +319,7 @@ private struct LpspDeezerShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDeezerMusicHomeTabScreen()
+            LpspDeezerSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspDeezerMusicSearchTabScreen()
@@ -439,5 +439,12 @@ private struct LpspDeezerMusicLibraryTabScreen: View {
     }
 }
 
+
+
+private struct LpspDeezerSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspDeezerMusicNowPlayingTabScreen()
+    }
+}
 
 

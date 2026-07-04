@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/linkedin/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/linkedin
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/linkedin
+// Meliwat/awesome-ios-design-md/social/linkedin/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeLinkedInView: View {
     var body: some View {
@@ -368,7 +368,7 @@ private struct LpspLinkedInShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspLinkedInFeedTabScreen()
+            LpspLinkedInSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspLinkedInSocialTabScreen(title: "My Network")
@@ -591,6 +591,13 @@ private struct LpspLinkedInGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspLinkedInSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspLinkedInFeedTabScreen()
     }
 }
 

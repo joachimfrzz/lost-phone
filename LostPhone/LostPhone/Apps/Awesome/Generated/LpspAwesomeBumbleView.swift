@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/dating/bumble/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/bumble
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/bumble
+// Meliwat/awesome-ios-design-md/dating/bumble/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeBumbleView: View {
     var body: some View {
@@ -423,7 +423,7 @@ private struct LpspBumbleShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspBumbleDatingTabScreen(title: "People", tabIndex: 0)
+            LpspBumbleSpectrHomeTabScreen()
                 .tabItem { Label("People", systemImage: "person.2") }
                 .tag(0)
             LpspBumbleDatingTabScreen(title: "Hives", tabIndex: 1)
@@ -560,6 +560,13 @@ private struct LpspBumbleDemoSwipeCard: View {
                 }
                 .padding(20)
             }
+    }
+}
+
+
+private struct LpspBumbleSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspBumbleDatingDiscoverTabScreen()
     }
 }
 

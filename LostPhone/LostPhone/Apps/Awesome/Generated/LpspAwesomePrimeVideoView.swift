@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/prime-video/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/prime-video
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/prime-video
+// Meliwat/awesome-ios-design-md/video/prime-video/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePrimeVideoView: View {
     var body: some View {
@@ -245,7 +245,7 @@ private struct LpspPrimeVideoShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPrimeVideoVideoHomeTabScreen()
+            LpspPrimeVideoSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspPrimeVideoVideoHomeTabScreen()
@@ -416,6 +416,13 @@ private struct LpspPrimeVideoDemoProfilePicker: View {
                 }
             }
         }
+    }
+}
+
+
+private struct LpspPrimeVideoSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspPrimeVideoVideoHomeTabScreen()
     }
 }
 

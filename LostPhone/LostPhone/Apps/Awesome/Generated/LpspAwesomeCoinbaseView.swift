@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/finance/coinbase/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/coinbase
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/coinbase
+// Meliwat/awesome-ios-design-md/finance/coinbase/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeCoinbaseView: View {
     var body: some View {
@@ -357,7 +357,7 @@ private struct LpspCoinbaseShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspCoinbaseFinanceHomeTabScreen()
+            LpspCoinbaseSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
             LpspCoinbaseFinanceHomeTabScreen()
@@ -470,6 +470,13 @@ private struct LpspCoinbaseDemoTx: Identifiable {
         .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
         .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
+}
+
+
+private struct LpspCoinbaseSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspCoinbaseFinanceHomeTabScreen()
+    }
 }
 
 

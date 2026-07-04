@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/threads/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/threads
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/threads
+// Meliwat/awesome-ios-design-md/social/threads/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeThreadsView: View {
     var body: some View {
@@ -337,7 +337,7 @@ private struct LpspThreadsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspThreadsFeedTabScreen()
+            LpspThreadsSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspThreadsExploreTabScreen()
@@ -533,6 +533,13 @@ private struct LpspThreadsGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspThreadsSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspThreadsFeedTabScreen()
     }
 }
 

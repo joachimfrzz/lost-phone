@@ -15,6 +15,7 @@ from awesome_v3_category_screens import (
     shazam_screens,
     youtube_screens,
 )
+from awesome_v3_home_screens import HomeContext, spectr_home_screen
 
 
 def _resolve_category(app_name: str, category: str, components: set[str]) -> str:
@@ -139,10 +140,10 @@ def _screen_for_tab(
     canvas: str,
     index: int,
 ) -> str:
+    if index == 0:
+        return f"{prefix}SpectrHomeTabScreen()"
     low = label.lower()
     if category == "ride":
-        if index == 0 or "home" in low:
-            return f"{prefix}RideHomeTabScreen()"
         return f"{prefix}RideTabScreen(title: \"{label}\", tabIndex: {index})"
     if category == "short-video":
         if any(x in low for x in ("home", "accueil", "feed")):
@@ -452,6 +453,53 @@ private struct {prefix}GenericTabScreen: View {{
                 _find_component(components, "DbxFileRow", "FileRow"),
             )
         )
+
+    shazam_home = _find_component(components, "ShazamHome")
+    composer = _find_component(components, "Composer")
+    user_bubble = _find_component(components, "UserMessageBubble", "OutgoingBubble")
+    assistant = _find_component(components, "AssistantMessage")
+    video_card = _find_component(components, "VideoCard")
+    scrubber = _find_component(components, "VideoScrubber")
+
+    parts.append(
+        spectr_home_screen(
+            HomeContext(
+                app_name=app_name,
+                prefix=prefix,
+                category=category,
+                tokens=tokens,
+                canvas=canvas,
+                accent=accent,
+                canvas_ref=canvas_ref,
+                accent_ref=accent_ref,
+                components=components,
+                feed_post=feed_post,
+                story_ring=story_ring,
+                post_card=post_card,
+                vote_col=vote_col,
+                chat_screen=chat_screen,
+                outgoing_bubble=outgoing_bubble,
+                compose_bar=compose_bar,
+                now_playing=now_playing,
+                map_view=map_view,
+                where_to=where_to,
+                ride_card=ride_card,
+                action_rail=action_rail,
+                caption_overlay=caption_overlay,
+                swipe_card=swipe_card,
+                play_btn=play_btn,
+                poster_row=poster_row,
+                top10_row=top10_row,
+                metal_card=metal_card,
+                shazam_home=shazam_home,
+                composer=composer,
+                user_bubble=user_bubble,
+                assistant=assistant,
+                video_card=video_card,
+                server_rail=server_rail,
+            )
+        )
+    )
 
     return "\n".join(parts)
 

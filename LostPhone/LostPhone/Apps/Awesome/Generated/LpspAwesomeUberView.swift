@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/uber/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/uber
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/uber
+// Meliwat/awesome-ios-design-md/travel/uber/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeUberView: View {
     var body: some View {
@@ -350,7 +350,7 @@ private struct LpspUberShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspUberRideHomeTabScreen()
+            LpspUberSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspUberRideTabScreen(title: "Services", tabIndex: 1)
@@ -478,6 +478,13 @@ private struct LpspUberRideTabScreen: View {
         else if low.contains("service") { LpspUberRideServicesTabScreen() }
         else if low.contains("activ") { LpspUberRideActivityTabScreen() }
         else { LpspUberRideAccountTabScreen() }
+    }
+}
+
+
+private struct LpspUberSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspUberRideHomeTabScreen()
     }
 }
 

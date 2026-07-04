@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/discord/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/discord
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/discord
+// Meliwat/awesome-ios-design-md/messaging/discord/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDiscordView: View {
     var body: some View {
@@ -473,7 +473,7 @@ private struct LpspDiscordShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDiscordDiscordServersTabScreen()
+            LpspDiscordSpectrHomeTabScreen()
                 .tabItem { Label("Servers", systemImage: "square.grid.2x2.fill") }
                 .tag(0)
             LpspDiscordDiscordMessagesTabScreen()
@@ -669,6 +669,13 @@ private enum LpspDiscordDemoChats {
         .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24"),
         .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier"),
     ]
+}
+
+
+private struct LpspDiscordSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspDiscordDiscordServersTabScreen()
+    }
 }
 
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/google-maps/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/google-maps
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/google-maps
+// Meliwat/awesome-ios-design-md/travel/google-maps/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGoogleMapsView: View {
     var body: some View {
@@ -380,7 +380,7 @@ private struct LpspGoogleMapsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGoogleMapsMapsTabScreen(title: "Explore", tabIndex: 0)
+            LpspGoogleMapsSpectrHomeTabScreen()
                 .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
             LpspGoogleMapsMapsTabScreen(title: "Go", tabIndex: 1)
@@ -470,6 +470,13 @@ private struct LpspGoogleMapsMapsTabScreen: View {
         if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspGoogleMapsMapsHomeTabScreen() }
         else if low.contains("itin") || low.contains("route") { LpspGoogleMapsMapsRoutesTabScreen() }
         else { LpspGoogleMapsMapsProfileTabScreen() }
+    }
+}
+
+
+private struct LpspGoogleMapsSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspGoogleMapsMapsHomeTabScreen()
     }
 }
 

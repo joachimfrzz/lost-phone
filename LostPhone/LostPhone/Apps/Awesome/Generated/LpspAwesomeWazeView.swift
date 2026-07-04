@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/waze/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/waze
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/waze
+// Meliwat/awesome-ios-design-md/travel/waze/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeWazeView: View {
     var body: some View {
@@ -486,7 +486,7 @@ private struct LpspWazeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspWazeMapsTabScreen(title: "Carte", tabIndex: 0)
+            LpspWazeSpectrHomeTabScreen()
                 .tabItem { Label("Carte", systemImage: "map.fill") }
                 .tag(0)
             LpspWazeMapsTabScreen(title: "Itinéraire", tabIndex: 1)
@@ -570,6 +570,13 @@ private struct LpspWazeMapsTabScreen: View {
         if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspWazeMapsHomeTabScreen() }
         else if low.contains("itin") || low.contains("route") { LpspWazeMapsRoutesTabScreen() }
         else { LpspWazeMapsProfileTabScreen() }
+    }
+}
+
+
+private struct LpspWazeSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspWazeMapsHomeTabScreen()
     }
 }
 

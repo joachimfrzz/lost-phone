@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/flighty/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/flighty
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/flighty
+// Meliwat/awesome-ios-design-md/travel/flighty/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeFlightyView: View {
     var body: some View {
@@ -242,7 +242,7 @@ private struct LpspFlightyShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspFlightyTravelTabScreen(title: "Flights", tabIndex: 0)
+            LpspFlightySpectrHomeTabScreen()
                 .tabItem { Label("Flights", systemImage: "airplane") }
                 .tag(0)
             LpspFlightyTravelTabScreen(title: "Search", tabIndex: 1)
@@ -361,6 +361,13 @@ private struct LpspFlightyTravelTabScreen: View {
         else if low.contains("profil") || low.contains("profile") { LpspFlightyTravelProfileTabScreen() }
         else if tabIndex == 0 { LpspFlightyTravelExploreTabScreen() }
         else { LpspFlightyTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspFlightySpectrHomeTabScreen: View {
+    var body: some View {
+        LpspFlightyTravelExploreTabScreen()
     }
 }
 

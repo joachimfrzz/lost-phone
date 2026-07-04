@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/x-twitter/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/x-twitter
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/x-twitter
+// Meliwat/awesome-ios-design-md/social/x-twitter/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeXView: View {
     var body: some View {
@@ -314,7 +314,7 @@ private struct LpspXShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspXFeedTabScreen()
+            LpspXSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspXExploreTabScreen()
@@ -510,6 +510,13 @@ private struct LpspXGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspXSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspXFeedTabScreen()
     }
 }
 

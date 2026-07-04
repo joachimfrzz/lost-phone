@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/facebook/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/facebook
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/facebook
+// Meliwat/awesome-ios-design-md/social/facebook/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeFacebookView: View {
     var body: some View {
@@ -347,7 +347,7 @@ private struct LpspFacebookShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspFacebookFeedTabScreen()
+            LpspFacebookSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspFacebookSocialTabScreen(title: "Video")
@@ -543,6 +543,13 @@ private struct LpspFacebookGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspFacebookSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspFacebookFeedTabScreen()
     }
 }
 

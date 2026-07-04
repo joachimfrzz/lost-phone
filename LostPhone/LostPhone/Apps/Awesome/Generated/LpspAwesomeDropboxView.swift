@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/productivity/dropbox/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/dropbox
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/dropbox
+// Meliwat/awesome-ios-design-md/productivity/dropbox/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDropboxView: View {
     var body: some View {
@@ -305,7 +305,7 @@ private struct LpspDropboxShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDropboxFilesTabScreen(title: "Home", tabIndex: 0)
+            LpspDropboxSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
             LpspDropboxFilesTabScreen(title: "Files", tabIndex: 1)
@@ -387,6 +387,13 @@ private struct LpspDropboxFilesTabScreen: View {
     var body: some View {
         if title.lowercased().contains("récent") || title.lowercased().contains("recent") { LpspDropboxFilesRecentsTabScreen() }
         else { LpspDropboxFilesHomeTabScreen() }
+    }
+}
+
+
+private struct LpspDropboxSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspDropboxFilesHomeTabScreen()
     }
 }
 

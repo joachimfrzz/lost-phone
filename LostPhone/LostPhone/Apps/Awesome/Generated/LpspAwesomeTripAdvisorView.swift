@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/tripadvisor/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/tripadvisor
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/tripadvisor
+// Meliwat/awesome-ios-design-md/travel/tripadvisor/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTripAdvisorView: View {
     var body: some View {
@@ -239,7 +239,7 @@ private struct LpspTripAdvisorShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTripAdvisorTravelTabScreen(title: "Explore", tabIndex: 0)
+            LpspTripAdvisorSpectrHomeTabScreen()
                 .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
             LpspTripAdvisorTravelTabScreen(title: "Search", tabIndex: 1)
@@ -361,6 +361,13 @@ private struct LpspTripAdvisorTravelTabScreen: View {
         else if low.contains("profil") || low.contains("profile") { LpspTripAdvisorTravelProfileTabScreen() }
         else if tabIndex == 0 { LpspTripAdvisorTravelExploreTabScreen() }
         else { LpspTripAdvisorTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspTripAdvisorSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspTripAdvisorTravelExploreTabScreen()
     }
 }
 

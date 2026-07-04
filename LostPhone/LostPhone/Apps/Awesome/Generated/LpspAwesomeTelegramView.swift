@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/telegram/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/telegram
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/telegram
+// Meliwat/awesome-ios-design-md/messaging/telegram/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTelegramView: View {
     var body: some View {
@@ -381,7 +381,7 @@ private struct LpspTelegramShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTelegramContactsTabScreen()
+            LpspTelegramSpectrHomeTabScreen()
                 .tabItem { Label("Contacts", systemImage: "person.2.fill") }
                 .tag(0)
             LpspTelegramCallsTabScreen()
@@ -601,6 +601,44 @@ private struct LpspTelegramDemoComposeBar: View {
         }
         .padding(8)
         .background(.ultraThinMaterial)
+    }
+}
+
+
+private struct LpspTelegramSpectrHomeTabScreen: View {
+    var body: some View {
+
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+                Circle().fill(LpspTelegramTokens.tgAccent.opacity(0.25)).frame(width: 36, height: 36)
+                    .overlay(Text("AL").font(.caption.bold()))
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Alex Martin").font(.system(size: 16, weight: .semibold))
+                    Text("last seen recently").font(.system(size: 12)).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "video").font(.system(size: 20))
+                Image(systemName: "phone").font(.system(size: 20))
+            }
+            .padding(.horizontal, 12).padding(.vertical, 8)
+            ScrollView {
+                VStack(spacing: 8) {
+                    Text("Messages and calls are end-to-end encrypted.")
+                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 8)
+
+                        LpspTelegramTgOutgoingBubble(text: "Morning! Did the mockups get sent over last night?", timestamp: "9:41", isRead: true)
+                        LpspTelegramTgIncomingBubble(text: "Yes — check the shared folder")
+
+                }
+                .padding(.vertical, 8)
+            }
+            LpspTelegramTgComposeBar()
+        }
+        .background(LpspTelegramTokens.tgCanvasLight.ignoresSafeArea())
+
     }
 }
 

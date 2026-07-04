@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/whatsapp/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/whatsapp
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/whatsapp
+// Meliwat/awesome-ios-design-md/messaging/whatsapp/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeWhatsAppView: View {
     var body: some View {
@@ -378,7 +378,7 @@ private struct LpspWhatsAppShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspWhatsAppUpdatesTabScreen()
+            LpspWhatsAppSpectrHomeTabScreen()
                 .tabItem { Label("Updates", systemImage: "circle.dashed") }
                 .tag(0)
             LpspWhatsAppCallsTabScreen()
@@ -589,6 +589,13 @@ private struct LpspWhatsAppDemoComposeBar: View {
         }
         .padding(8)
         .background(.ultraThinMaterial)
+    }
+}
+
+
+private struct LpspWhatsAppSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspWhatsAppWAChatScreen()
     }
 }
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/netflix/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/netflix
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/netflix
+// Meliwat/awesome-ios-design-md/video/netflix/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeNetflixView: View {
     var body: some View {
@@ -333,7 +333,7 @@ private struct LpspNetflixShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspNetflixVideoHomeTabScreen()
+            LpspNetflixSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspNetflixVideoNewTabScreen()
@@ -516,6 +516,13 @@ private struct LpspNetflixDemoProfilePicker: View {
                 }
             }
         }
+    }
+}
+
+
+private struct LpspNetflixSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspNetflixVideoHomeTabScreen()
     }
 }
 

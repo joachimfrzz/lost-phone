@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/soundcloud/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/soundcloud
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/soundcloud
+// Meliwat/awesome-ios-design-md/music/soundcloud/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSoundCloudView: View {
     var body: some View {
@@ -277,7 +277,7 @@ private struct LpspSoundCloudShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspSoundCloudMusicHomeTabScreen()
+            LpspSoundCloudSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspSoundCloudMusicSearchTabScreen()
@@ -403,5 +403,12 @@ private struct LpspSoundCloudMusicLibraryTabScreen: View {
     }
 }
 
+
+
+private struct LpspSoundCloudSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspSoundCloudMusicNowPlayingTabScreen()
+    }
+}
 
 

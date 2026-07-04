@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/reddit/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/reddit
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/reddit
+// Meliwat/awesome-ios-design-md/social/reddit/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeRedditView: View {
     var body: some View {
@@ -398,7 +398,7 @@ private struct LpspRedditShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspRedditFeedTabScreen()
+            LpspRedditSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspRedditCommunitiesTabScreen()
@@ -622,6 +622,13 @@ private struct LpspRedditGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspRedditSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspRedditFeedTabScreen()
     }
 }
 

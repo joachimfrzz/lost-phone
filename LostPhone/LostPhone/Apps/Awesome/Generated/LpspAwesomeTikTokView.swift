@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/tiktok/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/tiktok
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/tiktok
+// Meliwat/awesome-ios-design-md/social/tiktok/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTikTokView: View {
     var body: some View {
@@ -443,7 +443,7 @@ private struct LpspTikTokShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTikTokShortVideoFeedTabScreen()
+            LpspTikTokSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspTikTokShortVideoDiscoverTabScreen()
@@ -579,6 +579,13 @@ private struct LpspTikTokShortVideoProfileTabScreen: View {
             .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
             .navigationTitle("Profile")
         }
+    }
+}
+
+
+private struct LpspTikTokSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspTikTokShortVideoFeedTabScreen()
     }
 }
 

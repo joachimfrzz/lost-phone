@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/apple-music/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/apple-music
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/apple-music
+// Meliwat/awesome-ios-design-md/music/apple-music/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAppleMusicView: View {
     var body: some View {
@@ -452,7 +452,7 @@ private struct LpspAppleMusicShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAppleMusicMusicHomeTabScreen()
+            LpspAppleMusicSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspAppleMusicMusicHomeTabScreen()
@@ -589,5 +589,18 @@ private struct LpspAppleMusicMusicNowPlayingTabScreen: View {
     }
 }
 
+
+
+private struct LpspAppleMusicSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspAppleMusicNowPlayingScreen(
+            trackTitle: "Midnight Wavelength",
+            artist: "Nova Palmer",
+            artwork: Image(systemName: "music.note"),
+            dominantColor: LpspAppleMusicTokens.amCoral
+        )
+        .background(LpspAppleMusicTokens.amCanvasLight.ignoresSafeArea())
+    }
+}
 
 

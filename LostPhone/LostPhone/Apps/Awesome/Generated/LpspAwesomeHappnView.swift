@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/dating/happn/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/happn
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/happn
+// Meliwat/awesome-ios-design-md/dating/happn/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeHappnView: View {
     var body: some View {
@@ -307,7 +307,7 @@ private struct LpspHappnShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspHappnDatingTabScreen(title: "Timeline", tabIndex: 0)
+            LpspHappnSpectrHomeTabScreen()
                 .tabItem { Label("Timeline", systemImage: "heart.text.square") }
                 .tag(0)
             LpspHappnDatingTabScreen(title: "Map", tabIndex: 1)
@@ -435,6 +435,13 @@ private struct LpspHappnDemoSwipeCard: View {
                 }
                 .padding(20)
             }
+    }
+}
+
+
+private struct LpspHappnSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspHappnDatingDiscoverTabScreen()
     }
 }
 

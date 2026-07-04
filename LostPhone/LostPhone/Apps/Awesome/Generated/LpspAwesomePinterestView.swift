@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/pinterest/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/pinterest
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/pinterest
+// Meliwat/awesome-ios-design-md/social/pinterest/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePinterestView: View {
     var body: some View {
@@ -392,7 +392,7 @@ private struct LpspPinterestShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPinterestFeedTabScreen()
+            LpspPinterestSpectrHomeTabScreen()
                 .tabItem { Label("Accueil", systemImage: "house.fill") }
                 .tag(0)
             LpspPinterestExploreTabScreen()
@@ -582,6 +582,25 @@ private struct LpspPinterestGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspPinterestSpectrHomeTabScreen: View {
+    var body: some View {
+
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
+                ForEach(0..<8, id: \.self) { i in
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(LpspPinterestTokens.pinterestRed.opacity(0.08 + Double(i) * 0.05))
+                        .frame(height: CGFloat(120 + (i % 3) * 40))
+                }
+            }
+            .padding(12)
+        }
+        .background(LpspPinterestTokens.pinterestCanvasLight.ignoresSafeArea())
+
     }
 }
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/apple-tv/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/apple-tv
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/apple-tv
+// Meliwat/awesome-ios-design-md/video/apple-tv/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAppleTVView: View {
     var body: some View {
@@ -232,7 +232,7 @@ private struct LpspAppleTVShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAppleTVProfilePickerTabScreen()
+            LpspAppleTVSpectrHomeTabScreen()
                 .tabItem { Label("Watch Now", systemImage: "play.tv") }
                 .tag(0)
             LpspAppleTVVideoHomeTabScreen()
@@ -400,6 +400,13 @@ private struct LpspAppleTVDemoProfilePicker: View {
                 }
             }
         }
+    }
+}
+
+
+private struct LpspAppleTVSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspAppleTVVideoHomeTabScreen()
     }
 }
 

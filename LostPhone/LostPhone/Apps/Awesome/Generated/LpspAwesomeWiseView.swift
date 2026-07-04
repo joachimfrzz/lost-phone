@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/finance/wise/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/wise
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/wise
+// Meliwat/awesome-ios-design-md/finance/wise/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeWiseView: View {
     var body: some View {
@@ -259,7 +259,7 @@ private struct LpspWiseShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspWiseFinanceHomeTabScreen()
+            LpspWiseSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspWiseFinanceCardsTabScreen()
@@ -372,6 +372,13 @@ private struct LpspWiseDemoTx: Identifiable {
         .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
         .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
+}
+
+
+private struct LpspWiseSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspWiseFinanceHomeTabScreen()
+    }
 }
 
 

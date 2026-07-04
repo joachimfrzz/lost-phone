@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/amazon/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/amazon
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/amazon
+// Meliwat/awesome-ios-design-md/misc/amazon/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAmazonView: View {
     var body: some View {
@@ -358,7 +358,7 @@ private struct LpspAmazonShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAmazonCommerceTabScreen(title: "Home", tabIndex: 0)
+            LpspAmazonSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspAmazonCommerceTabScreen(title: "Menu", tabIndex: 1)
@@ -449,6 +449,13 @@ private struct LpspAmazonCommerceTabScreen: View {
         if tabIndex == 0 || low.contains("accueil") || low.contains("home") { LpspAmazonCommerceHomeTabScreen() }
         else if low.contains("panier") || low.contains("cart") { LpspAmazonCommerceCartTabScreen() }
         else { LpspAmazonCommerceHomeTabScreen() }
+    }
+}
+
+
+private struct LpspAmazonSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspAmazonCommerceHomeTabScreen()
     }
 }
 

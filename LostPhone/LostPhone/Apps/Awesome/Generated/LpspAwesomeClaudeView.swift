@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/claude/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/claude
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/claude
+// Meliwat/awesome-ios-design-md/misc/claude/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeClaudeView: View {
     var body: some View {
@@ -541,7 +541,7 @@ private struct LpspClaudeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspClaudeAiTabScreen(title: "Chat", tabIndex: 0)
+            LpspClaudeSpectrHomeTabScreen()
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
             LpspClaudeAiTabScreen(title: "Historique", tabIndex: 1)
@@ -635,6 +635,52 @@ private struct LpspClaudeAiTabScreen: View {
     var body: some View {
         if tabIndex == 0 || title.lowercased().contains("chat") { LpspClaudeAiChatTabScreen() }
         else { LpspClaudeAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspClaudeSpectrBubble: View {
+    let text: String
+    let outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 32) }
+            Text(text).font(.system(size: 16)).padding(12)
+                .background(outgoing ? LpspClaudeTokens.claudeCream.opacity(0.15) : Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            if !outgoing { Spacer(minLength: 32) }
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
+private struct LpspClaudeSpectrHomeTabScreen: View {
+    var body: some View {
+
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "line.3.horizontal").font(.title3)
+                Spacer()
+                Text("Claude").font(.system(size: 15, weight: .semibold))
+                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .background(Color(.systemGray6)).clipShape(Capsule())
+                Spacer()
+                Image(systemName: "square.and.pencil").font(.title3)
+            }
+            .padding(.horizontal, 16).padding(.vertical, 10)
+            ScrollView {
+                VStack(spacing: 16) {
+
+                        LpspClaudeSpectrBubble(text: "Write me a short poem about Paris", outgoing: true)
+                        LpspClaudeSpectrBubble(text: "Beneath the zinc and morning light, the Seine holds silver in its arms…", outgoing: false)
+
+                }
+                .padding(.vertical, 12)
+            }
+            LpspClaudeDemoComposeBar()
+        }
+        .background(LpspClaudeTokens.claudeDarkCanvas.ignoresSafeArea())
+
     }
 }
 

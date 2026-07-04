@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/productivity/zoom/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/zoom
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/zoom
+// Meliwat/awesome-ios-design-md/productivity/zoom/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeZoomView: View {
     var body: some View {
@@ -278,7 +278,7 @@ private struct LpspZoomShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspZoomMeetingsTabScreen(title: "Meetings", tabIndex: 0)
+            LpspZoomSpectrHomeTabScreen()
                 .tabItem { Label("Meetings", systemImage: "video.fill") }
                 .tag(0)
             LpspZoomMeetingsTabScreen(title: "Team Chat", tabIndex: 1)
@@ -377,6 +377,13 @@ private struct LpspZoomMeetingsTabScreen: View {
         else if low.contains("mail") { LpspZoomMeetingsMailTabScreen() }
         else if low.contains("phone") { LpspZoomMeetingsPhoneTabScreen() }
         else { LpspZoomMeetingsMoreTabScreen() }
+    }
+}
+
+
+private struct LpspZoomSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspZoomMeetingsChatTabScreen()
     }
 }
 

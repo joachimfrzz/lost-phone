@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/dating/hinge/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/hinge
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/hinge
+// Meliwat/awesome-ios-design-md/dating/hinge/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeHingeView: View {
     var body: some View {
@@ -388,7 +388,7 @@ private struct LpspHingeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspHingeDatingDiscoverTabScreen()
+            LpspHingeSpectrHomeTabScreen()
                 .tabItem { Label("Discover", systemImage: "safari") }
                 .tag(0)
             LpspHingeDatingTabScreen(title: "Likes You", tabIndex: 1)
@@ -519,6 +519,13 @@ private struct LpspHingeDemoSwipeCard: View {
                 }
                 .padding(20)
             }
+    }
+}
+
+
+private struct LpspHingeSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspHingeDatingProfileTabScreen()
     }
 }
 

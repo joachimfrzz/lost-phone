@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/audible/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/audible
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/audible
+// Meliwat/awesome-ios-design-md/music/audible/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAudibleView: View {
     var body: some View {
@@ -329,7 +329,7 @@ private struct LpspAudibleShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAudibleMusicHomeTabScreen()
+            LpspAudibleSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspAudibleMusicLibraryTabScreen()
@@ -449,5 +449,12 @@ private struct LpspAudibleMusicLibraryTabScreen: View {
     }
 }
 
+
+
+private struct LpspAudibleSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspAudibleReaderReadingTabScreen()
+    }
+}
 
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/grok/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/grok
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/grok
+// Meliwat/awesome-ios-design-md/misc/grok/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGrokView: View {
     var body: some View {
@@ -290,7 +290,7 @@ private struct LpspGrokShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGrokAiTabScreen(title: "Chat", tabIndex: 0)
+            LpspGrokSpectrHomeTabScreen()
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
             LpspGrokAiTabScreen(title: "Historique", tabIndex: 1)
@@ -384,6 +384,52 @@ private struct LpspGrokAiTabScreen: View {
     var body: some View {
         if tabIndex == 0 || title.lowercased().contains("chat") { LpspGrokAiChatTabScreen() }
         else { LpspGrokAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspGrokSpectrBubble: View {
+    let text: String
+    let outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 32) }
+            Text(text).font(.system(size: 16)).padding(12)
+                .background(outgoing ? LpspGrokTokens.grokAccentWhite.opacity(0.15) : Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            if !outgoing { Spacer(minLength: 32) }
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
+private struct LpspGrokSpectrHomeTabScreen: View {
+    var body: some View {
+
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "line.3.horizontal").font(.title3)
+                Spacer()
+                Text("Grok").font(.system(size: 15, weight: .semibold))
+                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .background(Color(.systemGray6)).clipShape(Capsule())
+                Spacer()
+                Image(systemName: "square.and.pencil").font(.title3)
+            }
+            .padding(.horizontal, 16).padding(.vertical, 10)
+            ScrollView {
+                VStack(spacing: 16) {
+
+                        LpspGrokSpectrBubble(text: "Write me a short poem about Paris", outgoing: true)
+                        LpspGrokSpectrBubble(text: "Beneath the zinc and morning light, the Seine holds silver in its arms…", outgoing: false)
+
+                }
+                .padding(.vertical, 12)
+            }
+            LpspGrokDemoComposeBar()
+        }
+        .background(LpspGrokTokens.grokCanvas.ignoresSafeArea())
+
     }
 }
 

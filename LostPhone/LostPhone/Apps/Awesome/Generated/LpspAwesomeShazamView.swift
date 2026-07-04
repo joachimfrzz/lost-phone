@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/shazam/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/shazam
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/shazam
+// Meliwat/awesome-ios-design-md/music/shazam/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeShazamView: View {
     var body: some View {
@@ -315,7 +315,7 @@ private struct LpspShazamShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspShazamShazamTabScreen(title: "Shazam", tabIndex: 0)
+            LpspShazamSpectrHomeTabScreen()
                 .tabItem { Label("Shazam", systemImage: "waveform.circle") }
                 .tag(0)
         }
@@ -373,6 +373,13 @@ private struct LpspShazamShazamTabScreen: View {
     var body: some View {
         if tabIndex == 0 || title.lowercased().contains("shazam") || title.lowercased().contains("accueil") { LpspShazamShazamHomeTabScreen() }
         else { LpspShazamShazamLibraryTabScreen() }
+    }
+}
+
+
+private struct LpspShazamSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspShazamShazamHome()
     }
 }
 

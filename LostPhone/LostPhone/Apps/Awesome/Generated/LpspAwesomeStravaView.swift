@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/fitness/strava/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/strava
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/strava
+// Meliwat/awesome-ios-design-md/fitness/strava/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeStravaView: View {
     var body: some View {
@@ -355,7 +355,7 @@ private struct LpspStravaShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspStravaFitnessTabScreen(title: "Home", tabIndex: 0)
+            LpspStravaSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
             LpspStravaFitnessTabScreen(title: "Maps", tabIndex: 1)
@@ -449,6 +449,13 @@ private struct LpspStravaFitnessTabScreen: View {
         if low.contains("carte") || low.contains("map") { LpspStravaFitnessMapTabScreen() }
         else if low.contains("vous") || low.contains("profile") || low.contains("profil") { LpspStravaFitnessYouTabScreen() }
         else { LpspStravaFitnessFeedTabScreen() }
+    }
+}
+
+
+private struct LpspStravaSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspStravaFitnessFeedTabScreen()
     }
 }
 

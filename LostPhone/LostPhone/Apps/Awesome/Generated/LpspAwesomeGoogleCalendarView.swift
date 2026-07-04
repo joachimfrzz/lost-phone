@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/productivity/google-calendar/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/google-calendar
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/google-calendar
+// Meliwat/awesome-ios-design-md/productivity/google-calendar/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGoogleCalendarView: View {
     var body: some View {
@@ -474,7 +474,7 @@ private struct LpspGoogleCalendarShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGoogleCalendarCalendarTabScreen(title: "Schedule", tabIndex: 0)
+            LpspGoogleCalendarSpectrHomeTabScreen()
                 .tabItem { Label("Schedule", systemImage: "list.bullet") }
                 .tag(0)
             LpspGoogleCalendarCalendarTabScreen(title: "Day", tabIndex: 1)
@@ -548,6 +548,13 @@ private struct LpspGoogleCalendarCalendarTabScreen: View {
     var body: some View {
         if title.lowercased().contains("mois") || title.lowercased().contains("month") { LpspGoogleCalendarCalendarMonthTabScreen() }
         else { LpspGoogleCalendarCalendarScheduleTabScreen() }
+    }
+}
+
+
+private struct LpspGoogleCalendarSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspGoogleCalendarCalendarScheduleTabScreen()
     }
 }
 

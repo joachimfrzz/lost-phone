@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/finance/revolut/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/revolut
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/revolut
+// Meliwat/awesome-ios-design-md/finance/revolut/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeRevolutView: View {
     var body: some View {
@@ -275,7 +275,7 @@ private struct LpspRevolutShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspRevolutFinanceHomeTabScreen()
+            LpspRevolutSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspRevolutFinanceHomeTabScreen()
@@ -382,6 +382,13 @@ private struct LpspRevolutDemoTx: Identifiable {
         .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
         .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
+}
+
+
+private struct LpspRevolutSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspRevolutFinanceHomeTabScreen()
+    }
 }
 
 

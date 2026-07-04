@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/snapchat/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/snapchat
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/snapchat
+// Meliwat/awesome-ios-design-md/social/snapchat/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSnapchatView: View {
     var body: some View {
@@ -436,7 +436,7 @@ private struct LpspSnapchatShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspSnapchatFeedTabScreen()
+            LpspSnapchatSpectrHomeTabScreen()
                 .tabItem { Label("Accueil", systemImage: "house.fill") }
                 .tag(0)
             LpspSnapchatExploreTabScreen()
@@ -626,6 +626,30 @@ private struct LpspSnapchatGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspSnapchatSpectrHomeTabScreen: View {
+    var body: some View {
+
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack {
+                HStack {
+                    Circle().fill(Color.yellow).frame(width: 32, height: 32)
+                    Spacer()
+                    Image(systemName: "magnifyingglass").foregroundStyle(.white)
+                    Image(systemName: "person.badge.plus").foregroundStyle(.white)
+                }
+                .padding()
+                Spacer()
+                Circle().strokeBorder(.white, lineWidth: 4).frame(width: 72, height: 72)
+                    .overlay(Circle().fill(.white.opacity(0.15)).frame(width: 60, height: 60))
+                Spacer()
+            }
+        }
+
     }
 }
 

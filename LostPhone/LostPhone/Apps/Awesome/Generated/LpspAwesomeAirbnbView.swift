@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/airbnb/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/airbnb
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/airbnb
+// Meliwat/awesome-ios-design-md/travel/airbnb/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAirbnbView: View {
     var body: some View {
@@ -347,7 +347,7 @@ private struct LpspAirbnbShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAirbnbTravelTabScreen(title: "Explore", tabIndex: 0)
+            LpspAirbnbSpectrHomeTabScreen()
                 .tabItem { Label("Explore", systemImage: "magnifyingglass") }
                 .tag(0)
             LpspAirbnbTravelTabScreen(title: "Wishlists", tabIndex: 1)
@@ -469,6 +469,13 @@ private struct LpspAirbnbTravelTabScreen: View {
         else if low.contains("profil") || low.contains("profile") { LpspAirbnbTravelProfileTabScreen() }
         else if tabIndex == 0 { LpspAirbnbTravelExploreTabScreen() }
         else { LpspAirbnbTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspAirbnbSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspAirbnbTravelExploreTabScreen()
     }
 }
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/productivity/microsoft-teams/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/microsoft-teams
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/microsoft-teams
+// Meliwat/awesome-ios-design-md/productivity/microsoft-teams/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTeamsView: View {
     var body: some View {
@@ -297,7 +297,7 @@ private struct LpspTeamsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTeamsMeetingsTabScreen(title: "Activity", tabIndex: 0)
+            LpspTeamsSpectrHomeTabScreen()
                 .tabItem { Label("Activity", systemImage: "bell.fill") }
                 .tag(0)
             LpspTeamsMeetingsTabScreen(title: "Chat", tabIndex: 1)
@@ -405,6 +405,13 @@ private struct LpspTeamsMeetingsTabScreen: View {
         else if low.contains("mail") { LpspTeamsMeetingsMailTabScreen() }
         else if low.contains("phone") { LpspTeamsMeetingsPhoneTabScreen() }
         else { LpspTeamsMeetingsMoreTabScreen() }
+    }
+}
+
+
+private struct LpspTeamsSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspTeamsMeetingsChatTabScreen()
     }
 }
 

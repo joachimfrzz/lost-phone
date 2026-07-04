@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/expedia/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/expedia
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/expedia
+// Meliwat/awesome-ios-design-md/travel/expedia/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeExpediaView: View {
     var body: some View {
@@ -289,7 +289,7 @@ private struct LpspExpediaShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspExpediaTravelTabScreen(title: "Search", tabIndex: 0)
+            LpspExpediaSpectrHomeTabScreen()
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
             LpspExpediaTravelTabScreen(title: "Saved", tabIndex: 1)
@@ -411,6 +411,13 @@ private struct LpspExpediaTravelTabScreen: View {
         else if low.contains("profil") || low.contains("profile") { LpspExpediaTravelProfileTabScreen() }
         else if tabIndex == 0 { LpspExpediaTravelExploreTabScreen() }
         else { LpspExpediaTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspExpediaSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspExpediaTravelExploreTabScreen()
     }
 }
 

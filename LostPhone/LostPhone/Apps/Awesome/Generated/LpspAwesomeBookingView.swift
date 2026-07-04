@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/booking/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/booking
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/booking
+// Meliwat/awesome-ios-design-md/travel/booking/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeBookingView: View {
     var body: some View {
@@ -268,7 +268,7 @@ private struct LpspBookingShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspBookingTravelTabScreen(title: "Search", tabIndex: 0)
+            LpspBookingSpectrHomeTabScreen()
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
             LpspBookingTravelTabScreen(title: "Saved", tabIndex: 1)
@@ -390,6 +390,13 @@ private struct LpspBookingTravelTabScreen: View {
         else if low.contains("profil") || low.contains("profile") { LpspBookingTravelProfileTabScreen() }
         else if tabIndex == 0 { LpspBookingTravelExploreTabScreen() }
         else { LpspBookingTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspBookingSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspBookingTravelExploreTabScreen()
     }
 }
 

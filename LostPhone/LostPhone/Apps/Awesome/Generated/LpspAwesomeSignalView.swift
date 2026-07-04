@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/signal/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/signal
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/signal
+// Meliwat/awesome-ios-design-md/messaging/signal/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSignalView: View {
     var body: some View {
@@ -253,7 +253,7 @@ private struct LpspSignalShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspSignalChatsTabScreen()
+            LpspSignalSpectrHomeTabScreen()
                 .tabItem { Label("Chats", systemImage: "message.fill") }
                 .tag(0)
             LpspSignalCallsTabScreen()
@@ -493,6 +493,62 @@ private struct LpspSignalDemoComposeBar: View {
         }
         .padding(8)
         .background(.ultraThinMaterial)
+    }
+}
+
+
+private struct LpspSignalSpectrBubble: View {
+    let text: String
+    let outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 48) }
+            Text(text)
+                .font(.system(size: 16))
+                .padding(.horizontal, 12).padding(.vertical, 8)
+                .background(outgoing ? LpspSignalTokens.sigTextPrimary.opacity(0.85) : Color(.systemGray5))
+                .foregroundStyle(outgoing ? .white : .primary)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+            if !outgoing { Spacer(minLength: 48) }
+        }
+        .padding(.horizontal, 12)
+    }
+}
+
+private struct LpspSignalSpectrHomeTabScreen: View {
+    var body: some View {
+
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+                Circle().fill(LpspSignalTokens.sigTextPrimary.opacity(0.25)).frame(width: 36, height: 36)
+                    .overlay(Text("RE").font(.caption.bold()))
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Renata Vogel").font(.system(size: 16, weight: .semibold))
+                    Text("1 week").font(.system(size: 12)).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "video").font(.system(size: 20))
+                Image(systemName: "phone").font(.system(size: 20))
+            }
+            .padding(.horizontal, 12).padding(.vertical, 8)
+            ScrollView {
+                VStack(spacing: 8) {
+                    Text("Messages and calls are end-to-end encrypted.")
+                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 8)
+
+                        LpspSignalSpectrBubble(text: "Morning! Did the mockups get sent over last night?", outgoing: false)
+                        LpspSignalSpectrBubble(text: "Yes — check the shared folder", outgoing: true)
+
+                }
+                .padding(.vertical, 8)
+            }
+            LpspSignalDemoComposeBar()
+        }
+        .background(LpspSignalTokens.sigCanvas.ignoresSafeArea())
+
     }
 }
 

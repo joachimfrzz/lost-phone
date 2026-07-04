@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/food/uber-eats/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/uber-eats
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/uber-eats
+// Meliwat/awesome-ios-design-md/food/uber-eats/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeUberEatsView: View {
     var body: some View {
@@ -294,7 +294,7 @@ private struct LpspUberEatsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspUberEatsFoodTabScreen(title: "Home", tabIndex: 0)
+            LpspUberEatsSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspUberEatsFoodTabScreen(title: "Browse", tabIndex: 1)
@@ -394,6 +394,13 @@ private struct LpspUberEatsFoodTabScreen: View {
         else if low.contains("recherch") || low.contains("search") { LpspUberEatsFoodSearchTabScreen() }
         else if low.contains("command") || low.contains("order") || low.contains("activity") { LpspUberEatsFoodOrdersTabScreen() }
         else { LpspUberEatsFoodAccountTabScreen() }
+    }
+}
+
+
+private struct LpspUberEatsSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspUberEatsFoodHomeTabScreen()
     }
 }
 

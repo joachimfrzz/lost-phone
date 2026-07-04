@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/messenger/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/messenger
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/messenger
+// Meliwat/awesome-ios-design-md/messaging/messenger/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeMessengerView: View {
     var body: some View {
@@ -276,7 +276,7 @@ private struct LpspMessengerShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspMessengerChatsTabScreen()
+            LpspMessengerSpectrHomeTabScreen()
                 .tabItem { Label("Chats", systemImage: "message.fill") }
                 .tag(0)
             LpspMessengerMessagingTabScreen(title: "Marketplace")
@@ -513,6 +513,44 @@ private struct LpspMessengerDemoComposeBar: View {
         }
         .padding(8)
         .background(.ultraThinMaterial)
+    }
+}
+
+
+private struct LpspMessengerSpectrHomeTabScreen: View {
+    var body: some View {
+
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+                Circle().fill(LpspMessengerTokens.msgActiveGreen.opacity(0.25)).frame(width: 36, height: 36)
+                    .overlay(Text("LÉ").font(.caption.bold()))
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Léa Dupont").font(.system(size: 16, weight: .semibold))
+                    Text("Active now").font(.system(size: 12)).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "video").font(.system(size: 20))
+                Image(systemName: "phone").font(.system(size: 20))
+            }
+            .padding(.horizontal, 12).padding(.vertical, 8)
+            ScrollView {
+                VStack(spacing: 8) {
+                    Text("Messages and calls are end-to-end encrypted.")
+                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 8)
+
+                        LpspMessengerOutgoingBubble(text: "Morning! Did the mockups get sent over last night?", timestamp: "9:41", isRead: true)
+                        LpspMessengerIncomingBubble(text: "Yes — check the shared folder")
+
+                }
+                .padding(.vertical, 8)
+            }
+            LpspMessengerDemoComposeBar()
+        }
+        .background(LpspMessengerTokens.msgCanvas.ignoresSafeArea())
+
     }
 }
 

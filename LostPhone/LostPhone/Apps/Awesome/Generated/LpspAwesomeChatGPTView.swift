@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/chatgpt/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/chatgpt
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/chatgpt
+// Meliwat/awesome-ios-design-md/misc/chatgpt/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeChatGPTView: View {
     var body: some View {
@@ -537,7 +537,7 @@ private struct LpspChatGPTShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspChatGPTAiTabScreen(title: "Chat", tabIndex: 0)
+            LpspChatGPTSpectrHomeTabScreen()
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
             LpspChatGPTAiTabScreen(title: "Historique", tabIndex: 1)
@@ -639,6 +639,37 @@ private struct LpspChatGPTAiTabScreen: View {
     var body: some View {
         if tabIndex == 0 || title.lowercased().contains("chat") { LpspChatGPTAiChatTabScreen() }
         else { LpspChatGPTAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspChatGPTSpectrHomeTabScreen: View {
+    var body: some View {
+
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "line.3.horizontal").font(.title3)
+                Spacer()
+                Text("ChatGPT").font(.system(size: 15, weight: .semibold))
+                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .background(Color(.systemGray6)).clipShape(Capsule())
+                Spacer()
+                Image(systemName: "square.and.pencil").font(.title3)
+            }
+            .padding(.horizontal, 16).padding(.vertical, 10)
+            ScrollView {
+                VStack(spacing: 16) {
+
+                        LpspChatGPTUserMessageBubble(text: "Write me a short poem about Paris")
+                        LpspChatGPTAssistantMessage(text: "Beneath the zinc and morning light,\nThe Seine holds silver in its arms…")
+
+                }
+                .padding(.vertical, 12)
+            }
+            LpspChatGPTComposer()
+        }
+        .background(LpspChatGPTTokens.gptCanvas.ignoresSafeArea())
+
     }
 }
 

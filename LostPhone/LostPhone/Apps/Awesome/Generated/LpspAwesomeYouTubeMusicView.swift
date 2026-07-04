@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/youtube-music/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/youtube-music
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/youtube-music
+// Meliwat/awesome-ios-design-md/music/youtube-music/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeYouTubeMusicView: View {
     var body: some View {
@@ -322,7 +322,7 @@ private struct LpspYouTubeMusicShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspYouTubeMusicMusicHomeTabScreen()
+            LpspYouTubeMusicSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspYouTubeMusicMusicHomeTabScreen()
@@ -442,5 +442,12 @@ private struct LpspYouTubeMusicMusicLibraryTabScreen: View {
     }
 }
 
+
+
+private struct LpspYouTubeMusicSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspYouTubeMusicMusicNowPlayingTabScreen()
+    }
+}
 
 

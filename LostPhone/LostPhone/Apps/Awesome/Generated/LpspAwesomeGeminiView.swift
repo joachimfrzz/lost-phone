@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/gemini/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/gemini
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/gemini
+// Meliwat/awesome-ios-design-md/misc/gemini/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGeminiView: View {
     var body: some View {
@@ -286,7 +286,7 @@ private struct LpspGeminiShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGeminiAiTabScreen(title: "Chat", tabIndex: 0)
+            LpspGeminiSpectrHomeTabScreen()
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
             LpspGeminiAiTabScreen(title: "Historique", tabIndex: 1)
@@ -380,6 +380,52 @@ private struct LpspGeminiAiTabScreen: View {
     var body: some View {
         if tabIndex == 0 || title.lowercased().contains("chat") { LpspGeminiAiChatTabScreen() }
         else { LpspGeminiAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspGeminiSpectrBubble: View {
+    let text: String
+    let outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 32) }
+            Text(text).font(.system(size: 16)).padding(12)
+                .background(outgoing ? LpspGeminiTokens.gemCoral.opacity(0.15) : Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            if !outgoing { Spacer(minLength: 32) }
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
+private struct LpspGeminiSpectrHomeTabScreen: View {
+    var body: some View {
+
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "line.3.horizontal").font(.title3)
+                Spacer()
+                Text("Gemini").font(.system(size: 15, weight: .semibold))
+                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .background(Color(.systemGray6)).clipShape(Capsule())
+                Spacer()
+                Image(systemName: "square.and.pencil").font(.title3)
+            }
+            .padding(.horizontal, 16).padding(.vertical, 10)
+            ScrollView {
+                VStack(spacing: 16) {
+
+                        LpspGeminiSpectrBubble(text: "Write me a short poem about Paris", outgoing: true)
+                        LpspGeminiSpectrBubble(text: "Beneath the zinc and morning light, the Seine holds silver in its arms…", outgoing: false)
+
+                }
+                .padding(.vertical, 12)
+            }
+            LpspGeminiDemoComposeBar()
+        }
+        .background(LpspGeminiTokens.gemCanvas.ignoresSafeArea())
+
     }
 }
 

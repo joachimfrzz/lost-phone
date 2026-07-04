@@ -277,35 +277,6 @@ fileprivate struct LpspGeminiGemPressableStyle: ButtonStyle {
     }
 }
 
-fileprivate struct LpspGeminiGemDrawer: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // New chat pill
-            HStack { Image(systemName: "plus"); Text("New chat").font(LpspGeminiFonts.gemButton) }
-                .padding(.vertical, 12).padding(.horizontal, 16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Capsule().fill(LpspGeminiTokens.gemSurface))
-
-            Text("TODAY").font(LpspGeminiFonts.gemLabelUpper).foregroundStyle(LpspGeminiTokens.gemTextSecondary)
-                .padding(.top, 16).padding(.leading, 8)
-
-            ForEach(recents) { r in
-                HStack(spacing: 12) {
-                    Image(systemName: "bubble.left").font(.system(size: 18))
-                    Text(r.title).font(LpspGeminiFonts.gemUserTurn).lineLimit(1)
-                }
-                .padding(.vertical, 12).padding(.horizontal, 16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    Capsule().fill(r.active ? LpspGeminiTokens.gemSurface : .clear))
-            }
-            Spacer()
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(LpspGeminiTokens.gemCanvas)
-    }
-}
 
 
 

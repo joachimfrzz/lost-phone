@@ -11,7 +11,15 @@ final class LostPhoneAppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor(red: 0.04, green: 0.05, blue: 0.12, alpha: 1)
-        window.rootViewController = SplashViewController(phone: phone)
+
+        if AwesomeSpectrPixelCapture.isEnabled {
+            let host = UIHostingController(rootView: AwesomeSpectrPixelCaptureHost())
+            host.view.backgroundColor = .black
+            window.rootViewController = host
+        } else {
+            window.rootViewController = SplashViewController(phone: phone)
+        }
+
         window.makeKeyAndVisible()
         self.window = window
         return true

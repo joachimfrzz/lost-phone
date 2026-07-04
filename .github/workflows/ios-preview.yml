@@ -12,6 +12,8 @@ on:
       - "LostPhone/**"
       - "public/stories/**"
       - ".github/workflows/ios-preview.yml"
+      - "LostPhone/scripts/capture_spectr_references.py"
+      - "LostPhone/scripts/compare_spectr_pixels.py"
   workflow_dispatch:
     inputs:
       simulator:
@@ -59,7 +61,36 @@ jobs:
           chmod +x LostPhone/scripts/ios-preview-capture.sh
           LostPhone/scripts/ios-preview-capture.sh "$GITHUB_WORKSPACE/preview-artifacts"
 
-      - name: Publish preview (Release)
+      - name: Spectr pixel pipeline (A+B+C)
+        run: |
+          python3 -m pip install --quiet playwright pillow numpy
+          python3 -m playwright install chromium
+          python3 LostPhone/scripts/capture_spectr_references.py
+          chmod +x LostPhone/scripts/ios-awesome-pixel-capture.sh
+          LostPhone/scripts/ios-awesome-pixel-capture.sh \
+            "$GITHUB_WORKSPACE/LostPhone/scripts/lpsp_pixel_captures" \
+            "$(find "$GITHUB_WORKSPACE/LostPhone/.derivedData-preview" -name 'LostPhone.app' -type d | head -1)"
+          python3 LostPhone/scripts/compare_spectr_pixels.py || true
+
+      - name: Upload Spectr pixel diff report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: spectr-pixel-report-${{ github.run_number }}
+          path: |
+            LostPhone/scripts/spectr_pixel_refs/
+            LostPhone/scripts/lpsp_pixel_captures/
+            LostPhone/scripts/spectr_pixel_report/
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Spectr pixel summary
+        if: always()
+        run: |
+          if [[ -f LostPhone/scripts/spectr_pixel_report/report.md ]]; then
+            echo "## Spectr pixel diff (61 apps — home tab)" >> "$GITHUB_STEP_SUMMARY"
+            head -20 LostPhone/scripts/spectr_pixel_report/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
         run: |
           gh release delete preview-latest -y 2>/dev/null || true
           gh release create preview-latest \

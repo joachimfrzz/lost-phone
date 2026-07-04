@@ -34,7 +34,11 @@ def enum_static_names(code: str, enum_name: str) -> list[str]:
     if marker not in code:
         return []
     block = code.split(marker, 1)[1].split("\nprivate ", 1)[0]
-    return list(dict.fromkeys(re.findall(r"static let (\w+)\s*=", block)))
+    return list(dict.fromkeys(re.findall(r"static (?:let|var) (\w+)", block)))
+
+
+def grad_static_names(code: str, grad_enum: str) -> list[str]:
+    return enum_static_names(code, grad_enum) if grad_enum in code else []
 
 
 def enum_static_func_names(code: str, enum_name: str) -> list[str]:
@@ -43,10 +47,6 @@ def enum_static_func_names(code: str, enum_name: str) -> list[str]:
         return []
     block = code.split(marker, 1)[1].split("\nprivate ", 1)[0]
     return list(dict.fromkeys(re.findall(r"static func (\w+)\(", block)))
-
-
-def grad_static_names(code: str, grad_enum: str) -> list[str]:
-    return enum_static_names(code, grad_enum) if grad_enum in code else []
 
 
 def fix_font_shorthand_refs(code: str, font_names: Sequence[str], fonts_enum: str) -> str:
@@ -74,7 +74,9 @@ def fix_posttext_argument_labels(code: str) -> str:
 
 
 def fix_sensory_feedback_weights(code: str) -> str:
-    return code.replace(".impact(weight: .soft)", ".impact(weight: .light)")
+    code = code.replace(".impact(weight: .soft)", ".impact(weight: .light)")
+    code = code.replace('.fontFeature("zero")', ".monospacedDigit()")
+    return code
 
 
 def fix_incomplete_map_views(code: str, prefix: str) -> str:
@@ -122,6 +124,39 @@ def strip_invalid_view_stroke_extensions(code: str) -> str:
     return "".join(out)
 
 
+def convert_shapestyle_color_extension(code: str, tokens_enum: str) -> str:
+    """Déplace `extension ShapeStyle where Self == Color` dans l'enum tokens."""
+    marker = "extension ShapeStyle where Self == Color"
+    if marker not in code:
+        return code
+    m = re.search(r"extension ShapeStyle where Self == Color\s*\{", code)
+    if not m:
+        return code
+    body, end = _extract_braced_block(code, m.start())
+    extra_lines: list[str] = []
+    for line in body.splitlines():
+        vm = re.match(r"\s*static var (\w+):\s*Color\s*\{(.+)\}", line.strip())
+        if vm:
+            extra_lines.append(f"    static var {vm.group(1)}: Color {{ {vm.group(2).strip()} }}")
+    code = code[: m.start()] + code[end:]
+    if extra_lines:
+        enum_marker = f"private enum {tokens_enum}"
+        idx = code.find(enum_marker)
+        if idx >= 0:
+            inner, enum_end = _extract_braced_block(code, idx)
+            inner = inner.rstrip() + "\n" + "\n".join(extra_lines) + "\n"
+            code = code[:idx] + f"{enum_marker} {{\n{inner}}}" + code[enum_end:]
+    return code
+
+
+def fix_orphan_token_color_vars(code: str, tokens_enum: str) -> str:
+    """Répare refs Tokens.foo pour static var Color déclarés hors enum."""
+    for m in re.finditer(rf"static var (\w+): Color", code):
+        name = m.group(1)
+        code = re.sub(rf"\b{re.escape(tokens_enum)}\.{re.escape(name)}\b", name, code)
+    return code
+
+
 def fix_shadow_gradient_colors(code: str, grad_enum: str, tokens_enum: str) -> str:
     """`.shadow(color: Gradients.brand.opacity` → Tokens.brand quand les deux existent."""
     token_names = set(enum_static_names(code, tokens_enum))
@@ -136,19 +171,21 @@ def fix_shadow_gradient_colors(code: str, grad_enum: str, tokens_enum: str) -> s
 
 
 def strip_spec_shell_views(code: str, prefix: str) -> str:
-    """Supprime coquilles TabView spec avec écrans placeholder (ExploreView, ListenNowView…)."""
+    """Supprime coquilles spec non compilables (TabView placeholder, layouts incomplets)."""
     shell_suffixes = ("RootTabView", "RootView", "MainTabView")
-    placeholder_view = re.compile(r"\b([A-Z][A-Za-z0-9]*View)\(\)")
-    skip_views = {"ContentView", "EmptyView", "AnyView", "Group"}
+    placeholder_type = re.compile(
+        r"\b([A-Z][A-Za-z0-9]*(?:View|Screen|Pane|Panel|Scroll|Burst))\(\)"
+    )
+    skip_types = {"ContentView", "EmptyView", "AnyView", "Group"}
 
     def block_is_shell(block: str, struct_name: str) -> bool:
         if any(struct_name.endswith(s) for s in shell_suffixes):
             return True
-        if "TabView" not in block:
-            return False
-        for m in placeholder_view.finditer(block):
+        if re.search(r"\b(?:sampleServers|ForEach\(recents\))\b", block):
+            return True
+        for m in placeholder_type.finditer(block):
             name = m.group(1)
-            if name.startswith(prefix) or name in skip_views:
+            if name.startswith(prefix) or name in skip_types:
                 continue
             return True
         return False
@@ -533,6 +570,21 @@ def add_missing_stub_types(code: str, prefix: str) -> str:
             f"    }}\n"
             f"}}"
         )
+    if re.search(r"\bSparkleBurst\b", code) and not re.search(rf"\bstruct\s+{re.escape(prefix)}SparkleBurst\b", code):
+        code = re.sub(r"\bSparkleBurst\b", f"{prefix}SparkleBurst", code)
+        stubs.append(
+            f"fileprivate struct {prefix}SparkleBurst: View {{\n"
+            f"    let color: Color\n"
+            f"    var body: some View {{\n"
+            f"        ZStack {{\n"
+            f"            ForEach(0..<8, id: \\.self) {{ i in\n"
+            f"                Circle().fill(color).frame(width: 4, height: 4)\n"
+            f"                    .offset(x: cos(Double(i) * .pi / 4) * 24, y: sin(Double(i) * .pi / 4) * 24)\n"
+            f"            }}\n"
+            f"        }}\n"
+            f"    }}\n"
+            f"}}"
+        )
     if stubs:
         code = code.rstrip() + "\n\n" + "\n\n".join(stubs) + "\n"
     return code
@@ -706,6 +758,7 @@ def finalize_component_swift(code: str, prefix: str) -> str:
         code, _ = transform_font_extension(code, fonts_enum)
     if "extension LinearGradient" in code:
         code = transform_linear_gradient_extension(code, grad_enum)
+    code = convert_shapestyle_color_extension(code, tokens_enum)
 
     code = merge_duplicate_private_enums(code, tokens_enum)
     code = merge_duplicate_private_enums(code, fonts_enum)

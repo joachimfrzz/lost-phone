@@ -437,7 +437,12 @@ private struct LpspNetflixVideoHomeTabScreen: View {
 
 private struct LpspNetflixProfilePickerTabScreen: View {
     var body: some View {
-        LpspNetflixProfilePicker(profiles: LpspNetflixDemoProfiles.items, onSelect: { _ in })
+        LpspNetflixProfilePicker(
+            profiles: LpspNetflixDemoProfiles.items.map {
+                LpspNetflixProfilePicker.Profile(name: $0.name, avatarColor: $0.color, isKids: $0.isKids)
+            },
+            onSelect: { _ in }
+        )
     }
 }
 

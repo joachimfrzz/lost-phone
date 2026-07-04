@@ -270,14 +270,29 @@ private struct {prefix}PlaceholderChatRow: View {{
 
     bubble_block = ""
     if outgoing:
-        if "WAOutgoingBubble" in outgoing:
+        if "MessengerOutgoingBubble" in outgoing:
+            bubble_block = f"""
+                    {prefix}DemoBubble(text: "Salut, tu es dispo ?", outgoing: true)
+                    {prefix}DemoBubble(text: "Oui, j'arrive !", outgoing: false)
+"""
+        elif "WAOutgoingBubble" in outgoing:
             bubble_out = f'{outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", readState: .read)'
+            incoming = outgoing.replace("Outgoing", "Incoming") if "Outgoing" in outgoing else prefix + "IncomingBubbleWrapper"
+            bubble_block = f"""
+                    {bubble_out}
+                    {incoming}(text: "Oui, j'arrive !")
+"""
         elif "TgOutgoingBubble" in outgoing:
             bubble_out = f'{outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)'
+            incoming = outgoing.replace("Outgoing", "Incoming") if "Outgoing" in outgoing else prefix + "IncomingBubbleWrapper"
+            bubble_block = f"""
+                    {bubble_out}
+                    {incoming}(text: "Oui, j'arrive !")
+"""
         else:
             bubble_out = f'{outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)'
-        incoming = outgoing.replace("Outgoing", "Incoming") if "Outgoing" in outgoing else prefix + "IncomingBubbleWrapper"
-        bubble_block = f"""
+            incoming = outgoing.replace("Outgoing", "Incoming") if "Outgoing" in outgoing else prefix + "IncomingBubbleWrapper"
+            bubble_block = f"""
                     {bubble_out}
                     {incoming}(text: "Oui, j'arrive !")
 """
@@ -287,7 +302,12 @@ private struct {prefix}PlaceholderChatRow: View {{
                     {prefix}DemoBubble(text: "Oui, j'arrive !", outgoing: false)
 """
 
-    compose_block = f"{compose}()" if compose else f"{prefix}DemoComposeBar()"
+    if compose and "DCComposeBar" in compose:
+        compose_block = f"{compose}(channelName: chat.name)"
+    elif compose:
+        compose_block = f"{compose}()"
+    else:
+        compose_block = f"{prefix}DemoComposeBar()"
 
     return (
         row_def
@@ -438,8 +458,7 @@ private enum {prefix}DemoPosts {{
 """
     elif feed_post:
         feed_body = f"""
-                    ForEach({prefix}DemoPosts.items.indices, id: \\.self) {{ i in
-                        let post = {prefix}DemoPosts.items[i]
+                    ForEach({prefix}DemoPosts.items) {{ post in
                         {feed_post}(
                             username: post.user,
                             avatar: Image(systemName: "person.circle.fill"),
@@ -621,12 +640,21 @@ private struct {prefix}GenericFeedCard: View {{
 
 
 def _video_screens(prefix, tokens, play_btn, profile_picker) -> str:
-    play = f"{play_btn}(title: \"Lecture\", action: {{}})" if play_btn else "Button(\"Lecture\") {}.buttonStyle(.borderedProminent).tint(.red)"
-    picker = (
-        f"{profile_picker}(profiles: {prefix}DemoProfiles.items, onSelect: {{ _ in }})"
-        if profile_picker
-        else f"{prefix}DemoProfilePicker()"
-    )
+    if play_btn and "DPPlayButton" in play_btn:
+        play = f'{play_btn}(label: "Lecture", action: {{}})'
+    elif play_btn:
+        play = f'{play_btn}(title: "Lecture", action: {{}})'
+    else:
+        play = 'Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)'
+    if profile_picker:
+        picker = f"""{profile_picker}(
+            profiles: {prefix}DemoProfiles.items.map {{
+                {profile_picker}.Profile(name: $0.name, avatarColor: $0.color, isKids: $0.isKids)
+            }},
+            onSelect: {{ _ in }}
+        )"""
+    else:
+        picker = f"{prefix}DemoProfilePicker()"
 
     return f"""
 private struct {prefix}DemoProfile: Identifiable {{

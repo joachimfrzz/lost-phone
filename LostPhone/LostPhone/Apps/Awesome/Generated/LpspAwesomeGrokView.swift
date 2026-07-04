@@ -56,7 +56,7 @@ private enum LpspGrokTokens {
 // Enable the slashed zero on numeral-bearing Text (technical identity)
 fileprivate extension View {
     func grokSlashedZero() -> some View {
-        self.font(LpspGrokFonts.grokBody).fontFeature("zero")
+        self.font(LpspGrokFonts.grokBody).monospacedDigit()
     }
 }
 
@@ -282,34 +282,7 @@ fileprivate struct LpspGrokGrokPromptBar: View {
     }
 }
 
-fileprivate struct LpspGrokGrokRoot: View {
-    @State private var isFun = false
-    @State private var showHistory = false
 
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Button { showHistory = true } label: {
-                    Image(systemName: "line.3.horizontal")
-                        .font(.system(size: 20)).foregroundStyle(LpspGrokTokens.grokTextPrimary)
-                }
-                Spacer()
-                LpspGrokGrokModeToggle(isFun: $isFun)
-                Spacer()
-                Button { /* new chat */ } label: {
-                    Image(systemName: "square.and.pencil")
-                        .font(.system(size: 20)).foregroundStyle(LpspGrokTokens.grokTextPrimary)
-                }
-            }
-            .padding(.horizontal, 16).frame(height: 44)
-            .background(LpspGrokTokens.grokCanvas)
-
-            ConversationScroll() // user bubbles + assistant responses + citations
-        }
-        .background(LpspGrokTokens.grokCanvas.ignoresSafeArea())
-        .sheet(isPresented: $showHistory) { GrokHistoryPanel() }
-    }
-}
 
 // MARK: - Écrans showroom
 

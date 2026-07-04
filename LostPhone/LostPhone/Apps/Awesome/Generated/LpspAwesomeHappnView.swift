@@ -200,7 +200,7 @@ fileprivate struct LpspHappnCrushCelebration: View {
                 }
             }
             // Gold sparkle layer — the only place gold appears (besides premium)
-            SparkleBurst(color: LpspHappnTokens.happnGold)
+            LpspHappnSparkleBurst(color: LpspHappnTokens.happnGold)
         }
         .onAppear {
             withAnimation(.easeOut(duration: 0.36)) { together = true }
@@ -275,25 +275,6 @@ fileprivate struct LpspHappnPressScale: ButtonStyle {
     }
 }
 
-fileprivate struct LpspHappnHappnTabView: View {
-    var body: some View {
-        TabView {
-            TimelineScreen().tabItem { Label("Timeline", systemImage: "heart.text.square") }
-            MapScreen().tabItem { Label("Map", systemImage: "map") }
-            ChatsScreen().tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right") }
-            ProfileScreen().tabItem { Label("Profile", systemImage: "person") }
-        }
-        .tint(LpspHappnTokens.happnPink)                 // active = pink icon + pink label; no tint pill
-        .onAppear {
-            let a = UITabBarAppearance()
-            a.configureWithTransparentBackground()
-            a.backgroundColor = UIColor(LpspHappnTokens.happnCanvas).withAlphaComponent(0.94)
-            a.shadowColor = UIColor(LpspHappnTokens.happnDivider)
-            UITabBar.appearance().standardAppearance = a
-            UITabBar.appearance().scrollEdgeAppearance = a
-        }
-    }
-}
 
 fileprivate struct LpspHappnHappnTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme
@@ -306,6 +287,19 @@ fileprivate struct LpspHappnHappnTheme: ViewModifier {
 }
 
 fileprivate extension View { func happnTheme() -> some View { modifier(LpspHappnHappnTheme()) } }
+
+fileprivate struct LpspHappnSparkleBurst: View {
+    let color: Color
+    var body: some View {
+        ZStack {
+            ForEach(0..<8, id: \.self) { i in
+                Circle().fill(color).frame(width: 4, height: 4)
+                    .offset(x: cos(Double(i) * .pi / 4) * 24, y: sin(Double(i) * .pi / 4) * 24)
+            }
+        }
+    }
+}
+
 
 // MARK: - Écrans showroom
 

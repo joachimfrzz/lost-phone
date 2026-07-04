@@ -462,8 +462,7 @@ private struct LpspLinkedInFeedTabScreen: View {
                     }
 
 
-                    ForEach(LpspLinkedInDemoPosts.items.indices, id: \.self) { i in
-                        let post = LpspLinkedInDemoPosts.items[i]
+                    ForEach(LpspLinkedInDemoPosts.items) { post in
                         LpspLinkedInFeedPostCard(
                             username: post.user,
                             avatar: Image(systemName: "person.circle.fill"),

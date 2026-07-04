@@ -32,6 +32,7 @@ private enum LpspAudibleFonts {
 }
 
 private enum LpspAudibleTokens {
+
     // MARK: - Canvas & Surfaces
     static let audCanvas   = Color(red: 0.102, green: 0.102, blue: 0.102) // #1A1A1A
     static let audSurface1 = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
@@ -47,11 +48,10 @@ private enum LpspAudibleTokens {
     static let audOrange        = Color(red: 1.0,   green: 0.600, blue: 0.0)  // #FF9900
     static let audOrangePressed = Color(red: 0.902, green: 0.541, blue: 0.0)  // #E68A00
     static let audErrorRed      = Color(red: 0.898, green: 0.282, blue: 0.302) // #E5484D
-}
-
-extension ShapeStyle where Self == Color {
     static var audOrangeGlow: Color { Color(red: 1.0, green: 0.6, blue: 0.0).opacity(0.28) }
 }
+
+
 
 
 
@@ -93,7 +93,7 @@ fileprivate struct LpspAudibleAudiblePlayButton: View {
                 .foregroundStyle(LpspAudibleTokens.audCanvas) // dark glyph on orange
                 .frame(width: size, height: size)
                 .background(Circle().fill(LpspAudibleTokens.audOrange))
-                .shadow(color: .audOrangeGlow, radius: 22, y: 6)
+                .shadow(color: LpspAudibleTokens.audOrangeGlow, radius: 22, y: 6)
         }
         .sensoryFeedback(.impact(weight: .medium), trigger: isPlaying)
         .buttonStyle(LpspAudibleAudPressable(pressedScale: 0.93))

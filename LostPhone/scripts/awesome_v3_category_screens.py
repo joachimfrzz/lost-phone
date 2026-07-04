@@ -225,7 +225,21 @@ def food_screens(
     order_tracking: str | None,
 ) -> str:
     if restaurant_card:
-        home = f"""
+        if "UERestaurantCard" in restaurant_card:
+            home = f"""
+                    ForEach({prefix}DemoRestaurants.items, id: \\.name) {{ r in
+                        {restaurant_card}(
+                            name: r.name,
+                            rating: String(format: "%.1f", r.rating),
+                            eta: r.meta,
+                            fee: r.fee,
+                            photo: Image(systemName: "fork.knife")
+                        )
+                            .padding(.horizontal)
+                    }}
+"""
+        else:
+            home = f"""
                     ForEach({prefix}DemoRestaurants.items, id: \\.name) {{ r in
                         {restaurant_card}(name: r.name, meta: r.meta, rating: r.rating, fee: r.fee, badge: r.badge, badgeIsPromo: r.promo, imageName: "photo")
                             .padding(.horizontal)
@@ -237,7 +251,13 @@ def food_screens(
 """
 
     if menu_row:
-        if "MenuItemRow" in menu_row:
+        if "UEMenuItemRow" in menu_row:
+            search = f"""
+                    ForEach({prefix}DemoMenu.items, id: \\.title) {{ item in
+                        {menu_row}(name: item.title, desc: item.sub, price: item.price, photo: Image(systemName: "fork.knife"), onAdd: {{}}).padding(.horizontal)
+                    }}
+"""
+        elif "MenuItemRow" in menu_row:
             search = f"""
                     ForEach({prefix}DemoMenu.items, id: \\.title) {{ item in
                         {menu_row}(name: item.title, desc: item.sub, price: item.price, imageName: "photo", onAdd: {{}}).padding(.horizontal)
@@ -254,14 +274,27 @@ def food_screens(
                     ForEach(0..<4, id: \\.self) { i in HStack { Text("Plat \\(i+1)"); Spacer(); Text("€12") }.padding(.horizontal) }
 """
 
-    basket = (
-        f'.safeAreaInset(edge: .bottom) {{ {basket_bar}(itemCount: 2, total: "€24,50", onTap: {{}}) }}'
-        if basket_bar and "BasketBar" in basket_bar
-        else f'.safeAreaInset(edge: .bottom) {{ {basket_bar}(itemCount: 2, subtotal: "€24,50", onCheckout: {{}}) }}'
-        if basket_bar
-        else ""
-    )
-    orders = f"{order_tracking}()" if order_tracking else 'List(["Commande en cours"], id: \\.self) { Label($0, systemImage: "bag") }'
+    if basket_bar and "StickyCartBar" in basket_bar:
+        basket = f'.safeAreaInset(edge: .bottom) {{ {basket_bar}(count: 2, total: "€24,50", onView: {{}}) }}'
+    elif basket_bar and "BasketBar" in basket_bar:
+        basket = f'.safeAreaInset(edge: .bottom) {{ {basket_bar}(itemCount: 2, total: "€24,50", onTap: {{}}) }}'
+    elif basket_bar:
+        basket = f'.safeAreaInset(edge: .bottom) {{ {basket_bar}(itemCount: 2, subtotal: "€24,50", onCheckout: {{}}) }}'
+    else:
+        basket = ""
+
+    if order_tracking and "OrderTrackingView" in order_tracking:
+        orders = f"""{order_tracking}(
+                route: [
+                    CLLocationCoordinate2D(latitude: 48.86, longitude: 2.35),
+                    CLLocationCoordinate2D(latitude: 48.87, longitude: 2.36),
+                ],
+                etaText: "Arrivée dans 12 min"
+            )"""
+    elif order_tracking:
+        orders = f"{order_tracking}()"
+    else:
+        orders = 'List(["Commande en cours"], id: \\.self) { Label($0, systemImage: "bag") }'
 
     return f"""
 private struct {prefix}DemoRestaurant {{ let name: String; let meta: String; let rating: Double; let fee: String; let badge: String?; let promo: Bool }}
@@ -336,7 +369,13 @@ def fitness_screens(prefix: str, canvas: str, accent: str, activity_card: str | 
                     RoundedRectangle(cornerRadius: 12).fill(Color.gray.opacity(0.12)).frame(height: 100).padding(.horizontal)
 """
 
-    rec_block = f"{record_btn}(action: {{}}).padding(.bottom, 40)" if record_btn else 'Button("Enregistrer") {}.buttonStyle(.borderedProminent).padding(.bottom, 40)'
+    rec_block = (
+        f"{record_btn}(onRecord: {{}}).padding(.bottom, 40)"
+        if record_btn and "RecordButton" in record_btn
+        else f"{record_btn}(action: {{}}).padding(.bottom, 40)"
+        if record_btn
+        else 'Button("Enregistrer") {}.buttonStyle(.borderedProminent).padding(.bottom, 40)'
+    )
 
     return f"""
 private struct {prefix}FitnessFeedTabScreen: View {{
@@ -463,7 +502,7 @@ def meetings_screens(
                 ScrollView {{
                     LazyVStack(alignment: .leading) {{
                         {channel_row}(channel: {prefix}DemoChannel.general, isActive: true)
-                        {message_card}(author: "Alex", initials: "AM", presence: .online, timestamp: "10:24", postText: "Showroom prêt !", replyCount: 3)
+                        {message_card}(author: "Alex", initials: "AM", presence: .available, timestamp: "10:24", postText: "Showroom prêt !", replyCount: 3)
                     }}
                 }}
 """
@@ -703,7 +742,7 @@ private struct {prefix}ReaderTabScreen: View {{
 
 
 def shazam_screens(prefix: str, shazam_home: str | None, result_card: str | None) -> str:
-    home = shazam_home or f"{prefix}DemoShazamPlaceholder()"
+    home = f"{shazam_home}()" if shazam_home else f"{prefix}DemoShazamPlaceholder()"
     result = f"""
 private struct {prefix}ShazamLibraryTabScreen: View {{
     var body: some View {{

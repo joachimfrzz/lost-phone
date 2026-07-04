@@ -404,7 +404,7 @@ private struct LpspUberRideHomeTabScreen: View {
                         .fill(Color.gray.opacity(0.4))
                         .frame(width: 36, height: 4)
                         .padding(.top, 8)
-                    LpspUberWhereToInput
+                    LpspUberWhereToInput()
                         .padding(.horizontal, 12)
                         .padding(.top, 12)
                     ForEach(Array(LpspUberDemoRides.items.enumerated()), id: \.offset) { idx, option in

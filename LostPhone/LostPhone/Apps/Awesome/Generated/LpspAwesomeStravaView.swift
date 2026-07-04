@@ -424,7 +424,7 @@ private struct LpspStravaFitnessMapTabScreen: View {
     var body: some View {
         ZStack {
             Color.gray.opacity(0.12).ignoresSafeArea()
-            VStack { Spacer(); LpspStravaRecordButton(action: {}).padding(.bottom, 40) }
+            VStack { Spacer(); LpspStravaRecordButton(onRecord: {}).padding(.bottom, 40) }
         }
     }
 }

@@ -153,7 +153,13 @@ private struct {prefix}AiTabScreen: View {{
 
 
 def commerce_screens(prefix: str, canvas: str, accent: str, top_nav: str | None, product_card: str | None) -> str:
-    nav_block = f"{top_nav}(cartCount: 2, onSearch: {{}}).padding(.horizontal)" if top_nav else ""
+    if top_nav:
+        if "AmazonTopNav" in top_nav:
+            nav_block = f"{top_nav}(onSearch: {{}}, onMicOrScan: {{}}).padding(.horizontal)"
+        else:
+            nav_block = f"{top_nav}(cartCount: 2, onSearch: {{}}).padding(.horizontal)"
+    else:
+        nav_block = ""
     if product_card:
         cards = f"""
                         {product_card}(

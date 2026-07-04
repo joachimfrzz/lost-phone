@@ -533,7 +533,9 @@ private struct LpspAppleMusicMusicHomeTabScreen: View {
                             title: track.title,
                             artist: track.artist,
                             artwork: Image(systemName: "music.note"),
-                            isPlaying: track.isPlaying
+                            isPlaying: track.isPlaying,
+                            hasAtmos: false,
+                            explicit: false
                         )
                     }
 
@@ -579,12 +581,17 @@ private struct LpspAppleMusicMusicLibraryTabScreen: View {
 }
 
 private struct LpspAppleMusicMusicNowPlayingTabScreen: View {
+    @State private var isPlaying = true
+    @State private var progress = 0.35
     var body: some View {
         LpspAppleMusicNowPlayingScreen(
             trackTitle: "Blinding Lights",
             artist: "The Weeknd",
             artwork: Image(systemName: "music.note"),
-            dominantColor: LpspAppleMusicTokens.amCoral
+            dominantColor: LpspAppleMusicTokens.amCoral,
+            complementaryColor: LpspAppleMusicTokens.amCoral.opacity(0.65),
+            isPlaying: $isPlaying,
+            progress: $progress
         )
     }
 }
@@ -592,12 +599,17 @@ private struct LpspAppleMusicMusicNowPlayingTabScreen: View {
 
 
 private struct LpspAppleMusicSpectrHomeTabScreen: View {
+    @State private var isPlaying = true
+    @State private var progress = 0.35
     var body: some View {
         LpspAppleMusicNowPlayingScreen(
             trackTitle: "Listen Now",
             artist: "Midnight Frequency",
             artwork: Image(systemName: "music.note"),
-            dominantColor: LpspAppleMusicTokens.amCoral
+            dominantColor: LpspAppleMusicTokens.amCoral,
+            complementaryColor: LpspAppleMusicTokens.amCoral.opacity(0.65),
+            isPlaying: $isPlaying,
+            progress: $progress
         )
         .background(LpspAppleMusicTokens.amCanvasLight.ignoresSafeArea())
         .preferredColorScheme(.dark)

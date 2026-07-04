@@ -408,7 +408,7 @@ private struct LpspAmazonCommerceHomeTabScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    LpspAmazonAmazonTopNav(cartCount: 2, onSearch: {}).padding(.horizontal)
+                    LpspAmazonAmazonTopNav(onSearch: {}, onMicOrScan: {}).padding(.horizontal)
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
 
                         LpspAmazonAmazonProductCard(

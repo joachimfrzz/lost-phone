@@ -7,9 +7,11 @@ SCRIPTS="$ROOT/LostPhone/scripts"
 ARTIFACTS="${1:-$ROOT/LostPhone/scripts/spectr_pixel_report}"
 
 echo "=== A — Spectr reference PNGs ==="
-python3 -m pip install --quiet playwright pillow numpy 2>/dev/null || pip3 install --quiet playwright pillow numpy
-python3 -m playwright install chromium 2>/dev/null || true
-python3 "$SCRIPTS/capture_spectr_references.py"
+python3 -m venv .spectr-pixel-venv
+source .spectr-pixel-venv/bin/activate
+pip install -q -r "$SCRIPTS/requirements-spectr-pixel.txt"
+python -m playwright install chromium 2>/dev/null || true
+python "$SCRIPTS/capture_spectr_references.py"
 
 if [[ "$(uname -s)" == "Darwin" ]] && xcrun simctl list devices available 2>/dev/null | grep -q iPhone; then
   echo "=== B — Lost Phone simulator captures ==="
@@ -25,7 +27,7 @@ else
 fi
 
 echo "=== C — Pixel diff report ==="
-python3 "$SCRIPTS/compare_spectr_pixels.py" || true
+python "$SCRIPTS/compare_spectr_pixels.py" || true
 
 if [[ -d "$ARTIFACTS" ]]; then
   cp -R "$SCRIPTS/spectr_pixel_report/"* "$ARTIFACTS/" 2>/dev/null || true

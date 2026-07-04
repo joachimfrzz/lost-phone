@@ -62,15 +62,18 @@ jobs:
           LostPhone/scripts/ios-preview-capture.sh "$GITHUB_WORKSPACE/preview-artifacts"
 
       - name: Spectr pixel pipeline (A+B+C)
+        continue-on-error: true
         run: |
-          python3 -m pip install --quiet playwright pillow numpy
-          python3 -m playwright install chromium
-          python3 LostPhone/scripts/capture_spectr_references.py
+          python3 -m venv .spectr-pixel-venv
+          source .spectr-pixel-venv/bin/activate
+          pip install -q playwright pillow numpy
+          python -m playwright install chromium
+          python LostPhone/scripts/capture_spectr_references.py
           chmod +x LostPhone/scripts/ios-awesome-pixel-capture.sh
           LostPhone/scripts/ios-awesome-pixel-capture.sh \
             "$GITHUB_WORKSPACE/LostPhone/scripts/lpsp_pixel_captures" \
             "$(find "$GITHUB_WORKSPACE/LostPhone/.derivedData-preview" -name 'LostPhone.app' -type d | head -1)"
-          python3 LostPhone/scripts/compare_spectr_pixels.py || true
+          python LostPhone/scripts/compare_spectr_pixels.py || true
 
       - name: Upload Spectr pixel diff report
         uses: actions/upload-artifact@v4

@@ -456,18 +456,6 @@ fileprivate struct LpspWazeAnimatedRoute: Shape {
     }
 }
 
-fileprivate extension View {
-    func wazeRouteStyle(phase: CGFloat) -> some View {
-        self
-            .stroke(LpspWazeTokens.wazePurple, style: StrokeStyle(
-                lineWidth: 6,
-                lineCap: .round,
-                lineJoin: .round,
-                dash: [16, 8],
-                dashPhase: phase
-            ))
-    }
-}
 
 fileprivate struct LpspWazeWazerAvatar: View {
     let emoji: String   // 🙂 / 😴 / 🤩 etc.

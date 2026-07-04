@@ -50,20 +50,22 @@ private enum LpspShazamTokens {
 }
 
 // The signature hero gradient
-extension ShapeStyle where Self == RadialGradient {
+
+
+
+
+
+
+private enum LpspShazamGradients {
     static var shazamHero: RadialGradient {
-        RadialGradient(
-            colors: [LpspShazamTokens.shazamBlue, LpspShazamTokens.shazamCore, LpspShazamTokens.shazamSpace],
-            center: UnitPoint(x: 0.5, y: 0.42),
-            startRadius: 0,
-            endRadius: 520
-        )
-    }
+            RadialGradient(
+                colors: [LpspShazamTokens.shazamBlue, LpspShazamTokens.shazamCore, LpspShazamTokens.shazamSpace],
+                center: UnitPoint(x: 0.5, y: 0.42),
+                startRadius: 0,
+                endRadius: 520
+            )
+        }
 }
-
-
-
-
 
 fileprivate struct LpspShazamShazamButton: View {
     @Binding var isListening: Bool
@@ -168,7 +170,7 @@ fileprivate struct LpspShazamShazamHome: View {
 
     var body: some View {
         ZStack {
-            Rectangle().fill(LpspShazamTokens.shazamHero).ignoresSafeArea()
+            Rectangle().fill(LpspShazamGradients.shazamHero).ignoresSafeArea()
 
             VStack {
                 HStack {

@@ -118,7 +118,7 @@ def strip_invalid_view_stroke_extensions(code: str) -> str:
     lines = code.splitlines(keepends=True)
     while i < len(lines):
         line = lines[i]
-        if re.match(r"fileprivate extension View\b", line.strip()):
+        if re.match(r"(fileprivate )?extension View\b", line.strip()):
             block = [line]
             i += 1
             depth = line.count("{") - line.count("}")
@@ -161,7 +161,31 @@ def convert_shapestyle_color_extension(code: str, tokens_enum: str) -> str:
     return code
 
 
-def fix_orphan_token_color_vars(code: str, tokens_enum: str) -> str:
+def convert_shapestyle_gradient_extension(code: str, grad_enum: str, grad_type: str) -> str:
+    """Déplace `extension ShapeStyle where Self == RadialGradient` (etc.) dans Gradients enum."""
+    marker = f"extension ShapeStyle where Self == {grad_type}"
+    if marker not in code:
+        return code
+    m = re.search(rf"extension ShapeStyle where Self == {re.escape(grad_type)}\s*\{{", code)
+    if not m:
+        return code
+    inner, end = _extract_braced_block(code, m.start())
+    code = code[: m.start()] + code[end:]
+    inner = "\n".join(("    " + line if line.strip() else line) for line in inner.strip().splitlines())
+    if not inner:
+        return code
+    enum_marker = f"private enum {grad_enum}"
+    if enum_marker in code:
+        idx = code.find(enum_marker)
+        body, enum_end = _extract_braced_block(code, idx)
+        body = body.rstrip() + "\n" + inner + "\n"
+        code = code[:idx] + f"{enum_marker} {{\n{body}}}" + code[enum_end:]
+    else:
+        block = f"private enum {grad_enum} {{\n{inner}\n}}\n\n"
+        insert = re.search(r"\n(?:private |fileprivate )?struct ", code)
+        pos = insert.start() + 1 if insert else 0
+        code = code[:pos] + block + code[pos:]
+    return code
     """Répare refs Tokens.foo pour static var Color déclarés hors enum."""
     for m in re.finditer(rf"static var (\w+): Color", code):
         name = m.group(1)
@@ -478,6 +502,12 @@ def fix_gradient_token_refs(code: str, token_names: Sequence[str], tokens_enum: 
     return code
 
 
+def fix_shorthand_gradient_fill_refs(code: str, grad_enum: str) -> str:
+    for g in grad_static_names(code, grad_enum):
+        code = re.sub(rf"\.fill\(\.{re.escape(g)}\)", f".fill({grad_enum}.{g})", code)
+    return code
+
+
 def fix_linear_gradient_refs(code: str, grad_enum: str) -> str:
     if grad_enum not in code:
         return code
@@ -773,6 +803,8 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     if "extension LinearGradient" in code:
         code = transform_linear_gradient_extension(code, grad_enum)
     code = convert_shapestyle_color_extension(code, tokens_enum)
+    code = convert_shapestyle_gradient_extension(code, grad_enum, "RadialGradient")
+    code = convert_shapestyle_gradient_extension(code, grad_enum, "LinearGradient")
 
     code = merge_duplicate_private_enums(code, tokens_enum)
     code = merge_duplicate_private_enums(code, fonts_enum)
@@ -795,6 +827,7 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     code = apply_token_and_font_refs(code, token_names, font_names, tokens_enum, fonts_enum)
     code = fix_gradient_token_refs(code, token_names, tokens_enum, font_names, grad_names)
     code = fix_misplaced_gradient_token_refs(code, grad_enum, tokens_enum)
+    code = fix_shorthand_gradient_fill_refs(code, grad_enum)
     code = fix_self_referential_tokens(code, tokens_enum)
     code = fix_shadow_gradient_colors(code, grad_enum, tokens_enum)
     code = fix_font_shorthand_refs(code, font_names, fonts_enum)
@@ -829,6 +862,8 @@ def finalize_component_swift(code: str, prefix: str) -> str:
 
     if "UIFont" in code and "import UIKit" not in code:
         code = "import UIKit\n" + code
+
+    code = fix_shorthand_gradient_fill_refs(code, grad_enum)
 
     return code
 

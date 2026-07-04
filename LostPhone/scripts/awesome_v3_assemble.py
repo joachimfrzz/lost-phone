@@ -284,10 +284,10 @@ private struct {prefix}PlaceholderChatRow: View {{
 """
         elif "TgOutgoingBubble" in outgoing:
             bubble_out = f'{outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)'
-            incoming = outgoing.replace("Outgoing", "Incoming") if "Outgoing" in outgoing else prefix + "IncomingBubbleWrapper"
+            incoming_type = outgoing.replace("Outgoing", "Incoming")
             bubble_block = f"""
                     {bubble_out}
-                    {incoming}(text: "Oui, j'arrive !")
+                    {incoming_type}(text: "Oui, j'arrive !", senderName: nil, senderId: nil)
 """
         else:
             bubble_out = f'{outgoing}(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)'

@@ -602,8 +602,8 @@ private struct LpspChatGPTAiChatTabScreen: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
 
-                    LpspChatGPTUserMessageBubble(text: "Explique-moi SwiftUI")
-                    LpspChatGPTAssistantMessage(text: "SwiftUI est le framework déclaratif d'Apple pour construire des interfaces iOS.")
+                    LpspChatGPTUserMessageBubble(text: "Explique-moi SwiftUI", attachmentUrl: nil)
+                    LpspChatGPTAssistantMessage(content: "SwiftUI est le framework déclaratif d'Apple pour construire des interfaces iOS.", onRegenerate: {}, onCopy: {}, onThumbUp: {}, onThumbDown: {})
 
                 }
                 .padding()

@@ -28,14 +28,24 @@ def ai_screens(
         composer_block = f"{prefix}DemoComposeBar()"
 
     if user_bubble and assistant and "UserMessageBubble" in user_bubble:
+        assistant_call = (
+            f'{assistant}(content: "SwiftUI est le framework déclaratif d\'Apple pour construire des interfaces iOS.", onRegenerate: {{}}, onCopy: {{}}, onThumbUp: {{}}, onThumbDown: {{}})'
+            if "AssistantMessage" in assistant
+            else f'{assistant}(text: "SwiftUI est le framework déclaratif d\'Apple pour construire des interfaces iOS.")'
+        )
         chat_body = f"""
-                    {user_bubble}(text: "Explique-moi SwiftUI")
-                    {assistant}(text: "SwiftUI est le framework déclaratif d'Apple pour construire des interfaces iOS.")
+                    {user_bubble}(text: "Explique-moi SwiftUI", attachmentUrl: nil)
+                    {assistant_call}
 """
     elif user_bubble and assistant:
+        assistant_call = (
+            f'{assistant}(content: "Comment puis-je vous aider ?", onRegenerate: {{}}, onCopy: {{}}, onThumbUp: {{}}, onThumbDown: {{}})'
+            if "AssistantMessage" in assistant
+            else f'{assistant}(text: "Comment puis-je vous aider ?")'
+        )
         chat_body = f"""
                     {user_bubble}(text: "Bonjour !")
-                    {assistant}(text: "Comment puis-je vous aider ?")
+                    {assistant_call}
 """
     else:
         chat_body = f"""
@@ -227,7 +237,14 @@ def food_screens(
 """
 
     if menu_row:
-        search = f"""
+        if "MenuItemRow" in menu_row:
+            search = f"""
+                    ForEach({prefix}DemoMenu.items, id: \\.title) {{ item in
+                        {menu_row}(name: item.title, desc: item.sub, price: item.price, imageName: "photo", onAdd: {{}}).padding(.horizontal)
+                    }}
+"""
+        else:
+            search = f"""
                     ForEach({prefix}DemoMenu.items, id: \\.title) {{ item in
                         {menu_row}(title: item.title, subtitle: item.sub, price: item.price, quantity: .constant(1)).padding(.horizontal)
                     }}
@@ -237,7 +254,13 @@ def food_screens(
                     ForEach(0..<4, id: \\.self) { i in HStack { Text("Plat \\(i+1)"); Spacer(); Text("€12") }.padding(.horizontal) }
 """
 
-    basket = f".safeAreaInset(edge: .bottom) {{ {basket_bar}(itemCount: 2, subtotal: \"€24,50\", onCheckout: {{}}) }}" if basket_bar else ""
+    basket = (
+        f'.safeAreaInset(edge: .bottom) {{ {basket_bar}(itemCount: 2, total: "€24,50", onTap: {{}}) }}'
+        if basket_bar and "BasketBar" in basket_bar
+        else f'.safeAreaInset(edge: .bottom) {{ {basket_bar}(itemCount: 2, subtotal: "€24,50", onCheckout: {{}}) }}'
+        if basket_bar
+        else ""
+    )
     orders = f"{order_tracking}()" if order_tracking else 'List(["Commande en cours"], id: \\.self) { Label($0, systemImage: "bag") }'
 
     return f"""
@@ -614,7 +637,43 @@ def reader_screens(prefix: str, canvas: str, accent: str, library_cover: str | N
                     }.padding()
 """
 
-    read = f"{reading_page}()" if reading_page else 'Text("Chapitre 1…").padding()'
+    if reading_page and "ReadingPage" in reading_page:
+        read = f"""
+            {reading_page}(
+                chapter: "CHAPITRE I",
+                title: "Le phare au matin",
+                paragraphs: [
+                    "La brume s'accrochait aux falaises comme une écharpe de laine mouillée.",
+                    "Personne ne savait encore que cette matinée allait tout changer.",
+                ],
+                percent: 42,
+                minsLeft: 18,
+                settings: {prefix}KindleReadingSettings(),
+                chromeShown: .constant(false)
+            )
+"""
+        reading_tab = f"""
+private struct {prefix}ReaderReadingTabScreen: View {{
+    var body: some View {{
+        ZStack {{
+            {canvas}.ignoresSafeArea()
+            {read}
+        }}
+    }}
+}}
+"""
+    else:
+        read = f"{reading_page}()" if reading_page else 'Text("Chapitre 1…").padding()'
+        reading_tab = f"""
+private struct {prefix}ReaderReadingTabScreen: View {{
+    var body: some View {{
+        ZStack {{
+            {canvas}.ignoresSafeArea()
+            {read}
+        }}
+    }}
+}}
+"""
 
     return f"""
 private struct {prefix}DemoBook {{ let title: String; let author: String; let progress: Double }}
@@ -629,14 +688,7 @@ private struct {prefix}ReaderLibraryTabScreen: View {{
     var body: some View {{ NavigationStack {{ ScrollView {{ {library} }} .navigationTitle("Bibliothèque") }} }}
 }}
 
-private struct {prefix}ReaderReadingTabScreen: View {{
-    var body: some View {{
-        ZStack {{
-            {canvas}.ignoresSafeArea()
-            {read}
-        }}
-    }}
-}}
+{reading_tab}
 
 private struct {prefix}ReaderTabScreen: View {{
     let title: String

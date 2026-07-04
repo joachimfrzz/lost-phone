@@ -361,7 +361,7 @@ private struct LpspDeliverooFoodHomeTabScreen: View {
  } .padding(.vertical) }
             .background(LpspDeliverooTokens.rooCanvas.ignoresSafeArea())
             .navigationTitle("Accueil")
-            .safeAreaInset(edge: .bottom) { LpspDeliverooBasketBar(itemCount: 2, subtotal: "€24,50", onCheckout: {}) }
+            .safeAreaInset(edge: .bottom) { LpspDeliverooBasketBar(itemCount: 2, total: "€24,50", onTap: {}) }
         }
     }
 }
@@ -369,7 +369,7 @@ private struct LpspDeliverooFoodHomeTabScreen: View {
 private struct LpspDeliverooFoodSearchTabScreen: View {
     var body: some View { NavigationStack { ScrollView { VStack { 
                     ForEach(LpspDeliverooDemoMenu.items, id: \.title) { item in
-                        LpspDeliverooMenuItemRow(title: item.title, subtitle: item.sub, price: item.price, quantity: .constant(1)).padding(.horizontal)
+                        LpspDeliverooMenuItemRow(name: item.title, desc: item.sub, price: item.price, imageName: "photo", onAdd: {}).padding(.horizontal)
                     }
  } } .navigationTitle("Rechercher") } }
 }

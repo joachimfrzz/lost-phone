@@ -138,6 +138,26 @@ private struct {ctx.prefix}SpectrHomeTabScreen: View {{
         texts = data.get("texts", [])
         title = next((t for t in texts if len(t) > 3 and t[0].isupper() and " " in t), "Midnight Wavelength")
         artist = next((t for t in texts if t not in (title,) and not t.startswith("Playing")), "Nova Palmer")
+        if slug == "apple-music" and "NowPlayingScreen" in ctx.now_playing:
+            return f"""
+private struct {ctx.prefix}SpectrHomeTabScreen: View {{
+    @State private var isPlaying = true
+    @State private var progress = 0.35
+    var body: some View {{
+        {ctx.now_playing}(
+            trackTitle: {_text_lit(title)},
+            artist: {_text_lit(artist)},
+            artwork: Image(systemName: "music.note"),
+            dominantColor: {ctx.accent_ref},
+            complementaryColor: {ctx.accent_ref}.opacity(0.65),
+            isPlaying: $isPlaying,
+            progress: $progress
+        )
+        .background({ctx.canvas_ref}.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }}
+}}
+"""
         return f"""
 private struct {ctx.prefix}SpectrHomeTabScreen: View {{
     var body: some View {{

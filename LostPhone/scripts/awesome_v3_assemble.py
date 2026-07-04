@@ -1759,6 +1759,19 @@ def _music_screens(prefix, tokens, canvas, accent, track_row=None, now_playing=N
                         )
                     }}
 """
+        elif "TrackRow" in track_row:
+            track_block = f"""
+                    ForEach({prefix}DemoTracks.items) {{ track in
+                        {track_row}(
+                            title: track.title,
+                            artist: track.artist,
+                            artwork: Image(systemName: "music.note"),
+                            isPlaying: track.isPlaying,
+                            hasAtmos: false,
+                            explicit: false
+                        )
+                    }}
+"""
         else:
             track_block = f"""
                     ForEach({prefix}DemoTracks.items) {{ track in
@@ -1780,7 +1793,25 @@ def _music_screens(prefix, tokens, canvas, accent, track_row=None, now_playing=N
 """
 
     now_playing_screen = ""
-    if now_playing:
+    if now_playing and "NowPlayingScreen" in now_playing:
+        now_playing_screen = f"""
+private struct {prefix}MusicNowPlayingTabScreen: View {{
+    @State private var isPlaying = true
+    @State private var progress = 0.35
+    var body: some View {{
+        {now_playing}(
+            trackTitle: "Blinding Lights",
+            artist: "The Weeknd",
+            artwork: Image(systemName: "music.note"),
+            dominantColor: {accent},
+            complementaryColor: {accent}.opacity(0.65),
+            isPlaying: $isPlaying,
+            progress: $progress
+        )
+    }}
+}}
+"""
+    elif now_playing:
         now_playing_screen = f"""
 private struct {prefix}MusicNowPlayingTabScreen: View {{
     var body: some View {{

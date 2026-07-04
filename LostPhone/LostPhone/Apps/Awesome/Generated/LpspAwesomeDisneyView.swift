@@ -401,7 +401,29 @@ private struct LpspDisneyDemoProfilePicker: View {
 
 private struct LpspDisneySpectrHomeTabScreen: View {
     var body: some View {
-        LpspDisneyVideoHomeTabScreen()
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        ScrollView {
+            VStack(spacing: 16) {
+            ZStack(alignment: .bottomLeading) {
+                    Text("ANDOR").font(.system(size: 30.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Action · Sci-Fi · TV-14 · 2024").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Play").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Watchlist").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(height: 380)
+                Text("DISNEY").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("PIXAR").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("MARVEL").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("STAR WARS").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("NAT GEO").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Continue Watching").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            .padding(.vertical, 8)
+        }
+            }
+        }
+        .background(Color(red: 0.039, green: 0.055, blue: 0.165).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

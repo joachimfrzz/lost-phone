@@ -632,24 +632,20 @@ private struct LpspSnapchatGenericFeedCard: View {
 
 private struct LpspSnapchatSpectrHomeTabScreen: View {
     var body: some View {
-
         ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                HStack {
-                    Circle().fill(Color.yellow).frame(width: 32, height: 32)
-                    Spacer()
-                    Image(systemName: "magnifyingglass").foregroundStyle(.white)
-                    Image(systemName: "person.badge.plus").foregroundStyle(.white)
-                }
-                .padding()
-                Spacer()
-                Circle().strokeBorder(.white, lineWidth: 4).frame(width: 72, height: 72)
-                    .overlay(Circle().fill(.white.opacity(0.15)).frame(width: 60, height: 60))
-                Spacer()
-            }
+        Color.black.ignoresSafeArea()
+        VStack {
+                    Text("Search").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Sunset Beach").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("🌸").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("🦋").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("✨").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("🔥").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("🎭").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
         }
-
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

@@ -1,0 +1,19 @@
+{
+  "h-icon": "color: var(--text-primary);",
+  "h-title": "font-family: var(--body); font-size: 14px; font-weight: 500; color: var(--text-primary);",
+  "src-row": "display: flex; gap: 8px; overflow: hidden; margin-bottom: 14px; padding-bottom: 4px;",
+  "src-card": "background: var(--surface-1);\n    border: 1px solid var(--surface-3);\n    border-radius: 12px;\n    width: 154px;\n    height: 78px;\n    padding: 10px;\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    flex-shrink: 0;",
+  "src-top": "display: flex; align-items: center; gap: 5px;",
+  "src-fav": "width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;",
+  "src-domain": "font-family: var(--body); font-size: 10px; color: var(--text-secondary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;",
+  "src-num": "font-family: var(--mono);\n    font-size: 9px;\n    font-weight: 700;\n    color: var(--text-secondary);\n    background: var(--surface-2);\n    padding: 1px 4px;\n    border-radius: 3px;",
+  "src-title": "font-family: var(--body); font-size: 11px; font-weight: 500; color: var(--text-primary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;",
+  "mark-icon": "width: 16px; height: 16px;\n    flex-shrink: 0;",
+  "ans-label": "font-family: var(--display); font-size: 12px; font-weight: 500; color: var(--text-secondary);",
+  "ans-body": "font-family: var(--body);\n    font-size: 13.5px;\n    line-height: 1.55;\n    color: var(--text-primary);\n    padding: 0 2px;",
+  "cite": "display: inline-block;\n    font-family: var(--mono);\n    font-size: 10px;\n    font-weight: 500;\n    color: var(--text-secondary);\n    background: var(--surface-2);\n    border: 1px solid var(--surface-3);\n    border-radius: 3px;\n    padding: 0 4px;\n    line-height: 14px;\n    vertical-align: 1px;\n    margin: 0 1px;",
+  "cursor": "display: inline-block;\n    width: 5px;\n    height: 12px;\n    background: var(--teal-bright);\n    margin-left: 2px;\n    vertical-align: text-bottom;\n    animation: blink 0.5s infinite;",
+  "si-text": "flex: 1; color: var(--text-tertiary); font-size: 14px; padding: 12px 0;",
+  "si-send": "width: 32px; height: 32px; border-radius: 50%;\n    background: var(--teal);\n    display: flex; align-items: center; justify-content: center;",
+  "tab": "display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-tertiary); font-size: 9px; font-weight: 500; font-family: var(--display); letter-spacing: 0.2px;"
+}

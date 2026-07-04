@@ -383,7 +383,23 @@ private struct LpspZoomMeetingsTabScreen: View {
 
 private struct LpspZoomSpectrHomeTabScreen: View {
     var body: some View {
-        LpspZoomMeetingsChatTabScreen()
+        VStack(spacing: 0) {
+                Text("Recording").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("12:34").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
+            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
+            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
+            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
+        } .padding(8)
+                Text("Unmute").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Video").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Participants").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("React").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Leave").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.102, green: 0.102, blue: 0.102).ignoresSafeArea())
     }
 }
 

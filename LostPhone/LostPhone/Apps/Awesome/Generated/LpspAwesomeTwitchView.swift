@@ -418,7 +418,36 @@ private struct LpspTwitchDemoProfilePicker: View {
 
 private struct LpspTwitchSpectrHomeTabScreen: View {
     var body: some View {
-        LpspTwitchVideoHomeTabScreen()
+        ZStack {
+        ZStack {
+            Text("LIVE").font(.system(size: 14))
+            Text("12.4K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+        } .background(Color.black)
+                Text("novaplays").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                Text("Just Chatting · 12.4K").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+            Text("Follow").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+            Text("Stream Chat").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+            ScrollView {
+                VStack(spacing: 8) {
+                    Text("pixelgremlin").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("harborwave").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("modbot").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("kellen_v").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("hana.r").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("drift_").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("harborwave").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                }
+                .padding(.vertical, 8)
+            }
+            Text("Send a message").font(.system(size: 14))
+            }
+            .padding(16)
+        }
+        }
+        .background(Color(red: 0.055, green: 0.055, blue: 0.063).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

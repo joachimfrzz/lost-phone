@@ -1,0 +1,8 @@
+{
+  "road": "position: absolute; background: #2F2F2F;",
+  "beacon": "position: absolute; width: 48px; height: 48px; border-radius: 50%; background: var(--green); opacity: 0; animation: pulse 1.8s ease-in-out infinite;",
+  "grabber": "width: 36px; height: 4px; background: var(--surface-2); border-radius: 2px; margin: 0 auto 12px;",
+  "sheet-title": "font-size: 18px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 12px;",
+  "opt": "height: 56px; border: 1px solid var(--divider); border-radius: 8px; padding: 0 12px; display: flex; align-items: center; gap: 10px; background: var(--surface-1);",
+  "tab": "display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--gray-400); font-size: 9px; font-weight: 500;"
+}

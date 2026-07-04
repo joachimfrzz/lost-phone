@@ -350,7 +350,23 @@ private struct LpspKindleReaderTabScreen: View {
 
 private struct LpspKindleSpectrHomeTabScreen: View {
     var body: some View {
-        LpspKindleReaderReadingTabScreen()
+        VStack(spacing: 0) {
+        ScrollView {
+                Text("Chapter Seven").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("The Lighthouse at Dawn").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("T").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("At the top the lamp still turned, patient and enormous, throwing its long arm of light across water the color of slate. She rested her palm on the brass and felt the faint warmth that never quite left it.").font(.system(size: 15.5, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Below, the village was a scatter of dark roofs. Somewhere down there a boat was already missing, though no one knew it yet but her.").font(.system(size: 15.5, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("38%").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("14 min left in chapter").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(20)
+                Text("Aa").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Brightness").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Layout").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Go To").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.055, green: 0.055, blue: 0.055).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

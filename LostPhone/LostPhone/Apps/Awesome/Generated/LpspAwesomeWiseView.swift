@@ -377,7 +377,49 @@ private struct LpspWiseDemoTx: Identifiable {
 
 private struct LpspWiseSpectrHomeTabScreen: View {
     var body: some View {
-        LpspWiseFinanceHomeTabScreen()
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("AM").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+            Text("Home").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+        } .padding(.horizontal, 16).frame(height: 44)
+            ZStack(alignment: .bottomLeading) {
+                Text("Total balance").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                Text("£12,480.65").font(.system(size: 38.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                Text("Add money").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+            } .frame(height: 420)
+        HStack(spacing: 0) {
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.420, green: 0.357, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Send").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.420, green: 0.357, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Add").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.420, green: 0.357, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Request").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.420, green: 0.357, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Convert").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+            } .frame(maxWidth: .infinity)
+        } .padding(.horizontal, 8).padding(.vertical, 16)
+        Text("Your accounts").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                Text("🇬🇧").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                    Text("GBP").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                    Text("British Pound").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                Text("£8,240.10").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                Text("🇪🇺").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                    Text("EUR").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                    Text("Euro").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                Text("€3,180.55").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                Text("🇺🇸").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                    Text("USD").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                    Text("US Dollar").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+                Text("$1,060.00").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

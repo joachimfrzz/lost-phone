@@ -1,0 +1,17 @@
+{
+  "status": "height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; font-size: 14px; font-weight: 600; color: var(--text);",
+  "addr": "display: inline-flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 700;",
+  "avatar-sm": "width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #C9C9C9, #9A9A9A);",
+  "searchbar": "margin: 0 16px 12px; height: 44px; border-radius: 12px; background: var(--surface); display: flex; align-items: center; gap: 10px; padding: 0 14px; color: var(--text-secondary); font-size: 15px;",
+  "pill": "display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 500px; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 500; white-space: nowrap;",
+  "rcard": "margin-bottom: 20px;",
+  "rphoto": "width: 100%; aspect-ratio: 16/9; border-radius: 12px; position: relative; overflow: hidden;",
+  "ribbon": "position: absolute; top: 10px; left: 10px; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 999px;",
+  "heart": "position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center;",
+  "rname": "font-size: 17px; font-weight: 700; margin-top: 8px;",
+  "rmeta": "display: flex; align-items: center; gap: 4px; font-size: 14px; color: var(--text-secondary); margin-top: 4px;",
+  "cart-count": "width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--green); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;",
+  "cart-label": "flex: 1; text-align: center; color: #fff; font-size: 16px; font-weight: 700;",
+  "cart-total": "color: #fff; font-size: 16px; font-weight: 700;",
+  "tab": "display: flex; flex-direction: column; align-items: center; color: var(--text-tertiary); font-size: 10px; font-weight: 500; gap: 3px; letter-spacing: 0.2px; position: relative;"
+}

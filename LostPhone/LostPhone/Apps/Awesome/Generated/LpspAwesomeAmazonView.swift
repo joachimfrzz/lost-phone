@@ -455,7 +455,31 @@ private struct LpspAmazonCommerceTabScreen: View {
 
 private struct LpspAmazonSpectrHomeTabScreen: View {
     var body: some View {
-        LpspAmazonCommerceHomeTabScreen()
+        VStack(spacing: 0) {
+        HStack(spacing: 8) {
+            Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+                Text("Apple AirPods Pro").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                Text("3").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+        } .padding(.horizontal, 12).frame(height: 48)
+            Text("Brooklyn, 11201").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                Text("Visit the Apple Store").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                Text("Apple AirPods Pro (2nd Generation) with MagSafe Charging Case (USB-C)").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("★★★★★").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("4,231 ratings").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("Limited time deal").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                        Text("$").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                        Text("00").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                        Text("List Price: $299.00").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                        Text("Save $50 (17%)").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("prime").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("FREE delivery").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("Tomorrow").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("In Stock").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("Add to Cart").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("Buy Now").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                Text("Frequently bought together").font(.system(size: 14))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

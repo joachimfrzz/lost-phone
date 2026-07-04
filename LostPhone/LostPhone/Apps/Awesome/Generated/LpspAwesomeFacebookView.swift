@@ -549,7 +549,30 @@ private struct LpspFacebookGenericFeedCard: View {
 
 private struct LpspFacebookSpectrHomeTabScreen: View {
     var body: some View {
-        LpspFacebookFeedTabScreen()
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("f").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+            Text("facebook").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(spacing: 12) {
+                    Circle().fill(LinearGradient(colors: [Color(red:1,green:0.84,blue:0.6), Color(red:1,green:0.89,blue:0.58)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 30, height: 30)
+                        Text("Sarah Johnson").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                            Text("🌍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("⋯").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                Text("Golden hour on the walk home. Can't believe we almost didn't go outside today.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                        Text("👍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                        Text("❤").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                        Text("😂").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("You, Maya and 1.2K others").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("84 comments").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("Like").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("Comment").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("Share").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+            }
+        }
+        }
+        .background(Color(red: 0.941, green: 0.949, blue: 0.961).ignoresSafeArea())
     }
 }
 

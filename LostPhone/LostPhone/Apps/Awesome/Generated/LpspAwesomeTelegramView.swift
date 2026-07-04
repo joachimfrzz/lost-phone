@@ -607,38 +607,58 @@ private struct LpspTelegramDemoComposeBar: View {
 
 private struct LpspTelegramSpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
-                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
-                Circle().fill(LpspTelegramTokens.tgAccent.opacity(0.25)).frame(width: 36, height: 36)
-                    .overlay(Text("AL").font(.caption.bold()))
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Alex Martin").font(.system(size: 16, weight: .semibold))
-                    Text("last seen recently").font(.system(size: 12)).foregroundStyle(.secondary)
-                }
-                Spacer()
-                Image(systemName: "video").font(.system(size: 20))
-                Image(systemName: "phone").font(.system(size: 20))
+        HStack(spacing: 10) {
+            Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+            Text("OP").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Olivia Park").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("last seen recently").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.439, green: 0.459, blue: 0.475))
             }
-            .padding(.horizontal, 12).padding(.vertical, 8)
-            ScrollView {
-                VStack(spacing: 8) {
-                    Text("Messages and calls are end-to-end encrypted.")
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.vertical, 8)
-
-                        LpspTelegramTgOutgoingBubble(text: "Morning! Did the mockups get sent over last night?", timestamp: "9:41", isRead: true)
-                        LpspTelegramTgIncomingBubble(text: "Yes — check the shared folder")
-
-                }
-                .padding(.vertical, 8)
+        } .padding(.horizontal, 12).frame(height: 56)
+                Text("Pinned Message").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Demo day Friday — bring a laptop.").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        ScrollView {
+            VStack(spacing: 8) {
+            HStack {
+                Text("Ok quick update — the gradient prototype is running.").font(.system(size: 16)).foregroundStyle(.primary)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
+                Spacer(minLength: 48)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
+            HStack {
+                Spacer(minLength: 48)
+                Text("Amazing, want me to test on the old iPhone?").font(.system(size: 16)).foregroundStyle(.white)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+            }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                Text("10:22").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            HStack {
+                Text("yes pls 🙏").font(.system(size: 16)).foregroundStyle(.primary)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
+                Spacer(minLength: 48)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
+            HStack {
+                Spacer(minLength: 48)
+                Text("").font(.system(size: 16)).foregroundStyle(.white)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+            }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+            HStack {
+                Text("perfect, on it").font(.system(size: 16)).foregroundStyle(.primary)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
+                Spacer(minLength: 48)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
             }
-            LpspTelegramTgComposeBar()
+            .padding(.vertical, 8)
         }
-        .background(LpspTelegramTokens.tgCanvasLight.ignoresSafeArea())
-
+        HStack(spacing: 12) {
+            Text("Message").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        } .padding(.horizontal, 8).padding(.vertical, 6).background(Color(red: 0.122, green: 0.173, blue: 0.204))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

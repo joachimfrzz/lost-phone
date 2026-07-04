@@ -367,7 +367,89 @@ private struct LpspTripAdvisorTravelTabScreen: View {
 
 private struct LpspTripAdvisorSpectrHomeTabScreen: View {
     var body: some View {
-        LpspTripAdvisorTravelExploreTabScreen()
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("New York City ▾").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+        } .padding(.horizontal, 16).frame(height: 44)
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                Text("Hotels, things to do, restaurants…").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.941, green: 0.941, blue: 0.941)).clipShape(RoundedRectangle(cornerRadius: 28))
+        } .padding(.horizontal, 16).padding(.top, 8)
+                Text("Hotels").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Things to do").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Restaurants").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Flights").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                    Text("Travelers' Choice").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                    Text("4.5 (1,284)").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("The Harborview Grand Hotel").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Hotel · $$ - $$$ · 0.4 mi · #2 of 240 hotels").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                    Text("4.0 (642)").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Olive & Thyme Bistro").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Mediterranean · $$ - $$$ · 0.7 mi").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

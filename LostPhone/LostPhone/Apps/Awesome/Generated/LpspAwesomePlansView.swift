@@ -476,7 +476,22 @@ private struct LpspPlansMapsTabScreen: View {
 
 private struct LpspPlansSpectrHomeTabScreen: View {
     var body: some View {
-        LpspPlansMapsHomeTabScreen()
+        ZStack(alignment: .bottom) {
+        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
+            Text("Search here").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+            Text("M").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+        VStack(spacing: 0) {
+                    Text("Sanborn's Café").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                        Text("4.6").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                        Text("★★★★★").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                        Text("(142)").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                        Text("Open").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                Text("Directions").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                Text("Call").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                Text("Save").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+        } .background(Color(red: 1.000, green: 1.000, blue: 1.000)).clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

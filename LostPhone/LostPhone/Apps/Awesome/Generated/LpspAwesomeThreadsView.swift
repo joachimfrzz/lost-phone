@@ -539,7 +539,31 @@ private struct LpspThreadsGenericFeedCard: View {
 
 private struct LpspThreadsSpectrHomeTabScreen: View {
     var body: some View {
-        LpspThreadsFeedTabScreen()
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("@").font(.system(size: 28.0, weight: .bold)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(spacing: 12) {
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                        Text("maya_c").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                        Text("2h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                    Text("Ran 5 miles before sunrise. The city felt like a secret.").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("247").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("18").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("12").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                        Text("jordanp").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                        Text("1h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                    Text("Same trail? I've been running that loop all month — it's unreal at 5am.").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("42").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("3").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+            }
+        }
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

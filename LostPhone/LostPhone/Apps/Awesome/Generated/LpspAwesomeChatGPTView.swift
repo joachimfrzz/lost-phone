@@ -645,31 +645,34 @@ private struct LpspChatGPTAiTabScreen: View {
 
 private struct LpspChatGPTSpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "line.3.horizontal").font(.title3)
-                Spacer()
-                Text("ChatGPT").font(.system(size: 15, weight: .semibold))
-                    .padding(.horizontal, 12).padding(.vertical, 6)
-                    .background(Color(.systemGray6)).clipShape(Capsule())
-                Spacer()
-                Image(systemName: "square.and.pencil").font(.title3)
+        HStack(spacing: 12) {
+            Image(systemName: "line.3.horizontal").font(.title3)
+            Text("GPT-4o").font(.system(size: 15, weight: .semibold)).padding(.horizontal, 12).padding(.vertical, 6).background(Color(.systemGray6)).clipShape(Capsule())
+            Image(systemName: "square.and.pencil").font(.title3)
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+            Text("Write a haiku about sunrises").font(.system(size: 14.5, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            VStack(alignment: .leading, spacing: 8) {
+                Text("A haiku about sunrises:").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+                Text("Quiet golden line\nBirds rehearse the morning song\nDew remembers night").font(.system(size: 13)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            } .padding(12).background(Color(red: 0.118, green: 0.118, blue: 0.165)).clipShape(RoundedRectangle(cornerRadius: 16)).frame(maxWidth: .infinity, alignment: .leading)
+            Text("Try one with more imagery").font(.system(size: 14.5, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Amber spills slow-honey\nAcross the chimney rooftops\nSteam curls like a cat").font(.system(size: 13)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            } .padding(12).background(Color(red: 0.118, green: 0.118, blue: 0.165)).clipShape(RoundedRectangle(cornerRadius: 16)).frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(.horizontal, 16).padding(.vertical, 10)
-            ScrollView {
-                VStack(spacing: 16) {
-
-                        LpspChatGPTUserMessageBubble(text: "Write me a short poem about Paris")
-                        LpspChatGPTAssistantMessage(text: "Beneath the zinc and morning light,\nThe Seine holds silver in its arms…")
-
-                }
-                .padding(.vertical, 12)
-            }
-            LpspChatGPTComposer()
+            .padding(16)
         }
-        .background(LpspChatGPTTokens.gptCanvas.ignoresSafeArea())
-
+        VStack(spacing: 6) {
+            HStack {
+                Text("Message ChatGPT…").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            } .padding(.horizontal, 12).padding(.vertical, 10).background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 24))
+            Text("ChatGPT can make mistakes. Check important info.").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+        } .padding(.horizontal, 12).padding(.bottom, 8)
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

@@ -360,12 +360,13 @@ private struct LpspSpotifyMusicNowPlayingTabScreen: View {
 private struct LpspSpotifySpectrHomeTabScreen: View {
     var body: some View {
         LpspSpotifyNowPlayingScreen(
-            trackTitle: "Midnight Wavelength",
-            artist: "Nova Palmer",
+            trackTitle: "Playing from Playlist",
+            artist: "Mellow Mornings",
             artwork: Image(systemName: "music.note"),
             dominantColor: LpspSpotifyTokens.spotifyErrorRed
         )
         .background(LpspSpotifyTokens.spotifyCanvas.ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

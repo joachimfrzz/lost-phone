@@ -446,7 +446,19 @@ private struct LpspYouTubeMusicMusicLibraryTabScreen: View {
 
 private struct LpspYouTubeMusicSpectrHomeTabScreen: View {
     var body: some View {
-        LpspYouTubeMusicMusicNowPlayingTabScreen()
+        VStack(spacing: 0) {
+                Text("FROM YOUR LIBRARY").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Song").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Video").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Midnight City").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("M83 · Hurry Up, We're Dreaming").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("1:48").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("-2:34").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Up Next").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Reckoner — Radiohead").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.012, green: 0.012, blue: 0.012).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

@@ -1,0 +1,15 @@
+{
+  "menu-btn": "color: var(--text); padding: 6px;",
+  "model-chip": "display: inline-flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; color: var(--text); padding: 6px 8px; border-radius: 6px;",
+  "new-chat": "color: var(--text); padding: 6px;",
+  "msg-user": "align-self: flex-end; max-width: 78%; background: var(--user-bubble); color: var(--text); padding: 10px 14px; border-radius: 20px; font-size: 14.5px; line-height: 1.45;",
+  "msg-asst": "align-self: flex-start; max-width: 96%; color: var(--text); font-size: 14.5px; line-height: 1.55;",
+  "asst-tools": "margin-top: 12px; display: flex; gap: 10px; color: var(--text-tertiary);",
+  "compose-pill": "display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--divider); border-radius: 24px; padding: 6px 6px 6px 10px;",
+  "comp-left": "color: var(--text-secondary); padding: 4px;",
+  "comp-input": "flex: 1; font-size: 14px; color: var(--text-tertiary); padding: 6px 0;",
+  "comp-right": "display: flex; align-items: center; gap: 4px;",
+  "comp-mic": "color: var(--text); padding: 6px;",
+  "send-btn": "width: 32px; height: 32px; border-radius: 50%; background: var(--send); display: flex; align-items: center; justify-content: center;",
+  "compose-hint": "margin-top: 8px; font-size: 11px; color: var(--text-tertiary); text-align: center;"
+}

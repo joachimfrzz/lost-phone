@@ -396,7 +396,49 @@ private struct LpspBookingTravelTabScreen: View {
 
 private struct LpspBookingSpectrHomeTabScreen: View {
     var body: some View {
-        LpspBookingTravelExploreTabScreen()
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            HStack {
+                    Text("Lisbon").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Fri 12 Jul — Sun 14 Jul · 2 adults").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+            } .padding(.horizontal, 16).frame(height: 48)
+        }
+        ScrollView {
+            VStack(spacing: 16) {
+                    Text("Lisbon, Portugal").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Fri 12 Jul — Sun 14 Jul").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("2 adults · 0 children · 1 room").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                Text("Search").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Genius").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("You're a Genius level 1 member").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                Text("10% off").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Grand Plaza Hotel").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("City centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("· 0.5 km from centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Free cancellation").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("8.9").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Fabulous").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("· 1,284 reviews").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("$240").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("$198").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Includes taxes and fees").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Only 2 rooms left").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Riverside Boutique Inn").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Alfama").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("· 1.2 km from centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Breakfast included").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("9.2").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Superb").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("· 642 reviews").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("$164").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Includes taxes and fees").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+            }
+            .padding(.vertical, 8)
+        }
+            }
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

@@ -594,9 +594,7 @@ private struct LpspWhatsAppDemoComposeBar: View {
 
 
 private struct LpspWhatsAppSpectrHomeTabScreen: View {
-    var body: some View {
-        LpspWhatsAppWAChatScreen()
-    }
+    var body: some View { LpspWhatsAppWAChatScreen() }
 }
 
 

@@ -674,7 +674,57 @@ private enum LpspDiscordDemoChats {
 
 private struct LpspDiscordSpectrHomeTabScreen: View {
     var body: some View {
-        LpspDiscordDiscordServersTabScreen()
+        VStack(spacing: 0) {
+        VStack(spacing: 20) {
+            VStack(spacing: 4) {
+
+            }
+            VStack(spacing: 4) {
+                Text("DS").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            }
+            VStack(spacing: 4) {
+                Text("G").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            }
+            VStack(spacing: 4) {
+                Text("IX").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                Text("3").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            }
+            VStack(spacing: 4) {
+                Text("FM").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            }
+            Text("+").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+        } .padding(.trailing, 12)
+                Text("#").font(.system(size: 18.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                Text("general").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                            Text("Aria").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("Today at 10:18 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("v4.2.0-rc1").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("🔥 3").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("😀 2").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("👍 5").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                            Text("statbot").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("BOT").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("10:19 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("rc1").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("@aria").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                            Text("Jules").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("10:21 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                        Text("on it — deploying preview now.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("🚀 4").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                            Text("makenzie").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("10:23 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                        Text("the presence dots look so clean on this canvas 😌").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            VStack(spacing: 6) {
+                    Text("+").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Text("Message #general").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            } .padding(.horizontal, 12).padding(.bottom, 8)
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

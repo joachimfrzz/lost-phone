@@ -628,7 +628,43 @@ private struct LpspRedditGenericFeedCard: View {
 
 private struct LpspRedditSpectrHomeTabScreen: View {
     var body: some View {
-        LpspRedditFeedTabScreen()
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("MS").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                Text("Search Reddit").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+            Text("AV").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(spacing: 12) {
+                    Text("4.2k").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                VStack(alignment: .leading, spacing: 0) {
+                        Text("d").font(.system(size: 8.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                        Text("r/dataisbeautiful").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                        Text("3h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    Text("OC").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    Text("Why crow populations dropped in North American cities over the last 30 years").font(.system(size: 14.5, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    HStack(spacing: 18) {
+                            Text("342").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                            Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                            Text("Save").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    } .padding(.bottom, 8)
+                }
+                    Text("892").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                VStack(alignment: .leading, spacing: 0) {
+                        Text("a").font(.system(size: 8.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                        Text("r/AskReddit").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                        Text("5h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    Text("What's a skill you picked up that you thought would be useless, but completely changed your life?").font(.system(size: 14.5, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    HStack(spacing: 18) {
+                            Text("1.2k").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                            Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                            Text("Save").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    } .padding(.bottom, 8)
+                }
+            }
+        }
+        }
+        .background(Color(red: 0.965, green: 0.969, blue: 0.973).ignoresSafeArea())
     }
 }
 

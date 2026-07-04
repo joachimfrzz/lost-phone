@@ -384,48 +384,23 @@ private struct LpspGeminiAiTabScreen: View {
 }
 
 
-private struct LpspGeminiSpectrBubble: View {
-    let text: String
-    let outgoing: Bool
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 32) }
-            Text(text).font(.system(size: 16)).padding(12)
-                .background(outgoing ? LpspGeminiTokens.gemCoral.opacity(0.15) : Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-            if !outgoing { Spacer(minLength: 32) }
-        }
-        .padding(.horizontal, 16)
-    }
-}
-
 private struct LpspGeminiSpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "line.3.horizontal").font(.title3)
-                Spacer()
-                Text("Gemini").font(.system(size: 15, weight: .semibold))
-                    .padding(.horizontal, 12).padding(.vertical, 6)
-                    .background(Color(.systemGray6)).clipShape(Capsule())
-                Spacer()
-                Image(systemName: "square.and.pencil").font(.title3)
+        HStack(spacing: 12) {
+            Text("Gemini").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+            Text("Explain what a transformer is, simply.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("transformer").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("attention").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
             }
-            .padding(.horizontal, 16).padding(.vertical, 10)
-            ScrollView {
-                VStack(spacing: 16) {
-
-                        LpspGeminiSpectrBubble(text: "Write me a short poem about Paris", outgoing: true)
-                        LpspGeminiSpectrBubble(text: "Beneath the zinc and morning light, the Seine holds silver in its arms…", outgoing: false)
-
-                }
-                .padding(.vertical, 12)
-            }
-            LpspGeminiDemoComposeBar()
+            .padding(16)
         }
-        .background(LpspGeminiTokens.gemCanvas.ignoresSafeArea())
-
+                    Text("Ask a follow-up…").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

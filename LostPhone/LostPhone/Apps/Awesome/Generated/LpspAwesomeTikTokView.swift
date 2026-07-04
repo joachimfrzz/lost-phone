@@ -585,7 +585,44 @@ private struct LpspTikTokShortVideoProfileTabScreen: View {
 
 private struct LpspTikTokSpectrHomeTabScreen: View {
     var body: some View {
-        LpspTikTokShortVideoFeedTabScreen()
+        ZStack(alignment: .bottomLeading) {
+            LinearGradient(colors: [Color(red:0.08,green:0.05,blue:0.12), Color(red: 0.004, green: 0.004, blue: 0.004)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .ignoresSafeArea()
+        LinearGradient(colors: [Color(red:0.08,green:0.05,blue:0.12), Color.primary], startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
+        HStack(spacing: 20) {
+            Text("Following").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("For You").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.top, 52)
+        Image(systemName: "magnifyingglass").font(.system(size: 20)).foregroundStyle(.white).padding(.trailing, 16)
+        VStack(spacing: 20) {
+            ZStack(alignment: .bottom) {
+                Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+            }
+            VStack(spacing: 4) {
+                Text("812.1K").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            VStack(spacing: 4) {
+                Text("4,567").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            VStack(spacing: 4) {
+                Text("42.8K").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            VStack(spacing: 4) {
+                Text("Share").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            Circle().fill(.black).frame(width: 44, height: 44).overlay(Circle().fill(Color.red.opacity(0.8)).frame(width: 26, height: 26))
+        } .padding(.trailing, 12)
+        VStack(alignment: .leading, spacing: 6) {
+            Text("@kellenvoss").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("tokyo station on a rainy tuesday #tokyo #rainy #streetfilm").font(.system(size: 15)).foregroundStyle(.white)
+            HStack(spacing: 8) {
+                Text("neon ritual - slow amber trio · neon ritual - slow amber trio · neon ritual").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .foregroundStyle(.white.opacity(0.9))
+        } .padding(.horizontal, 14).padding(.bottom, 8)
+        Capsule().fill(.white.opacity(0.25)).frame(height: 4).padding(.horizontal, 24)
+        }
+        .background(Color(red: 0.004, green: 0.004, blue: 0.004).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

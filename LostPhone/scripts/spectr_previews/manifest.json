@@ -1,0 +1,1700 @@
+{
+  "WhatsApp": {
+    "slug": "whatsapp",
+    "classes": [
+      "wall",
+      "chat-nav",
+      "nav-back",
+      "nav-avatar",
+      "nav-info",
+      "nav-name",
+      "nav-sub",
+      "nav-icons",
+      "chat-body",
+      "e2e-banner",
+      "bubble incoming",
+      "time"
+    ],
+    "texts": [
+      "MR",
+      "Maya Rivera",
+      "online",
+      "Messages and calls are end-to-end encrypted.",
+      "Morning! Did the mockups get sent over last night?",
+      "10:21",
+      "10:24",
+      "Amazing, pulling it up now 🎉"
+    ],
+    "var_count": 19
+  },
+  "Signal": {
+    "slug": "signal",
+    "classes": [
+      "status",
+      "thread-head",
+      "th-back",
+      "th-avatar",
+      "th-name",
+      "th-timer",
+      "th-actions",
+      "thread",
+      "sys-note",
+      "msg-row",
+      "bubble in mid",
+      "msg-row"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Renata Vogel",
+      "1 week",
+      "Messages and calls are end-to-end encrypted.",
+      "Are we still on for the design review tomorrow?",
+      "Pushed it to 2pm so the whole team can make it.",
+      "9:38 AM"
+    ],
+    "var_count": 14
+  },
+  "Telegram": {
+    "slug": "telegram",
+    "classes": [
+      "chat-nav",
+      "nav-back",
+      "nav-avatar",
+      "nav-info",
+      "nav-name",
+      "nav-sub",
+      "nav-actions",
+      "pinned",
+      "pin-bar",
+      "pin-text",
+      "pin-label",
+      "pin-body"
+    ],
+    "texts": [
+      "Back",
+      "OP",
+      "Olivia Park",
+      "last seen recently",
+      "Pinned Message",
+      "Demo day Friday &mdash; bring a laptop.",
+      "Ok quick update &mdash; the gradient prototype is running.",
+      "10:21"
+    ],
+    "var_count": 18
+  },
+  "Messenger": {
+    "slug": "messenger",
+    "classes": [
+      "status",
+      "thread-head",
+      "th-back",
+      "th-avatar",
+      "th-name",
+      "th-status",
+      "th-actions",
+      "thread",
+      "msg-row",
+      "bubble in mid",
+      "msg-row",
+      "bubble in"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Theo Marchetti",
+      "Active now",
+      "Did you see the new gradient bubbles?",
+      "They flow down the whole conversation now 🌈",
+      "9:36 AM",
+      "Yes! It looks like one continuous ribbon."
+    ],
+    "var_count": 17
+  },
+  "Discord": {
+    "slug": "discord",
+    "classes": [
+      "rail",
+      "rail-icon home",
+      "rail-divider",
+      "rail-icon active",
+      "mark active",
+      "rail-icon image",
+      "mark unread",
+      "rail-icon image-2",
+      "ping",
+      "rail-icon image-3",
+      "rail-icon add",
+      "right-col"
+    ],
+    "texts": [
+      "DS",
+      "IX",
+      "FM",
+      "general",
+      "AD",
+      "Aria",
+      "Today at 10:18 AM",
+      "Pushing the build tag now"
+    ],
+    "var_count": 25
+  },
+  "Teams": {
+    "slug": "microsoft-teams",
+    "classes": [
+      "app-top",
+      "top-left",
+      "me-av",
+      "pd",
+      "screen-title",
+      "top-right",
+      "join-bar",
+      "jt",
+      "jp",
+      "tree",
+      "team-row",
+      "team-av"
+    ],
+    "texts": [
+      "YA",
+      "Teams",
+      "Weekly Sync · in progress",
+      "Join",
+      "DG",
+      "Design Guild",
+      "general",
+      "design-crit"
+    ],
+    "var_count": 19
+  },
+  "Instagram": {
+    "slug": "instagram",
+    "classes": [
+      "app-nav",
+      "app-logo",
+      "app-nav-actions",
+      "icon",
+      "icon",
+      "stories",
+      "story",
+      "story-ring",
+      "story-ring-inner",
+      "story-photo",
+      "story-label",
+      "story"
+    ],
+    "texts": [
+      "Instagram",
+      "Your story",
+      "maya_c",
+      "jordanp",
+      "_alex",
+      "maya_c",
+      "1,247 likes",
+      "maya_c"
+    ],
+    "var_count": 17
+  },
+  "TikTok": {
+    "slug": "tiktok",
+    "classes": [
+      "video",
+      "top-tabs",
+      "top-tab",
+      "top-tab active",
+      "top-search",
+      "rail",
+      "avatar-wrap",
+      "avatar",
+      "plus-badge",
+      "rail-icon liked",
+      "rail-count",
+      "rail-icon"
+    ],
+    "texts": [
+      "Following",
+      "For You",
+      "812.1K",
+      "4,567",
+      "42.8K",
+      "Share",
+      "@kellenvoss",
+      "tokyo station on a rainy tuesday"
+    ],
+    "var_count": 16
+  },
+  "Snapchat": {
+    "slug": "snapchat",
+    "classes": [
+      "viewfinder",
+      "cam-overlay",
+      "cam-top",
+      "bitmoji",
+      "bitmoji-ghost",
+      "cam-search",
+      "cam-right-icons",
+      "cam-icon",
+      "cam-spacer",
+      "cam-label",
+      "lens-carousel",
+      "lens"
+    ],
+    "texts": [
+      "Search",
+      "Sunset Beach"
+    ],
+    "var_count": 16
+  },
+  "X": {
+    "slug": "x-twitter",
+    "classes": [
+      "top-nav",
+      "top-avatar",
+      "x-logo",
+      "top-spark",
+      "filter-bar",
+      "filter-tab active",
+      "filter-tab",
+      "post-scroll",
+      "post",
+      "post-avatar",
+      "post-body",
+      "post-head"
+    ],
+    "texts": [
+      "For you",
+      "Following",
+      "Nova Palmer",
+      "@novapalmer",
+      "2h",
+      "Just shipped a new feature. Feedback welcome.",
+      "#shipit",
+      "24"
+    ],
+    "var_count": 14
+  },
+  "Reddit": {
+    "slug": "reddit",
+    "classes": [
+      "top-nav",
+      "profile-av",
+      "search-bar",
+      "right-av",
+      "feed",
+      "card",
+      "votes",
+      "arrow up active",
+      "karma up",
+      "arrow down",
+      "post",
+      "post-meta"
+    ],
+    "texts": [
+      "MS",
+      "Search Reddit",
+      "AV",
+      "4.2k",
+      "r/dataisbeautiful",
+      "3h",
+      "OC",
+      "Why crow populations dropped in North American cities over the last 30 years"
+    ],
+    "var_count": 18
+  },
+  "LinkedIn": {
+    "slug": "linkedin",
+    "classes": [
+      "top-nav",
+      "nav-avatar",
+      "nav-search",
+      "nav-msg",
+      "feed",
+      "post",
+      "post-head",
+      "avatar-ring",
+      "avatar-inner",
+      "post-meta",
+      "post-name",
+      "conn-badge"
+    ],
+    "texts": [
+      "Search",
+      "Lena Parker",
+      "· 1st",
+      "Senior Product Designer at Stripe",
+      "Design Systems · Fintech",
+      "2h ·",
+      "127 reactions · 23 comments",
+      "Like"
+    ],
+    "var_count": 23
+  },
+  "Facebook": {
+    "slug": "facebook",
+    "classes": [
+      "top-nav",
+      "fb-logo",
+      "fb-name",
+      "top-btn",
+      "top-btn",
+      "feed-scroll",
+      "fb-card",
+      "post-head",
+      "post-avatar",
+      "post-meta",
+      "post-name",
+      "post-stamp"
+    ],
+    "texts": [
+      "facebook",
+      "Sarah Johnson",
+      "2h ·",
+      "Golden hour on the walk home. Can't believe we almost didn't go outside today.",
+      "You, Maya and 1.2K others",
+      "84 comments",
+      "Like",
+      "Comment"
+    ],
+    "var_count": 17
+  },
+  "Threads": {
+    "slug": "threads",
+    "classes": [
+      "top-nav",
+      "at-logo",
+      "feed-scroll",
+      "thread-post",
+      "avatar-col",
+      "avatar",
+      "thread-line",
+      "avatar avatar-small a2",
+      "post-body",
+      "post-head",
+      "name",
+      "verified"
+    ],
+    "texts": [
+      "maya_c",
+      "2h",
+      "Ran 5 miles before sunrise. The city felt like a secret.",
+      "247",
+      "18",
+      "12",
+      "jordanp",
+      "1h"
+    ],
+    "var_count": 13
+  },
+  "Pinterest": {
+    "slug": "pinterest",
+    "classes": [
+      "search-pill",
+      "placeholder",
+      "feed",
+      "masonry",
+      "col",
+      "pin",
+      "img g1",
+      "save",
+      "title",
+      "creator",
+      "pin",
+      "img g2"
+    ],
+    "texts": [
+      "Search for ideas",
+      "Save",
+      "Cozy rustic kitchen corner inspiration",
+      "by hanaruiz",
+      "Save",
+      "Blue hour street",
+      "by kvoss",
+      "Save"
+    ],
+    "var_count": 11
+  },
+  "Tinder": {
+    "slug": "tinder",
+    "classes": [
+      "app-top",
+      "flame",
+      "top-filter",
+      "card-area",
+      "bg-card",
+      "swipe-card",
+      "portrait",
+      "nope-stamp",
+      "card-gradient",
+      "card-info",
+      "card-name-row",
+      "card-name"
+    ],
+    "texts": [
+      "NOPE",
+      "Maya,",
+      "27",
+      "📍 3 mi away · Designer"
+    ],
+    "var_count": 18
+  },
+  "Bumble": {
+    "slug": "bumble",
+    "classes": [
+      "header",
+      "h-title",
+      "h-icon",
+      "swipe-area",
+      "swipe-card",
+      "progress",
+      "seg active",
+      "seg",
+      "seg",
+      "seg",
+      "card-bottom",
+      "card-name"
+    ],
+    "texts": [
+      "People",
+      "Sigrún, 28",
+      "2 mi away · Engineer at a coffee co-op",
+      "Your turn: 23h 14m",
+      "People",
+      "Hives",
+      "Matches",
+      "Chats"
+    ],
+    "var_count": 16
+  },
+  "Hinge": {
+    "slug": "hinge",
+    "classes": [
+      "header",
+      "h-mark",
+      "h-title",
+      "h-icon",
+      "profile-scroll",
+      "name-row",
+      "name-text",
+      "name-meta",
+      "chips",
+      "chip",
+      "chip",
+      "verified"
+    ],
+    "texts": [
+      "Discover",
+      "Sigrún, 28",
+      "2 mi away",
+      "5'9\"",
+      "Engineer",
+      "SF",
+      "I geek out on _",
+      "My simple pleasures"
+    ],
+    "var_count": 16
+  },
+  "Happn": {
+    "slug": "happn",
+    "classes": [
+      "status",
+      "topbar",
+      "topbar-title",
+      "topbar-ico",
+      "timeline-head",
+      "timeline-h",
+      "timeline-sub",
+      "cross-scroll",
+      "cross",
+      "cross-dot",
+      "cross-card",
+      "cross-av cross-a"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "happ",
+      "Crossed paths today",
+      "12 people near you · sorted by latest",
+      "Camille, 27",
+      "Le Marais · 11 min ago",
+      "You crossed paths 3 times"
+    ],
+    "var_count": 18
+  },
+  "Spotify": {
+    "slug": "spotify",
+    "classes": [
+      "np-gradient",
+      "app-nav",
+      "np-label",
+      "np-from",
+      "scroll-body",
+      "album-art",
+      "track-title",
+      "track-artist",
+      "scrubber",
+      "scrubber-track",
+      "scrubber-fill",
+      "scrubber-thumb"
+    ],
+    "texts": [
+      "Playing from Playlist",
+      "Mellow Mornings",
+      "Midnight Wavelength",
+      "Nova Palmer",
+      "2:14",
+      "3:32",
+      "Midnight Wavelength",
+      "Nova Palmer"
+    ],
+    "var_count": 13
+  },
+  "Apple Music": {
+    "slug": "apple-music",
+    "classes": [
+      "np-gradient",
+      "np-handle",
+      "np-top",
+      "np-crumb-wrap",
+      "np-crumb",
+      "np-art-wrap",
+      "album-art",
+      "np-info",
+      "np-text",
+      "np-title",
+      "np-artist",
+      "atmos-pill"
+    ],
+    "texts": [
+      "Listen Now",
+      "Midnight Frequency",
+      "Nova Palmer",
+      "Dolby Atmos",
+      "1:24",
+      "-1:56",
+      "LYRICS · AIRPLAY · QUEUE",
+      "Home"
+    ],
+    "var_count": 16
+  },
+  "Deezer": {
+    "slug": "deezer",
+    "classes": [
+      "status",
+      "np-body",
+      "np-top",
+      "np-chev",
+      "np-ctx",
+      "np-ctx-label",
+      "np-ctx-title",
+      "np-more",
+      "art",
+      "flow-badge",
+      "eqbars",
+      "eqbar"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Flow · Your Mix",
+      "Made for you",
+      "FLOW",
+      "Midnight City",
+      "M83 · Hurry Up, We're Dreaming",
+      "1:48"
+    ],
+    "var_count": 17
+  },
+  "SoundCloud": {
+    "slug": "soundcloud",
+    "classes": [
+      "app-nav",
+      "np-label",
+      "np-from",
+      "nav-more",
+      "scroll-body",
+      "album-art",
+      "track-title",
+      "track-artist",
+      "waveform",
+      "wf-playhead",
+      "wf-avatar a1",
+      "wf-avatar a2"
+    ],
+    "texts": [
+      "Playing from Playlist",
+      "Late Night Uploads",
+      "Smoke & Static",
+      "novaa",
+      "2:08",
+      "-1:24",
+      "1.2K",
+      "340"
+    ],
+    "var_count": 14
+  },
+  "YouTube Music": {
+    "slug": "youtube-music",
+    "classes": [
+      "status",
+      "np",
+      "np-art-backdrop",
+      "np-top",
+      "np-source",
+      "np-art",
+      "np-toggle",
+      "active",
+      "np-meta",
+      "np-track",
+      "np-artist",
+      "np-scrub"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "FROM YOUR LIBRARY",
+      "Song",
+      "Video",
+      "Midnight City",
+      "M83 · Hurry Up, We're Dreaming",
+      "1:48"
+    ],
+    "var_count": 15
+  },
+  "Shazam": {
+    "slug": "shazam",
+    "classes": [
+      "hero-bg",
+      "top-bar",
+      "hero-center",
+      "ring-wrap",
+      "ring",
+      "ring r2",
+      "ring r3",
+      "glow",
+      "shz-btn",
+      "tap-prompt",
+      "sheet",
+      "grab"
+    ],
+    "texts": [
+      "Listening for music…",
+      "Your Shazams",
+      "Bad Habit",
+      "Steve Lacy",
+      "2h ago",
+      "As It Was",
+      "Harry Styles",
+      "Yesterday"
+    ],
+    "var_count": 13
+  },
+  "Audible": {
+    "slug": "audible",
+    "classes": [
+      "app-nav",
+      "nav-title",
+      "nav-ico",
+      "scroll-body",
+      "cover-wrap",
+      "cover-ring",
+      "cover",
+      "cover-band",
+      "book-title",
+      "book-author",
+      "book-narrator",
+      "transport"
+    ],
+    "texts": [
+      "Now Playing",
+      "The Song of Achilles",
+      "By Madeline Miller",
+      "Narrated by Frazer Douglas",
+      "30",
+      "30",
+      "8 hrs 14 min left",
+      "1.5×"
+    ],
+    "var_count": 13
+  },
+  "YouTube": {
+    "slug": "youtube",
+    "classes": [
+      "top-bar",
+      "logo",
+      "logo-mark",
+      "logo-word",
+      "top-icons",
+      "avatar-mini",
+      "chip-row",
+      "tc active",
+      "tc",
+      "tc",
+      "tc",
+      "feed"
+    ],
+    "texts": [
+      "YouTube",
+      "All",
+      "Music",
+      "Gaming",
+      "Podcasts",
+      "12:34",
+      "Golden hour film workflow — shooting on a 40-year-old lens",
+      "Amber Leaf · 142K views · 2 hours ago"
+    ],
+    "var_count": 12
+  },
+  "Netflix": {
+    "slug": "netflix",
+    "classes": [
+      "hero",
+      "hero-bg",
+      "hero-fade",
+      "hero-top",
+      "nf-word",
+      "top10-badge",
+      "top10-chip",
+      "top10-text",
+      "hero-title",
+      "hero-title-art",
+      "hero-sub",
+      "hero-sub-chips"
+    ],
+    "texts": [
+      "NETFLIX",
+      "TOP 10",
+      "in the U.S. Today",
+      "NIGHT",
+      "WAVE",
+      "Gripping · Dramas · Thrillers",
+      "This week's trending",
+      "Play"
+    ],
+    "var_count": 13
+  },
+  "Disney+": {
+    "slug": "disney-plus",
+    "classes": [
+      "scroll-body",
+      "billboard",
+      "stars",
+      "billboard-scrim",
+      "mute-toggle",
+      "bb-content",
+      "bb-logo",
+      "bb-meta",
+      "bb-actions",
+      "bb-play",
+      "bb-sec",
+      "portals"
+    ],
+    "texts": [
+      "ANDOR",
+      "Action · Sci-Fi · TV-14 · 2024",
+      "Play",
+      "Watchlist",
+      "DISNEY",
+      "PIXAR",
+      "MARVEL",
+      "STAR WARS"
+    ],
+    "var_count": 13
+  },
+  "Prime Video": {
+    "slug": "prime-video",
+    "classes": [
+      "billboard",
+      "bb-bg",
+      "bb-fade",
+      "bb-content",
+      "bb-title",
+      "bb-meta",
+      "imdb",
+      "bb-actions",
+      "play-btn",
+      "wl-btn",
+      "xray",
+      "xray-head"
+    ],
+    "texts": [
+      "The Citadel Files",
+      "2024 · 16+ · 1 Season ·",
+      "★ 8.4 IMDb",
+      "Play",
+      "Watchlist",
+      "In this scene",
+      "N. Palmer",
+      "Agent Cole"
+    ],
+    "var_count": 13
+  },
+  "Apple TV": {
+    "slug": "apple-tv",
+    "classes": [
+      "status",
+      "scroll-body",
+      "titlebar",
+      "avatar",
+      "hero",
+      "hero-art",
+      "hero-fade",
+      "hero-content",
+      "hero-brand",
+      "atv",
+      "tvp",
+      "hero-title"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Watch Now",
+      "TV+",
+      "· New Episode",
+      "Severance",
+      "Season 2",
+      "Episode 6"
+    ],
+    "var_count": 15
+  },
+  "Twitch": {
+    "slug": "twitch",
+    "classes": [
+      "player",
+      "live-pill",
+      "live-dot",
+      "viewer-pill",
+      "ch-bar",
+      "ch-ring",
+      "ch-avatar",
+      "ch-info",
+      "ch-name",
+      "ch-meta",
+      "follow-btn",
+      "chat"
+    ],
+    "texts": [
+      "LIVE",
+      "12.4K",
+      "novaplays",
+      "Just Chatting · 12.4K",
+      "Follow",
+      "Stream Chat",
+      "pixelgremlin",
+      ": that clutch was insane"
+    ],
+    "var_count": 14
+  },
+  "ChatGPT": {
+    "slug": "chatgpt",
+    "classes": [
+      "top-nav",
+      "menu-btn",
+      "model-chip",
+      "caret",
+      "new-chat",
+      "chat",
+      "msg-user",
+      "msg-asst",
+      "intro",
+      "poem",
+      "asst-tools",
+      "t"
+    ],
+    "texts": [
+      "GPT-4o",
+      "Write a haiku about sunrises",
+      "A haiku about sunrises:",
+      "Quiet golden line\nBirds rehearse the morning song\nDew remembers night",
+      "Try one with more imagery",
+      "Amber spills slow-honey\nAcross the chimney rooftops\nSteam curls like a cat",
+      "Message ChatGPT…",
+      "ChatGPT can make mistakes. Check important info."
+    ],
+    "var_count": 15
+  },
+  "Gemini": {
+    "slug": "gemini",
+    "classes": [
+      "status",
+      "top-bar",
+      "tb-icon",
+      "tb-model",
+      "tb-avatar",
+      "convo",
+      "user-turn",
+      "ai-turn",
+      "ai-spark",
+      "grad-fill",
+      "ai-body",
+      "ai-actions"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Gemini",
+      "Explain what a transformer is, simply.",
+      "A",
+      "transformer",
+      "attention",
+      "Ask a follow-up…"
+    ],
+    "var_count": 17
+  },
+  "Claude": {
+    "slug": "claude",
+    "classes": [
+      "header",
+      "hamburger",
+      "h-title",
+      "ellipsis",
+      "model-chip",
+      "mark",
+      "chev",
+      "conv",
+      "user-msg",
+      "ast-msg",
+      "ast-header",
+      "mark avatar"
+    ],
+    "texts": [
+      "Untitled chat",
+      "Claude Opus 4.5",
+      "Explain Bayesian inference like I'm a curious 15-year-old.",
+      "Claude",
+      "· Opus 4.5",
+      "they have keys",
+      "— and then they hint,",
+      "\"it jingles when I walk\""
+    ],
+    "var_count": 24
+  },
+  "Perplexity": {
+    "slug": "perplexity",
+    "classes": [
+      "header",
+      "h-icon",
+      "h-title",
+      "h-icon",
+      "scroll",
+      "question",
+      "src-label",
+      "mark-icon",
+      "src-row",
+      "src-card",
+      "src-top",
+      "src-fav wiki"
+    ],
+    "texts": [
+      "Bayesian inference",
+      "What is Bayesian inference?",
+      "Sources",
+      "wikipedia.org",
+      "Bayesian inference — Wikipedia",
+      "arXiv",
+      "arxiv.org",
+      "A gentle introduction to probabilistic reasoning"
+    ],
+    "var_count": 23
+  },
+  "Grok": {
+    "slug": "grok",
+    "classes": [
+      "top-bar",
+      "top-icon",
+      "mode-toggle",
+      "mode-seg on-reg",
+      "mode-seg",
+      "top-icon",
+      "convo",
+      "user-msg",
+      "assistant",
+      "glyph",
+      "assistant-body",
+      "cursor"
+    ],
+    "texts": [
+      "Regular",
+      "Fun",
+      "What's the latest reaction to the Grok 4 launch on X?",
+      "Devin Park",
+      "@devbuilds · 2h",
+      "128",
+      "342",
+      "2.1K"
+    ],
+    "var_count": 15
+  },
+  "Revolut": {
+    "slug": "revolut",
+    "classes": [
+      "status",
+      "top-bar",
+      "avatar",
+      "top-name",
+      "top-icon",
+      "top-icon",
+      "balance-wrap",
+      "balance-label",
+      "balance-figure",
+      "qa-row",
+      "qa",
+      "qa-circle primary"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Alex Mercer",
+      "Total balance",
+      "£12,480.65",
+      "Add",
+      "Exchange",
+      "Send"
+    ],
+    "var_count": 20
+  },
+  "Wise": {
+    "slug": "wise",
+    "classes": [
+      "status",
+      "top-bar",
+      "avatar",
+      "top-name",
+      "top-icon",
+      "top-icon",
+      "hero-wrap",
+      "hero",
+      "hero-label",
+      "hero-total",
+      "hero-add",
+      "qa-row"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "AM",
+      "Home",
+      "Total balance",
+      "£12,480.65",
+      "Add money",
+      "Send"
+    ],
+    "var_count": 17
+  },
+  "PayPal": {
+    "slug": "paypal",
+    "classes": [
+      "nav-top",
+      "nav-logo",
+      "p-sky",
+      "p-blue",
+      "nav-icons",
+      "content",
+      "balance-card",
+      "balance-label",
+      "balance-amount",
+      "balance-actions",
+      "b-btn b-btn-fill",
+      "b-btn b-btn-out"
+    ],
+    "texts": [
+      "PayPal balance",
+      "$1,247.92",
+      "Add Money",
+      "Transfer",
+      "All",
+      "Sent",
+      "Received",
+      "Pending"
+    ],
+    "var_count": 19
+  },
+  "Binance": {
+    "slug": "binance",
+    "classes": [
+      "status",
+      "top-row",
+      "search-pill",
+      "icon-btn",
+      "bal-wrap",
+      "bal-label",
+      "bal-value",
+      "ccy",
+      "bal-pnl",
+      "quick",
+      "quick-btn qb-primary",
+      "quick-btn qb-ghost"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Search BTC, ETH, BNB…",
+      "Est. Total Value",
+      "12,840.57",
+      "USDT",
+      "+$214.86 (+1.70%) Today",
+      "Deposit"
+    ],
+    "var_count": 18
+  },
+  "Coinbase": {
+    "slug": "coinbase",
+    "classes": [
+      "nav-top",
+      "c-mark",
+      "nav-icons",
+      "hero",
+      "hero-label",
+      "hero-value",
+      "hero-change",
+      "chart",
+      "ranges",
+      "range-chip",
+      "range-chip active",
+      "range-chip"
+    ],
+    "texts": [
+      "Portfolio Balance",
+      "$12,847.93",
+      "+$847.93 (+6.59%) Today",
+      "1H",
+      "1D",
+      "1W",
+      "1M",
+      "1Y"
+    ],
+    "var_count": 22
+  },
+  "Amazon": {
+    "slug": "amazon",
+    "classes": [
+      "nav-bar",
+      "nav-back",
+      "nav-search",
+      "input",
+      "btn",
+      "nav-cart",
+      "cart-badge",
+      "sub-nav",
+      "loc",
+      "pdp",
+      "product-hero",
+      "prod-img"
+    ],
+    "texts": [
+      "Apple AirPods Pro",
+      "Deliver to",
+      "Brooklyn, 11201",
+      "Visit the Apple Store",
+      "Apple AirPods Pro (2nd Generation) with MagSafe Charging Case (USB-C)",
+      "★★★★★",
+      "4,231 ratings",
+      "Limited time deal"
+    ],
+    "var_count": 22
+  },
+  "Uber": {
+    "slug": "uber",
+    "classes": [
+      "map",
+      "road h1",
+      "road h2",
+      "road v1",
+      "road v2",
+      "route",
+      "pickup",
+      "pin",
+      "body",
+      "driver",
+      "beacon",
+      "beacon b2"
+    ],
+    "texts": [
+      "2 min",
+      "Choose a ride",
+      "Where to?",
+      "Later",
+      "UberX",
+      "· 4",
+      "3 min away · 8:42 PM",
+      "$14.82"
+    ],
+    "var_count": 15
+  },
+  "Uber Eats": {
+    "slug": "uber-eats",
+    "classes": [
+      "status",
+      "topbar",
+      "addr",
+      "avatar-sm",
+      "searchbar",
+      "pill-row",
+      "pill active",
+      "pill",
+      "pill",
+      "pill",
+      "pill",
+      "feed"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Deliver to · Home",
+      "Search Uber Eats",
+      "Featured",
+      "Pizza",
+      "Sushi",
+      "Burgers"
+    ],
+    "var_count": 13
+  },
+  "Deliveroo": {
+    "slug": "deliveroo",
+    "classes": [
+      "status",
+      "addr-bar",
+      "addr-label",
+      "addr-value",
+      "bag",
+      "search-wrap",
+      "search-pill",
+      "plus-card",
+      "plus-logo",
+      "plus-text",
+      "plus-cta",
+      "cat-bar"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Deliver to",
+      "12 Hatton Garden",
+      "Restaurants, groceries, dishes",
+      "deliveroo plus",
+      "Free delivery on this order",
+      "Join"
+    ],
+    "var_count": 16
+  },
+  "Waze": {
+    "slug": "waze",
+    "classes": [
+      "map",
+      "water",
+      "park-1",
+      "park-2",
+      "road highway h1",
+      "road h2",
+      "road v1",
+      "road v2",
+      "building b1",
+      "building b2",
+      "building b3",
+      "building b4"
+    ],
+    "texts": [
+      "Police",
+      "Traffic",
+      "Cleared",
+      "0.4 mi",
+      "Market Street",
+      "then turn left in 0.6 mi",
+      "SPEED LIMIT",
+      "35"
+    ],
+    "var_count": 25
+  },
+  "Google Maps": {
+    "slug": "google-maps",
+    "classes": [
+      "map",
+      "park p1",
+      "park p2",
+      "park p3",
+      "water",
+      "highway",
+      "road r1",
+      "road r2",
+      "road r3",
+      "road r4",
+      "bldg b1",
+      "bldg b2"
+    ],
+    "texts": [
+      "Search here",
+      "Sanborn's Café",
+      "4.6",
+      "★★★★★",
+      "(142)",
+      "Coffee shop ·",
+      "Open",
+      "· 0.3 mi"
+    ],
+    "var_count": 21
+  },
+  "Booking": {
+    "slug": "booking",
+    "classes": [
+      "appbar",
+      "appbar-row",
+      "ab-back",
+      "ab-title",
+      "ab-sub",
+      "scroll-body",
+      "search-card",
+      "sf-row",
+      "sf-row",
+      "sf-row",
+      "sf-btn",
+      "genius"
+    ],
+    "texts": [
+      "Lisbon",
+      "Fri 12 Jul — Sun 14 Jul · 2 adults",
+      "Lisbon, Portugal",
+      "Fri 12 Jul — Sun 14 Jul",
+      "2 adults · 0 children · 1 room",
+      "Search",
+      "Genius",
+      "You're a Genius level 1 member"
+    ],
+    "var_count": 16
+  },
+  "Airbnb": {
+    "slug": "airbnb",
+    "classes": [
+      "status",
+      "search-wrap",
+      "search-pill",
+      "search-icon",
+      "search-texts",
+      "search-top",
+      "search-sub",
+      "search-filter",
+      "cat-bar",
+      "cat active",
+      "cat-label",
+      "cat"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Where to?",
+      "Anywhere · Any week · Add guests",
+      "Cabins",
+      "Amazing views",
+      "Tropical",
+      "Beachfront"
+    ],
+    "var_count": 17
+  },
+  "Expedia": {
+    "slug": "expedia",
+    "classes": [
+      "status",
+      "app-bar",
+      "brand",
+      "brand-name",
+      "onekey-pill",
+      "dot",
+      "seg",
+      "seg-item active",
+      "seg-item",
+      "seg-item",
+      "seg-item",
+      "search-wrap"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Expedia",
+      "12,480 One Key",
+      "Stays",
+      "Flights",
+      "Cars",
+      "Bundle"
+    ],
+    "var_count": 19
+  },
+  "Flighty": {
+    "slug": "flighty",
+    "classes": [
+      "map",
+      "land l1",
+      "land l2",
+      "map-scrim",
+      "arc-svg",
+      "pin o",
+      "pin-label o",
+      "pin d",
+      "pin-label d",
+      "status",
+      "sheet",
+      "grabber"
+    ],
+    "texts": [
+      "SFO",
+      "JFK",
+      "9:41",
+      "●●● ▢",
+      "United · UA 482",
+      "DELAYED 22m",
+      "SFO",
+      "JFK"
+    ],
+    "var_count": 18
+  },
+  "TripAdvisor": {
+    "slug": "tripadvisor",
+    "classes": [
+      "status",
+      "top-nav",
+      "owl",
+      "loc-pill",
+      "avatar",
+      "search-wrap",
+      "search-pill",
+      "search-icon",
+      "search-text",
+      "cat-grid",
+      "cat-tile",
+      "cat-label"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "New York City ▾",
+      "Hotels, things to do, restaurants…",
+      "Hotels",
+      "Things to do",
+      "Restaurants",
+      "Flights"
+    ],
+    "var_count": 13
+  },
+  "Strava": {
+    "slug": "strava",
+    "classes": [
+      "topbar",
+      "topbar-title",
+      "topbar-actions",
+      "feed",
+      "feed-card",
+      "card-header",
+      "avatar",
+      "author",
+      "author-name",
+      "author-time",
+      "activity-icon",
+      "activity-title"
+    ],
+    "texts": [
+      "Home",
+      "CR",
+      "Casey Reardon",
+      "2 hours ago · Boston, MA",
+      "Tuesday Morning Run",
+      "Distance",
+      "8.2 mi",
+      "Time"
+    ],
+    "var_count": 20
+  },
+  "Google Calendar": {
+    "slug": "google-calendar",
+    "classes": [
+      "appbar",
+      "appbar-menu",
+      "appbar-title",
+      "appbar-icon",
+      "appbar-icon",
+      "schedule",
+      "day-banner",
+      "day-number-today",
+      "day-banner-left",
+      "day-label",
+      "day-weather",
+      "day-temp"
+    ],
+    "texts": [
+      "May 2026",
+      "14",
+      "Thu · May",
+      "Today",
+      "72°",
+      "Stand-up",
+      "9:00 – 9:30 AM",
+      "Join with Google Meet"
+    ],
+    "var_count": 22
+  },
+  "Dropbox": {
+    "slug": "dropbox",
+    "classes": [
+      "status",
+      "nav-row",
+      "nav-title",
+      "nav-icons",
+      "scroll-body",
+      "shelf-head",
+      "shelf",
+      "rcard",
+      "rcard-thumb",
+      "rcard-name",
+      "rcard-meta",
+      "rcard"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Files",
+      "Recents",
+      "Q3 Report.pdf",
+      "2.4 MB · Today",
+      "Mockup_v4.png",
+      "880 KB · Apr 14"
+    ],
+    "var_count": 18
+  },
+  "Zoom": {
+    "slug": "zoom",
+    "classes": [
+      "call-top",
+      "rec",
+      "rec-dot",
+      "rec-label",
+      "call-timer",
+      "gallery",
+      "tile t1 speaking",
+      "tile-av",
+      "tile-label",
+      "name-chip",
+      "tile t2",
+      "tile-av"
+    ],
+    "texts": [
+      "Recording",
+      "12:34",
+      "AR",
+      "Alex Rivera",
+      "MK",
+      "Mia Kado",
+      "JT",
+      "Jon Tao"
+    ],
+    "var_count": 17
+  },
+  "Kindle": {
+    "slug": "kindle",
+    "classes": [
+      "status",
+      "reader",
+      "reader-head",
+      "ico-row",
+      "ico-row",
+      "reader-body",
+      "chap-num",
+      "chap-title",
+      "reader-p",
+      "drop",
+      "reader-p",
+      "reader-p"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Chapter Seven",
+      "The Lighthouse at Dawn",
+      "38%",
+      "14 min left in chapter",
+      "Aa",
+      "Brightness"
+    ],
+    "var_count": 21
+  },
+  "Banque": {
+    "slug": "revolut",
+    "classes": [
+      "status",
+      "top-bar",
+      "avatar",
+      "top-name",
+      "top-icon",
+      "top-icon",
+      "balance-wrap",
+      "balance-label",
+      "balance-figure",
+      "qa-row",
+      "qa",
+      "qa-circle primary"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Alex Mercer",
+      "Total balance",
+      "£12,480.65",
+      "Add",
+      "Exchange",
+      "Send"
+    ],
+    "var_count": 20
+  },
+  "Plans": {
+    "slug": "google-maps",
+    "classes": [
+      "map",
+      "park p1",
+      "park p2",
+      "park p3",
+      "water",
+      "highway",
+      "road r1",
+      "road r2",
+      "road r3",
+      "road r4",
+      "bldg b1",
+      "bldg b2"
+    ],
+    "texts": [
+      "Search here",
+      "Sanborn's Café",
+      "4.6",
+      "★★★★★",
+      "(142)",
+      "Coffee shop ·",
+      "Open",
+      "· 0.3 mi"
+    ],
+    "var_count": 21
+  },
+  "Fichiers": {
+    "slug": "dropbox",
+    "classes": [
+      "status",
+      "nav-row",
+      "nav-title",
+      "nav-icons",
+      "scroll-body",
+      "shelf-head",
+      "shelf",
+      "rcard",
+      "rcard-thumb",
+      "rcard-name",
+      "rcard-meta",
+      "rcard"
+    ],
+    "texts": [
+      "9:41",
+      "●●● ▢",
+      "Files",
+      "Recents",
+      "Q3 Report.pdf",
+      "2.4 MB · Today",
+      "Mockup_v4.png",
+      "880 KB · Apr 14"
+    ],
+    "var_count": 18
+  }
+}

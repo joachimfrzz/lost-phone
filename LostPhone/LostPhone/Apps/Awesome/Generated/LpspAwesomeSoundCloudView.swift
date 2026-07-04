@@ -407,7 +407,31 @@ private struct LpspSoundCloudMusicLibraryTabScreen: View {
 
 private struct LpspSoundCloudSpectrHomeTabScreen: View {
     var body: some View {
-        LpspSoundCloudMusicNowPlayingTabScreen()
+        VStack(spacing: 0) {
+        HStack {
+                Text("Playing from Playlist").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.600, green: 0.600, blue: 0.600))
+                Text("Late Night Uploads").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.600, green: 0.600, blue: 0.600))
+            Text("⌄").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+        } .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 6)
+        ScrollView {
+            VStack(spacing: 16) {
+            RoundedRectangle(cornerRadius: 8).fill(LinearGradient(colors: [Color(red:0.3,green:0.2,blue:0.5), Color(red:0.1,green:0.1,blue:0.2)], startPoint: .topLeading, endPoint: .bottomTrailing)).aspectRatio(1, contentMode: .fit).padding(.horizontal, 24)
+            Text("Smoke & Static").font(.system(size: 22.0, weight: .semibold)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+            Text("novaa").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                Text("2:08").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                Text("-1:24").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+            HStack(spacing: 16) {
+                    Text("1.2K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                    Text("340").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                    Text("88").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+            } .font(.system(size: 22)).padding(.horizontal, 14).frame(height: 44)
+            }
+            .padding(.vertical, 8)
+        }
+                Text("Smoke & Static").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                Text("novaa").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

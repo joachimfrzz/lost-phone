@@ -1,0 +1,13 @@
+{
+  "h-mark": "width: 28px; height: 28px;\n    background: var(--black);\n    border-radius: 50%;\n    display: flex; align-items: center; justify-content: center;\n    color: var(--paper);\n    font-family: Georgia, serif;\n    font-size: 16px;\n    font-weight: 700;\n    letter-spacing: -0.5px;",
+  "h-title": "font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--black); letter-spacing: -0.2px;",
+  "h-icon": "color: var(--black);",
+  "name-text": "font-family: var(--display); font-size: 26px; font-weight: 700; color: var(--black); letter-spacing: -0.4px;",
+  "name-meta": "font-family: var(--body); font-size: 13px; color: var(--stone); margin-top: 4px;",
+  "chip": "display: inline-flex;\n    align-items: center;\n    gap: 4px;\n    background: var(--sand);\n    padding: 6px 12px;\n    border-radius: 500px;\n    font-size: 12px;\n    font-weight: 500;\n    color: var(--black);",
+  "prompt-q": "font-family: var(--display);\n    font-size: 14px;\n    font-weight: 500;\n    color: var(--graphite);\n    font-style: italic;\n    letter-spacing: -0.2px;\n    margin-bottom: 8px;",
+  "prompt-a": "font-family: var(--display);\n    font-size: 17px;\n    font-weight: 700;\n    color: var(--black);\n    line-height: 1.25;\n    letter-spacing: -0.3px;",
+  "heart-tap": "position: absolute;\n    bottom: 12px; right: 12px;\n    width: 36px; height: 36px;\n    border-radius: 50%;\n    background: var(--paper);\n    border: 1px solid var(--black);\n    display: flex; align-items: center; justify-content: center;",
+  "ab-btn": "width: 52px; height: 52px;\n    border-radius: 50%;\n    background: var(--paper);\n    border: 1.5px solid var(--black);\n    display: flex; align-items: center; justify-content: center;\n    box-shadow: 0 4px 12px rgba(28,20,10,0.10);",
+  "tab": "display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--stone); font-size: 9px; font-weight: 500; font-family: var(--display); letter-spacing: 0.2px;"
+}

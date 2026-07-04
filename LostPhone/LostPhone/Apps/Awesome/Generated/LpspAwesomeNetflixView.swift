@@ -522,7 +522,60 @@ private struct LpspNetflixDemoProfilePicker: View {
 
 private struct LpspNetflixSpectrHomeTabScreen: View {
     var body: some View {
-        LpspNetflixVideoHomeTabScreen()
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        ZStack(alignment: .bottomLeading) {
+            LinearGradient(colors: [Color(red:0.05,green:0.05,blue:0.08), Color(red:0.15,green:0.05,blue:0.08)], startPoint: .top, endPoint: .bottom).frame(maxWidth: .infinity, maxHeight: .infinity)
+            LinearGradient(colors: [.clear, Color(red: 0.078, green: 0.078, blue: 0.078)], startPoint: .top, endPoint: .bottom).frame(height: 120)
+            HStack {
+                Text("NETFLIX").font(.system(size: 22.0, weight: .black)).foregroundStyle(Color(red: 0.898, green: 0.035, blue: 0.078))
+            } .padding(.horizontal, 12).padding(.top, 48)
+            HStack(spacing: 6) {
+                Text("TOP 10").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("in the U.S. Today").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(.horizontal, 12)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("NIGHT WAVE").font(.system(size: 42, weight: .black)).foregroundStyle(.white)
+                    Text("Gripping · Dramas · Thrillers").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("This week's trending").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.667, green: 0.667, blue: 0.667))
+                HStack(spacing: 10) {
+                    Text("Play").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("My List").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                } .padding(.horizontal, 12).padding(.bottom, 16)
+            } .padding(.horizontal, 12)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Continue Watching").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                    RoundedRectangle(cornerRadius: 4).fill(Color(red:0.15,green:0.15,blue:0.15)).frame(width: 120, height: 68)
+                    RoundedRectangle(cornerRadius: 4).fill(Color(red:0.15,green:0.15,blue:0.15)).frame(width: 120, height: 68)
+                    RoundedRectangle(cornerRadius: 4).fill(Color(red:0.15,green:0.15,blue:0.15)).frame(width: 120, height: 68)
+                    }
+                    .padding(.horizontal, 12)
+                }
+            } .padding(.top, 12)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Top 10 in the U.S. Today").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                HStack(spacing: 8) {
+                    HStack(alignment: .bottom, spacing: 4) {
+                        Text("1").font(.system(size: 110.0, weight: .black)).foregroundStyle(Color(red: 0.12, green: 0.12, blue: 0.12))
+                        RoundedRectangle(cornerRadius: 4).fill(Color(red:0.2,green:0.2,blue:0.22)).frame(width: 90, height: 130)
+                    }
+                    HStack(alignment: .bottom, spacing: 4) {
+                        Text("2").font(.system(size: 110.0, weight: .black)).foregroundStyle(Color(red: 0.12, green: 0.12, blue: 0.12))
+                        RoundedRectangle(cornerRadius: 4).fill(Color(red:0.2,green:0.2,blue:0.22)).frame(width: 90, height: 130)
+                    }
+                    HStack(alignment: .bottom, spacing: 4) {
+                        Text("3").font(.system(size: 110.0, weight: .black)).foregroundStyle(Color(red: 0.12, green: 0.12, blue: 0.12))
+                        RoundedRectangle(cornerRadius: 4).fill(Color(red:0.2,green:0.2,blue:0.22)).frame(width: 90, height: 130)
+                    }
+                } .padding(.horizontal, 12)
+            } .padding(.top, 8)
+        } .frame(height: 420)
+            }
+        }
+        .background(Color(red: 0.078, green: 0.078, blue: 0.078).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

@@ -1,0 +1,19 @@
+{
+  "fb-logo": "width: 32px; height: 32px; border-radius: 8px; background: var(--fb-blue); color: #fff; font-weight: 900; font-size: 22px; display: flex; align-items: center; justify-content: center; font-family: Georgia, serif;",
+  "fb-name": "font-size: 22px; font-weight: 700; color: var(--fb-blue); flex: 1; letter-spacing: -0.5px;",
+  "top-btn": "width: 34px; height: 34px; border-radius: 50%; background: var(--divider); display: flex; align-items: center; justify-content: center; color: var(--text);",
+  "feed-scroll": "flex: 1; overflow: hidden; padding: 8px 8px 0; background: var(--canvas);",
+  "post-avatar": "width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #FFD6C9, #FFE29A);",
+  "post-meta": "flex: 1;",
+  "post-name": "font-size: 14px; font-weight: 600; color: var(--text);",
+  "post-stamp": "font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px;",
+  "post-dots": "color: var(--text-secondary); font-size: 20px;",
+  "post-text": "padding: 0 12px 12px; font-size: 14px; color: var(--text); line-height: 1.35;",
+  "post-img": "aspect-ratio: 16/10; background: linear-gradient(135deg, #F5A623 0%, #D0021B 50%, #5B3C6F 100%); position: relative; overflow: hidden;",
+  "reaction-summary": "display: flex; align-items: center; padding: 10px 12px; gap: 8px; font-size: 12px; color: var(--text-secondary);",
+  "reaction-stack": "display: flex;",
+  "card-divider": "height: 1px; background: var(--divider); margin: 0 12px;",
+  "action-row": "display: flex; padding: 4px 0;",
+  "action-btn": "flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 0; font-size: 14px; font-weight: 600; color: var(--text-secondary);",
+  "tab": "display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-secondary); font-size: 10px; font-weight: 500; position: relative;"
+}

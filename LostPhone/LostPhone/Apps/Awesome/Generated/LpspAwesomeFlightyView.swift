@@ -367,7 +367,22 @@ private struct LpspFlightyTravelTabScreen: View {
 
 private struct LpspFlightySpectrHomeTabScreen: View {
     var body: some View {
-        LpspFlightyTravelExploreTabScreen()
+        ZStack(alignment: .bottom) {
+        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
+        VStack(spacing: 0) {
+                Text("United · UA 482").font(.system(size: 17.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("DELAYED 22m").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("SFO").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("JFK").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("7:45 AM").font(.system(size: 32.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Gate B24 · Term 2").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("4:34 PM").font(.system(size: 32.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Gate 7 · Term 4").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("5h 42m · 2,586 mi · Nonstop · 62% complete").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .background(Color(red: 0.043, green: 0.043, blue: 0.059)).clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .background(Color(red: 0.043, green: 0.043, blue: 0.059).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

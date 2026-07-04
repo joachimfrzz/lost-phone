@@ -379,7 +379,28 @@ private struct LpspShazamShazamTabScreen: View {
 
 private struct LpspShazamSpectrHomeTabScreen: View {
     var body: some View {
-        LpspShazamShazamHome()
+        VStack(spacing: 0) {
+        Circle().fill(RadialGradient(colors: [Color(red: 0.000, green: 0.400, blue: 1.000).opacity(0.5), .clear], center: .center, startRadius: 20, endRadius: 180)).frame(width: 280, height: 280)
+        HStack(spacing: 12) {
+
+        } .padding(.horizontal, 16).frame(height: 44)
+            ZStack {
+                Circle().strokeBorder(.white.opacity(0.15), lineWidth: 3).frame(width: 200, height: 200)
+                Circle().strokeBorder(.white.opacity(0.15), lineWidth: 3).frame(width: 200, height: 200)
+                Circle().strokeBorder(.white.opacity(0.15), lineWidth: 3).frame(width: 200, height: 200)
+            }
+            Text("Listening for music…").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        VStack(spacing: 0) {
+            Text("Your Shazams").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Bad Habit").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Steve Lacy").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("2h ago").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("As It Was").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Harry Styles").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Yesterday").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .background(Color(red: 1.000, green: 1.000, blue: 1.000)).clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

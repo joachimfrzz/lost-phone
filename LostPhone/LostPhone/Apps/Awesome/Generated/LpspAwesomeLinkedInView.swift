@@ -597,7 +597,32 @@ private struct LpspLinkedInGenericFeedCard: View {
 
 private struct LpspLinkedInSpectrHomeTabScreen: View {
     var body: some View {
-        LpspLinkedInFeedTabScreen()
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 36, height: 36).overlay(Text("MR").font(.caption.bold()).foregroundStyle(.white))
+                Text("Search").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 0) {
+                            Text("· 1st").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("Design Systems · Fintech").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("2h ·").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Big milestone: shipped our design system v2.0 today. 18 months, 140+ components, one team.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Rectangle().fill(LinearGradient(colors: [Color(red:0.20,green:0.12,blue:0.30), Color(red:0.82,green:0.29,blue:0.45)], startPoint: .topLeading, endPoint: .bottomTrailing)).aspectRatio(1, contentMode: .fill)
+                            Text("👍").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("👏").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("💡").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("127 reactions · 23 comments").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Like").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Comment").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Repost").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Send").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            }
+        }
+        }
+        .background(Color(red: 0.953, green: 0.949, blue: 0.937).ignoresSafeArea())
     }
 }
 

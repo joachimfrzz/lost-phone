@@ -1,0 +1,18 @@
+{
+  "scroll-body": "flex: 1; overflow: hidden; display: flex; flex-direction: column;",
+  "stars": "position: absolute; inset: 0;",
+  "billboard-scrim": "position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, transparent 45%, var(--canvas) 100%);",
+  "bb-content": "position: absolute; left: 0; right: 0; bottom: 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 16px; z-index: 2;",
+  "bb-logo": "font-size: 30px; font-weight: 700; letter-spacing: 4px; text-shadow: 0 2px 12px rgba(0,0,0,0.5);",
+  "bb-meta": "font-size: 13px; font-weight: 600; letter-spacing: 0.3px; color: var(--text-secondary);",
+  "bb-actions": "display: flex; gap: 12px; width: 100%;",
+  "bb-play": "flex: 1; height: 44px; border-radius: 8px; background: #fff; color: var(--canvas); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 700; letter-spacing: 0.3px; box-shadow: 0 6px 22px var(--focus-glow);",
+  "bb-sec": "flex: 1; height: 44px; border-radius: 8px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 600;",
+  "mute-toggle": "position: absolute; right: 16px; bottom: 96px; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 3;",
+  "portal": "width: 132px; height: 80px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; letter-spacing: 1px; border: 1px solid var(--divider); position: relative;",
+  "card-row": "display: flex; gap: 12px; padding: 0 16px 16px; overflow-x: auto; scrollbar-width: none;",
+  "card": "width: 200px; height: 113px; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden;",
+  "card-prog": "position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,0.25);",
+  "card-play": "position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;",
+  "tab": "display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-secondary); font-size: 10px; font-weight: 600; position: relative;"
+}

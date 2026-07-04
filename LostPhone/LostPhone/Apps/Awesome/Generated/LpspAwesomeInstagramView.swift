@@ -480,7 +480,7 @@ private struct LpspInstagramSpectrStoryItem: Identifiable {
     let unread: Bool
 }
 
-private enum LpspInstagramSpectrStories {
+private enum LpspInstagramSpectrStoryData {
     static let items: [LpspInstagramSpectrStoryItem] = [
         .init(name: "Your story", unread: true),
         .init(name: "maya_c", unread: true),
@@ -491,25 +491,19 @@ private enum LpspInstagramSpectrStories {
 
 private struct LpspInstagramSpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
             HStack {
-                Text("Instagram")
-                    .font(.custom("Snell Roundhand", size: 28))
-                    .fontWeight(.bold)
+                Text("Instagram").font(.custom("Snell Roundhand", size: 28)).fontWeight(.bold)
                 Spacer()
                 Image(systemName: "heart").font(.system(size: 22))
                 Image(systemName: "paperplane").font(.system(size: 22))
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 8)
-            .padding(.bottom, 6)
+            .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 6)
             ScrollView {
                 VStack(spacing: 0) {
-
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            ForEach(LpspInstagramSpectrStories.items) { s in
+                            ForEach(LpspInstagramSpectrStoryData.items) { s in
                                 VStack(spacing: 4) {
                                     LpspInstagramStoryRing(avatar: Image(systemName: "person.circle.fill"), isUnread: s.unread, size: 56)
                                     Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 56)
@@ -519,8 +513,6 @@ private struct LpspInstagramSpectrHomeTabScreen: View {
                         .padding(.horizontal, 14).padding(.vertical, 10)
                     }
                     .overlay(alignment: .bottom) { Divider().background(Color(red: 0.15, green: 0.15, blue: 0.15)) }
-
-
                     LpspInstagramFeedPost(
                         username: "maya_c",
                         avatar: Image(systemName: "person.circle.fill"),
@@ -529,13 +521,11 @@ private struct LpspInstagramSpectrHomeTabScreen: View {
                         caption: "golden hour on the walk home",
                         timestamp: "2 HOURS AGO"
                     )
-
                 }
             }
         }
-        .background(LpspInstagramTokens.igCanvasLight.ignoresSafeArea())
+        .background(Color.black.ignoresSafeArea())
         .preferredColorScheme(.dark)
-
     }
 }
 

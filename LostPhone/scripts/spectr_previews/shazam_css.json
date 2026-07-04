@@ -1,0 +1,16 @@
+{
+  "top-bar": "padding: 52px 20px 0; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 3;",
+  "hero-center": "flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2;",
+  "ring-wrap": "width: 132px; height: 132px; position: relative; display: flex; align-items: center; justify-content: center;",
+  "ring": "position: absolute; width: 132px; height: 132px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.22); animation: pulse 1.8s ease-out infinite;",
+  "shz-btn": "width: 132px; height: 132px; border-radius: 50%; background: radial-gradient(circle at 38% 32%, #FFFFFF 0%, #E8F0FF 60%, #CFE0FF 100%); border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; box-shadow: 0 16px 48px rgba(0,80,255,0.45); position: relative; z-index: 2; animation: breathe 2.4s ease-in-out infinite;",
+  "tap-prompt": "font-size: 16px; font-weight: 700; letter-spacing: 0.2px; margin-top: 28px; color: #fff;",
+  "grab": "width: 36px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.4); margin: 0 auto 14px;",
+  "sheet-title": "font-size: 16px; font-weight: 700; margin-bottom: 10px;",
+  "sheet-row": "display: flex; align-items: center; gap: 12px; padding: 8px 0;",
+  "sheet-art": "width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;",
+  "sheet-info": "flex: 1; min-width: 0;",
+  "sheet-rt": "font-size: 14px; font-weight: 700;",
+  "sheet-ra": "font-size: 12px; color: var(--text-secondary);",
+  "sheet-time": "font-size: 12px; color: var(--text-secondary);"
+}

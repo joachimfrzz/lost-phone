@@ -639,48 +639,22 @@ private struct LpspClaudeAiTabScreen: View {
 }
 
 
-private struct LpspClaudeSpectrBubble: View {
-    let text: String
-    let outgoing: Bool
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 32) }
-            Text(text).font(.system(size: 16)).padding(12)
-                .background(outgoing ? LpspClaudeTokens.claudeCream.opacity(0.15) : Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-            if !outgoing { Spacer(minLength: 32) }
-        }
-        .padding(.horizontal, 16)
-    }
-}
-
 private struct LpspClaudeSpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "line.3.horizontal").font(.title3)
-                Spacer()
-                Text("Claude").font(.system(size: 15, weight: .semibold))
-                    .padding(.horizontal, 12).padding(.vertical, 6)
-                    .background(Color(.systemGray6)).clipShape(Capsule())
-                Spacer()
-                Image(systemName: "square.and.pencil").font(.title3)
-            }
-            .padding(.horizontal, 16).padding(.vertical, 10)
-            ScrollView {
-                VStack(spacing: 16) {
-
-                        LpspClaudeSpectrBubble(text: "Write me a short poem about Paris", outgoing: true)
-                        LpspClaudeSpectrBubble(text: "Beneath the zinc and morning light, the Seine holds silver in its arms…", outgoing: false)
-
-                }
-                .padding(.vertical, 12)
-            }
-            LpspClaudeDemoComposeBar()
+        HStack {
+            Text("Untitled chat").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 48)
+        Text("Claude Opus 4.5").font(.system(size: 15, weight: .semibold)).padding(.horizontal, 12).padding(.vertical, 6).background(Color(.systemGray6)).clipShape(Capsule())
+            Text("Explain Bayesian inference like I'm a curious 15-year-old.").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Claude").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("· Opus 4.5").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("they have keys").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("\"it jingles when I walk\"").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("updates").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Reply to Claude…").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
         }
-        .background(LpspClaudeTokens.claudeDarkCanvas.ignoresSafeArea())
-
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

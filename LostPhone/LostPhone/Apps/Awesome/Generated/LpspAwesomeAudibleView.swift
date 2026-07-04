@@ -453,7 +453,26 @@ private struct LpspAudibleMusicLibraryTabScreen: View {
 
 private struct LpspAudibleSpectrHomeTabScreen: View {
     var body: some View {
-        LpspAudibleReaderReadingTabScreen()
+        VStack(spacing: 0) {
+        HStack {
+            Text("Now Playing").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 6)
+        ScrollView {
+            VStack(spacing: 16) {
+            Text("The Song of Achilles").font(.system(size: 26.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("By Madeline Miller").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Narrated by Frazer Douglas").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("30").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("30").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("8 hrs 14 min left").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("1.5×").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            .padding(.vertical, 8)
+        }
+                Text("The Song of Achilles").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Madeline Miller").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.102, green: 0.102, blue: 0.102).ignoresSafeArea())
     }
 }
 

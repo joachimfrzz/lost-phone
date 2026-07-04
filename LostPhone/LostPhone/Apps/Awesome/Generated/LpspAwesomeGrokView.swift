@@ -388,48 +388,32 @@ private struct LpspGrokAiTabScreen: View {
 }
 
 
-private struct LpspGrokSpectrBubble: View {
-    let text: String
-    let outgoing: Bool
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 32) }
-            Text(text).font(.system(size: 16)).padding(12)
-                .background(outgoing ? LpspGrokTokens.grokAccentWhite.opacity(0.15) : Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-            if !outgoing { Spacer(minLength: 32) }
-        }
-        .padding(.horizontal, 16)
-    }
-}
-
 private struct LpspGrokSpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "line.3.horizontal").font(.title3)
-                Spacer()
-                Text("Grok").font(.system(size: 15, weight: .semibold))
-                    .padding(.horizontal, 12).padding(.vertical, 6)
-                    .background(Color(.systemGray6)).clipShape(Capsule())
-                Spacer()
-                Image(systemName: "square.and.pencil").font(.title3)
+        HStack(spacing: 12) {
+                Text("Regular").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                Text("Fun").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+            Text("What's the latest reaction to the Grok 4 launch on X?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                    Text("G").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                    Text("▍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("Devin Park").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("@devbuilds · 2h").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("𝕏").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                        Text("Grok 4's real-time X access is the actual moat here. Asked it about a thread from 10 minutes ago and it cited the exact posts.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("128").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("342").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("2.1K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
             }
-            .padding(.horizontal, 16).padding(.vertical, 10)
-            ScrollView {
-                VStack(spacing: 16) {
-
-                        LpspGrokSpectrBubble(text: "Write me a short poem about Paris", outgoing: true)
-                        LpspGrokSpectrBubble(text: "Beneath the zinc and morning light, the Seine holds silver in its arms…", outgoing: false)
-
-                }
-                .padding(.vertical, 12)
-            }
-            LpspGrokDemoComposeBar()
+            .padding(16)
         }
-        .background(LpspGrokTokens.grokCanvas.ignoresSafeArea())
-
+                Text("Ask Grok anything").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

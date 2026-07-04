@@ -400,7 +400,31 @@ private struct LpspUberEatsFoodTabScreen: View {
 
 private struct LpspUberEatsSpectrHomeTabScreen: View {
     var body: some View {
-        LpspUberEatsFoodHomeTabScreen()
+        VStack(spacing: 0) {
+            Text("Deliver to · Home").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        Text("Search Uber Eats").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Text("Featured").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Text("Pizza").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Text("Sushi").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Text("Burgers").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Text("Healthy").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        ScrollView {
+            VStack(spacing: 12) {
+                    Text("$0 Delivery Fee").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Sunrise Diner").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                    Text("4.8").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                    Text("· 25 min ·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                    Text("$0 Delivery Fee").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Green Bowl Kitchen").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                    Text("4.7").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                    Text("· 30 min · $1.49 Delivery Fee").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            }
+        }
+            Text("3").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Text("View cart").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Text("$28.40").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

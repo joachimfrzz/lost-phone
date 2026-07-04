@@ -1,0 +1,9 @@
+{
+  "h-title": "font-family: var(--sans); font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: -0.1px;",
+  "ast-header": "display: flex;\n    align-items: center;\n    gap: 6px;\n    margin-left: 0;",
+  "ast-sender": "font-family: var(--sans); font-size: 12px; font-weight: 500; color: var(--graphite);",
+  "ast-model": "font-family: var(--sans); font-size: 12px; color: var(--stone);",
+  "ast-body": "font-family: var(--serif);\n    font-size: 15px;\n    font-weight: 400;\n    color: var(--ink);\n    line-height: 1.55;\n    margin-left: 24px;",
+  "ci-input": "flex: 1; color: var(--stone); font-family: var(--sans); font-size: 15px; padding: 8px 0;",
+  "ci-send": "width: 36px; height: 36px; border-radius: 50%;\n    background: var(--orange);\n    display: flex; align-items: center; justify-content: center;"
+}

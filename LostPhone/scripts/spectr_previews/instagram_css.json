@@ -1,0 +1,23 @@
+{
+  "app-nav": "height: 48px; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; padding-top: 44px; padding-bottom: 6px;",
+  "app-logo": "font-family: var(--logo-font); font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: var(--text);",
+  "app-nav-actions": "display: flex; gap: 16px; align-items: center;",
+  "icon": "width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; color: var(--text);",
+  "stories": "display: flex; gap: 12px; padding: 10px 14px; overflow-x: auto; border-bottom: 0.5px solid var(--separator);",
+  "story": "display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0;",
+  "story-ring": "width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: var(--gradient-brand);",
+  "story-ring-inner": "width: 100%; height: 100%; border-radius: 50%; background: var(--bg); padding: 2px;",
+  "story-photo": "width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #FFD6C9, #FFE29A);",
+  "story-label": "font-size: 11px; color: var(--text); max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;",
+  "post": "display: flex; flex-direction: column;",
+  "post-header": "height: 48px; display: flex; align-items: center; padding: 0 14px; gap: 10px;",
+  "post-avatar": "width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #FFE29A, #FFD6C9);",
+  "post-username": "font-size: 13px; font-weight: 600; flex: 1;",
+  "post-image": "aspect-ratio: 1; background: linear-gradient(135deg, #341E4D 0%, #4A2A75 40%, #7B3C8A 80%, #D14B72 100%); position: relative;",
+  "action-bar": "height: 44px; display: flex; align-items: center; padding: 0 14px; gap: 16px;",
+  "likes": "padding: 0 14px; font-size: 13px; font-weight: 600; margin-bottom: 6px;",
+  "caption": "padding: 0 14px; font-size: 13px; line-height: 1.35; margin-bottom: 4px;",
+  "caption-meta": "padding: 0 14px; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;",
+  "tab-bar": "margin-top: auto; height: 49px; border-top: 0.5px solid var(--separator); background: rgba(0,0,0,0.92); backdrop-filter: saturate(180%) blur(20px); display: flex; align-items: center; justify-content: space-around; padding: 0 8px;",
+  "tab-avatar": "width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--text); background: linear-gradient(135deg, #FFD6C9, #FFE29A);"
+}

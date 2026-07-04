@@ -594,12 +594,13 @@ private struct LpspAppleMusicMusicNowPlayingTabScreen: View {
 private struct LpspAppleMusicSpectrHomeTabScreen: View {
     var body: some View {
         LpspAppleMusicNowPlayingScreen(
-            trackTitle: "Midnight Wavelength",
-            artist: "Nova Palmer",
+            trackTitle: "Listen Now",
+            artist: "Midnight Frequency",
             artwork: Image(systemName: "music.note"),
             dominantColor: LpspAppleMusicTokens.amCoral
         )
         .background(LpspAppleMusicTokens.amCanvasLight.ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

@@ -443,7 +443,17 @@ private struct LpspDeezerMusicLibraryTabScreen: View {
 
 private struct LpspDeezerSpectrHomeTabScreen: View {
     var body: some View {
-        LpspDeezerMusicNowPlayingTabScreen()
+        VStack(spacing: 0) {
+                    Text("Flow · Your Mix").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Made for you").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("FLOW").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Midnight City").font(.system(size: 24.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("M83 · Hurry Up, We're Dreaming").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("1:48").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("-2:31").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.059, green: 0.051, blue: 0.075).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

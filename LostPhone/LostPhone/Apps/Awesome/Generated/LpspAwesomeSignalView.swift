@@ -497,58 +497,42 @@ private struct LpspSignalDemoComposeBar: View {
 }
 
 
-private struct LpspSignalSpectrBubble: View {
-    let text: String
-    let outgoing: Bool
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 48) }
-            Text(text)
-                .font(.system(size: 16))
-                .padding(.horizontal, 12).padding(.vertical, 8)
-                .background(outgoing ? LpspSignalTokens.sigTextPrimary.opacity(0.85) : Color(.systemGray5))
-                .foregroundStyle(outgoing ? .white : .primary)
-                .clipShape(RoundedRectangle(cornerRadius: 18))
-            if !outgoing { Spacer(minLength: 48) }
-        }
-        .padding(.horizontal, 12)
-    }
-}
-
 private struct LpspSignalSpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
-                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
-                Circle().fill(LpspSignalTokens.sigTextPrimary.opacity(0.25)).frame(width: 36, height: 36)
-                    .overlay(Text("RE").font(.caption.bold()))
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Renata Vogel").font(.system(size: 16, weight: .semibold))
-                    Text("1 week").font(.system(size: 12)).foregroundStyle(.secondary)
-                }
-                Spacer()
-                Image(systemName: "video").font(.system(size: 20))
-                Image(systemName: "phone").font(.system(size: 20))
+        HStack(spacing: 10) {
+                Text("Renata Vogel").font(.system(size: 17.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("1 week").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 12).frame(height: 56)
+        ScrollView {
+            VStack(spacing: 8) {
+            Text("Messages and calls are end-to-end encrypted.").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Are we still on for the design review tomorrow?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("Pushed it to 2pm so the whole team can make it.").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                Text("Perfect, 2pm works.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("I'll bring the updated bubble specs and the timer-chip mocks.").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("See you then 🙌").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
             }
-            .padding(.horizontal, 12).padding(.vertical, 8)
-            ScrollView {
-                VStack(spacing: 8) {
-                    Text("Messages and calls are end-to-end encrypted.")
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.vertical, 8)
-
-                        LpspSignalSpectrBubble(text: "Morning! Did the mockups get sent over last night?", outgoing: false)
-                        LpspSignalSpectrBubble(text: "Yes — check the shared folder", outgoing: true)
-
-                }
-                .padding(.vertical, 8)
-            }
-            LpspSignalDemoComposeBar()
+            .padding(.vertical, 8)
         }
-        .background(LpspSignalTokens.sigCanvas.ignoresSafeArea())
-
+                Text("Signal message").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.106, green: 0.106, blue: 0.106).ignoresSafeArea())
     }
 }
 

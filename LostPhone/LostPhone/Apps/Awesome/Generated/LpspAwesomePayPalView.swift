@@ -463,7 +463,34 @@ private struct LpspPayPalDemoTx: Identifiable {
 
 private struct LpspPayPalSpectrHomeTabScreen: View {
     var body: some View {
-        LpspPayPalFinanceHomeTabScreen()
+        VStack(spacing: 0) {
+                Text("P").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("P").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+            HStack(spacing: 16) {
+
+            } .foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("PayPal balance").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.173, green: 0.180, blue: 0.184))
+                Text("$1,247.92").font(.system(size: 36.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("Add Money").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("Transfer").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("All").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("Sent").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("Received").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("Pending").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Sarah Kim").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Today, 2:18 PM · Completed").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("+$42.00").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Marcus Lin").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Yesterday · Completed").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("$18.50").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Whole Foods Market").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Dec 1 · Visa debit ·· 4242").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("$67.84").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Cashback Reward").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Nov 28 · From PayPal").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("+$3.42").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

@@ -574,48 +574,30 @@ private struct LpspPerplexityAiTabScreen: View {
 }
 
 
-private struct LpspPerplexitySpectrBubble: View {
-    let text: String
-    let outgoing: Bool
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 32) }
-            Text(text).font(.system(size: 16)).padding(12)
-                .background(outgoing ? LpspPerplexityTokens.pplxTextPrimary.opacity(0.15) : Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-            if !outgoing { Spacer(minLength: 32) }
-        }
-        .padding(.horizontal, 16)
-    }
-}
-
 private struct LpspPerplexitySpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "line.3.horizontal").font(.title3)
-                Spacer()
-                Text("Perplexity").font(.system(size: 15, weight: .semibold))
-                    .padding(.horizontal, 12).padding(.vertical, 6)
-                    .background(Color(.systemGray6)).clipShape(Capsule())
-                Spacer()
-                Image(systemName: "square.and.pencil").font(.title3)
-            }
-            .padding(.horizontal, 16).padding(.vertical, 10)
-            ScrollView {
-                VStack(spacing: 16) {
-
-                        LpspPerplexitySpectrBubble(text: "Write me a short poem about Paris", outgoing: true)
-                        LpspPerplexitySpectrBubble(text: "Beneath the zinc and morning light, the Seine holds silver in its arms…", outgoing: false)
-
-                }
-                .padding(.vertical, 12)
-            }
-            LpspPerplexityDemoComposeBar()
+        HStack {
+            Text("Bayesian inference").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 48)
+            Text("What is Bayesian inference?").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Sources").font(.system(size: 14))
+                        Text("W").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("wikipedia.org").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("1").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Bayesian inference — Wikipedia").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("arXiv").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("arxiv.org").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("2").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("A gentle introduction to probabilistic reasoning").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Answer").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("update").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("1").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("2").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Ask anything…").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
         }
-        .background(LpspPerplexityTokens.pplxCanvas.ignoresSafeArea())
-
+        .background(Color(red: 0.039, green: 0.039, blue: 0.039).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

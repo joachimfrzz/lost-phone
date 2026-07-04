@@ -475,7 +475,48 @@ private struct LpspCoinbaseDemoTx: Identifiable {
 
 private struct LpspCoinbaseSpectrHomeTabScreen: View {
     var body: some View {
-        LpspCoinbaseFinanceHomeTabScreen()
+        VStack(spacing: 0) {
+            HStack(spacing: 16) {
+
+            } .foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+        ZStack(alignment: .bottomLeading) {
+            Text("Portfolio Balance").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+            Text("$12,847.93").font(.system(size: 36.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+            Text("+$847.93 (+6.59%) Today").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+        } .frame(height: 420)
+            Text("1H").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+            Text("1D").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+            Text("1W").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+            Text("1M").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+            Text("1Y").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+            Text("ALL").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                Text("Buy").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                Text("Sell").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                Text("Send").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                Text("Receive").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+            Text("Your assets").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                Text("₿").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("Bitcoin").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                        Text("BTC").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("$12,389.42").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("+1.92%").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                Text("Ξ").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("Ethereum").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                        Text("ETH").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("$1,847.62").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("−0.84%").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                Text("$").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("USD Coin").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                        Text("USDC").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("$420.00").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("+0.01%").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                Text("S").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("Solana").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                        Text("SOL").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("$590.81").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+                    Text("+3.42%").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

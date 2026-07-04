@@ -588,19 +588,28 @@ private struct LpspPinterestGenericFeedCard: View {
 
 private struct LpspPinterestSpectrHomeTabScreen: View {
     var body: some View {
-
+        VStack(spacing: 0) {
+        HStack(spacing: 10) {
+            Text("Search for ideas").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.067, green: 0.067, blue: 0.067))
+        } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.941, green: 0.941, blue: 0.941)).clipShape(RoundedRectangle(cornerRadius: 28))
         ScrollView {
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
-                ForEach(0..<8, id: \.self) { i in
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LpspPinterestTokens.pinterestRed.opacity(0.08 + Double(i) * 0.05))
-                        .frame(height: CGFloat(120 + (i % 3) * 40))
-                }
+            VStack(spacing: 12) {
+            HStack(alignment: .top, spacing: 8) {
+                VStack(spacing: 8) {
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                } .frame(maxWidth: .infinity)
+                VStack(spacing: 8) {
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                } .frame(maxWidth: .infinity)
+            } .padding(.horizontal, 8)
             }
-            .padding(12)
         }
-        .background(LpspPinterestTokens.pinterestCanvasLight.ignoresSafeArea())
-
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

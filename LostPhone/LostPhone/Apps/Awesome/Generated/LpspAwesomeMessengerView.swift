@@ -519,38 +519,41 @@ private struct LpspMessengerDemoComposeBar: View {
 
 private struct LpspMessengerSpectrHomeTabScreen: View {
     var body: some View {
-
         VStack(spacing: 0) {
-            HStack(spacing: 12) {
-                Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
-                Circle().fill(LpspMessengerTokens.msgActiveGreen.opacity(0.25)).frame(width: 36, height: 36)
-                    .overlay(Text("LÉ").font(.caption.bold()))
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Léa Dupont").font(.system(size: 16, weight: .semibold))
-                    Text("Active now").font(.system(size: 12)).foregroundStyle(.secondary)
-                }
-                Spacer()
-                Image(systemName: "video").font(.system(size: 20))
-                Image(systemName: "phone").font(.system(size: 20))
+        HStack(spacing: 10) {
+                Text("Theo Marchetti").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("Active now").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+        } .padding(.horizontal, 12).frame(height: 56)
+        ScrollView {
+            VStack(spacing: 8) {
+                Text("Did you see the new gradient bubbles?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("They flow down the whole conversation now 🌈").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                Text("Yes! It looks like one continuous ribbon.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("Way more fun than a flat color.").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                Text("Long-press one to react 👇").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("👍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("❤️").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("😆").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("😮").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("😢").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("😡").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
             }
-            .padding(.horizontal, 12).padding(.vertical, 8)
-            ScrollView {
-                VStack(spacing: 8) {
-                    Text("Messages and calls are end-to-end encrypted.")
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.vertical, 8)
-
-                        LpspMessengerOutgoingBubble(text: "Morning! Did the mockups get sent over last night?", timestamp: "9:41", isRead: true)
-                        LpspMessengerIncomingBubble(text: "Yes — check the shared folder")
-
-                }
-                .padding(.vertical, 8)
-            }
-            LpspMessengerDemoComposeBar()
+            .padding(.vertical, 8)
         }
-        .background(LpspMessengerTokens.msgCanvas.ignoresSafeArea())
-
+                Text("Aa").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

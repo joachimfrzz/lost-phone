@@ -513,7 +513,32 @@ private struct LpspTinderDemoSwipeCard: View {
 
 private struct LpspTinderSpectrHomeTabScreen: View {
     var body: some View {
-        LpspTinderDatingDiscoverTabScreen()
+        VStack(spacing: 0) {
+        HStack {
+
+        } .padding(.horizontal, 16).frame(height: 48)
+        ZStack {
+            ZStack(alignment: .bottomLeading) {
+                LinearGradient(colors: [Color(red:0.55,green:0.35,blue:0.45), Color(red:0.25,green:0.18,blue:0.35)], startPoint: .top, endPoint: .bottom).frame(maxWidth: .infinity, maxHeight: .infinity)
+                Text("NOPE").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                LinearGradient(colors: [.clear, .black.opacity(0.75)], startPoint: .center, endPoint: .bottom).frame(height: 180)
+                HStack(alignment: .bottom) {
+                            Text("Maya,").font(.system(size: 24.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("27").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("📍 3 mi away · Designer").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("i").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                } .padding(16)
+            } .frame(maxWidth: .infinity).frame(height: 480).clipShape(RoundedRectangle(cornerRadius: 12))
+            HStack(spacing: 18) {
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+            } .padding(.bottom, 8)
+        } .padding(.horizontal, 12)
+        }
+        .background(Color(red: 0.071, green: 0.071, blue: 0.071).ignoresSafeArea())
     }
 }
 

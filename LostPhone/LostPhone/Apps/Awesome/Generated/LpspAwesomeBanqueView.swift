@@ -387,7 +387,59 @@ private struct LpspBanqueDemoTx: Identifiable {
 
 private struct LpspBanqueSpectrHomeTabScreen: View {
     var body: some View {
-        LpspBanqueFinanceHomeTabScreen()
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+            Text("Alex Mercer").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 44)
+        VStack(spacing: 4) {
+            Text("Total balance").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.604, green: 0.604, blue: 0.667))
+            Text("£12,480.65").font(.system(size: 36, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .frame(maxWidth: .infinity).padding(.horizontal, 20).padding(.top, 8)
+        HStack(spacing: 0) {
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Add").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Exchange").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Send").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
+                Text("More").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity)
+        } .padding(.horizontal, 8).padding(.vertical, 16)
+            RoundedRectangle(cornerRadius: 16).fill(LinearGradient(colors: [Color(red: 0.357, green: 0.420, blue: 1.000), Color(red: 0.612, green: 0.420, blue: 1.000)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(height: 120).padding(.horizontal, 16)
+        VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                Text("🇬🇧").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("GBP").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("British Pound").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("£8,240.10").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
+            HStack(spacing: 12) {
+                Text("🇪🇺").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("EUR").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Euro").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("€3,180.55").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
+            HStack(spacing: 12) {
+                Text("🇺🇸").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("USD").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("US Dollar").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("$1,060.00").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
+        } .padding(.horizontal, 16).padding(.top, 8)
+            }
+        }
+        .background(Color(red: 0.039, green: 0.039, blue: 0.059).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

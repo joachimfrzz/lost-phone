@@ -566,7 +566,23 @@ private struct LpspBumbleDemoSwipeCard: View {
 
 private struct LpspBumbleSpectrHomeTabScreen: View {
     var body: some View {
-        LpspBumbleDatingDiscoverTabScreen()
+        VStack(spacing: 0) {
+        HStack {
+            Text("People").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 48)
+        ZStack {
+            ZStack(alignment: .bottomLeading) {
+                    Text("Sigrún, 28").font(.system(size: 14))
+                    Text("2 mi away · Engineer at a coffee co-op").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("i").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity).frame(height: 480).clipShape(RoundedRectangle(cornerRadius: 12))
+            HStack(spacing: 18) {
+
+            } .padding(.bottom, 8)
+            Text("Your turn: 23h 14m").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

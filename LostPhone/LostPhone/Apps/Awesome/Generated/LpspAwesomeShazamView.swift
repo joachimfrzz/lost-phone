@@ -350,7 +350,7 @@ private struct LpspShazamGenericTabScreen: View {
 
 
 private struct LpspShazamShazamHomeTabScreen: View {
-    var body: some View { LpspShazamShazamHome }
+    var body: some View { LpspShazamShazamHome() }
 }
 
 

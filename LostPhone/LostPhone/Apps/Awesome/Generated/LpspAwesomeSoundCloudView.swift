@@ -356,8 +356,10 @@ private struct LpspSoundCloudMusicHomeTabScreen: View {
                     ForEach(LpspSoundCloudDemoTracks.items) { track in
                         LpspSoundCloudSCTrackRow(
                             title: track.title,
-                            artist: track.artist,
+                            uploader: track.artist,
                             artwork: Image(systemName: "music.note"),
+                            samples: [0.2, 0.5, 0.8, 0.4, 0.6],
+                            progress: track.isPlaying ? 0.42 : 0,
                             isPlaying: track.isPlaying
                         )
                     }

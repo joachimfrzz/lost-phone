@@ -374,7 +374,7 @@ private struct LpspTeamsMeetingsChatTabScreen: View {
                 ScrollView {
                     LazyVStack(alignment: .leading) {
                         LpspTeamsChannelRow(channel: LpspTeamsDemoChannel.general, isActive: true)
-                        LpspTeamsMessageCard(author: "Alex", initials: "AM", presence: .online, timestamp: "10:24", postText: "Showroom prêt !", replyCount: 3)
+                        LpspTeamsMessageCard(author: "Alex", initials: "AM", presence: .available, timestamp: "10:24", postText: "Showroom prêt !", replyCount: 3)
                     }
                 }
 

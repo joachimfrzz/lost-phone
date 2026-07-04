@@ -358,13 +358,13 @@ private struct LpspUberEatsFoodHomeTabScreen: View {
         NavigationStack {
             ScrollView { VStack(spacing: 16) { 
                     ForEach(LpspUberEatsDemoRestaurants.items, id: \.name) { r in
-                        LpspUberEatsUERestaurantCard(name: r.name, meta: r.meta, rating: r.rating, fee: r.fee, badge: r.badge, badgeIsPromo: r.promo, imageName: "photo")
+                        LpspUberEatsUERestaurantCard(name: r.name, rating: String(format: "%.1f", r.rating), eta: r.meta, fee: r.fee, photo: Image(systemName: "fork.knife"))
                             .padding(.horizontal)
                     }
  } .padding(.vertical) }
             .background(LpspUberEatsTokens.ueCanvas.ignoresSafeArea())
             .navigationTitle("Accueil")
-            .safeAreaInset(edge: .bottom) { LpspUberEatsUEStickyCartBar(itemCount: 2, subtotal: "€24,50", onCheckout: {}) }
+            .safeAreaInset(edge: .bottom) { LpspUberEatsUEStickyCartBar(count: 2, total: "€24,50", onView: {}) }
         }
     }
 }
@@ -372,13 +372,19 @@ private struct LpspUberEatsFoodHomeTabScreen: View {
 private struct LpspUberEatsFoodSearchTabScreen: View {
     var body: some View { NavigationStack { ScrollView { VStack { 
                     ForEach(LpspUberEatsDemoMenu.items, id: \.title) { item in
-                        LpspUberEatsUEMenuItemRow(title: item.title, subtitle: item.sub, price: item.price, quantity: .constant(1)).padding(.horizontal)
+                        LpspUberEatsUEMenuItemRow(name: item.title, desc: item.sub, price: item.price, photo: Image(systemName: "fork.knife"), onAdd: {}).padding(.horizontal)
                     }
  } } .navigationTitle("Rechercher") } }
 }
 
 private struct LpspUberEatsFoodOrdersTabScreen: View {
-    var body: some View { NavigationStack { LpspUberEatsUEOrderTrackingView() .navigationTitle("Commandes") } }
+    var body: some View { NavigationStack { LpspUberEatsUEOrderTrackingView(
+                route: [
+                    CLLocationCoordinate2D(latitude: 48.86, longitude: 2.35),
+                    CLLocationCoordinate2D(latitude: 48.87, longitude: 2.36),
+                ],
+                etaText: "Arrivée dans 12 min"
+            ) .navigationTitle("Commandes") } }
 }
 
 private struct LpspUberEatsFoodAccountTabScreen: View {

@@ -1070,7 +1070,7 @@ private struct {prefix}ShortVideoProfileTabScreen: View {{
 
 def _ride_screens(prefix, tokens, canvas, accent, map_view, where_to, ride_card) -> str:
     map_block = f"{map_view}().ignoresSafeArea()" if map_view else "Color.gray.opacity(0.2).ignoresSafeArea()"
-    where = where_to or f"{prefix}DemoWhereTo()"
+    where = f"{where_to}()" if where_to else f"{prefix}DemoWhereTo()"
     ride_comp = ride_card or f"{prefix}DemoRideCard"
 
     return f"""
@@ -1746,7 +1746,21 @@ private struct {prefix}DemoProfilePicker: View {{
 def _music_screens(prefix, tokens, canvas, accent, track_row=None, now_playing=None) -> str:
     track_block = ""
     if track_row:
-        track_block = f"""
+        if "SCTrackRow" in track_row:
+            track_block = f"""
+                    ForEach({prefix}DemoTracks.items) {{ track in
+                        {track_row}(
+                            title: track.title,
+                            uploader: track.artist,
+                            artwork: Image(systemName: "music.note"),
+                            samples: [0.2, 0.5, 0.8, 0.4, 0.6],
+                            progress: track.isPlaying ? 0.42 : 0,
+                            isPlaying: track.isPlaying
+                        )
+                    }}
+"""
+        else:
+            track_block = f"""
                     ForEach({prefix}DemoTracks.items) {{ track in
                         {track_row}(
                             title: track.title,

@@ -344,7 +344,7 @@ private struct LpspTeamsGenericTabScreen: View {
 
 
 private enum LpspTeamsDemoChannel {
-    static let general = LpspTeamsTeamsChannel(name: "general", unread: false)
+    static let general = LpspTeamsChannel(name: "general", unread: false)
 }
 
 private struct LpspTeamsDemoParticipant { let name: String; let isMuted: Bool; let isSpeaking: Bool }

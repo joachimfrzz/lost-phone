@@ -462,7 +462,7 @@ def meetings_screens(
     if channel_row and "TeamsChannelRow" in (channel_row or ""):
         teams_channel = f"""
 private enum {prefix}DemoChannel {{
-    static let general = {prefix}TeamsChannel(name: "general", unread: false)
+    static let general = {prefix}Channel(name: "general", unread: false)
 }}
 """
 

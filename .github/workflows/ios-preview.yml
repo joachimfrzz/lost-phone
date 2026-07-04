@@ -91,6 +91,8 @@ jobs:
             echo "## Spectr pixel diff (61 apps — home tab)" >> "$GITHUB_STEP_SUMMARY"
             head -20 LostPhone/scripts/spectr_pixel_report/report.md >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      - name: Publish preview (Release)
         run: |
           gh release delete preview-latest -y 2>/dev/null || true
           gh release create preview-latest \

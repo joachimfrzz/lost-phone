@@ -421,7 +421,7 @@ private struct {prefix}DemoComposeBar: View {{
 
 
 def _social_screens(prefix, tokens, canvas, accent, feed_post, story_ring, post_card, vote_col) -> str:
-    if post_card and vote_col:
+    if post_card and vote_col and "RDPostCard" in post_card:
         feed_body = f"""
                     ForEach({prefix}DemoPosts.items) {{ post in
                         {post_card}(
@@ -453,6 +453,40 @@ private enum {prefix}DemoPosts {{
     static let items: [{prefix}DemoPostItem] = [
         .init(sub: "paris", title: "Meilleur café du 11e ?", body: "Je cherche vos recommandations…", time: "2 h", comments: 48, karma: 128),
         .init(sub: "swiftui", title: "Spectr + SwiftUI", body: nil, time: "5 h", comments: 22, karma: 89),
+    ]
+}}
+"""
+    elif post_card and "FeedPostCard" in post_card:
+        feed_body = f"""
+                    ForEach({prefix}DemoPosts.items) {{ post in
+                        {post_card}(
+                            authorName: post.author,
+                            connectionDegree: post.degree,
+                            headline: post.headline,
+                            timeAgo: post.time,
+                            postText: post.text,
+                            mediaImage: Image(systemName: "photo"),
+                            isPremium: post.premium,
+                            isOpenToWork: post.openToWork
+                        )
+                    }}
+"""
+        demo_posts = f"""
+private struct {prefix}DemoPostItem: Identifiable {{
+    let id = UUID()
+    let author: String
+    let degree: String
+    let headline: String
+    let time: String
+    let text: String
+    let premium: Bool
+    let openToWork: Bool
+}}
+
+private enum {prefix}DemoPosts {{
+    static let items: [{prefix}DemoPostItem] = [
+        .init(author: "Alex Martin", degree: "1er", headline: "Designer · Lost Phone", time: "3 j •", text: "Showroom Lost Phone — clone Spectr en SwiftUI.", premium: true, openToWork: false),
+        .init(author: "Léa Dupont", degree: "2e", headline: "iOS Engineer", time: "1 sem •", text: "Retour d'expérience sur la génération v3.", premium: false, openToWork: true),
     ]
 }}
 """

@@ -415,16 +415,19 @@ private struct LpspLinkedInGenericTabScreen: View {
 
 private struct LpspLinkedInDemoPostItem: Identifiable {
     let id = UUID()
-    let user: String
-    let likes: Int
-    let caption: String
+    let author: String
+    let degree: String
+    let headline: String
     let time: String
+    let text: String
+    let premium: Bool
+    let openToWork: Bool
 }
 
 private enum LpspLinkedInDemoPosts {
     static let items: [LpspLinkedInDemoPostItem] = [
-        .init(user: "lost.phone", likes: 128, caption: "Showroom Lost Phone — Paris", time: "2 H"),
-        .init(user: "alex.m", likes: 42, caption: "Week-end en Bretagne", time: "5 H"),
+        .init(author: "Alex Martin", degree: "1er", headline: "Designer · Lost Phone", time: "3 j •", text: "Showroom Lost Phone — clone Spectr en SwiftUI.", premium: true, openToWork: false),
+        .init(author: "Léa Dupont", degree: "2e", headline: "iOS Engineer", time: "1 sem •", text: "Retour d'expérience sur la génération v3.", premium: false, openToWork: true),
     ]
 }
 
@@ -464,12 +467,14 @@ private struct LpspLinkedInFeedTabScreen: View {
 
                     ForEach(LpspLinkedInDemoPosts.items) { post in
                         LpspLinkedInFeedPostCard(
-                            username: post.user,
-                            avatar: Image(systemName: "person.circle.fill"),
-                            photo: Image(systemName: "photo"),
-                            likes: post.likes,
-                            caption: post.caption,
-                            timestamp: post.time
+                            authorName: post.author,
+                            connectionDegree: post.degree,
+                            headline: post.headline,
+                            timeAgo: post.time,
+                            postText: post.text,
+                            mediaImage: Image(systemName: "photo"),
+                            isPremium: post.premium,
+                            isOpenToWork: post.openToWork
                         )
                     }
 

@@ -236,7 +236,7 @@ def strip_spec_shell_views(code: str, prefix: str) -> str:
     def block_is_shell(block: str, struct_name: str) -> bool:
         if any(struct_name.endswith(s) for s in shell_suffixes):
             return True
-        if re.search(r"\b(?:sampleServers|ForEach\(recents\))\b", block):
+        if re.search(r"(?:sampleServers|ForEach\(recents\))", block):
             return True
         for m in placeholder_type.finditer(block):
             name = m.group(1)

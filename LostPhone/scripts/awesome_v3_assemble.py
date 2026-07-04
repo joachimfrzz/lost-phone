@@ -2003,7 +2003,7 @@ def _dating_screens(prefix, tokens, accent, swipe_card, components: set[str]) ->
 
     top_picks = ""
     if photo_card and "StandoutsCard" in photo_card:
-        top_picks = f"{photo_card}(name: \"Léa\", age: 27, prompt: \"Mon spot préféré à Paris\")"
+        top_picks = f'{photo_card}(photo: Image(systemName: "person.fill"), answer: "Mon spot préféré à Paris", onSendRose: {{}})'
     elif photo_card and "PromptCard" in photo_card:
         top_picks = f"{photo_card}(question: \"Deux vérités et un mensonge\", answer: \"J'ai vécu au Japon\", onCommentTap: {{}})"
     elif photo_card and "PhotoCard" in photo_card:

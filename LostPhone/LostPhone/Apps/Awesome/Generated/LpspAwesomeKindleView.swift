@@ -332,7 +332,18 @@ private struct LpspKindleReaderReadingTabScreen: View {
     var body: some View {
         ZStack {
             LpspKindleTokens.kdlChromeCanvas.ignoresSafeArea()
-            LpspKindleReadingPage()
+            LpspKindleReadingPage(
+                chapter: "CHAPITRE I",
+                title: "Le phare au matin",
+                paragraphs: [
+                    "La brume s'accrochait aux falaises comme une écharpe de laine mouillée.",
+                    "Personne ne savait encore que cette matinée allait tout changer.",
+                ],
+                percent: 42,
+                minsLeft: 18,
+                settings: LpspKindleKindleReadingSettings(),
+                chromeShown: .constant(false)
+            )
         }
     }
 }

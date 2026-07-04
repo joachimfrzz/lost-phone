@@ -475,7 +475,7 @@ private struct LpspHingeDatingMessagesTabScreen: View {
 private struct LpspHingeDatingTopPicksTabScreen: View {
     var body: some View {
         NavigationStack {
-            ScrollView { LpspHingeStandoutsCard(name: "Léa", age: 27, prompt: "Mon spot préféré à Paris").padding() }
+            ScrollView { LpspHingeStandoutsCard(photo: Image(systemName: "person.fill"), answer: "Mon spot préféré à Paris", onSendRose: {}).padding() }
             .navigationTitle("Top Picks")
         }
     }

@@ -380,9 +380,21 @@ private struct LpspGoogleMapsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGoogleMapsGenericTabScreen(title: "Contribute", tabIndex: 0)
-                .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
+            LpspGoogleMapsMapsHomeTabScreen()
+                .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
+            LpspGoogleMapsGenericTabScreen(title: "Go", tabIndex: 1)
+                .tabItem { Label("Go", systemImage: "location.north.circle.fill") }
+                .tag(1)
+            LpspGoogleMapsGenericTabScreen(title: "Saved", tabIndex: 2)
+                .tabItem { Label("Saved", systemImage: "bookmark.fill") }
+                .tag(2)
+            LpspGoogleMapsGenericTabScreen(title: "Contribute", tabIndex: 3)
+                .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
+                .tag(3)
+            LpspGoogleMapsGenericTabScreen(title: "Updates", tabIndex: 4)
+                .tabItem { Label("Updates", systemImage: "newspaper.fill") }
+                .tag(4)
         }
         .tint(LpspGoogleMapsTokens.gmYellow)
         
@@ -413,9 +425,23 @@ private struct LpspGoogleMapsGenericTabScreen: View {
 }
 
 
-private struct LpspGoogleMapsMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspGoogleMapsGenericTabScreen(title: title, tabIndex: 0) }
+private struct LpspGoogleMapsMapsHomeTabScreen: View {
+    var body: some View {
+        ZStack {
+            Color.gray.opacity(0.15).ignoresSafeArea()
+            VStack {
+                HStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.ultraThinMaterial)
+                        .frame(height: 48)
+                        .overlay(HStack { Image(systemName: "magnifyingglass"); Text("Rechercher") }.foregroundStyle(.secondary))
+                        .padding()
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
+    }
 }
 
 

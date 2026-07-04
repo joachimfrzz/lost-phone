@@ -373,15 +373,18 @@ private struct LpspTinderShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTinderDatingDiscoverTabScreen()
-                .tabItem { Label("Découvrir", systemImage: "flame.fill") }
+            LpspTinderGenericTabScreen(title: "Flame Fill", tabIndex: 0)
+                .tabItem { Label("Flame Fill", systemImage: "flame.fill") }
                 .tag(0)
-            LpspTinderGenericTabScreen(title: "Messages", tabIndex: 1)
-                .tabItem { Label("Messages", systemImage: "bubble.left") }
+            LpspTinderGenericTabScreen(title: "Star Fill", tabIndex: 1)
+                .tabItem { Label("Star Fill", systemImage: "star.fill") }
                 .tag(1)
-            LpspTinderGenericTabScreen(title: "Profil", tabIndex: 2)
-                .tabItem { Label("Profil", systemImage: "person.fill") }
+            LpspTinderGenericTabScreen(title: "Bubble Left Fill", tabIndex: 2)
+                .tabItem { Label("Bubble Left Fill", systemImage: "bubble.left.fill") }
                 .tag(2)
+            LpspTinderGenericTabScreen(title: "Person Fill", tabIndex: 3)
+                .tabItem { Label("Person Fill", systemImage: "person.fill") }
+                .tag(3)
         }
         .tint(LpspTinderTokens.tdrNopeRed)
         

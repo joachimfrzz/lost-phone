@@ -350,7 +350,7 @@ private struct LpspUberShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspUberGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspUberRideHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspUberGenericTabScreen(title: "Services", tabIndex: 1)
@@ -364,7 +364,7 @@ private struct LpspUberShowroomRoot: View {
                 .tag(3)
         }
         .tint(LpspUberTokens.uberRed)
-        
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -392,9 +392,54 @@ private struct LpspUberGenericTabScreen: View {
 }
 
 
-private struct LpspUberMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspUberGenericTabScreen(title: title, tabIndex: 0) }
+private struct LpspUberRideHomeTabScreen: View {
+    @State private var selectedRide = 0
+    var body: some View {
+        ZStack(alignment: .top) {
+            LpspUberUberMapView().ignoresSafeArea()
+            VStack {
+                Spacer()
+                VStack(spacing: 0) {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(width: 36, height: 4)
+                        .padding(.top, 8)
+                    LpspUberWhereToInput
+                        .padding(.horizontal, 12)
+                        .padding(.top, 12)
+                    ForEach(Array(LpspUberDemoRides.items.enumerated()), id: \.offset) { idx, option in
+                        LpspUberRideOptionCard(
+                            name: option.name,
+                            eta: option.eta,
+                            capacity: option.capacity,
+                            price: option.price,
+                            isSelected: selectedRide == idx,
+                            carImage: Image(systemName: "car.fill"),
+                            action: { selectedRide = idx }
+                        )
+                        .padding(.horizontal, 12)
+                    }
+                    .padding(.vertical, 8)
+                }
+                .background(RoundedRectangle(cornerRadius: 16).fill(LpspUberTokens.uberCanvasDark).ignoresSafeArea(edges: .bottom))
+            }
+        }
+    }
+}
+
+private struct LpspUberDemoRideOption {
+    let name: String
+    let eta: String
+    let capacity: Int
+    let price: String
+}
+
+private enum LpspUberDemoRides {
+    static let items: [LpspUberDemoRideOption] = [
+        .init(name: "UberX", eta: "3 min", capacity: 4, price: "€12.40"),
+        .init(name: "Comfort", eta: "5 min", capacity: 4, price: "€16.80"),
+        .init(name: "Green", eta: "4 min", capacity: 4, price: "€13.20"),
+    ]
 }
 
 

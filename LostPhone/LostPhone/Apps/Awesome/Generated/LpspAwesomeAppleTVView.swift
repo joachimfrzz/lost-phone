@@ -274,6 +274,16 @@ private struct LpspAppleTVGenericTabScreen: View {
 }
 
 
+private struct LpspAppleTVDemoPosterURLs {
+    static let items: [URL] = [
+        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+    ]
+}
 private struct LpspAppleTVDemoProfile: Identifiable {
     let id = UUID()
     let name: String
@@ -314,6 +324,7 @@ private struct LpspAppleTVVideoHomeTabScreen: View {
                     Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(0..<6, id: \.self) { i in
@@ -337,6 +348,41 @@ private struct LpspAppleTVVideoHomeTabScreen: View {
 private struct LpspAppleTVProfilePickerTabScreen: View {
     var body: some View {
         LpspAppleTVDemoProfilePicker()
+    }
+}
+
+private struct LpspAppleTVVideoNewTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+
+                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+                }
+                .padding(.vertical, 8)
+            }
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+        }
+    }
+}
+
+private struct LpspAppleTVVideoDownloadsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
+                HStack {
+                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
+                    VStack(alignment: .leading) {
+                        Text(title).font(.headline).foregroundStyle(.white)
+                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Downloads")
+        }
     }
 }
 

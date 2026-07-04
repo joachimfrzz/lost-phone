@@ -364,6 +364,19 @@ private struct LpspYouTubeMusicGenericTabScreen: View {
 }
 
 
+private enum LpspYouTubeMusicDemoTracks {
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}
 private struct LpspYouTubeMusicMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
@@ -380,6 +393,14 @@ private struct LpspYouTubeMusicMusicHomeTabScreen: View {
                         }
                     }
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+
+                    ForEach(0..<4, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
+                            .frame(height: 56)
+                            .padding(.horizontal)
+                    }
+
                 }
             }
             .background(LpspYouTubeMusicTokens.ytmCanvas.ignoresSafeArea())
@@ -420,5 +441,6 @@ private struct LpspYouTubeMusicMusicLibraryTabScreen: View {
         }
     }
 }
+
 
 

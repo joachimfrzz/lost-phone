@@ -230,7 +230,7 @@ private struct LpspSpotifyShowroomRoot: View {
             LpspSpotifyMusicLibraryTabScreen()
                 .tabItem { Label("Your Library", systemImage: "books.vertical.fill") }
                 .tag(2)
-            LpspSpotifyMusicHomeTabScreen()
+            LpspSpotifyMusicNowPlayingTabScreen()
                 .tabItem { Label("Premium", systemImage: "sparkles") }
                 .tag(3)
         }
@@ -263,6 +263,19 @@ private struct LpspSpotifyGenericTabScreen: View {
 }
 
 
+private enum LpspSpotifyDemoTracks {
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}
 private struct LpspSpotifyMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
@@ -279,6 +292,17 @@ private struct LpspSpotifyMusicHomeTabScreen: View {
                         }
                     }
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+
+                    ForEach(LpspSpotifyDemoTracks.items) { track in
+                        LpspSpotifyTrackRow(
+                            title: track.title,
+                            artist: track.artist,
+                            artwork: Image(systemName: "music.note"),
+                            isPlaying: track.isPlaying
+                        )
+                    }
+
                 }
             }
             .background(LpspSpotifyTokens.spotifyCanvas.ignoresSafeArea())
@@ -319,5 +343,17 @@ private struct LpspSpotifyMusicLibraryTabScreen: View {
         }
     }
 }
+
+private struct LpspSpotifyMusicNowPlayingTabScreen: View {
+    var body: some View {
+        LpspSpotifyNowPlayingScreen(
+            trackTitle: "Blinding Lights",
+            artist: "The Weeknd",
+            artwork: Image(systemName: "music.note"),
+            dominantColor: LpspSpotifyTokens.spotifyErrorRed
+        )
+    }
+}
+
 
 

@@ -239,13 +239,13 @@ private struct LpspTripAdvisorShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTripAdvisorGenericTabScreen(title: "Explore", tabIndex: 0)
+            LpspTripAdvisorTravelExploreTabScreen()
                 .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
-            LpspTripAdvisorGenericTabScreen(title: "Search", tabIndex: 1)
+            LpspTripAdvisorTravelExploreTabScreen()
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspTripAdvisorGenericTabScreen(title: "Trips", tabIndex: 2)
+            LpspTripAdvisorTravelTripsTabScreen()
                 .tabItem { Label("Trips", systemImage: "suitcase.fill") }
                 .tag(2)
             LpspTripAdvisorGenericTabScreen(title: "Review", tabIndex: 3)
@@ -284,9 +284,60 @@ private struct LpspTripAdvisorGenericTabScreen: View {
 }
 
 
-private struct LpspTripAdvisorMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspTripAdvisorGenericTabScreen(title: title, tabIndex: 0) }
+private struct LpspTripAdvisorTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspTripAdvisorTokens.taErrorRed.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspTripAdvisorTokens.taCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspTripAdvisorTokens.taErrorRed.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
 }
 
 

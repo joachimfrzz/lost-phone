@@ -344,6 +344,7 @@ private struct LpspBinanceFinanceHomeTabScreen: View {
                         Text("2 847,50 €").font(.system(size: 36, weight: .bold))
                     }
                     .padding(.horizontal)
+
                     RoundedRectangle(cornerRadius: 16)
                         .fill(LinearGradient(colors: [LpspBinanceTokens.bnYellow, LpspBinanceTokens.bnYellow.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(height: 180)
@@ -351,7 +352,9 @@ private struct LpspBinanceFinanceHomeTabScreen: View {
                             Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
                         }
                         .padding(.horizontal)
+
                     Text("Transactions").font(.headline).padding(.horizontal)
+
                     ForEach(LpspBinanceDemoTx.items) { tx in
                         HStack {
                             Circle().fill(LpspBinanceTokens.bnYellow.opacity(0.15)).frame(width: 40, height: 40)
@@ -362,6 +365,7 @@ private struct LpspBinanceFinanceHomeTabScreen: View {
                         }
                         .padding(.horizontal)
                     }
+
                 }
                 .padding(.vertical)
             }
@@ -374,7 +378,15 @@ private struct LpspBinanceFinanceHomeTabScreen: View {
 private struct LpspBinanceFinanceCardsTabScreen: View {
     var body: some View {
         NavigationStack {
-            Text("Gérez vos cartes").padding().navigationTitle("Cartes")
+            ScrollView {
+                VStack(spacing: 16) {
+                    RoundedRectangle(cornerRadius: 16).fill(LpspBinanceTokens.bnYellow).frame(height: 180).padding(.horizontal)
+                    Text("Gérez vos cartes").font(.headline)
+                }
+                .padding(.vertical)
+            }
+            .background(LpspBinanceTokens.bnCanvas.ignoresSafeArea())
+            .navigationTitle("Cartes")
         }
     }
 }
@@ -384,9 +396,11 @@ private struct LpspBinanceDemoTx: Identifiable {
     let title: String
     let date: String
     let amount: String
+    let incoming: Bool
+    let icon: String
     static let items: [LpspBinanceDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €"),
+        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
+        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
 }
 

@@ -278,9 +278,21 @@ private struct LpspZoomShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspZoomGenericTabScreen(title: "Team Chat", tabIndex: 0)
-                .tabItem { Label("Team Chat", systemImage: "bubble.left.and.bubble.right.fill") }
+            LpspZoomGenericTabScreen(title: "Meetings", tabIndex: 0)
+                .tabItem { Label("Meetings", systemImage: "video.fill") }
                 .tag(0)
+            LpspZoomGenericTabScreen(title: "Team Chat", tabIndex: 1)
+                .tabItem { Label("Team Chat", systemImage: "bubble.left.and.bubble.right.fill") }
+                .tag(1)
+            LpspZoomGenericTabScreen(title: "Mail", tabIndex: 2)
+                .tabItem { Label("Mail", systemImage: "envelope.fill") }
+                .tag(2)
+            LpspZoomGenericTabScreen(title: "Phone", tabIndex: 3)
+                .tabItem { Label("Phone", systemImage: "phone.fill") }
+                .tag(3)
+            LpspZoomGenericTabScreen(title: "More", tabIndex: 4)
+                .tabItem { Label("More", systemImage: "ellipsis") }
+                .tag(4)
         }
         .tint(LpspZoomTokens.zoomHandYellow)
         

@@ -300,9 +300,18 @@ private struct LpspTeamsShowroomRoot: View {
             LpspTeamsGenericTabScreen(title: "Activity", tabIndex: 0)
                 .tabItem { Label("Activity", systemImage: "bell.fill") }
                 .tag(0)
-            LpspTeamsGenericTabScreen(title: "Calendar", tabIndex: 1)
-                .tabItem { Label("Calendar", systemImage: "calendar") }
+            LpspTeamsGenericTabScreen(title: "Chat", tabIndex: 1)
+                .tabItem { Label("Chat", systemImage: "bubble.left.and.bubble.right.fill") }
                 .tag(1)
+            LpspTeamsGenericTabScreen(title: "Teams", tabIndex: 2)
+                .tabItem { Label("Teams", systemImage: "person.3.fill") }
+                .tag(2)
+            LpspTeamsGenericTabScreen(title: "Calendar", tabIndex: 3)
+                .tabItem { Label("Calendar", systemImage: "calendar") }
+                .tag(3)
+            LpspTeamsGenericTabScreen(title: "Calls", tabIndex: 4)
+                .tabItem { Label("Calls", systemImage: "phone.fill") }
+                .tag(4)
         }
         .tint(LpspTeamsTokens.teamsPurpleLight)
         

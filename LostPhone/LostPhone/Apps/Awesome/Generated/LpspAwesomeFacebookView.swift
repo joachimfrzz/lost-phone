@@ -347,9 +347,21 @@ private struct LpspFacebookShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
+            LpspFacebookFeedTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
+                .tag(0)
+            LpspFacebookSocialTabScreen(title: "Video")
+                .tabItem { Label("Video", systemImage: "play.rectangle.fill") }
+                .tag(1)
+            LpspFacebookSocialTabScreen(title: "Marketplace")
+                .tabItem { Label("Marketplace", systemImage: "cart.fill") }
+                .tag(2)
             LpspFacebookSocialTabScreen(title: "Notifications")
                 .tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .tag(0)
+                .tag(3)
+            LpspFacebookSocialTabScreen(title: "Menu")
+                .tabItem { Label("Menu", systemImage: "line.3.horizontal") }
+                .tag(4)
         }
         .tint(LpspFacebookTokens.fbCareYellow)
         

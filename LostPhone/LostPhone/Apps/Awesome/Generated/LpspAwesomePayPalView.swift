@@ -346,11 +346,20 @@ private struct LpspPayPalShowroomRoot: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             LpspPayPalFinanceHomeTabScreen()
-                .tabItem { Label("Activity", systemImage: "clock") }
+                .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
             LpspPayPalFinanceHomeTabScreen()
-                .tabItem { Label("Finances", systemImage: "chart.line.uptrend.xyaxis") }
+                .tabItem { Label("Send", systemImage: "paperplane") }
                 .tag(1)
+            LpspPayPalFinanceHomeTabScreen()
+                .tabItem { Label("Wallet", systemImage: "wallet.pass") }
+                .tag(2)
+            LpspPayPalFinanceHomeTabScreen()
+                .tabItem { Label("Activity", systemImage: "clock") }
+                .tag(3)
+            LpspPayPalFinanceHomeTabScreen()
+                .tabItem { Label("Finances", systemImage: "chart.line.uptrend.xyaxis") }
+                .tag(4)
         }
         .tint(LpspPayPalTokens.ppTextPrimary)
         
@@ -391,6 +400,7 @@ private struct LpspPayPalFinanceHomeTabScreen: View {
                         Text("2 847,50 €").font(.system(size: 36, weight: .bold))
                     }
                     .padding(.horizontal)
+
                     RoundedRectangle(cornerRadius: 16)
                         .fill(LinearGradient(colors: [LpspPayPalTokens.ppTextPrimary, LpspPayPalTokens.ppTextPrimary.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(height: 180)
@@ -398,7 +408,9 @@ private struct LpspPayPalFinanceHomeTabScreen: View {
                             Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
                         }
                         .padding(.horizontal)
+
                     Text("Transactions").font(.headline).padding(.horizontal)
+
                     ForEach(LpspPayPalDemoTx.items) { tx in
                         HStack {
                             Circle().fill(LpspPayPalTokens.ppTextPrimary.opacity(0.15)).frame(width: 40, height: 40)
@@ -409,6 +421,7 @@ private struct LpspPayPalFinanceHomeTabScreen: View {
                         }
                         .padding(.horizontal)
                     }
+
                 }
                 .padding(.vertical)
             }
@@ -421,7 +434,15 @@ private struct LpspPayPalFinanceHomeTabScreen: View {
 private struct LpspPayPalFinanceCardsTabScreen: View {
     var body: some View {
         NavigationStack {
-            Text("Gérez vos cartes").padding().navigationTitle("Cartes")
+            ScrollView {
+                VStack(spacing: 16) {
+                    RoundedRectangle(cornerRadius: 16).fill(LpspPayPalTokens.ppTextPrimary).frame(height: 180).padding(.horizontal)
+                    Text("Gérez vos cartes").font(.headline)
+                }
+                .padding(.vertical)
+            }
+            .background(LpspPayPalTokens.ppCanvas.ignoresSafeArea())
+            .navigationTitle("Cartes")
         }
     }
 }
@@ -431,9 +452,11 @@ private struct LpspPayPalDemoTx: Identifiable {
     let title: String
     let date: String
     let amount: String
+    let incoming: Bool
+    let icon: String
     static let items: [LpspPayPalDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €"),
+        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
+        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
 }
 

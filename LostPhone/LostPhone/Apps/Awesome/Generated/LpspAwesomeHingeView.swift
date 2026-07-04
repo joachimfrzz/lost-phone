@@ -389,14 +389,20 @@ private struct LpspHingeShowroomRoot: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             LpspHingeDatingDiscoverTabScreen()
-                .tabItem { Label("Découvrir", systemImage: "flame.fill") }
+                .tabItem { Label("Discover", systemImage: "safari") }
                 .tag(0)
-            LpspHingeGenericTabScreen(title: "Messages", tabIndex: 1)
-                .tabItem { Label("Messages", systemImage: "bubble.left") }
+            LpspHingeGenericTabScreen(title: "Likes You", tabIndex: 1)
+                .tabItem { Label("Likes You", systemImage: "heart") }
                 .tag(1)
-            LpspHingeGenericTabScreen(title: "Profil", tabIndex: 2)
-                .tabItem { Label("Profil", systemImage: "person.fill") }
+            LpspHingeGenericTabScreen(title: "Standouts", tabIndex: 2)
+                .tabItem { Label("Standouts", systemImage: "star") }
                 .tag(2)
+            LpspHingeGenericTabScreen(title: "Matches", tabIndex: 3)
+                .tabItem { Label("Matches", systemImage: "bubble.left") }
+                .tag(3)
+            LpspHingeGenericTabScreen(title: "Profile", tabIndex: 4)
+                .tabItem { Label("Profile", systemImage: "person") }
+                .tag(4)
         }
         .tint(LpspHingeTokens.hingeMatchGreen)
         

@@ -486,7 +486,7 @@ private struct LpspWazeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspWazeGenericTabScreen(title: "Carte", tabIndex: 0)
+            LpspWazeMapsHomeTabScreen()
                 .tabItem { Label("Carte", systemImage: "map.fill") }
                 .tag(0)
             LpspWazeGenericTabScreen(title: "Itinéraire", tabIndex: 1)
@@ -525,9 +525,23 @@ private struct LpspWazeGenericTabScreen: View {
 }
 
 
-private struct LpspWazeMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspWazeGenericTabScreen(title: title, tabIndex: 0) }
+private struct LpspWazeMapsHomeTabScreen: View {
+    var body: some View {
+        ZStack {
+            Color.gray.opacity(0.15).ignoresSafeArea()
+            VStack {
+                HStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.ultraThinMaterial)
+                        .frame(height: 48)
+                        .overlay(HStack { Image(systemName: "magnifyingglass"); Text("Rechercher") }.foregroundStyle(.secondary))
+                        .padding()
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
+    }
 }
 
 

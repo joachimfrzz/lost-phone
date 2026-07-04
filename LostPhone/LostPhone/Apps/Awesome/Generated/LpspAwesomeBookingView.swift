@@ -268,9 +268,21 @@ private struct LpspBookingShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspBookingGenericTabScreen(title: "Bookings", tabIndex: 0)
-                .tabItem { Label("Bookings", systemImage: "suitcase") }
+            LpspBookingTravelExploreTabScreen()
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
+            LpspBookingGenericTabScreen(title: "Saved", tabIndex: 1)
+                .tabItem { Label("Saved", systemImage: "heart") }
+                .tag(1)
+            LpspBookingGenericTabScreen(title: "Bookings", tabIndex: 2)
+                .tabItem { Label("Bookings", systemImage: "suitcase") }
+                .tag(2)
+            LpspBookingTravelProfileTabScreen()
+                .tabItem { Label("Profile", systemImage: "person") }
+                .tag(3)
+            LpspBookingGenericTabScreen(title: "Help", tabIndex: 4)
+                .tabItem { Label("Help", systemImage: "questionmark.circle") }
+                .tag(4)
         }
         .tint(LpspBookingTokens.bkYellow)
         
@@ -301,9 +313,60 @@ private struct LpspBookingGenericTabScreen: View {
 }
 
 
-private struct LpspBookingMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspBookingGenericTabScreen(title: title, tabIndex: 0) }
+private struct LpspBookingTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspBookingTokens.bkYellow.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspBookingTokens.bkCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspBookingTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspBookingTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspBookingTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspBookingTokens.bkYellow.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
 }
 
 

@@ -462,9 +462,18 @@ private struct LpspPerplexityShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPerplexityGenericTabScreen(title: "Discover", tabIndex: 0)
-                .tabItem { Label("Discover", systemImage: "safari") }
+            LpspPerplexityGenericTabScreen(title: "Home", tabIndex: 0)
+                .tabItem { Label("Home", systemImage: "magnifyingglass") }
                 .tag(0)
+            LpspPerplexityGenericTabScreen(title: "Discover", tabIndex: 1)
+                .tabItem { Label("Discover", systemImage: "safari") }
+                .tag(1)
+            LpspPerplexityGenericTabScreen(title: "Library", tabIndex: 2)
+                .tabItem { Label("Library", systemImage: "books.vertical") }
+                .tag(2)
+            LpspPerplexityGenericTabScreen(title: "Spaces", tabIndex: 3)
+                .tabItem { Label("Spaces", systemImage: "square.stack.3d.down.right") }
+                .tag(3)
         }
         .tint(LpspPerplexityTokens.pplxTextPrimary)
         

@@ -352,6 +352,7 @@ private struct LpspSignalChatsTabScreen: View {
     }
 }
 
+
 private struct LpspSignalChatDetailScreen: View {
     let chat: LpspSignalDemoChat
     var body: some View {
@@ -372,6 +373,7 @@ private struct LpspSignalChatDetailScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 
 private struct LpspSignalCallsTabScreen: View {
     var body: some View {

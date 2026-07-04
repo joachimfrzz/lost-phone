@@ -395,7 +395,7 @@ private struct LpspWhatsAppShowroomRoot: View {
                 .tag(4)
         }
         .tint(LpspWhatsAppTokens.waErrorRed)
-        
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -460,26 +460,16 @@ private struct LpspWhatsAppChatsTabScreen: View {
     }
 }
 
+
 private struct LpspWhatsAppChatDetailScreen: View {
     let chat: LpspWhatsAppDemoChat
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 8) {
-
-                    LpspWhatsAppWAOutgoingBubble(text: "Salut, tu es dispo ?", timestamp: "10:24", readState: .read)
-                    LpspWhatsAppWAIncomingBubble(text: "Oui, j'arrive !")
-
-                }
-                .padding(.vertical, 8)
-            }
-            .background(LpspWhatsAppTokens.waCanvasLight.ignoresSafeArea())
-            LpspWhatsAppWAComposeBar()
-        }
-        .navigationTitle(chat.name)
-        .navigationBarTitleDisplayMode(.inline)
+        LpspWhatsAppWAChatScreen()
+            .navigationTitle(chat.name)
+            .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 
 private struct LpspWhatsAppCallsTabScreen: View {
     var body: some View {

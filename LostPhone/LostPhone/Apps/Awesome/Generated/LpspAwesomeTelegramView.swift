@@ -460,6 +460,7 @@ private struct LpspTelegramChatsTabScreen: View {
     }
 }
 
+
 private struct LpspTelegramChatDetailScreen: View {
     let chat: LpspTelegramDemoChat
     var body: some View {
@@ -480,6 +481,7 @@ private struct LpspTelegramChatDetailScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 
 private struct LpspTelegramCallsTabScreen: View {
     var body: some View {

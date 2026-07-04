@@ -330,24 +330,22 @@ private struct LpspBanqueFinanceHomeTabScreen: View {
                         Text("2 847,50 €").font(.system(size: 36, weight: .bold))
                     }
                     .padding(.horizontal)
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [LpspBanqueTokens.revBrand, LpspBanqueTokens.revBrand.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(height: 180)
-                        .overlay(alignment: .bottomLeading) {
-                            Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
-                        }
+
+                    LpspBanqueMetalCardHero()
                         .padding(.horizontal)
+
                     Text("Transactions").font(.headline).padding(.horizontal)
+
                     ForEach(LpspBanqueDemoTx.items) { tx in
-                        HStack {
-                            Circle().fill(LpspBanqueTokens.revBrand.opacity(0.15)).frame(width: 40, height: 40)
-                            VStack(alignment: .leading) { Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }
-                            Spacer()
-                            Text(tx.amount).font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
-                        }
-                        .padding(.horizontal)
+                        LpspBanqueTransactionRow(
+                            merchant: tx.title,
+                            meta: tx.date,
+                            amount: tx.amount,
+                            incoming: tx.incoming,
+                            logo: Image(systemName: tx.icon)
+                        )
                     }
+
                 }
                 .padding(.vertical)
             }
@@ -360,7 +358,15 @@ private struct LpspBanqueFinanceHomeTabScreen: View {
 private struct LpspBanqueFinanceCardsTabScreen: View {
     var body: some View {
         NavigationStack {
-            Text("Gérez vos cartes").padding().navigationTitle("Cartes")
+            ScrollView {
+                VStack(spacing: 16) {
+                    LpspBanqueMetalCardHero()
+                    Text("Gérez vos cartes").font(.headline)
+                }
+                .padding(.vertical)
+            }
+            .background(LpspBanqueTokens.revCanvas.ignoresSafeArea())
+            .navigationTitle("Cartes")
         }
     }
 }
@@ -370,9 +376,11 @@ private struct LpspBanqueDemoTx: Identifiable {
     let title: String
     let date: String
     let amount: String
+    let incoming: Bool
+    let icon: String
     static let items: [LpspBanqueDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €"),
+        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
+        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
 }
 

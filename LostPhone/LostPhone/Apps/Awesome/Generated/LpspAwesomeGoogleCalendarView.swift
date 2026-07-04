@@ -477,6 +477,15 @@ private struct LpspGoogleCalendarShowroomRoot: View {
             LpspGoogleCalendarGenericTabScreen(title: "Schedule", tabIndex: 0)
                 .tabItem { Label("Schedule", systemImage: "list.bullet") }
                 .tag(0)
+            LpspGoogleCalendarGenericTabScreen(title: "Day", tabIndex: 1)
+                .tabItem { Label("Day", systemImage: "calendar.day.timeline.left") }
+                .tag(1)
+            LpspGoogleCalendarGenericTabScreen(title: "Week", tabIndex: 2)
+                .tabItem { Label("Week", systemImage: "calendar") }
+                .tag(2)
+            LpspGoogleCalendarGenericTabScreen(title: "Month", tabIndex: 3)
+                .tabItem { Label("Month", systemImage: "calendar") }
+                .tag(3)
         }
         .tint(LpspGoogleCalendarTokens.gcalEventYellow)
         

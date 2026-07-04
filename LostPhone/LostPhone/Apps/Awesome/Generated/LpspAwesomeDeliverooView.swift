@@ -291,9 +291,21 @@ private struct LpspDeliverooShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDeliverooGenericTabScreen(title: "Favourites", tabIndex: 0)
-                .tabItem { Label("Favourites", systemImage: "heart") }
+            LpspDeliverooGenericTabScreen(title: "Home", tabIndex: 0)
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
+            LpspDeliverooGenericTabScreen(title: "Search", tabIndex: 1)
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .tag(1)
+            LpspDeliverooGenericTabScreen(title: "Orders", tabIndex: 2)
+                .tabItem { Label("Orders", systemImage: "list.bullet.rectangle") }
+                .tag(2)
+            LpspDeliverooGenericTabScreen(title: "Favourites", tabIndex: 3)
+                .tabItem { Label("Favourites", systemImage: "heart") }
+                .tag(3)
+            LpspDeliverooGenericTabScreen(title: "Account", tabIndex: 4)
+                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+                .tag(4)
         }
         .tint(LpspDeliverooTokens.rooTextPrimary)
         

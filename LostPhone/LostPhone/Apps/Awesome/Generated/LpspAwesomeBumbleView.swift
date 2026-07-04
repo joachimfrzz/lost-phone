@@ -423,12 +423,21 @@ private struct LpspBumbleShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspBumbleGenericTabScreen(title: "Matches", tabIndex: 0)
-                .tabItem { Label("Matches", systemImage: "heart.fill") }
+            LpspBumbleGenericTabScreen(title: "People", tabIndex: 0)
+                .tabItem { Label("People", systemImage: "person.2") }
                 .tag(0)
-            LpspBumbleGenericTabScreen(title: "Profile", tabIndex: 1)
-                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+            LpspBumbleGenericTabScreen(title: "Hives", tabIndex: 1)
+                .tabItem { Label("Hives", systemImage: "hexagon.fill") }
                 .tag(1)
+            LpspBumbleGenericTabScreen(title: "Matches", tabIndex: 2)
+                .tabItem { Label("Matches", systemImage: "heart.fill") }
+                .tag(2)
+            LpspBumbleGenericTabScreen(title: "Chats", tabIndex: 3)
+                .tabItem { Label("Chats", systemImage: "bubble.left.fill") }
+                .tag(3)
+            LpspBumbleGenericTabScreen(title: "Profile", tabIndex: 4)
+                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+                .tag(4)
         }
         .tint(LpspBumbleTokens.bumbleYellow)
         

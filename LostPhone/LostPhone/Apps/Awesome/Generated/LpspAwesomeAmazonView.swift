@@ -358,9 +358,21 @@ private struct LpspAmazonShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAmazonGenericTabScreen(title: "Search", tabIndex: 0)
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            LpspAmazonGenericTabScreen(title: "Home", tabIndex: 0)
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
+            LpspAmazonGenericTabScreen(title: "Menu", tabIndex: 1)
+                .tabItem { Label("Menu", systemImage: "line.3.horizontal") }
+                .tag(1)
+            LpspAmazonGenericTabScreen(title: "Cart", tabIndex: 2)
+                .tabItem { Label("Cart", systemImage: "cart.fill") }
+                .tag(2)
+            LpspAmazonGenericTabScreen(title: "You", tabIndex: 3)
+                .tabItem { Label("You", systemImage: "person.fill") }
+                .tag(3)
+            LpspAmazonGenericTabScreen(title: "Search", tabIndex: 4)
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .tag(4)
         }
         .tint(LpspAmazonTokens.amzYellow)
         

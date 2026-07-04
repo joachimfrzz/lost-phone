@@ -375,16 +375,16 @@ private struct LpspYouTubeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspYouTubeVideoHomeTabScreen()
+            LpspYouTubeShortVideoFeedTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspYouTubeVideoHomeTabScreen()
+            LpspYouTubeGenericTabScreen(title: "Shorts", tabIndex: 1)
                 .tabItem { Label("Shorts", systemImage: "play.rectangle.fill") }
                 .tag(1)
-            LpspYouTubeVideoHomeTabScreen()
+            LpspYouTubeGenericTabScreen(title: "Subscriptions", tabIndex: 2)
                 .tabItem { Label("Subscriptions", systemImage: "play.square.stack.fill") }
                 .tag(2)
-            LpspYouTubeVideoHomeTabScreen()
+            LpspYouTubeGenericTabScreen(title: "You", tabIndex: 3)
                 .tabItem { Label("You", systemImage: "person.crop.circle.fill") }
                 .tag(3)
         }
@@ -417,85 +417,99 @@ private struct LpspYouTubeGenericTabScreen: View {
 }
 
 
-private struct LpspYouTubeDemoProfile: Identifiable {
-    let id = UUID()
-    let name: String
-    let color: Color
-    let isKids: Bool
-}
-
-private enum LpspYouTubeDemoProfiles {
-    static let items: [LpspYouTubeDemoProfile] = [
-        .init(name: "Lost Phone", color: .red, isKids: false),
-        .init(name: "Enfants", color: .orange, isKids: true),
-    ]
-}
-
-private struct LpspYouTubeVideoHomeTabScreen: View {
+private struct LpspYouTubeShortVideoFeedTabScreen: View {
+    @State private var isFollowed = false
+    @State private var isLiked = true
+    @State private var likeCount = 12800
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.08, green: 0.08, blue: 0.08), Color.black],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .frame(height: 220)
-                            .overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill").font(.system(size: 56)).foregroundStyle(.white.opacity(0.9))
-                            }
-                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
-                            .frame(height: 80)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .padding(.horizontal, 12)
-                    Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)
-                        .padding(.horizontal, 12)
-                    Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(0..<6, id: \.self) { i in
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.15, green: 0.15, blue: 0.15))
-                                    .frame(width: 110, height: 165)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                    }
+        ZStack {
+            LinearGradient(
+                colors: [Color(red: 0.1, green: 0.05, blue: 0.15), LpspYouTubeTokens.ytCanvasLight, .black],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            VStack {
+                Spacer()
+                HStack(alignment: .bottom) {
+                    LpspYouTubeDemoCaption(username: "lost.phone", caption: "Showroom Lost Phone #fyp #swiftui", musicTitle: "Original Sound - lost.phone")
+                    LpspYouTubeShortsActionRail(
+                        avatarURL: nil,
+                        isFollowed: $isFollowed,
+                        likeCount: $likeCount,
+                        isLiked: $isLiked,
+                        commentCount: 420,
+                        bookmarkCount: 89,
+                        shareCount: 156,
+                        musicArtwork: nil
+                    )
                 }
-                .padding(.vertical, 8)
+                LpspYouTubeDemoScrubber(progress: 0.42)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
             }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("")
-            .toolbarBackground(.hidden, for: .navigationBar)
         }
     }
 }
 
-private struct LpspYouTubeProfilePickerTabScreen: View {
+private struct LpspYouTubeShortVideoDiscoverTabScreen: View {
+    let cols = [GridItem(.flexible()), GridItem(.flexible())]
     var body: some View {
-        LpspYouTubeDemoProfilePicker()
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: cols, spacing: 4) {
+                    ForEach(0..<12, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(LpspYouTubeTokens.ytRed.opacity(0.12 + Double(i) * 0.04))
+                            .aspectRatio(9/16, contentMode: .fit)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("#trend \(i + 1)").font(.caption.bold()).foregroundStyle(.white).padding(6)
+                            }
+                    }
+                }
+                .padding(8)
+            }
+            .background(LpspYouTubeTokens.ytCanvasLight.ignoresSafeArea())
+            .navigationTitle("Discover")
+        }
     }
 }
 
-private struct LpspYouTubeDemoProfilePicker: View {
+private struct LpspYouTubeShortVideoInboxTabScreen: View {
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 32) {
-                Text("Qui regarde ?").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
-                ForEach(LpspYouTubeDemoProfiles.items) { p in
-                    VStack(spacing: 8) {
-                        Circle().fill(p.color).frame(width: 72, height: 72)
-                        Text(p.name).foregroundStyle(.gray)
-                    }
+        NavigationStack {
+            List(["Alex t'a mentionné", "Nouveau follower", "Live maintenant"], id: \.self) { item in
+                HStack {
+                    Circle().fill(LpspYouTubeTokens.ytRed.opacity(0.2)).frame(width: 40, height: 40)
+                    Text(item)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(LpspYouTubeTokens.ytCanvasLight.ignoresSafeArea())
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspYouTubeShortVideoProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    Circle().fill(LpspYouTubeTokens.ytRed.gradient).frame(width: 88, height: 88)
+                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
+                    Text("@lost.phone").font(.title3.bold()).foregroundStyle(.white)
+                    HStack(spacing: 24) {
+                        VStack { Text("128").bold(); Text("Following").font(.caption) }
+                        VStack { Text("12.4K").bold(); Text("Followers").font(.caption) }
+                        VStack { Text("89K").bold(); Text("Likes").font(.caption) }
+                    }
+                    .foregroundStyle(.white)
+                }
+                .padding()
+            }
+            .background(LpspYouTubeTokens.ytCanvasLight.ignoresSafeArea())
+            .navigationTitle("Profile")
         }
     }
 }

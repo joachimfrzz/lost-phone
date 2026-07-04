@@ -305,12 +305,21 @@ private struct LpspFichiersShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspFichiersGenericTabScreen(title: "Offline", tabIndex: 0)
-                .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
+            LpspFichiersGenericTabScreen(title: "Home", tabIndex: 0)
+                .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
-            LpspFichiersGenericTabScreen(title: "Account", tabIndex: 1)
-                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+            LpspFichiersGenericTabScreen(title: "Files", tabIndex: 1)
+                .tabItem { Label("Files", systemImage: "folder") }
                 .tag(1)
+            LpspFichiersGenericTabScreen(title: "Photos", tabIndex: 2)
+                .tabItem { Label("Photos", systemImage: "photo.on.rectangle") }
+                .tag(2)
+            LpspFichiersGenericTabScreen(title: "Offline", tabIndex: 3)
+                .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
+                .tag(3)
+            LpspFichiersGenericTabScreen(title: "Account", tabIndex: 4)
+                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+                .tag(4)
         }
         .tint(LpspFichiersTokens.dbxPdfRed)
         

@@ -5,6 +5,19 @@ from __future__ import annotations
 from awesome_templates import category_from_path, extract_tabs, pick_color
 
 
+def _resolve_category(app_name: str, category: str, components: set[str]) -> str:
+    """Map raw path category + extracted components to an assembler profile."""
+    if _find_component(components, "ActionRail", "CaptionOverlay"):
+        return "short-video"
+    if _find_component(components, "DCServerRail", "DCMessageRow"):
+        return "discord"
+    if category == "ride" or _find_component(components, "UberMapView", "WhereToInput", "RideOptionCard"):
+        return "ride"
+    if app_name in ("WhatsApp", "Telegram") and category == "messaging":
+        return "messaging"
+    return category
+
+
 def _tabs_or_default(md: str, category: str) -> list[tuple[str, str]]:
     tabs = extract_tabs(md)
     defaults: dict[str, list[tuple[str, str]]] = {
@@ -18,6 +31,9 @@ def _tabs_or_default(md: str, category: str) -> list[tuple[str, str]]:
         "travel": [("Explorer", "safari"), ("Rechercher", "magnifyingglass"), ("Voyages", "suitcase")],
         "food": [("Accueil", "house.fill"), ("Rechercher", "magnifyingglass"), ("Compte", "person")],
         "maps": [("Carte", "map.fill"), ("Itinéraire", "arrow.triangle.turn.up.right.diamond"), ("Profil", "person")],
+        "ride": [("Home", "house.fill"), ("Services", "square.grid.2x2.fill"), ("Activity", "clock.fill"), ("Account", "person.fill")],
+        "short-video": [("Home", "house.fill"), ("Discover", "magnifyingglass"), ("Inbox", "tray.fill"), ("Profile", "person.fill")],
+        "discord": [("Servers", "square.grid.2x2.fill"), ("Messages", "bubble.left.and.bubble.right.fill"), ("Notifications", "bell.fill"), ("You", "person.crop.circle.fill")],
         "ai": [("Chat", "bubble.left.fill"), ("Historique", "clock")],
         "commerce": [("Accueil", "house.fill"), ("Panier", "cart.fill")],
         "productivity": [("Accueil", "folder.fill"), ("Récents", "clock")],
@@ -42,22 +58,27 @@ def assemble_root(
     components: set[str],
     token_names: list[str],
 ) -> str:
+    category = _resolve_category(app_name, category, components)
     tabs = _tabs_or_default(md, category)
     root = f"{prefix}ShowroomRoot"
     tokens = f"{prefix}Tokens"
     canvas = pick_color([(t, "") for t in token_names], "canvas", "Canvas", "background", "surface", default_idx=0)
     accent = pick_color([(t, "") for t in token_names], "brand", "coral", "action", "accent", "yellow", "red", "green", "primary", default_idx=0)
-    dark_categories = {"video", "music", "fitness"}
+    dark_categories = {"video", "music", "fitness", "short-video", "discord", "ride"}
+    dark_tokens = any(
+        x in t.lower()
+        for t in token_names
+        for x in ("netflix", "spotify", "revolut", "discord", "tiktok", "whatsapp", "dcchat", "wacanvas", "wawallpaper")
+    )
     color_scheme = (
         ".preferredColorScheme(.dark)"
-        if category in dark_categories
-        or any("netflix" in t.lower() or "spotify" in t.lower() for t in token_names)
+        if category in dark_categories or dark_tokens
         else ""
     )
 
     tab_views = []
     for i, (label, icon) in enumerate(tabs):
-        screen = _screen_for_tab(prefix, category, label, components, tokens, accent, canvas, i)
+        screen = _screen_for_tab(app_name, prefix, category, label, components, tokens, accent, canvas, i)
         tab_views.append(
             f"""            {screen}
                 .tabItem {{ Label("{label}", systemImage: "{icon}") }}
@@ -78,11 +99,12 @@ private struct {root}: View {{
     }}
 }}
 
-{ _screens_impl(prefix, category, components, tokens, accent, canvas, tabs) }
+{ _screens_impl(app_name, prefix, category, components, tokens, accent, canvas, tabs) }
 """
 
 
 def _screen_for_tab(
+    app_name: str,
     prefix: str,
     category: str,
     label: str,
@@ -93,6 +115,44 @@ def _screen_for_tab(
     index: int,
 ) -> str:
     low = label.lower()
+    if category == "ride":
+        if index == 0 or "home" in low:
+            return f"{prefix}RideHomeTabScreen()"
+        return f"{prefix}GenericTabScreen(title: \"{label}\", tabIndex: {index})"
+    if category == "short-video":
+        if any(x in low for x in ("home", "accueil", "feed")):
+            return f"{prefix}ShortVideoFeedTabScreen()"
+        if "discover" in low or "explor" in low:
+            return f"{prefix}ShortVideoDiscoverTabScreen()"
+        if "inbox" in low or "boîte" in low:
+            return f"{prefix}ShortVideoInboxTabScreen()"
+        if "profil" in low or "profile" in low:
+            return f"{prefix}ShortVideoProfileTabScreen()"
+        return f"{prefix}GenericTabScreen(title: \"{label}\", tabIndex: {index})"
+    if category == "discord":
+        if "server" in low:
+            return f"{prefix}DiscordServersTabScreen()"
+        if "message" in low or "chat" in low:
+            return f"{prefix}DiscordMessagesTabScreen()"
+        if "notif" in low:
+            return f"{prefix}DiscordNotificationsTabScreen()"
+        if "you" in low or "profil" in low:
+            return f"{prefix}DiscordYouTabScreen()"
+        return f"{prefix}GenericTabScreen(title: \"{label}\", tabIndex: {index})"
+    if category == "maps":
+        if index == 0 or "carte" in low or "map" in low:
+            return f"{prefix}MapsHomeTabScreen()"
+        return f"{prefix}GenericTabScreen(title: \"{label}\", tabIndex: {index})"
+    if category == "travel":
+        if "explor" in low or "search" in low or "recherch" in low:
+            return f"{prefix}TravelExploreTabScreen()"
+        if "wishlist" in low or "voyage" in low or "trip" in low:
+            return f"{prefix}TravelTripsTabScreen()"
+        if "inbox" in low or "message" in low:
+            return f"{prefix}TravelInboxTabScreen()"
+        if "profil" in low or "profile" in low:
+            return f"{prefix}TravelProfileTabScreen()"
+        return f"{prefix}GenericTabScreen(title: \"{label}\", tabIndex: {index})"
     if category == "messaging":
         if "chat" in low or "message" in low:
             return f"{prefix}ChatsTabScreen()"
@@ -110,14 +170,20 @@ def _screen_for_tab(
             return f"{prefix}ProfileTabScreen()"
         return f"{prefix}SocialTabScreen(title: \"{label}\")"
     if category == "video":
-        if "profil" in low or "netflix" in low or "watch" in low:
+        if "profil" in low or "netflix" in low or "watch" in low or "my " in low:
             return f"{prefix}ProfilePickerTabScreen()"
+        if "download" in low:
+            return f"{prefix}VideoDownloadsTabScreen()"
+        if "new" in low or "hot" in low or "nouveaut" in low:
+            return f"{prefix}VideoNewTabScreen()"
         return f"{prefix}VideoHomeTabScreen()"
     if category == "music":
         if "recherch" in low or "search" in low:
             return f"{prefix}MusicSearchTabScreen()"
-        if "biblio" in low or "library" in low:
+        if "biblio" in low or "library" in low or "your library" in low:
             return f"{prefix}MusicLibraryTabScreen()"
+        if "premium" in low or "now playing" in low:
+            return f"{prefix}MusicNowPlayingTabScreen()"
         return f"{prefix}MusicHomeTabScreen()"
     if category == "finance":
         if "carte" in low or "card" in low:
@@ -131,6 +197,7 @@ def _screen_for_tab(
 
 
 def _screens_impl(
+    app_name: str,
     prefix: str,
     category: str,
     components: set[str],
@@ -139,7 +206,7 @@ def _screens_impl(
     canvas: str,
     tabs: list[tuple[str, str]],
 ) -> str:
-    chat_row = _find_component(components, "ChatListRow", "WAChatListRow")
+    chat_row = _find_component(components, "ChatListRow", "WAChatListRow", "TgChatListRow")
     chat_screen = _find_component(components, "ChatScreen", "WAChatScreen")
     feed_post = _find_component(components, "FeedPost", "IGFeedPost")
     story_ring = _find_component(components, "StoryRing")
@@ -148,8 +215,22 @@ def _screens_impl(
     play_btn = _find_component(components, "PlayButton", "NetflixPlayButton")
     profile_picker = _find_component(components, "ProfilePicker")
     outgoing_bubble = _find_component(components, "OutgoingBubble", "WAOutgoingBubble")
-    compose_bar = _find_component(components, "ComposeBar", "WAComposeBar")
+    compose_bar = _find_component(components, "ComposeBar", "WAComposeBar", "DCComposeBar")
     swipe_card = _find_component(components, "SwipeCard", "TinderCard")
+    map_view = _find_component(components, "UberMapView", "MapView")
+    where_to = _find_component(components, "WhereToInput")
+    ride_card = _find_component(components, "RideOptionCard")
+    action_rail = _find_component(components, "ActionRail")
+    caption_overlay = _find_component(components, "CaptionOverlay")
+    server_rail = _find_component(components, "DCServerRail")
+    message_row = _find_component(components, "DCMessageRow")
+    channel_row = _find_component(components, "DCChannelRow")
+    metal_card = _find_component(components, "MetalCardHero")
+    tx_row = _find_component(components, "TransactionRow")
+    track_row = _find_component(components, "TrackRow")
+    now_playing = _find_component(components, "NowPlayingScreen")
+    poster_row = _find_component(components, "PosterRow")
+    top10_row = _find_component(components, "Top10Row")
 
     canvas_ref = f"{tokens}.{canvas}" if canvas else "Color(.systemBackground)"
     accent_ref = f"{tokens}.{accent}" if accent else "Color.accentColor"
@@ -184,15 +265,25 @@ private struct {prefix}GenericTabScreen: View {{
     )
 
     if category == "messaging":
-        parts.append(_messaging_screens(prefix, tokens, canvas_ref, accent_ref, chat_row, chat_screen, outgoing_bubble, compose_bar))
+        parts.append(_messaging_screens(prefix, tokens, canvas_ref, accent_ref, chat_row, chat_screen, outgoing_bubble, compose_bar, message_row))
+    elif category == "discord":
+        parts.append(_discord_screens(prefix, tokens, canvas_ref, accent_ref, server_rail, message_row, channel_row, compose_bar))
     elif category == "social":
         parts.append(_social_screens(prefix, tokens, canvas_ref, accent_ref, feed_post, story_ring, post_card, vote_col))
+    elif category == "short-video":
+        parts.append(_short_video_screens(prefix, tokens, canvas_ref, accent_ref, action_rail, caption_overlay, _find_component(components, "VideoScrubber")))
+    elif category == "ride":
+        parts.append(_ride_screens(prefix, tokens, canvas_ref, accent_ref, map_view, where_to, ride_card))
+    elif category == "maps":
+        parts.append(_maps_screens(prefix, tokens, canvas_ref, accent_ref, map_view))
+    elif category == "travel":
+        parts.append(_travel_screens(prefix, tokens, canvas_ref, accent_ref))
     elif category == "video":
-        parts.append(_video_screens(prefix, tokens, play_btn, profile_picker))
+        parts.append(_video_screens(prefix, tokens, play_btn, profile_picker, poster_row, top10_row))
     elif category == "music":
-        parts.append(_music_screens(prefix, tokens, canvas_ref, accent_ref))
+        parts.append(_music_screens(prefix, tokens, canvas_ref, accent_ref, track_row, now_playing))
     elif category == "finance":
-        parts.append(_finance_screens(prefix, tokens, canvas_ref, accent_ref))
+        parts.append(_finance_screens(prefix, tokens, canvas_ref, accent_ref, metal_card, tx_row))
     elif category == "dating":
         parts.append(_dating_screens(prefix, tokens, accent_ref, swipe_card))
     else:
@@ -208,7 +299,7 @@ private struct {prefix}MessagingTabScreen: View {{
     return "\n".join(parts)
 
 
-def _messaging_screens(prefix, tokens, canvas, accent, chat_row, chat_screen, outgoing, compose) -> str:
+def _messaging_screens(prefix, tokens, canvas, accent, chat_row, chat_screen, outgoing, compose, message_row=None) -> str:
     row = chat_row or f"{prefix}PlaceholderChatRow"
     if not chat_row:
         row_def = f"""
@@ -304,10 +395,45 @@ private struct {prefix}PlaceholderChatRow: View {{
 
     if compose and "DCComposeBar" in compose:
         compose_block = f"{compose}(channelName: chat.name)"
+    elif compose and "WAComposeBar" in compose:
+        compose_block = f"{compose}()"
     elif compose:
         compose_block = f"{compose}()"
     else:
         compose_block = f"{prefix}DemoComposeBar()"
+
+    detail_bg = canvas
+    if "WAChatScreen" in (chat_screen or ""):
+        detail_screen = f"""
+private struct {prefix}ChatDetailScreen: View {{
+    let chat: {prefix}DemoChat
+    var body: some View {{
+        {chat_screen}()
+            .navigationTitle(chat.name)
+            .navigationBarTitleDisplayMode(.inline)
+    }}
+}}
+"""
+    else:
+        detail_screen = f"""
+private struct {prefix}ChatDetailScreen: View {{
+    let chat: {prefix}DemoChat
+    var body: some View {{
+        VStack(spacing: 0) {{
+            ScrollView {{
+                LazyVStack(spacing: 8) {{
+{bubble_block}
+                }}
+                .padding(.vertical, 8)
+            }}
+            .background({detail_bg}.ignoresSafeArea())
+            {compose_block}
+        }}
+        .navigationTitle(chat.name)
+        .navigationBarTitleDisplayMode(.inline)
+    }}
+}}
+"""
 
     return (
         row_def
@@ -341,23 +467,7 @@ private struct {prefix}ChatsTabScreen: View {{
     }}
 }}
 
-private struct {prefix}ChatDetailScreen: View {{
-    let chat: {prefix}DemoChat
-    var body: some View {{
-        VStack(spacing: 0) {{
-            ScrollView {{
-                LazyVStack(spacing: 8) {{
-{bubble_block}
-                }}
-                .padding(.vertical, 8)
-            }}
-            .background({canvas}.ignoresSafeArea())
-            {compose_block}
-        }}
-        .navigationTitle(chat.name)
-        .navigationBarTitleDisplayMode(.inline)
-    }}
-}}
+{detail_screen}
 
 private struct {prefix}CallsTabScreen: View {{
     var body: some View {{
@@ -418,6 +528,418 @@ private struct {prefix}DemoComposeBar: View {{
 }}
 """
     )
+
+
+def _discord_screens(prefix, tokens, canvas, accent, server_rail, message_row, channel_row, compose) -> str:
+    rail = server_rail or f"{prefix}DemoServerRail"
+    msg = message_row or f"{prefix}DemoMessageRow"
+    ch = channel_row or f"{prefix}DemoChannelRow"
+    compose_call = f"{compose}(channelName: \"general\")" if compose else f"{prefix}DemoComposeBar()"
+
+    return f"""
+private struct {prefix}DiscordDemoServer: Identifiable {{
+    let id: String
+    let name: String
+    let initials: String
+    let unreadCount: Int
+    let mentionCount: Int
+}}
+
+private enum {prefix}DiscordDemoData {{
+    static let servers: [{prefix}DiscordDemoServer] = [
+        .init(id: "s1", name: "Lost Phone", initials: "LP", unreadCount: 0, mentionCount: 2),
+        .init(id: "s2", name: "SwiftUI", initials: "SW", unreadCount: 3, mentionCount: 0),
+        .init(id: "s3", name: "Paris", initials: "PA", unreadCount: 0, mentionCount: 0),
+    ]
+    static let channels = ["general", "showroom", "design-review"]
+}}
+
+private struct {prefix}DiscordServersTabScreen: View {{
+    @State private var activeServerId: String? = "s1"
+    var body: some View {{
+        HStack(spacing: 0) {{
+            {rail}(servers: {prefix}DiscordDemoData.servers.map {{
+                {prefix}Server(id: $0.id, name: $0.name, imageUri: nil, initials: $0.initials, unreadCount: $0.unreadCount, mentionCount: $0.mentionCount)
+            }}, activeServerId: $activeServerId)
+            VStack(spacing: 0) {{
+                ScrollView {{
+                    LazyVStack(alignment: .leading, spacing: 0) {{
+                        Text("TEXT CHANNELS").font(.caption.bold()).foregroundStyle(.secondary).padding(.horizontal, 12).padding(.top, 8)
+                        ForEach(Array({prefix}DiscordDemoData.channels.enumerated()), id: \\.offset) {{ idx, name in
+                            {ch}(name: name, type: .text, isActive: idx == 0, unreadCount: idx == 1 ? 2 : 0, mentionCount: idx == 0 ? 1 : 0)
+                        }}
+                        ForEach(0..<4, id: \\.self) {{ i in
+                            {msg}(
+                                avatar: Image(systemName: "person.circle.fill"),
+                                username: i == 0 ? "Alex" : "Léa",
+                                roleColor: {accent},
+                                timestamp: "10:2\\(i)",
+                                message: i == 0 ? "Showroom Spectr prêt !" : "Super rendu 👍",
+                                presenceStatus: .online,
+                                isGroupedWithPrevious: i > 0
+                            )
+                        }}
+                    }}
+                }}
+                .background({canvas}.ignoresSafeArea())
+                {compose_call}
+            }}
+        }}
+        .background({canvas}.ignoresSafeArea())
+    }}
+}}
+
+private struct {prefix}DiscordMessagesTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            List {{
+                ForEach({prefix}DemoChats.chats) {{ chat in
+                    NavigationLink {{
+                        {prefix}DiscordDMDetailScreen(chat: chat)
+                    }} label: {{
+                        HStack(spacing: 12) {{
+                            Circle().fill({accent}.opacity(0.2)).frame(width: 48, height: 48)
+                            VStack(alignment: .leading) {{
+                                Text(chat.name).font(.headline)
+                                Text(chat.preview).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                            }}
+                            Spacer()
+                            Text(chat.time).font(.caption).foregroundStyle(.secondary)
+                        }}
+                    }}
+                }}
+            }}
+            .scrollContentBackground(.hidden)
+            .background({canvas}.ignoresSafeArea())
+            .navigationTitle("Messages")
+        }}
+    }}
+}}
+
+private struct {prefix}DiscordDMDetailScreen: View {{
+    let chat: {prefix}DemoChat
+    var body: some View {{
+        VStack(spacing: 0) {{
+            ScrollView {{
+                LazyVStack(spacing: 8) {{
+                    {msg}(
+                        avatar: Image(systemName: "person.circle.fill"),
+                        username: chat.name,
+                        roleColor: {accent},
+                        timestamp: "10:24",
+                        message: "On se voit ce soir ?",
+                        presenceStatus: .online,
+                        isGroupedWithPrevious: false
+                    )
+                    {msg}(
+                        avatar: Image(systemName: "person.circle.fill"),
+                        username: "Vous",
+                        roleColor: .white,
+                        timestamp: "10:25",
+                        message: "Oui, j'arrive !",
+                        presenceStatus: .online,
+                        isGroupedWithPrevious: false
+                    )
+                }}
+                .padding(.vertical, 8)
+            }}
+            .background({canvas}.ignoresSafeArea())
+            {compose_call}
+        }}
+        .navigationTitle(chat.name)
+        .navigationBarTitleDisplayMode(.inline)
+    }}
+}}
+
+private struct {prefix}DiscordNotificationsTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            List(["Mention in #general", "Nouveau message de Alex", "Invitation serveur"], id: \\.self) {{ item in
+                Label(item, systemImage: "bell.fill")
+            }}
+            .scrollContentBackground(.hidden)
+            .background({canvas}.ignoresSafeArea())
+            .navigationTitle("Notifications")
+        }}
+    }}
+}}
+
+private struct {prefix}DiscordYouTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            VStack(spacing: 16) {{
+                Circle().fill({accent}.gradient).frame(width: 80, height: 80)
+                Text("lost.phone").font(.title2.bold())
+                Text("En ligne").foregroundStyle(.green)
+            }}
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background({canvas}.ignoresSafeArea())
+            .navigationTitle("You")
+        }}
+    }}
+}}
+
+private struct {prefix}DemoChat: Identifiable {{
+    let id = UUID()
+    let name: String
+    let preview: String
+    let time: String
+}}
+
+private enum {prefix}DemoChats {{
+    static let chats: [{prefix}DemoChat] = [
+        .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24"),
+        .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier"),
+    ]
+}}
+"""
+
+
+def _short_video_screens(prefix, tokens, canvas, accent, action_rail, caption_overlay, scrubber=None) -> str:
+    rail = action_rail or f"{prefix}DemoActionRail"
+    caption = caption_overlay or f"{prefix}DemoCaption"
+    scrubber_view = scrubber or f"{prefix}DemoScrubber"
+
+    return f"""
+private struct {prefix}ShortVideoFeedTabScreen: View {{
+    @State private var isFollowed = false
+    @State private var isLiked = true
+    @State private var likeCount = 12800
+    var body: some View {{
+        ZStack {{
+            LinearGradient(
+                colors: [Color(red: 0.1, green: 0.05, blue: 0.15), {canvas}, .black],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            VStack {{
+                Spacer()
+                HStack(alignment: .bottom) {{
+                    {caption}(username: "lost.phone", caption: "Showroom Lost Phone #fyp #swiftui", musicTitle: "Original Sound - lost.phone")
+                    {rail}(
+                        avatarURL: nil,
+                        isFollowed: $isFollowed,
+                        likeCount: $likeCount,
+                        isLiked: $isLiked,
+                        commentCount: 420,
+                        bookmarkCount: 89,
+                        shareCount: 156,
+                        musicArtwork: nil
+                    )
+                }}
+                {scrubber_view}(progress: 0.42)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+            }}
+        }}
+    }}
+}}
+
+private struct {prefix}ShortVideoDiscoverTabScreen: View {{
+    let cols = [GridItem(.flexible()), GridItem(.flexible())]
+    var body: some View {{
+        NavigationStack {{
+            ScrollView {{
+                LazyVGrid(columns: cols, spacing: 4) {{
+                    ForEach(0..<12, id: \\.self) {{ i in
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill({accent}.opacity(0.12 + Double(i) * 0.04))
+                            .aspectRatio(9/16, contentMode: .fit)
+                            .overlay(alignment: .bottomLeading) {{
+                                Text("#trend \\(i + 1)").font(.caption.bold()).foregroundStyle(.white).padding(6)
+                            }}
+                    }}
+                }}
+                .padding(8)
+            }}
+            .background({canvas}.ignoresSafeArea())
+            .navigationTitle("Discover")
+        }}
+    }}
+}}
+
+private struct {prefix}ShortVideoInboxTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            List(["Alex t'a mentionné", "Nouveau follower", "Live maintenant"], id: \\.self) {{ item in
+                HStack {{
+                    Circle().fill({accent}.opacity(0.2)).frame(width: 40, height: 40)
+                    Text(item)
+                }}
+            }}
+            .scrollContentBackground(.hidden)
+            .background({canvas}.ignoresSafeArea())
+            .navigationTitle("Inbox")
+        }}
+    }}
+}}
+
+private struct {prefix}ShortVideoProfileTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            ScrollView {{
+                VStack(spacing: 16) {{
+                    Circle().fill({accent}.gradient).frame(width: 88, height: 88)
+                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
+                    Text("@lost.phone").font(.title3.bold()).foregroundStyle(.white)
+                    HStack(spacing: 24) {{
+                        VStack {{ Text("128").bold(); Text("Following").font(.caption) }}
+                        VStack {{ Text("12.4K").bold(); Text("Followers").font(.caption) }}
+                        VStack {{ Text("89K").bold(); Text("Likes").font(.caption) }}
+                    }}
+                    .foregroundStyle(.white)
+                }}
+                .padding()
+            }}
+            .background({canvas}.ignoresSafeArea())
+            .navigationTitle("Profile")
+        }}
+    }}
+}}
+"""
+
+
+def _ride_screens(prefix, tokens, canvas, accent, map_view, where_to, ride_card) -> str:
+    map_block = f"{map_view}().ignoresSafeArea()" if map_view else "Color.gray.opacity(0.2).ignoresSafeArea()"
+    where = where_to or f"{prefix}DemoWhereTo()"
+    ride_comp = ride_card or f"{prefix}DemoRideCard"
+
+    return f"""
+private struct {prefix}RideHomeTabScreen: View {{
+    @State private var selectedRide = 0
+    var body: some View {{
+        ZStack(alignment: .top) {{
+            {map_block}
+            VStack {{
+                Spacer()
+                VStack(spacing: 0) {{
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(width: 36, height: 4)
+                        .padding(.top, 8)
+                    {where}
+                        .padding(.horizontal, 12)
+                        .padding(.top, 12)
+                    ForEach(Array({prefix}DemoRides.items.enumerated()), id: \\.offset) {{ idx, option in
+                        {ride_comp}(
+                            name: option.name,
+                            eta: option.eta,
+                            capacity: option.capacity,
+                            price: option.price,
+                            isSelected: selectedRide == idx,
+                            carImage: Image(systemName: "car.fill"),
+                            action: {{ selectedRide = idx }}
+                        )
+                        .padding(.horizontal, 12)
+                    }}
+                    .padding(.vertical, 8)
+                }}
+                .background(RoundedRectangle(cornerRadius: 16).fill({canvas}).ignoresSafeArea(edges: .bottom))
+            }}
+        }}
+    }}
+}}
+
+private struct {prefix}DemoRideOption {{
+    let name: String
+    let eta: String
+    let capacity: Int
+    let price: String
+}}
+
+private enum {prefix}DemoRides {{
+    static let items: [{prefix}DemoRideOption] = [
+        .init(name: "UberX", eta: "3 min", capacity: 4, price: "€12.40"),
+        .init(name: "Comfort", eta: "5 min", capacity: 4, price: "€16.80"),
+        .init(name: "Green", eta: "4 min", capacity: 4, price: "€13.20"),
+    ]
+}}
+"""
+
+
+def _maps_screens(prefix, tokens, canvas, accent, map_view) -> str:
+    map_block = f"{map_view}().ignoresSafeArea()" if map_view else f"Color.gray.opacity(0.15).ignoresSafeArea()"
+    return f"""
+private struct {prefix}MapsHomeTabScreen: View {{
+    var body: some View {{
+        ZStack {{
+            {map_block}
+            VStack {{
+                HStack {{
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.ultraThinMaterial)
+                        .frame(height: 48)
+                        .overlay(HStack {{ Image(systemName: "magnifyingglass"); Text("Rechercher") }}.foregroundStyle(.secondary))
+                        .padding()
+                    Spacer()
+                }}
+                Spacer()
+            }}
+        }}
+    }}
+}}
+"""
+
+
+def _travel_screens(prefix, tokens, canvas, accent) -> str:
+    return f"""
+private struct {prefix}TravelExploreTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            ScrollView {{
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {{
+                    ForEach(0..<6, id: \\.self) {{ i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill({accent}.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {{
+                                Text("Logement \\(i + 1)").font(.headline).padding(8)
+                            }}
+                    }}
+                }}
+                .padding()
+            }}
+            .background({canvas}.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }}
+    }}
+}}
+
+private struct {prefix}TravelTripsTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \\.self) {{ trip in
+                Label(trip, systemImage: "airplane")
+            }}
+            .navigationTitle("Trips")
+        }}
+    }}
+}}
+
+private struct {prefix}TravelInboxTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            List(["Message hôte · Paris", "Rappel check-in"], id: \\.self) {{ msg in
+                Label(msg, systemImage: "message")
+            }}
+            .navigationTitle("Inbox")
+        }}
+    }}
+}}
+
+private struct {prefix}TravelProfileTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            VStack(spacing: 16) {{
+                Circle().fill({accent}.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }}
+            .navigationTitle("Profile")
+        }}
+    }}
+}}
+"""
 
 
 def _social_screens(prefix, tokens, canvas, accent, feed_post, story_ring, post_card, vote_col) -> str:
@@ -673,7 +1195,7 @@ private struct {prefix}GenericFeedCard: View {{
     )
 
 
-def _video_screens(prefix, tokens, play_btn, profile_picker) -> str:
+def _video_screens(prefix, tokens, play_btn, profile_picker, poster_row=None, top10_row=None) -> str:
     if play_btn and "DPPlayButton" in play_btn:
         play = f'{play_btn}(label: "Lecture", action: {{}})'
     elif play_btn:
@@ -690,7 +1212,28 @@ def _video_screens(prefix, tokens, play_btn, profile_picker) -> str:
     else:
         picker = f"{prefix}DemoProfilePicker()"
 
+    poster_block = ""
+    if poster_row:
+        poster_block = f"""
+                    {poster_row}(title: "Trending Now", posters: {prefix}DemoPosterURLs.items)
+                    {poster_row}(title: "Continue Watching", posters: {prefix}DemoPosterURLs.items)
+"""
+    if top10_row:
+        poster_block += f"""
+                    {top10_row}(posters: {prefix}DemoPosterURLs.items)
+"""
+
     return f"""
+private struct {prefix}DemoPosterURLs {{
+    static let items: [URL] = [
+        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+    ]
+}}
 private struct {prefix}DemoProfile: Identifiable {{
     let id = UUID()
     let name: String
@@ -731,6 +1274,7 @@ private struct {prefix}VideoHomeTabScreen: View {{
                     {play}
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+{poster_block}
                     ScrollView(.horizontal, showsIndicators: false) {{
                         HStack(spacing: 8) {{
                             ForEach(0..<6, id: \\.self) {{ i in
@@ -757,6 +1301,41 @@ private struct {prefix}ProfilePickerTabScreen: View {{
     }}
 }}
 
+private struct {prefix}VideoNewTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            ScrollView {{
+                VStack(alignment: .leading, spacing: 16) {{
+{poster_block if poster_row else ""}
+                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+                }}
+                .padding(.vertical, 8)
+            }}
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+        }}
+    }}
+}}
+
+private struct {prefix}VideoDownloadsTabScreen: View {{
+    var body: some View {{
+        NavigationStack {{
+            List(["Stranger Things S4E1", "The Crown S6E2"], id: \\.self) {{ title in
+                HStack {{
+                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
+                    VStack(alignment: .leading) {{
+                        Text(title).font(.headline).foregroundStyle(.white)
+                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+                    }}
+                }}
+            }}
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Downloads")
+        }}
+    }}
+}}
+
 private struct {prefix}DemoProfilePicker: View {{
     var body: some View {{
         ZStack {{
@@ -776,8 +1355,57 @@ private struct {prefix}DemoProfilePicker: View {{
 """
 
 
-def _music_screens(prefix, tokens, canvas, accent) -> str:
+def _music_screens(prefix, tokens, canvas, accent, track_row=None, now_playing=None) -> str:
+    track_block = ""
+    if track_row:
+        track_block = f"""
+                    ForEach({prefix}DemoTracks.items) {{ track in
+                        {track_row}(
+                            title: track.title,
+                            artist: track.artist,
+                            artwork: Image(systemName: "music.note"),
+                            isPlaying: track.isPlaying
+                        )
+                    }}
+"""
+    else:
+        track_block = """
+                    ForEach(0..<4, id: \\.self) { i in
+                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
+                            .frame(height: 56)
+                            .padding(.horizontal)
+                    }
+"""
+
+    now_playing_screen = ""
+    if now_playing:
+        now_playing_screen = f"""
+private struct {prefix}MusicNowPlayingTabScreen: View {{
+    var body: some View {{
+        {now_playing}(
+            trackTitle: "Blinding Lights",
+            artist: "The Weeknd",
+            artwork: Image(systemName: "music.note"),
+            dominantColor: {accent}
+        )
+    }}
+}}
+"""
+
     return f"""
+private enum {prefix}DemoTracks {{
+    struct Item: Identifiable {{
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }}
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}}
 private struct {prefix}MusicHomeTabScreen: View {{
     var body: some View {{
         NavigationStack {{
@@ -794,6 +1422,8 @@ private struct {prefix}MusicHomeTabScreen: View {{
                         }}
                     }}
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+{track_block}
                 }}
             }}
             .background({canvas}.ignoresSafeArea())
@@ -834,10 +1464,57 @@ private struct {prefix}MusicLibraryTabScreen: View {{
         }}
     }}
 }}
+{now_playing_screen}
 """
 
 
-def _finance_screens(prefix, tokens, canvas, accent) -> str:
+def _finance_screens(prefix, tokens, canvas, accent, metal_card=None, tx_row=None) -> str:
+    hero_block = ""
+    if metal_card:
+        hero_block = f"""
+                    {metal_card}()
+                        .padding(.horizontal)
+"""
+    else:
+        hero_block = f"""
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(LinearGradient(colors: [{accent}, {accent}.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(height: 180)
+                        .overlay(alignment: .bottomLeading) {{
+                            Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
+                        }}
+                        .padding(.horizontal)
+"""
+
+    tx_block = ""
+    if tx_row:
+        tx_block = f"""
+                    ForEach({prefix}DemoTx.items) {{ tx in
+                        {tx_row}(
+                            merchant: tx.title,
+                            meta: tx.date,
+                            amount: tx.amount,
+                            incoming: tx.incoming,
+                            logo: Image(systemName: tx.icon)
+                        )
+                    }}
+"""
+    else:
+        tx_block = f"""
+                    ForEach({prefix}DemoTx.items) {{ tx in
+                        HStack {{
+                            Circle().fill({accent}.opacity(0.15)).frame(width: 40, height: 40)
+                            VStack(alignment: .leading) {{ Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }}
+                            Spacer()
+                            Text(tx.amount).font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
+                        }}
+                        .padding(.horizontal)
+                    }}
+"""
+
+    cards_hero = f"{metal_card}()" if metal_card else f"RoundedRectangle(cornerRadius: 16).fill({accent}).frame(height: 180).padding(.horizontal)"
+
     return f"""
 private struct {prefix}FinanceHomeTabScreen: View {{
     var body: some View {{
@@ -849,24 +1526,9 @@ private struct {prefix}FinanceHomeTabScreen: View {{
                         Text("2 847,50 €").font(.system(size: 36, weight: .bold))
                     }}
                     .padding(.horizontal)
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [{accent}, {accent}.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(height: 180)
-                        .overlay(alignment: .bottomLeading) {{
-                            Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
-                        }}
-                        .padding(.horizontal)
+{hero_block}
                     Text("Transactions").font(.headline).padding(.horizontal)
-                    ForEach({prefix}DemoTx.items) {{ tx in
-                        HStack {{
-                            Circle().fill({accent}.opacity(0.15)).frame(width: 40, height: 40)
-                            VStack(alignment: .leading) {{ Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }}
-                            Spacer()
-                            Text(tx.amount).font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
-                        }}
-                        .padding(.horizontal)
-                    }}
+{tx_block}
                 }}
                 .padding(.vertical)
             }}
@@ -879,7 +1541,15 @@ private struct {prefix}FinanceHomeTabScreen: View {{
 private struct {prefix}FinanceCardsTabScreen: View {{
     var body: some View {{
         NavigationStack {{
-            Text("Gérez vos cartes").padding().navigationTitle("Cartes")
+            ScrollView {{
+                VStack(spacing: 16) {{
+                    {cards_hero}
+                    Text("Gérez vos cartes").font(.headline)
+                }}
+                .padding(.vertical)
+            }}
+            .background({canvas}.ignoresSafeArea())
+            .navigationTitle("Cartes")
         }}
     }}
 }}
@@ -889,9 +1559,11 @@ private struct {prefix}DemoTx: Identifiable {{
     let title: String
     let date: String
     let amount: String
+    let incoming: Bool
+    let icon: String
     static let items: [{prefix}DemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €"),
+        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
+        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
 }}
 """

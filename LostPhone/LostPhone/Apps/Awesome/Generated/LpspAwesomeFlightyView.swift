@@ -245,13 +245,13 @@ private struct LpspFlightyShowroomRoot: View {
             LpspFlightyGenericTabScreen(title: "Flights", tabIndex: 0)
                 .tabItem { Label("Flights", systemImage: "airplane") }
                 .tag(0)
-            LpspFlightyGenericTabScreen(title: "Search", tabIndex: 1)
+            LpspFlightyTravelExploreTabScreen()
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
             LpspFlightyGenericTabScreen(title: "Airport", tabIndex: 2)
                 .tabItem { Label("Airport", systemImage: "building.2.fill") }
                 .tag(2)
-            LpspFlightyGenericTabScreen(title: "Profile", tabIndex: 3)
+            LpspFlightyTravelProfileTabScreen()
                 .tabItem { Label("Profile", systemImage: "person.fill") }
                 .tag(3)
         }
@@ -284,9 +284,60 @@ private struct LpspFlightyGenericTabScreen: View {
 }
 
 
-private struct LpspFlightyMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspFlightyGenericTabScreen(title: title, tabIndex: 0) }
+private struct LpspFlightyTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspFlightyTokens.fltTextPrimary.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspFlightyTokens.fltCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspFlightyTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspFlightyTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspFlightyTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspFlightyTokens.fltTextPrimary.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
 }
 
 

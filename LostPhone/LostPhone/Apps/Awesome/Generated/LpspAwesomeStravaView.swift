@@ -364,6 +364,9 @@ private struct LpspStravaShowroomRoot: View {
             LpspStravaGenericTabScreen(title: "Groups", tabIndex: 2)
                 .tabItem { Label("Groups", systemImage: "person.3") }
                 .tag(2)
+            LpspStravaGenericTabScreen(title: "You", tabIndex: 3)
+                .tabItem { Label("You", systemImage: "person.crop.circle") }
+                .tag(3)
         }
         .tint(LpspStravaTokens.stravaHeartRed)
         .preferredColorScheme(.dark)

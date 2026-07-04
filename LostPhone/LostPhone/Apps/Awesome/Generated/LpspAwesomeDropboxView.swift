@@ -305,12 +305,21 @@ private struct LpspDropboxShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDropboxGenericTabScreen(title: "Offline", tabIndex: 0)
-                .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
+            LpspDropboxGenericTabScreen(title: "Home", tabIndex: 0)
+                .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
-            LpspDropboxGenericTabScreen(title: "Account", tabIndex: 1)
-                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+            LpspDropboxGenericTabScreen(title: "Files", tabIndex: 1)
+                .tabItem { Label("Files", systemImage: "folder") }
                 .tag(1)
+            LpspDropboxGenericTabScreen(title: "Photos", tabIndex: 2)
+                .tabItem { Label("Photos", systemImage: "photo.on.rectangle") }
+                .tag(2)
+            LpspDropboxGenericTabScreen(title: "Offline", tabIndex: 3)
+                .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
+                .tag(3)
+            LpspDropboxGenericTabScreen(title: "Account", tabIndex: 4)
+                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+                .tag(4)
         }
         .tint(LpspDropboxTokens.dbxPdfRed)
         

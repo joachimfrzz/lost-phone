@@ -497,6 +497,19 @@ private struct LpspAppleMusicGenericTabScreen: View {
 }
 
 
+private enum LpspAppleMusicDemoTracks {
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}
 private struct LpspAppleMusicMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
@@ -513,6 +526,17 @@ private struct LpspAppleMusicMusicHomeTabScreen: View {
                         }
                     }
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+
+                    ForEach(LpspAppleMusicDemoTracks.items) { track in
+                        LpspAppleMusicTrackRow(
+                            title: track.title,
+                            artist: track.artist,
+                            artwork: Image(systemName: "music.note"),
+                            isPlaying: track.isPlaying
+                        )
+                    }
+
                 }
             }
             .background(LpspAppleMusicTokens.amCanvasLight.ignoresSafeArea())
@@ -553,5 +577,17 @@ private struct LpspAppleMusicMusicLibraryTabScreen: View {
         }
     }
 }
+
+private struct LpspAppleMusicMusicNowPlayingTabScreen: View {
+    var body: some View {
+        LpspAppleMusicNowPlayingScreen(
+            trackTitle: "Blinding Lights",
+            artist: "The Weeknd",
+            artwork: Image(systemName: "music.note"),
+            dominantColor: LpspAppleMusicTokens.amCoral
+        )
+    }
+}
+
 
 

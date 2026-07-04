@@ -347,9 +347,21 @@ private struct LpspAirbnbShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAirbnbGenericTabScreen(title: "Wishlists", tabIndex: 0)
-                .tabItem { Label("Wishlists", systemImage: "heart") }
+            LpspAirbnbTravelExploreTabScreen()
+                .tabItem { Label("Explore", systemImage: "magnifyingglass") }
                 .tag(0)
+            LpspAirbnbTravelTripsTabScreen()
+                .tabItem { Label("Wishlists", systemImage: "heart") }
+                .tag(1)
+            LpspAirbnbTravelTripsTabScreen()
+                .tabItem { Label("Trips", systemImage: "airplane") }
+                .tag(2)
+            LpspAirbnbTravelInboxTabScreen()
+                .tabItem { Label("Inbox", systemImage: "message") }
+                .tag(3)
+            LpspAirbnbTravelProfileTabScreen()
+                .tabItem { Label("Profile", systemImage: "person.circle") }
+                .tag(4)
         }
         .tint(LpspAirbnbTokens.airbnbCoral)
         
@@ -380,9 +392,60 @@ private struct LpspAirbnbGenericTabScreen: View {
 }
 
 
-private struct LpspAirbnbMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspAirbnbGenericTabScreen(title: title, tabIndex: 0) }
+private struct LpspAirbnbTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspAirbnbTokens.airbnbCoral.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspAirbnbTokens.airbnbCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspAirbnbTokens.airbnbCoral.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
 }
 
 

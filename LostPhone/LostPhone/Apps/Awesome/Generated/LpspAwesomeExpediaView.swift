@@ -289,13 +289,13 @@ private struct LpspExpediaShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspExpediaGenericTabScreen(title: "Search", tabIndex: 0)
+            LpspExpediaTravelExploreTabScreen()
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
             LpspExpediaGenericTabScreen(title: "Saved", tabIndex: 1)
                 .tabItem { Label("Saved", systemImage: "heart") }
                 .tag(1)
-            LpspExpediaGenericTabScreen(title: "Trips", tabIndex: 2)
+            LpspExpediaTravelTripsTabScreen()
                 .tabItem { Label("Trips", systemImage: "suitcase") }
                 .tag(2)
             LpspExpediaGenericTabScreen(title: "Support", tabIndex: 3)
@@ -334,9 +334,60 @@ private struct LpspExpediaGenericTabScreen: View {
 }
 
 
-private struct LpspExpediaMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspExpediaGenericTabScreen(title: title, tabIndex: 0) }
+private struct LpspExpediaTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspExpediaTokens.expActionBlue.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspExpediaTokens.expCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspExpediaTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspExpediaTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspExpediaTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspExpediaTokens.expActionBlue.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
 }
 
 

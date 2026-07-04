@@ -294,9 +294,21 @@ private struct LpspUberEatsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspUberEatsGenericTabScreen(title: "Account", tabIndex: 0)
-                .tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
+            LpspUberEatsGenericTabScreen(title: "Home", tabIndex: 0)
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
+            LpspUberEatsGenericTabScreen(title: "Browse", tabIndex: 1)
+                .tabItem { Label("Browse", systemImage: "square.grid.2x2.fill") }
+                .tag(1)
+            LpspUberEatsGenericTabScreen(title: "Search", tabIndex: 2)
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .tag(2)
+            LpspUberEatsGenericTabScreen(title: "Cart", tabIndex: 3)
+                .tabItem { Label("Cart", systemImage: "cart.fill") }
+                .tag(3)
+            LpspUberEatsGenericTabScreen(title: "Account", tabIndex: 4)
+                .tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
+                .tag(4)
         }
         .tint(LpspUberEatsTokens.ueErrorRed)
         

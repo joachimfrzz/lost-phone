@@ -253,15 +253,18 @@ private struct LpspInstagramShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspInstagramFeedTabScreen()
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
-                .tag(0)
             LpspInstagramExploreTabScreen()
                 .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
+                .tag(0)
+            LpspInstagramReelsTabScreen()
+                .tabItem { Label("Reels", systemImage: "play.rectangle") }
                 .tag(1)
+            LpspInstagramSocialTabScreen(title: "Créer")
+                .tabItem { Label("Créer", systemImage: "plus.app") }
+                .tag(2)
             LpspInstagramProfileTabScreen()
                 .tabItem { Label("Profil", systemImage: "person.circle") }
-                .tag(2)
+                .tag(3)
         }
         .tint(LpspInstagramTokens.igActionBlue)
         

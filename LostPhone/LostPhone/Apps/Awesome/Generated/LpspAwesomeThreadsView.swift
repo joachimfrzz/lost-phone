@@ -343,9 +343,15 @@ private struct LpspThreadsShowroomRoot: View {
             LpspThreadsExploreTabScreen()
                 .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspThreadsProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle") }
+            LpspThreadsSocialTabScreen(title: "Plus Square")
+                .tabItem { Label("Plus Square", systemImage: "plus.square") }
                 .tag(2)
+            LpspThreadsSocialTabScreen(title: "Heart Fill")
+                .tabItem { Label("Heart Fill", systemImage: "heart.fill") }
+                .tag(3)
+            LpspThreadsProfileTabScreen()
+                .tabItem { Label("Profil", systemImage: "person.circle.fill") }
+                .tag(4)
         }
         .tint(LpspThreadsTokens.threadsLikeCoral)
         

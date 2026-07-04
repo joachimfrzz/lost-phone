@@ -320,9 +320,15 @@ private struct LpspXShowroomRoot: View {
             LpspXExploreTabScreen()
                 .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspXProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle") }
+            LpspXSocialTabScreen(title: "Person 3 Fill")
+                .tabItem { Label("Person 3 Fill", systemImage: "person.3.fill") }
                 .tag(2)
+            LpspXSocialTabScreen(title: "Bell Fill")
+                .tabItem { Label("Bell Fill", systemImage: "bell.fill") }
+                .tag(3)
+            LpspXSocialTabScreen(title: "Envelope Fill")
+                .tabItem { Label("Envelope Fill", systemImage: "envelope.fill") }
+                .tag(4)
         }
         .tint(LpspXTokens.xErrorRed)
         

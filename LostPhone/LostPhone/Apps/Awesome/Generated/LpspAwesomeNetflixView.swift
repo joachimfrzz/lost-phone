@@ -336,13 +336,13 @@ private struct LpspNetflixShowroomRoot: View {
             LpspNetflixVideoHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspNetflixVideoHomeTabScreen()
+            LpspNetflixVideoNewTabScreen()
                 .tabItem { Label("New & Hot", systemImage: "play.rectangle.on.rectangle.fill") }
                 .tag(1)
             LpspNetflixProfilePickerTabScreen()
                 .tabItem { Label("My Netflix", systemImage: "person.crop.circle.fill") }
                 .tag(2)
-            LpspNetflixVideoHomeTabScreen()
+            LpspNetflixVideoDownloadsTabScreen()
                 .tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
                 .tag(3)
         }
@@ -375,6 +375,16 @@ private struct LpspNetflixGenericTabScreen: View {
 }
 
 
+private struct LpspNetflixDemoPosterURLs {
+    static let items: [URL] = [
+        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+    ]
+}
 private struct LpspNetflixDemoProfile: Identifiable {
     let id = UUID()
     let name: String
@@ -415,6 +425,12 @@ private struct LpspNetflixVideoHomeTabScreen: View {
                     LpspNetflixNetflixPlayButton(title: "Lecture", action: {})
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+
+                    LpspNetflixPosterRow(title: "Trending Now", posters: LpspNetflixDemoPosterURLs.items)
+                    LpspNetflixPosterRow(title: "Continue Watching", posters: LpspNetflixDemoPosterURLs.items)
+
+                    LpspNetflixTop10Row(posters: LpspNetflixDemoPosterURLs.items)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(0..<6, id: \.self) { i in
@@ -443,6 +459,46 @@ private struct LpspNetflixProfilePickerTabScreen: View {
             },
             onSelect: { _ in }
         )
+    }
+}
+
+private struct LpspNetflixVideoNewTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+
+                    LpspNetflixPosterRow(title: "Trending Now", posters: LpspNetflixDemoPosterURLs.items)
+                    LpspNetflixPosterRow(title: "Continue Watching", posters: LpspNetflixDemoPosterURLs.items)
+
+                    LpspNetflixTop10Row(posters: LpspNetflixDemoPosterURLs.items)
+
+                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+                }
+                .padding(.vertical, 8)
+            }
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+        }
+    }
+}
+
+private struct LpspNetflixVideoDownloadsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
+                HStack {
+                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
+                    VStack(alignment: .leading) {
+                        Text(title).font(.headline).foregroundStyle(.white)
+                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Downloads")
+        }
     }
 }
 

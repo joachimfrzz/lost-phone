@@ -242,8 +242,20 @@ private struct LpspTwitchShowroomRoot: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             LpspTwitchVideoHomeTabScreen()
-                .tabItem { Label("Notifications", systemImage: "bell.fill") }
+                .tabItem { Label("Following", systemImage: "heart.fill") }
                 .tag(0)
+            LpspTwitchVideoHomeTabScreen()
+                .tabItem { Label("Browse", systemImage: "play.square.stack.fill") }
+                .tag(1)
+            LpspTwitchVideoHomeTabScreen()
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .tag(2)
+            LpspTwitchVideoHomeTabScreen()
+                .tabItem { Label("Notifications", systemImage: "bell.fill") }
+                .tag(3)
+            LpspTwitchProfilePickerTabScreen()
+                .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
+                .tag(4)
         }
         .tint(LpspTwitchTokens.twitchLiveRed)
         .preferredColorScheme(.dark)
@@ -274,6 +286,16 @@ private struct LpspTwitchGenericTabScreen: View {
 }
 
 
+private struct LpspTwitchDemoPosterURLs {
+    static let items: [URL] = [
+        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+    ]
+}
 private struct LpspTwitchDemoProfile: Identifiable {
     let id = UUID()
     let name: String
@@ -314,6 +336,7 @@ private struct LpspTwitchVideoHomeTabScreen: View {
                     Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(0..<6, id: \.self) { i in
@@ -337,6 +360,41 @@ private struct LpspTwitchVideoHomeTabScreen: View {
 private struct LpspTwitchProfilePickerTabScreen: View {
     var body: some View {
         LpspTwitchDemoProfilePicker()
+    }
+}
+
+private struct LpspTwitchVideoNewTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+
+                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+                }
+                .padding(.vertical, 8)
+            }
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+        }
+    }
+}
+
+private struct LpspTwitchVideoDownloadsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
+                HStack {
+                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
+                    VStack(alignment: .leading) {
+                        Text(title).font(.headline).foregroundStyle(.white)
+                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Downloads")
+        }
     }
 }
 

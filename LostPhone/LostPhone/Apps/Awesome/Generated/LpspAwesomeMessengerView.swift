@@ -372,6 +372,7 @@ private struct LpspMessengerChatsTabScreen: View {
     }
 }
 
+
 private struct LpspMessengerChatDetailScreen: View {
     let chat: LpspMessengerDemoChat
     var body: some View {
@@ -392,6 +393,7 @@ private struct LpspMessengerChatDetailScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 
 private struct LpspMessengerCallsTabScreen: View {
     var body: some View {

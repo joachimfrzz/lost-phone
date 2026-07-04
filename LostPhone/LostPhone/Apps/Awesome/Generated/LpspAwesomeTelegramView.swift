@@ -468,7 +468,7 @@ private struct LpspTelegramChatDetailScreen: View {
                 LazyVStack(spacing: 8) {
 
                     LpspTelegramTgOutgoingBubble(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)
-                    LpspTelegramTgIncomingBubble(text: "Oui, j'arrive !")
+                    LpspTelegramTgIncomingBubble(text: "Oui, j'arrive !", senderName: nil, senderId: nil)
 
                 }
                 .padding(.vertical, 8)

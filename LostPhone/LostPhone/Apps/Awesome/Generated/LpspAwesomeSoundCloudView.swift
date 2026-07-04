@@ -116,7 +116,7 @@ fileprivate struct LpspSoundCloudWaveformScrubber: View {
                         .resizable()
                         .frame(width: 20, height: 20)
                         .clipShape(Circle())
-                        .overlay(Circle().strokeBorder(LpspSoundCloudTokens.scCanvas, lineWidth: 1.5))
+                        .overlay(Circle().stroke(LpspSoundCloudTokens.scCanvas, lineWidth: 1.5))
                         .offset(x: CGFloat(c.position) * w - 10, y: 52)
                         .onAppear {
                             // reveal as the playhead sweeps past

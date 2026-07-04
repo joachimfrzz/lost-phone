@@ -271,7 +271,7 @@ fileprivate struct LpspBumbleCountdownChip: View {
             .background(
                 Capsule()
                     .fill(isExpired ? LpspBumbleTokens.bumbleError : LpspBumbleTokens.bumbleYellow)
-                    .overlay(Capsule().strokeBorder(LpspBumbleTokens.bumbleHoneyDeep, lineWidth: 1))
+                    .overlay(Capsule().stroke(LpspBumbleTokens.bumbleHoneyDeep, lineWidth: 1))
             )
             .opacity(pulse ? 1.0 : 0.95)
             .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: pulse)
@@ -362,7 +362,7 @@ fileprivate struct LpspBumbleHexAvatar: View {
             .aspectRatio(contentMode: .fill)
             .frame(width: size, height: size)
             .clipShape(LpspBumbleHexagon())
-            .overlay(LpspBumbleHexagon().strokeBorder(stroke, lineWidth: 4))
+            .overlay(LpspBumbleHexagon().stroke(stroke, lineWidth: 4))
     }
 }
 
@@ -471,11 +471,11 @@ private struct LpspBumbleDatingDiscoverTabScreen: View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
             LpspBumbleSwipeCard(
+                photos: [Image(systemName: "person.fill")],
                 name: "Alex",
                 age: 28,
-                distance: "5 km",
-                occupation: "Designer",
-                photoURLs: []
+                bio: "Paris · Photo · Voyage",
+                isVerified: true
             )
         }
     }

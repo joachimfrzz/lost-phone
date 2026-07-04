@@ -163,7 +163,7 @@ fileprivate struct LpspMessengerReactionBadge: View {
         }
         .padding(.horizontal, 6).padding(.vertical, 3)
         .background(Capsule().fill(LpspMessengerTokens.msgCanvas)
-            .overlay(Capsule().strokeBorder(LpspMessengerTokens.msgDivider, lineWidth: 1)))
+            .overlay(Capsule().stroke(LpspMessengerTokens.msgDivider, lineWidth: 1)))
         .scaleEffect(landed ? 1 : 1.25)
         .animation(.spring(response: 0.25, dampingFraction: 0.5), value: landed)
         .onAppear { landed = true }
@@ -228,7 +228,7 @@ fileprivate struct LpspMessengerConversationRow: View {
                 if activeNow {
                     Circle().fill(LpspMessengerTokens.msgActiveGreen)
                         .frame(width: 14, height: 14)
-                        .overlay(Circle().strokeBorder(LpspMessengerTokens.msgCanvas, lineWidth: 2))
+                        .overlay(Circle().stroke(LpspMessengerTokens.msgCanvas, lineWidth: 2))
                 }
             }
             VStack(alignment: .leading, spacing: 3) {

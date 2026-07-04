@@ -205,14 +205,14 @@ fileprivate struct LpspAirbnbSearchPill: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(LpspAirbnbTokens.airbnbInk)
                     .padding(10)
-                    .overlay(Circle().strokeBorder(LpspAirbnbTokens.airbnbDivider, lineWidth: 1))
+                    .overlay(Circle().stroke(LpspAirbnbTokens.airbnbDivider, lineWidth: 1))
             }
             .padding(.horizontal, 20)
             .frame(height: 56)
             .background(
                 Capsule()
                     .fill(LpspAirbnbTokens.airbnbCanvas)
-                    .overlay(Capsule().strokeBorder(LpspAirbnbTokens.airbnbDivider, lineWidth: 0.5))
+                    .overlay(Capsule().stroke(LpspAirbnbTokens.airbnbDivider, lineWidth: 0.5))
                     .shadow(color: .black.opacity(0.08), radius: 12, y: 4)
                     .shadow(color: .black.opacity(0.04), radius: 2, y: 1)
             )

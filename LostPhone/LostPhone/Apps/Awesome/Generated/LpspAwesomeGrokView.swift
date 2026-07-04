@@ -233,7 +233,7 @@ fileprivate struct LpspGrokGrokModeToggle: View {
         }
         .padding(3)
         .background(Capsule().fill(LpspGrokTokens.grokSurface1))
-        .overlay(Capsule().strokeBorder(LpspGrokTokens.grokDivider, lineWidth: 1))
+        .overlay(Capsule().stroke(LpspGrokTokens.grokDivider, lineWidth: 1))
         .sensoryFeedback(.selection, trigger: isFun)
     }
 

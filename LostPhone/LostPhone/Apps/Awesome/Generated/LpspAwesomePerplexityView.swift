@@ -343,7 +343,7 @@ fileprivate struct LpspPerplexityProSearchToggle: View {
             .padding(.horizontal, 14)
             .background(
                 Capsule().fill(isOn ? LpspPerplexityTokens.pplxTeal : LpspPerplexityTokens.pplxSurface2)
-                    .overlay(Capsule().strokeBorder(isOn ? Color.clear : LpspPerplexityTokens.pplxSurface3, lineWidth: 1))
+                    .overlay(Capsule().stroke(isOn ? Color.clear : LpspPerplexityTokens.pplxSurface3, lineWidth: 1))
             )
         }
         .buttonStyle(.plain)

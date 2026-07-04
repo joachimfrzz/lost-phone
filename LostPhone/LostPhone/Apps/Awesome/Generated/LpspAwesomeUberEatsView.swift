@@ -241,7 +241,7 @@ fileprivate struct LpspUberEatsUEOrderTrackingView: View {
                 Annotation("Courier", coordinate: courier) {
                     Circle().fill(LpspUberEatsTokens.ueGreen)
                         .frame(width: 22, height: 22)
-                        .overlay(Circle().strokeBorder(.white, lineWidth: 3))
+                        .overlay(Circle().stroke(.white, lineWidth: 3))
                 }
             }
             .mapStyle(.standard(elevation: .flat))

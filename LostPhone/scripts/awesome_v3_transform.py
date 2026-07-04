@@ -79,6 +79,18 @@ def fix_sensory_feedback_weights(code: str) -> str:
     return code
 
 
+def fix_shape_stroke_border_calls(code: str) -> str:
+    """Shape().strokeBorder dans overlay → stroke (compatibilité Shape SwiftUI)."""
+    return re.sub(
+        r"\.overlay\((\w+\(\))\.strokeBorder\(([^)]+)\)\)",
+        r".overlay(\1.stroke(\2))",
+        code,
+    )
+    code = code.replace(".impact(weight: .soft)", ".impact(weight: .light)")
+    code = code.replace('.fontFeature("zero")', ".monospacedDigit()")
+    return code
+
+
 def fix_incomplete_map_views(code: str, prefix: str) -> str:
     """Complète UberMapView spec avec coordonnées démo si pickup/route absents."""
     if "coordinate: pickup" not in code or ("let pickup" in code or "var pickup" in code):
@@ -557,6 +569,8 @@ def add_missing_stub_types(code: str, prefix: str) -> str:
         code = re.sub(r"\bFlowLayout\b", f"{prefix}FlowLayout", code)
         stubs.append(
             f"fileprivate struct {prefix}FlowLayout: Layout {{\n"
+            f"    var spacing: CGFloat = 8\n"
+            f"    init(spacing: CGFloat = 8) {{ self.spacing = spacing }}\n"
             f"    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {{\n"
             f"        proposal.replacingUnspecifiedDimensions(by: CGSize(width: 300, height: 40))\n"
             f"    }}\n"
@@ -565,7 +579,7 @@ def add_missing_stub_types(code: str, prefix: str) -> str:
             f"        for subview in subviews {{\n"
             f"            let size = subview.sizeThatFits(.unspecified)\n"
             f"            subview.place(at: CGPoint(x: x, y: bounds.minY), proposal: .unspecified)\n"
-            f"            x += size.width + 8\n"
+            f"            x += size.width + spacing\n"
             f"        }}\n"
             f"    }}\n"
             f"}}"
@@ -798,6 +812,7 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     code = fix_view_body_property_conflict(code)
     code = fix_posttext_argument_labels(code)
     code = fix_sensory_feedback_weights(code)
+    code = fix_shape_stroke_border_calls(code)
     code = fix_incomplete_map_views(code, prefix)
     code = strip_invalid_view_stroke_extensions(code)
     code = add_missing_stub_types(code, prefix)

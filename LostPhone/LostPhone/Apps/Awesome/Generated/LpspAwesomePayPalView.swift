@@ -106,7 +106,7 @@ fileprivate struct LpspPayPalBalanceCard: View {
                     Text("Transfer")
                         .font(LpspPayPalFonts.ppButtonSmall).foregroundStyle(LpspPayPalTokens.payPalBlue)
                         .frame(maxWidth: .infinity).frame(height: 44)
-                        .overlay(Capsule().strokeBorder(LpspPayPalTokens.payPalBlue, lineWidth: 1.5))
+                        .overlay(Capsule().stroke(LpspPayPalTokens.payPalBlue, lineWidth: 1.5))
                 }
             }
         }
@@ -215,7 +215,7 @@ fileprivate struct LpspPayPalPayPalSecondaryButton: View {
                 .foregroundStyle(LpspPayPalTokens.payPalBlue)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .overlay(Capsule().strokeBorder(LpspPayPalTokens.payPalBlue, lineWidth: 1.5))
+                .overlay(Capsule().stroke(LpspPayPalTokens.payPalBlue, lineWidth: 1.5))
         }
     }
 }

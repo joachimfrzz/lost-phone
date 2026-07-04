@@ -324,9 +324,8 @@ private struct LpspZoomGenericTabScreen: View {
 
 
 
-private struct LpspZoomDemoParticipant { let name: String; let isMuted: Bool; let isSpeaking: Bool }
 private enum LpspZoomDemoParticipants {
-    static let items: [LpspZoomDemoParticipant] = [
+    static let items: [LpspZoomParticipant] = [
         .init(name: "Alex", isMuted: false, isSpeaking: true),
         .init(name: "Léa", isMuted: true, isSpeaking: false),
     ]

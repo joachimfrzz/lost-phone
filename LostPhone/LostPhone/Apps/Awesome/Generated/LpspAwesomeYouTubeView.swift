@@ -448,14 +448,10 @@ private struct LpspYouTubeYoutubeShortsTabScreen: View {
                 HStack {
                     Spacer()
                     LpspYouTubeShortsActionRail(
-                        avatarURL: nil,
-                        isFollowed: .constant(false),
-                        likeCount: .constant(4200),
-                        isLiked: .constant(true),
-                        commentCount: 120,
-                        bookmarkCount: 89,
-                        shareCount: 45,
-                        musicArtwork: nil
+                        creatorAvatarURL: URL(string: "https://picsum.photos/seed/ytcreator/44/44")!,
+                        likeCount: "4,2 k",
+                        commentCount: "120",
+                        isLiked: .constant(true)
                     )
                 }
             }

@@ -466,11 +466,18 @@ private enum {prefix}DemoChannel {{
 }}
 """
 
+    participant_type = f"{prefix}Participant" if gallery_grid else f"{prefix}DemoParticipant"
+    demo_participant_struct = ""
+    if not gallery_grid:
+        demo_participant_struct = f"""
+private struct {prefix}DemoParticipant {{ let name: String; let isMuted: Bool; let isSpeaking: Bool }}
+"""
+
     return f"""
 {teams_channel}
-private struct {prefix}DemoParticipant {{ let name: String; let isMuted: Bool; let isSpeaking: Bool }}
+{demo_participant_struct}
 private enum {prefix}DemoParticipants {{
-    static let items: [{prefix}DemoParticipant] = [
+    static let items: [{participant_type}] = [
         .init(name: "Alex", isMuted: false, isSpeaking: true),
         .init(name: "Léa", isMuted: true, isSpeaking: false),
     ]
@@ -724,14 +731,10 @@ def youtube_screens(
                 HStack {{
                     Spacer()
                     {shorts_rail}(
-                        avatarURL: nil,
-                        isFollowed: .constant(false),
-                        likeCount: .constant(4200),
-                        isLiked: .constant(true),
-                        commentCount: 120,
-                        bookmarkCount: 89,
-                        shareCount: 45,
-                        musicArtwork: nil
+                        creatorAvatarURL: URL(string: "https://picsum.photos/seed/ytcreator/44/44")!,
+                        likeCount: "4,2 k",
+                        commentCount: "120",
+                        isLiked: .constant(true)
                     )
                 }}
             }}

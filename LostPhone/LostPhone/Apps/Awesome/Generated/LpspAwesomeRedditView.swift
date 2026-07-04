@@ -145,14 +145,8 @@ fileprivate struct LpspRedditRDVoteColumn: View {
     }
 
     private func bounce(_ value: inout CGFloat) {
-        withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) {
-            value = 1.25
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-            withAnimation(.spring(response: 0.2, dampingFraction: 0.7)) {
-                value = 1.0
-            }
-        }
+        withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) { value = 1.25 }
+        withAnimation(.spring(response: 0.2, dampingFraction: 0.7).delay(0.18)) { value = 1.0 }
     }
 }
 

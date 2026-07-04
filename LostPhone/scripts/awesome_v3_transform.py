@@ -79,6 +79,25 @@ def fix_sensory_feedback_weights(code: str) -> str:
     return code
 
 
+def fix_inout_bounce_helper(code: str) -> str:
+    """Corrige bounce(inout) + DispatchQueue.asyncAfter (illégal en Swift)."""
+    needle = """    private func bounce(_ value: inout CGFloat) {
+        withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) {
+            value = 1.25
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.7)) {
+                value = 1.0
+            }
+        }
+    }"""
+    repl = """    private func bounce(_ value: inout CGFloat) {
+        withAnimation(.spring(response: 0.18, dampingFraction: 0.55)) { value = 1.25 }
+        withAnimation(.spring(response: 0.2, dampingFraction: 0.7).delay(0.18)) { value = 1.0 }
+    }"""
+    return code.replace(needle, repl)
+
+
 def fix_shape_stroke_border_calls(code: str) -> str:
     """Shape().strokeBorder dans overlay → stroke (compatibilité Shape SwiftUI)."""
     return re.sub(
@@ -846,6 +865,7 @@ def finalize_component_swift(code: str, prefix: str) -> str:
     code = fix_posttext_argument_labels(code)
     code = fix_sensory_feedback_weights(code)
     code = fix_shape_stroke_border_calls(code)
+    code = fix_inout_bounce_helper(code)
     code = fix_incomplete_map_views(code, prefix)
     code = strip_invalid_view_stroke_extensions(code)
     code = add_missing_stub_types(code, prefix)

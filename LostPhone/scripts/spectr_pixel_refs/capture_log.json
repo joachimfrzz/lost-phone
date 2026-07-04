@@ -1,0 +1,429 @@
+[
+  {
+    "slug": "airbnb",
+    "name": "Airbnb",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/airbnb.png"
+  },
+  {
+    "slug": "amazon",
+    "name": "Amazon",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/amazon.png"
+  },
+  {
+    "slug": "apple-music",
+    "name": "Apple Music",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/apple-music.png"
+  },
+  {
+    "slug": "apple-tv",
+    "name": "Apple TV",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/apple-tv.png"
+  },
+  {
+    "slug": "audible",
+    "name": "Audible",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/audible.png"
+  },
+  {
+    "slug": "binance",
+    "name": "Binance",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/binance.png"
+  },
+  {
+    "slug": "booking",
+    "name": "Booking",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/booking.png"
+  },
+  {
+    "slug": "bumble",
+    "name": "Bumble",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/bumble.png"
+  },
+  {
+    "slug": "chatgpt",
+    "name": "ChatGPT",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/chatgpt.png"
+  },
+  {
+    "slug": "claude",
+    "name": "Claude",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/claude.png"
+  },
+  {
+    "slug": "coinbase",
+    "name": "Coinbase",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/coinbase.png"
+  },
+  {
+    "slug": "deezer",
+    "name": "Deezer",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/deezer.png"
+  },
+  {
+    "slug": "deliveroo",
+    "name": "Deliveroo",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/deliveroo.png"
+  },
+  {
+    "slug": "discord",
+    "name": "Discord",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/discord.png"
+  },
+  {
+    "slug": "disney-plus",
+    "name": "Disney+",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/disney-plus.png"
+  },
+  {
+    "slug": "dropbox",
+    "name": "Dropbox",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/dropbox.png"
+  },
+  {
+    "slug": "dropbox",
+    "name": "Fichiers",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/dropbox.png"
+  },
+  {
+    "slug": "expedia",
+    "name": "Expedia",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/expedia.png"
+  },
+  {
+    "slug": "facebook",
+    "name": "Facebook",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/facebook.png"
+  },
+  {
+    "slug": "flighty",
+    "name": "Flighty",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/flighty.png"
+  },
+  {
+    "slug": "gemini",
+    "name": "Gemini",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/gemini.png"
+  },
+  {
+    "slug": "google-calendar",
+    "name": "Google Calendar",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/google-calendar.png"
+  },
+  {
+    "slug": "google-maps",
+    "name": "Google Maps",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/google-maps.png"
+  },
+  {
+    "slug": "google-maps",
+    "name": "Plans",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/google-maps.png"
+  },
+  {
+    "slug": "grok",
+    "name": "Grok",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/grok.png"
+  },
+  {
+    "slug": "happn",
+    "name": "Happn",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/happn.png"
+  },
+  {
+    "slug": "hinge",
+    "name": "Hinge",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/hinge.png"
+  },
+  {
+    "slug": "instagram",
+    "name": "Instagram",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/instagram.png"
+  },
+  {
+    "slug": "kindle",
+    "name": "Kindle",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/kindle.png"
+  },
+  {
+    "slug": "linkedin",
+    "name": "LinkedIn",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/linkedin.png"
+  },
+  {
+    "slug": "messenger",
+    "name": "Messenger",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/messenger.png"
+  },
+  {
+    "slug": "microsoft-teams",
+    "name": "Teams",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/microsoft-teams.png"
+  },
+  {
+    "slug": "netflix",
+    "name": "Netflix",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/netflix.png"
+  },
+  {
+    "slug": "paypal",
+    "name": "PayPal",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/paypal.png"
+  },
+  {
+    "slug": "perplexity",
+    "name": "Perplexity",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/perplexity.png"
+  },
+  {
+    "slug": "pinterest",
+    "name": "Pinterest",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/pinterest.png"
+  },
+  {
+    "slug": "prime-video",
+    "name": "Prime Video",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/prime-video.png"
+  },
+  {
+    "slug": "reddit",
+    "name": "Reddit",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/reddit.png"
+  },
+  {
+    "slug": "revolut",
+    "name": "Revolut",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/revolut.png"
+  },
+  {
+    "slug": "revolut",
+    "name": "Banque",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/revolut.png"
+  },
+  {
+    "slug": "shazam",
+    "name": "Shazam",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/shazam.png"
+  },
+  {
+    "slug": "signal",
+    "name": "Signal",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/signal.png"
+  },
+  {
+    "slug": "snapchat",
+    "name": "Snapchat",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/snapchat.png"
+  },
+  {
+    "slug": "soundcloud",
+    "name": "SoundCloud",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/soundcloud.png"
+  },
+  {
+    "slug": "spotify",
+    "name": "Spotify",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/spotify.png"
+  },
+  {
+    "slug": "strava",
+    "name": "Strava",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/strava.png"
+  },
+  {
+    "slug": "telegram",
+    "name": "Telegram",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/telegram.png"
+  },
+  {
+    "slug": "threads",
+    "name": "Threads",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/threads.png"
+  },
+  {
+    "slug": "tiktok",
+    "name": "TikTok",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/tiktok.png"
+  },
+  {
+    "slug": "tinder",
+    "name": "Tinder",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/tinder.png"
+  },
+  {
+    "slug": "tripadvisor",
+    "name": "TripAdvisor",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/tripadvisor.png"
+  },
+  {
+    "slug": "twitch",
+    "name": "Twitch",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/twitch.png"
+  },
+  {
+    "slug": "uber",
+    "name": "Uber",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/uber.png"
+  },
+  {
+    "slug": "uber-eats",
+    "name": "Uber Eats",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/uber-eats.png"
+  },
+  {
+    "slug": "waze",
+    "name": "Waze",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/waze.png"
+  },
+  {
+    "slug": "whatsapp",
+    "name": "WhatsApp",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/whatsapp.png"
+  },
+  {
+    "slug": "wise",
+    "name": "Wise",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/wise.png"
+  },
+  {
+    "slug": "x-twitter",
+    "name": "X",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/x-twitter.png"
+  },
+  {
+    "slug": "youtube",
+    "name": "YouTube",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/youtube.png"
+  },
+  {
+    "slug": "youtube-music",
+    "name": "YouTube Music",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/youtube-music.png"
+  },
+  {
+    "slug": "zoom",
+    "name": "Zoom",
+    "status": "ok",
+    "source": "live",
+    "path": "/workspace/LostPhone/scripts/spectr_pixel_refs/zoom.png"
+  }
+]

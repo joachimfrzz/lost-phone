@@ -26,3 +26,8 @@ LostPhone/*.xcworkspace
 _refs
 __pycache__/
 awesome-ios-design-md/
+
+# Spectr pixel pipeline outputs (regenerate via run_spectr_pixel_pipeline.sh)
+LostPhone/scripts/spectr_pixel_refs/*.png
+LostPhone/scripts/lpsp_pixel_captures/
+LostPhone/scripts/spectr_pixel_report/diffs/

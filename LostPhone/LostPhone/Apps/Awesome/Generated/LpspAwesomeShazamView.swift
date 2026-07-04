@@ -168,7 +168,7 @@ fileprivate struct LpspShazamShazamHome: View {
 
     var body: some View {
         ZStack {
-            Rectangle().fill(.shazamHero).ignoresSafeArea()
+            Rectangle().fill(LpspShazamTokens.shazamHero).ignoresSafeArea()
 
             VStack {
                 HStack {

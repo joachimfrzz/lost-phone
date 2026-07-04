@@ -340,8 +340,7 @@ private struct LpspInstagramFeedTabScreen: View {
                     }
 
 
-                    ForEach(LpspInstagramDemoPosts.items.indices, id: \.self) { i in
-                        let post = LpspInstagramDemoPosts.items[i]
+                    ForEach(LpspInstagramDemoPosts.items) { post in
                         LpspInstagramFeedPost(
                             username: post.user,
                             avatar: Image(systemName: "person.circle.fill"),

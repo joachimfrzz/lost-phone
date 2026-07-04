@@ -379,8 +379,8 @@ private struct LpspMessengerChatDetailScreen: View {
             ScrollView {
                 LazyVStack(spacing: 8) {
 
-                    LpspMessengerOutgoingBubble(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)
-                    LpspMessengerIncomingBubble(text: "Oui, j'arrive !")
+                    LpspMessengerDemoBubble(text: "Salut, tu es dispo ?", outgoing: true)
+                    LpspMessengerDemoBubble(text: "Oui, j'arrive !", outgoing: false)
 
                 }
                 .padding(.vertical, 8)

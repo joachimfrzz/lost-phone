@@ -272,18 +272,6 @@ fileprivate struct LpspExpediaBundleButton: View {
     }
 }
 
-fileprivate struct LpspExpediaExpediaTabView: View {
-    var body: some View {
-        TabView {
-            SearchScreen().tabItem { Label("Search", systemImage: "magnifyingglass") }
-            SavedScreen().tabItem { Label("Saved", systemImage: "heart") }
-            TripsScreen().tabItem { Label("Trips", systemImage: "suitcase") }
-            SupportScreen().tabItem { Label("Support", systemImage: "questionmark.circle") }
-            AccountScreen().tabItem { Label("Account", systemImage: "person.crop.circle") }
-        }
-        .tint(LpspExpediaTokens.expActionBlue) // active = Action Blue, no pill indicator
-    }
-}
 
 fileprivate struct LpspExpediaExpediaTheme: ViewModifier {
     @Environment(\.colorScheme) var scheme

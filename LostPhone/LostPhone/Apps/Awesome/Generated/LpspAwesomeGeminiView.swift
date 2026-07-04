@@ -307,40 +307,7 @@ fileprivate struct LpspGeminiGemDrawer: View {
     }
 }
 
-fileprivate struct LpspGeminiGemRoot: View {
-    @State private var drawerOpen = false
-    var body: some View {
-        ZStack {
-            ConversationView()
-                .safeAreaInset(edge: .top) {
-                    HStack {
-                        Button { drawerOpen = true } label: {
-                            Image(systemName: "line.3.horizontal").font(.system(size: 22))
-                        }
-                        Spacer()
-                        Button { } label: {
-                            HStack(spacing: 4) {
-                                Text("Gemini").font(LpspGeminiFonts.gemButton)
-                                Image(systemName: "chevron.down").font(.system(size: 12))
-                            }
-                        }
-                        Spacer()
-                        Image(systemName: "person.crop.circle").font(.system(size: 28))
-                    }
-                    .padding(.horizontal, 16).padding(.vertical, 8)
-                    .background(LpspGeminiTokens.gemCanvas)
-                }
-            if drawerOpen {
-                Color.black.opacity(0.4).ignoresSafeArea()
-                    .onTapGesture { drawerOpen = false }
-                LpspGeminiGemDrawer().frame(width: UIScreen.main.bounds.width * 0.82)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .transition(.move(edge: .leading))
-            }
-        }
-        .animation(.easeOut(duration: 0.28), value: drawerOpen)
-    }
-}
+
 
 // MARK: - Écrans showroom
 

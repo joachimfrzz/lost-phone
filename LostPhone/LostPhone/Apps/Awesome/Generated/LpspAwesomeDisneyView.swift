@@ -30,6 +30,7 @@ private enum LpspDisneyFonts {
 }
 
 private enum LpspDisneyTokens {
+
     // MARK: - Canvas & Surfaces
     static let dpCanvas   = Color(red: 0.039, green: 0.055, blue: 0.165) // #0A0E2A
     static let dpSurface1 = Color(red: 0.071, green: 0.082, blue: 0.180) // #12152E
@@ -46,11 +47,10 @@ private enum LpspDisneyTokens {
     static let dpGlowBlue    = Color(red: 0.102, green: 0.459, blue: 1.0)   // #1A75FF
     static let dpBluePressed = Color(red: 0.0,   green: 0.322, blue: 0.741) // #0052BD
     static let dpLiveRed     = Color(red: 0.898, green: 0.282, blue: 0.302) // #E5484D
-}
-
-extension ShapeStyle where Self == Color {
     static var dpFocusGlow: Color { Color(red: 0.102, green: 0.459, blue: 1.0).opacity(0.30) }
 }
+
+
 
 
 
@@ -306,7 +306,7 @@ private struct LpspDisneyVideoHomeTabScreen: View {
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 4))
                     .padding(.horizontal, 12)
-                    LpspDisneyDPPlayButton(title: "Lecture", action: {})
+                    LpspDisneyDPPlayButton(label: "Lecture", action: {})
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
                     ScrollView(.horizontal, showsIndicators: false) {

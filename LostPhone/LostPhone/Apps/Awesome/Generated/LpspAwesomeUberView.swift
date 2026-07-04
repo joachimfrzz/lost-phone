@@ -70,30 +70,6 @@ private enum LpspUberTokens {
 // System fallback when Uber Move isn't bundled:
 
 
-fileprivate struct LpspUberUberPrimaryButton: View {
-    let title: String
-    var isLoading: Bool = false
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                if isLoading {
-                    ProgressView().tint(.white)
-                } else {
-                    Text(title)
-                        .font(LpspUberFonts.uberButton)
-                        .foregroundStyle(.white)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(RoundedRectangle(cornerRadius: 8).fill(LpspUberTokens.uberBlack))
-        }
-        .buttonStyle(LpspUberUberPressableStyle(pressedFill: LpspUberTokens.uberGray900, pressedScale: 0.98))
-        .sensoryFeedback(.impact(weight: .medium), trigger: isLoading)
-    }
-}
 
 fileprivate struct LpspUberUberPressableStyle: ButtonStyle {
     var pressedFill: Color? = nil

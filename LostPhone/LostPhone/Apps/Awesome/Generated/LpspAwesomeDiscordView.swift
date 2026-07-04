@@ -465,39 +465,7 @@ fileprivate struct LpspDiscordDCReactionChip: View {
 }
 
 
-fileprivate struct LpspDiscordDCMobileShell: View {
-    @State private var drawerOpen: Bool = true
-    @State private var activeServerId: String? = nil
 
-    var body: some View {
-        GeometryReader { geo in
-            let drawerWidth = geo.size.width * 0.85
-
-            ZStack(alignment: .leading) {
-                DCChatView()
-                    .frame(width: geo.size.width, height: geo.size.height)
-                    .offset(x: drawerOpen ? drawerWidth : 0)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.85), value: drawerOpen)
-                    .disabled(drawerOpen)
-
-                HStack(spacing: 0) {
-                    LpspDiscordDCServerRail(servers: sampleServers, activeServerId: $activeServerId)
-                    DCChannelListPane(activeServerId: activeServerId)
-                }
-                .frame(width: drawerWidth, height: geo.size.height)
-                .offset(x: drawerOpen ? 0 : -drawerWidth)
-                .animation(.spring(response: 0.3, dampingFraction: 0.85), value: drawerOpen)
-            }
-            .gesture(
-                DragGesture()
-                    .onEnded { g in
-                        if g.translation.width > 60 { drawerOpen = true }
-                        else if g.translation.width < -60 { drawerOpen = false }
-                    }
-            )
-        }
-    }
-}
 
 // MARK: - Écrans showroom
 
@@ -618,7 +586,7 @@ private struct LpspDiscordChatDetailScreen: View {
                 .padding(.vertical, 8)
             }
             .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
-            LpspDiscordDCComposeBar()
+            LpspDiscordDCComposeBar(channelName: chat.name)
         }
         .navigationTitle(chat.name)
         .navigationBarTitleDisplayMode(.inline)

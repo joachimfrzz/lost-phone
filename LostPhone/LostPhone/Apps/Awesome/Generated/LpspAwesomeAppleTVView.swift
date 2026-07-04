@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/apple-tv/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/apple-tv
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/apple-tv
+// Meliwat/awesome-ios-design-md/video/apple-tv/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAppleTVView: View {
     var body: some View {
@@ -232,7 +232,7 @@ private struct LpspAppleTVShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAppleTVProfilePickerTabScreen()
+            LpspAppleTVSpectrHomeTabScreen()
                 .tabItem { Label("Watch Now", systemImage: "play.tv") }
                 .tag(0)
             LpspAppleTVVideoHomeTabScreen()
@@ -274,6 +274,16 @@ private struct LpspAppleTVGenericTabScreen: View {
 }
 
 
+private struct LpspAppleTVDemoPosterURLs {
+    static let items: [URL] = [
+        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+    ]
+}
 private struct LpspAppleTVDemoProfile: Identifiable {
     let id = UUID()
     let name: String
@@ -314,6 +324,7 @@ private struct LpspAppleTVVideoHomeTabScreen: View {
                     Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(0..<6, id: \.self) { i in
@@ -340,6 +351,41 @@ private struct LpspAppleTVProfilePickerTabScreen: View {
     }
 }
 
+private struct LpspAppleTVVideoNewTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+
+                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+                }
+                .padding(.vertical, 8)
+            }
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+        }
+    }
+}
+
+private struct LpspAppleTVVideoDownloadsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
+                HStack {
+                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
+                    VStack(alignment: .leading) {
+                        Text(title).font(.headline).foregroundStyle(.white)
+                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Downloads")
+        }
+    }
+}
+
 private struct LpspAppleTVDemoProfilePicker: View {
     var body: some View {
         ZStack {
@@ -354,6 +400,50 @@ private struct LpspAppleTVDemoProfilePicker: View {
                 }
             }
         }
+    }
+}
+
+
+private struct LpspAppleTVSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        ScrollView {
+            VStack(spacing: 16) {
+                Text("Watch Now").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+            ZStack(alignment: .bottomLeading) {
+                LinearGradient(colors: [.clear, Color(red: 0.000, green: 0.000, blue: 0.000)], startPoint: .top, endPoint: .bottom).frame(height: 120)
+                        Text("TV+").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("· New Episode").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Severance").font(.system(size: 28.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    HStack(spacing: 10) {
+                        Text("Play").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    } .padding(.horizontal, 12).padding(.bottom, 16)
+            } .frame(height: 420)
+                    Text("Up Next").font(.system(size: 21.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("Apple TV+").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Ted Lasso").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("S3 E8 · 24 min left").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Slow Horses").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("S4 E2 · 41 min left").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("Apple TV+").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("The Morning Show").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("New Episode").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("MLS Season Pass").font(.system(size: 21.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("● LIVE").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Inter Miami vs LA").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Matchday 28 · 2nd Half").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("LAFC vs Seattle").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Today · 7:30 PM").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            .padding(.vertical, 8)
+        }
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

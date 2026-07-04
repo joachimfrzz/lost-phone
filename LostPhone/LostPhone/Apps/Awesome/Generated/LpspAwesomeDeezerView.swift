@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/deezer/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/deezer
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/deezer
+// Meliwat/awesome-ios-design-md/music/deezer/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDeezerView: View {
     var body: some View {
@@ -319,9 +319,18 @@ private struct LpspDeezerShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
+            LpspDeezerSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
+                .tag(0)
+            LpspDeezerMusicSearchTabScreen()
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .tag(1)
+            LpspDeezerMusicHomeTabScreen()
+                .tabItem { Label("Music", systemImage: "music.note.list") }
+                .tag(2)
             LpspDeezerMusicHomeTabScreen()
                 .tabItem { Label("Profile", systemImage: "person.fill") }
-                .tag(0)
+                .tag(3)
         }
         .tint(LpspDeezerTokens.dzTextPrimary)
         .preferredColorScheme(.dark)
@@ -352,6 +361,19 @@ private struct LpspDeezerGenericTabScreen: View {
 }
 
 
+private enum LpspDeezerDemoTracks {
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}
 private struct LpspDeezerMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
@@ -368,6 +390,14 @@ private struct LpspDeezerMusicHomeTabScreen: View {
                         }
                     }
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+
+                    ForEach(0..<4, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
+                            .frame(height: 56)
+                            .padding(.horizontal)
+                    }
+
                 }
             }
             .background(LpspDeezerTokens.dzCanvas.ignoresSafeArea())
@@ -406,6 +436,24 @@ private struct LpspDeezerMusicLibraryTabScreen: View {
             }
             .navigationTitle("Bibliothèque")
         }
+    }
+}
+
+
+
+private struct LpspDeezerSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+                    Text("Flow · Your Mix").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Made for you").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("FLOW").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Midnight City").font(.system(size: 24.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("M83 · Hurry Up, We're Dreaming").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("1:48").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("-2:31").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.059, green: 0.051, blue: 0.075).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

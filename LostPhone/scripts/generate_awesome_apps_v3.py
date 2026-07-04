@@ -36,8 +36,8 @@ def generate_view(
     gallery_slug = rel.split("/")[-1]
     body = f"""import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/{rel}/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/{gallery_slug}
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/{gallery_slug}
+// Meliwat/awesome-ios-design-md/{rel}/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesome{slug(app_name)}View: View {{
     var body: some View {{

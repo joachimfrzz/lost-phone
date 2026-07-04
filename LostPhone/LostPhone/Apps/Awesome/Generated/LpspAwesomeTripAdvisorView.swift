@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/tripadvisor/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/tripadvisor
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/tripadvisor
+// Meliwat/awesome-ios-design-md/travel/tripadvisor/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTripAdvisorView: View {
     var body: some View {
@@ -239,19 +239,19 @@ private struct LpspTripAdvisorShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTripAdvisorGenericTabScreen(title: "Explore", tabIndex: 0)
+            LpspTripAdvisorSpectrHomeTabScreen()
                 .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
-            LpspTripAdvisorGenericTabScreen(title: "Search", tabIndex: 1)
+            LpspTripAdvisorTravelTabScreen(title: "Search", tabIndex: 1)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspTripAdvisorGenericTabScreen(title: "Trips", tabIndex: 2)
+            LpspTripAdvisorTravelTabScreen(title: "Trips", tabIndex: 2)
                 .tabItem { Label("Trips", systemImage: "suitcase.fill") }
                 .tag(2)
-            LpspTripAdvisorGenericTabScreen(title: "Review", tabIndex: 3)
+            LpspTripAdvisorTravelTabScreen(title: "Review", tabIndex: 3)
                 .tabItem { Label("Review", systemImage: "square.and.pencil") }
                 .tag(3)
-            LpspTripAdvisorGenericTabScreen(title: "More", tabIndex: 4)
+            LpspTripAdvisorTravelTabScreen(title: "More", tabIndex: 4)
                 .tabItem { Label("More", systemImage: "ellipsis") }
                 .tag(4)
         }
@@ -284,9 +284,173 @@ private struct LpspTripAdvisorGenericTabScreen: View {
 }
 
 
-private struct LpspTripAdvisorMessagingTabScreen: View {
+private struct LpspTripAdvisorTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspTripAdvisorTokens.taErrorRed.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspTripAdvisorTokens.taCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspTripAdvisorTokens.taErrorRed.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelTabScreen: View {
     let title: String
-    var body: some View { LpspTripAdvisorGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspTripAdvisorTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspTripAdvisorTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspTripAdvisorTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspTripAdvisorTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspTripAdvisorTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspTripAdvisorTravelExploreTabScreen() }
+        else { LpspTripAdvisorTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspTripAdvisorSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("New York City ▾").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+        } .padding(.horizontal, 16).frame(height: 44)
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                Text("Hotels, things to do, restaurants…").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.941, green: 0.941, blue: 0.941)).clipShape(RoundedRectangle(cornerRadius: 28))
+        } .padding(.horizontal, 16).padding(.top, 8)
+                Text("Hotels").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Things to do").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Restaurants").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Flights").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                    Text("Travelers' Choice").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                    Text("4.5 (1,284)").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("The Harborview Grand Hotel").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Hotel · $$ - $$$ · 0.4 mi · #2 of 240 hotels").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                        HStack {
+                            Spacer(minLength: 48)
+                            Text("").font(.system(size: 16)).foregroundStyle(.white)
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                    Text("4.0 (642)").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Olive & Thyme Bistro").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Mediterranean · $$ - $$$ · 0.7 mi").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

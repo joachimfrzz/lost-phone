@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/youtube/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/youtube
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/youtube
+// Meliwat/awesome-ios-design-md/video/youtube/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeYouTubeView: View {
     var body: some View {
@@ -375,21 +375,21 @@ private struct LpspYouTubeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspYouTubeVideoHomeTabScreen()
+            LpspYouTubeSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspYouTubeVideoHomeTabScreen()
+            LpspYouTubeYoutubeTabScreen(title: "Shorts", tabIndex: 1)
                 .tabItem { Label("Shorts", systemImage: "play.rectangle.fill") }
                 .tag(1)
-            LpspYouTubeVideoHomeTabScreen()
+            LpspYouTubeYoutubeTabScreen(title: "Subscriptions", tabIndex: 2)
                 .tabItem { Label("Subscriptions", systemImage: "play.square.stack.fill") }
                 .tag(2)
-            LpspYouTubeVideoHomeTabScreen()
+            LpspYouTubeYoutubeTabScreen(title: "You", tabIndex: 3)
                 .tabItem { Label("You", systemImage: "person.crop.circle.fill") }
                 .tag(3)
         }
         .tint(LpspYouTubeTokens.ytRed)
-        .preferredColorScheme(.dark)
+        
     }
 }
 
@@ -417,86 +417,103 @@ private struct LpspYouTubeGenericTabScreen: View {
 }
 
 
-private struct LpspYouTubeDemoProfile: Identifiable {
-    let id = UUID()
-    let name: String
-    let color: Color
-    let isKids: Bool
-}
-
-private enum LpspYouTubeDemoProfiles {
-    static let items: [LpspYouTubeDemoProfile] = [
-        .init(name: "Lost Phone", color: .red, isKids: false),
-        .init(name: "Enfants", color: .orange, isKids: true),
-    ]
-}
-
-private struct LpspYouTubeVideoHomeTabScreen: View {
+private struct LpspYouTubeYoutubeHomeTabScreen: View {
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.08, green: 0.08, blue: 0.08), Color.black],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .frame(height: 220)
-                            .overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill").font(.system(size: 56)).foregroundStyle(.white.opacity(0.9))
-                            }
-                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
-                            .frame(height: 80)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .padding(.horizontal, 12)
-                    Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)
-                        .padding(.horizontal, 12)
-                    Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(0..<6, id: \.self) { i in
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.15, green: 0.15, blue: 0.15))
-                                    .frame(width: 110, height: 165)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                    }
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("")
-            .toolbarBackground(.hidden, for: .navigationBar)
+            ScrollView { VStack(spacing: 12) { 
+                    LpspYouTubeVideoCard(
+                        thumbnailURL: URL(string: "https://picsum.photos/seed/yt/320/180")!,
+                        duration: "10:24",
+                        isLive: false,
+                        title: "Showroom Lost Phone",
+                        channelName: "lost.phone",
+                        channelAvatarURL: URL(string: "https://picsum.photos/seed/ytav/40/40")!,
+                        viewCount: "12 k vues",
+                        uploadedAgo: "il y a 2 j"
+                    )
+                    .padding(.horizontal)
+ } }
+            .background(LpspYouTubeTokens.ytCanvasLight.ignoresSafeArea())
+            .navigationTitle("Accueil")
         }
     }
 }
 
-private struct LpspYouTubeProfilePickerTabScreen: View {
-    var body: some View {
-        LpspYouTubeDemoProfilePicker()
-    }
-}
-
-private struct LpspYouTubeDemoProfilePicker: View {
-    var body: some View {
+private struct LpspYouTubeYoutubeShortsTabScreen: View {
+    var body: some View { 
         ZStack {
             Color.black.ignoresSafeArea()
-            VStack(spacing: 32) {
-                Text("Qui regarde ?").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
-                ForEach(LpspYouTubeDemoProfiles.items) { p in
-                    VStack(spacing: 8) {
-                        Circle().fill(p.color).frame(width: 72, height: 72)
-                        Text(p.name).foregroundStyle(.gray)
-                    }
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    LpspYouTubeShortsActionRail(
+                        avatarURL: nil,
+                        isFollowed: .constant(false),
+                        likeCount: .constant(4200),
+                        isLiked: .constant(true),
+                        commentCount: 120,
+                        bookmarkCount: 89,
+                        shareCount: 45,
+                        musicArtwork: nil
+                    )
                 }
             }
         }
+ }
+}
+
+private struct LpspYouTubeYoutubeSubscriptionsTabScreen: View {
+    var body: some View { NavigationStack { List(["lost.phone", "Apple Dev"], id: \.self) { Label($0, systemImage: "play.rectangle") } .navigationTitle("Abonnements") } }
+}
+
+private struct LpspYouTubeYoutubeLibraryTabScreen: View {
+    var body: some View { NavigationStack { List(["Historique", "Playlists"], id: \.self) { Label($0, systemImage: "clock") } .navigationTitle("Bibliothèque") } }
+}
+
+private struct LpspYouTubeYoutubeTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("short") { LpspYouTubeYoutubeShortsTabScreen() }
+        else if low.contains("abonn") || low.contains("subscri") { LpspYouTubeYoutubeSubscriptionsTabScreen() }
+        else if low.contains("biblio") || low.contains("library") { LpspYouTubeYoutubeLibraryTabScreen() }
+        else { LpspYouTubeYoutubeHomeTabScreen() }
+    }
+}
+
+
+private struct LpspYouTubeSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+                Text("YouTube").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 44)
+            Text("All").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Music").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Gaming").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Podcasts").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        ScrollView {
+            VStack(spacing: 12) {
+                    Text("12:34").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Golden hour film workflow — shooting on a 40-year-old lens").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Amber Leaf · 142K views · 2 hours ago").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("⋮").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("8:02").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Building a tiny CLI that actually ships").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("PlantNook Dev · 1.2M views · 3 days ago").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("⋮").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Shorts").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("60-sec soup").font(.system(size: 9.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Lens test").font(.system(size: 9.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Cabin vlog").font(.system(size: 9.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Garden").font(.system(size: 9.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+        }
+        }
+        .background(Color(red: 0.059, green: 0.059, blue: 0.059).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

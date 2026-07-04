@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/claude/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/claude
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/claude
+// Meliwat/awesome-ios-design-md/misc/claude/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeClaudeView: View {
     var body: some View {
@@ -541,10 +541,10 @@ private struct LpspClaudeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspClaudeGenericTabScreen(title: "Chat", tabIndex: 0)
+            LpspClaudeSpectrHomeTabScreen()
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
-            LpspClaudeGenericTabScreen(title: "Historique", tabIndex: 1)
+            LpspClaudeAiTabScreen(title: "Historique", tabIndex: 1)
                 .tabItem { Label("Historique", systemImage: "clock") }
                 .tag(1)
         }
@@ -577,9 +577,85 @@ private struct LpspClaudeGenericTabScreen: View {
 }
 
 
-private struct LpspClaudeMessagingTabScreen: View {
+private struct LpspClaudeDemoBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspClaudeTokens.claudeCream.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }
+    }
+}
+
+private struct LpspClaudeDemoComposeBar: View {
+    @State private var text = ""
+    var body: some View {
+        HStack {
+            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+            Image(systemName: "paperplane.fill").foregroundStyle(LpspClaudeTokens.claudeCream)
+        }
+        .padding(8)
+    }
+}
+
+private struct LpspClaudeAiChatTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 12) {
+
+                    LpspClaudeDemoBubble(text: "Bonjour !", outgoing: true)
+                    LpspClaudeDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
+
+                }
+                .padding()
+            }
+            .background(LpspClaudeTokens.claudeDarkCanvas.ignoresSafeArea())
+            LpspClaudeDemoComposeBar()
+        }
+    }
+}
+
+
+private struct LpspClaudeAiHistoryTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
+            .navigationTitle("Historique")
+        }
+    }
+}
+
+
+private struct LpspClaudeAiTabScreen: View {
     let title: String
-    var body: some View { LpspClaudeGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if tabIndex == 0 || title.lowercased().contains("chat") { LpspClaudeAiChatTabScreen() }
+        else { LpspClaudeAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspClaudeSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack {
+            Text("Untitled chat").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 48)
+        Text("Claude Opus 4.5").font(.system(size: 15, weight: .semibold)).padding(.horizontal, 12).padding(.vertical, 6).background(Color(.systemGray6)).clipShape(Capsule())
+            Text("Explain Bayesian inference like I'm a curious 15-year-old.").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Claude").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("· Opus 4.5").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("they have keys").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("\"it jingles when I walk\"").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("updates").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Reply to Claude…").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

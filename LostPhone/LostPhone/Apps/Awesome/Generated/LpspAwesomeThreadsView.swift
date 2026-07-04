@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/threads/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/threads
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/threads
+// Meliwat/awesome-ios-design-md/social/threads/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeThreadsView: View {
     var body: some View {
@@ -337,15 +337,21 @@ private struct LpspThreadsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspThreadsFeedTabScreen()
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
+            LpspThreadsSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspThreadsExploreTabScreen()
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
+            LpspThreadsSocialTabScreen(title: "Compose")
+                .tabItem { Label("Compose", systemImage: "plus.square") }
+                .tag(2)
+            LpspThreadsSocialTabScreen(title: "Activity")
+                .tabItem { Label("Activity", systemImage: "heart.fill") }
+                .tag(3)
             LpspThreadsProfileTabScreen()
                 .tabItem { Label("Profil", systemImage: "person.circle") }
-                .tag(2)
+                .tag(4)
         }
         .tint(LpspThreadsTokens.threadsLikeCoral)
         
@@ -477,9 +483,37 @@ private struct LpspThreadsProfileTabScreen: View {
     }
 }
 
+private struct LpspThreadsCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspThreadsCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspThreadsTokens.threadsLikeCoral)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspThreadsTokens.threadsCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspThreadsSocialTabScreen: View {
     let title: String
-    var body: some View { LpspThreadsGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspThreadsCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspThreadsExploreTabScreen() }
+        else if low.contains("reel") { LpspThreadsReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspThreadsProfileTabScreen() }
+        else { LpspThreadsFeedTabScreen() }
+    }
 }
 
 private struct LpspThreadsGenericFeedCard: View {
@@ -499,6 +533,37 @@ private struct LpspThreadsGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspThreadsSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("@").font(.system(size: 28.0, weight: .bold)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(spacing: 12) {
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                        Text("maya_c").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                        Text("2h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                    Text("Ran 5 miles before sunrise. The city felt like a secret.").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("247").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("18").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("12").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                        Text("jordanp").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                        Text("1h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                    Text("Same trail? I've been running that loop all month — it's unreal at 5am.").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("42").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+                            Text("3").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+            }
+        }
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

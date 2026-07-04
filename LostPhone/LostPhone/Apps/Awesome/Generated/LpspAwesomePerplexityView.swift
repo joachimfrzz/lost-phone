@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/perplexity/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/perplexity
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/perplexity
+// Meliwat/awesome-ios-design-md/misc/perplexity/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePerplexityView: View {
     var body: some View {
@@ -462,9 +462,18 @@ private struct LpspPerplexityShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPerplexityGenericTabScreen(title: "Discover", tabIndex: 0)
-                .tabItem { Label("Discover", systemImage: "safari") }
+            LpspPerplexitySpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "magnifyingglass") }
                 .tag(0)
+            LpspPerplexityAiTabScreen(title: "Discover", tabIndex: 1)
+                .tabItem { Label("Discover", systemImage: "safari") }
+                .tag(1)
+            LpspPerplexityAiTabScreen(title: "Library", tabIndex: 2)
+                .tabItem { Label("Library", systemImage: "books.vertical") }
+                .tag(2)
+            LpspPerplexityAiTabScreen(title: "Spaces", tabIndex: 3)
+                .tabItem { Label("Spaces", systemImage: "square.stack.3d.down.right") }
+                .tag(3)
         }
         .tint(LpspPerplexityTokens.pplxTextPrimary)
         
@@ -495,9 +504,101 @@ private struct LpspPerplexityGenericTabScreen: View {
 }
 
 
-private struct LpspPerplexityMessagingTabScreen: View {
+private struct LpspPerplexityDemoBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspPerplexityTokens.pplxTextPrimary.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }
+    }
+}
+
+private struct LpspPerplexityDemoComposeBar: View {
+    @State private var text = ""
+    var body: some View {
+        HStack {
+            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+            Image(systemName: "paperplane.fill").foregroundStyle(LpspPerplexityTokens.pplxTextPrimary)
+        }
+        .padding(8)
+    }
+}
+
+private struct LpspPerplexityAiChatTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 12) {
+
+                    LpspPerplexityDemoBubble(text: "Bonjour !", outgoing: true)
+                    LpspPerplexityDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
+
+                }
+                .padding()
+            }
+            .background(LpspPerplexityTokens.pplxCanvas.ignoresSafeArea())
+            LpspPerplexityDemoComposeBar()
+        }
+    }
+}
+
+
+private struct LpspPerplexityAiHistoryTabScreen: View {
+    @State private var query = "Meilleurs cafés Paris"
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                LpspPerplexitySearchInput(text: $query, onSubmit: {}, onAttach: {})
+                ScrollView {
+                    LpspPerplexityAnswerBlock(content: AttributedString("Voici trois adresses recommandées…"), isStreaming: false)
+                }
+            }
+            .padding()
+            .background(LpspPerplexityTokens.pplxCanvas.ignoresSafeArea())
+            .navigationTitle("Historique")
+        }
+    }
+}
+
+
+private struct LpspPerplexityAiTabScreen: View {
     let title: String
-    var body: some View { LpspPerplexityGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if tabIndex == 0 || title.lowercased().contains("chat") { LpspPerplexityAiChatTabScreen() }
+        else { LpspPerplexityAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspPerplexitySpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack {
+            Text("Bayesian inference").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 48)
+            Text("What is Bayesian inference?").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Sources").font(.system(size: 14))
+                        Text("W").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("wikipedia.org").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("1").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Bayesian inference — Wikipedia").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("arXiv").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("arxiv.org").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("2").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("A gentle introduction to probabilistic reasoning").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Answer").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("update").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("1").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("2").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Ask anything…").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.039, green: 0.039, blue: 0.039).ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
 }
 
 

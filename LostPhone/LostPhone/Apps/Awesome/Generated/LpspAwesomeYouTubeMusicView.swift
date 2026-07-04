@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/youtube-music/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/youtube-music
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/youtube-music
+// Meliwat/awesome-ios-design-md/music/youtube-music/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeYouTubeMusicView: View {
     var body: some View {
@@ -322,7 +322,7 @@ private struct LpspYouTubeMusicShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspYouTubeMusicMusicHomeTabScreen()
+            LpspYouTubeMusicSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspYouTubeMusicMusicHomeTabScreen()
@@ -364,6 +364,19 @@ private struct LpspYouTubeMusicGenericTabScreen: View {
 }
 
 
+private enum LpspYouTubeMusicDemoTracks {
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}
 private struct LpspYouTubeMusicMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
@@ -380,6 +393,14 @@ private struct LpspYouTubeMusicMusicHomeTabScreen: View {
                         }
                     }
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+
+                    ForEach(0..<4, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
+                            .frame(height: 56)
+                            .padding(.horizontal)
+                    }
+
                 }
             }
             .background(LpspYouTubeMusicTokens.ytmCanvas.ignoresSafeArea())
@@ -418,6 +439,26 @@ private struct LpspYouTubeMusicMusicLibraryTabScreen: View {
             }
             .navigationTitle("Bibliothèque")
         }
+    }
+}
+
+
+
+private struct LpspYouTubeMusicSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+                Text("FROM YOUR LIBRARY").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Song").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Video").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Midnight City").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("M83 · Hurry Up, We're Dreaming").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("1:48").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("-2:34").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Up Next").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Reckoner — Radiohead").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.012, green: 0.012, blue: 0.012).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

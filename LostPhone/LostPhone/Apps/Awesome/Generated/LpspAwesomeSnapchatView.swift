@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/snapchat/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/snapchat
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/snapchat
+// Meliwat/awesome-ios-design-md/social/snapchat/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSnapchatView: View {
     var body: some View {
@@ -436,7 +436,7 @@ private struct LpspSnapchatShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspSnapchatFeedTabScreen()
+            LpspSnapchatSpectrHomeTabScreen()
                 .tabItem { Label("Accueil", systemImage: "house.fill") }
                 .tag(0)
             LpspSnapchatExploreTabScreen()
@@ -576,9 +576,37 @@ private struct LpspSnapchatProfileTabScreen: View {
     }
 }
 
+private struct LpspSnapchatCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspSnapchatCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspSnapchatTokens.snapYellow)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspSnapchatTokens.snapCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspSnapchatSocialTabScreen: View {
     let title: String
-    var body: some View { LpspSnapchatGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspSnapchatCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspSnapchatExploreTabScreen() }
+        else if low.contains("reel") { LpspSnapchatReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspSnapchatProfileTabScreen() }
+        else { LpspSnapchatFeedTabScreen() }
+    }
 }
 
 private struct LpspSnapchatGenericFeedCard: View {
@@ -598,6 +626,26 @@ private struct LpspSnapchatGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspSnapchatSpectrHomeTabScreen: View {
+    var body: some View {
+        ZStack {
+        Color.black.ignoresSafeArea()
+        VStack {
+                    Text("Search").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Sunset Beach").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("🌸").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("🦋").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("✨").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("🔥").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("🎭").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

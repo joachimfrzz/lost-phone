@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/productivity/google-calendar/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/google-calendar
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/google-calendar
+// Meliwat/awesome-ios-design-md/productivity/google-calendar/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGoogleCalendarView: View {
     var body: some View {
@@ -474,9 +474,18 @@ private struct LpspGoogleCalendarShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGoogleCalendarGenericTabScreen(title: "Schedule", tabIndex: 0)
+            LpspGoogleCalendarSpectrHomeTabScreen()
                 .tabItem { Label("Schedule", systemImage: "list.bullet") }
                 .tag(0)
+            LpspGoogleCalendarCalendarTabScreen(title: "Day", tabIndex: 1)
+                .tabItem { Label("Day", systemImage: "calendar.day.timeline.left") }
+                .tag(1)
+            LpspGoogleCalendarCalendarTabScreen(title: "Week", tabIndex: 2)
+                .tabItem { Label("Week", systemImage: "calendar") }
+                .tag(2)
+            LpspGoogleCalendarCalendarTabScreen(title: "Month", tabIndex: 3)
+                .tabItem { Label("Month", systemImage: "calendar") }
+                .tag(3)
         }
         .tint(LpspGoogleCalendarTokens.gcalEventYellow)
         
@@ -507,9 +516,70 @@ private struct LpspGoogleCalendarGenericTabScreen: View {
 }
 
 
-private struct LpspGoogleCalendarMessagingTabScreen: View {
+private struct LpspGoogleCalendarCalendarScheduleTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 12) { 
+                    LpspGoogleCalendarEventCard(title: "Standup Lost Phone", timeRange: "9:00 – 9:30", location: "Zoom", calendarColor: LpspGoogleCalendarTokens.gcalEventYellow)
+                    LpspGoogleCalendarEventCard(title: "Review Spectr", timeRange: "14:00 – 15:00", location: nil, calendarColor: LpspGoogleCalendarTokens.gcalEventYellow.opacity(0.7))
+                        .padding(.horizontal)
+ } }
+            .background(LpspGoogleCalendarTokens.gcalCanvas.ignoresSafeArea())
+            .navigationTitle("Agenda")
+            .overlay(alignment: .bottomTrailing) { LpspGoogleCalendarGcalFAB(action: {}).padding() }
+        }
+    }
+}
+
+private struct LpspGoogleCalendarCalendarMonthTabScreen: View {
+    var body: some View { NavigationStack { ScrollView { 
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 4) {
+                        ForEach(1...28, id: \.self) { day in
+                            LpspGoogleCalendarMonthCell(day: day, isToday: day == 4, isCurrentMonth: true, events: [LpspGoogleCalendarTokens.gcalEventYellow])
+                        }
+                    }
+                    .padding()
+ } .navigationTitle("Mois") } }
+}
+
+private struct LpspGoogleCalendarCalendarTabScreen: View {
     let title: String
-    var body: some View { LpspGoogleCalendarGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if title.lowercased().contains("mois") || title.lowercased().contains("month") { LpspGoogleCalendarCalendarMonthTabScreen() }
+        else { LpspGoogleCalendarCalendarScheduleTabScreen() }
+    }
+}
+
+
+private struct LpspGoogleCalendarSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            Text("May 2026").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        ScrollView {
+                Text("14").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Thu · May").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Today").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("72°").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Stand-up").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("9:00 – 9:30 AM").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Join with Google Meet").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Design review · Calendar v4").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("10:30 – 11:30 AM").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Conference Room B").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Lunch with Kira").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("12:30 – 1:30 PM").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Tartine, Mission").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Pay car insurance").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("3:00 PM · Task").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Yoga · 30 min").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("6:30 – 7:00 PM").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/airbnb/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/airbnb
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/airbnb
+// Meliwat/awesome-ios-design-md/travel/airbnb/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAirbnbView: View {
     var body: some View {
@@ -347,9 +347,21 @@ private struct LpspAirbnbShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAirbnbGenericTabScreen(title: "Wishlists", tabIndex: 0)
-                .tabItem { Label("Wishlists", systemImage: "heart") }
+            LpspAirbnbSpectrHomeTabScreen()
+                .tabItem { Label("Explore", systemImage: "magnifyingglass") }
                 .tag(0)
+            LpspAirbnbTravelTabScreen(title: "Wishlists", tabIndex: 1)
+                .tabItem { Label("Wishlists", systemImage: "heart") }
+                .tag(1)
+            LpspAirbnbTravelTabScreen(title: "Trips", tabIndex: 2)
+                .tabItem { Label("Trips", systemImage: "airplane") }
+                .tag(2)
+            LpspAirbnbTravelTabScreen(title: "Inbox", tabIndex: 3)
+                .tabItem { Label("Inbox", systemImage: "message") }
+                .tag(3)
+            LpspAirbnbTravelTabScreen(title: "Profile", tabIndex: 4)
+                .tabItem { Label("Profile", systemImage: "person.circle") }
+                .tag(4)
         }
         .tint(LpspAirbnbTokens.airbnbCoral)
         
@@ -380,9 +392,121 @@ private struct LpspAirbnbGenericTabScreen: View {
 }
 
 
-private struct LpspAirbnbMessagingTabScreen: View {
+private struct LpspAirbnbTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspAirbnbTokens.airbnbCoral.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspAirbnbTokens.airbnbCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspAirbnbTokens.airbnbCoral.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelTabScreen: View {
     let title: String
-    var body: some View { LpspAirbnbGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspAirbnbTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspAirbnbTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspAirbnbTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspAirbnbTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspAirbnbTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspAirbnbTravelExploreTabScreen() }
+        else { LpspAirbnbTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspAirbnbSpectrHomeTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                    Text("Where to?").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Anywhere · Any week · Add guests").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.165, green: 0.165, blue: 0.165)).clipShape(RoundedRectangle(cornerRadius: 28))
+        } .padding(.horizontal, 16).padding(.top, 8)
+                Text("Cabins").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Amazing views").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Tropical").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Beachfront").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Design").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Mansions").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("4.92").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("· 324").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Private room in Reykjavík").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Hosted by Sigrún · Superhost").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Oct 12 – 17").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("$214").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("night").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("4.87").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("· 1,284").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Dome in Joshua Tree").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Hosted by Marion · 3 yrs hosting").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Nov 3 – 8").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("$326").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("night").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+        }
+        .background(Color(red: 0.071, green: 0.071, blue: 0.071).ignoresSafeArea())
+    }
 }
 
 

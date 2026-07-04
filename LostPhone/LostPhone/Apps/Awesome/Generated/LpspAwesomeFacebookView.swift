@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/facebook/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/facebook
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/facebook
+// Meliwat/awesome-ios-design-md/social/facebook/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeFacebookView: View {
     var body: some View {
@@ -347,9 +347,21 @@ private struct LpspFacebookShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
+            LpspFacebookSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
+                .tag(0)
+            LpspFacebookSocialTabScreen(title: "Video")
+                .tabItem { Label("Video", systemImage: "play.rectangle.fill") }
+                .tag(1)
+            LpspFacebookSocialTabScreen(title: "Marketplace")
+                .tabItem { Label("Marketplace", systemImage: "cart.fill") }
+                .tag(2)
             LpspFacebookSocialTabScreen(title: "Notifications")
                 .tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .tag(0)
+                .tag(3)
+            LpspFacebookSocialTabScreen(title: "Menu")
+                .tabItem { Label("Menu", systemImage: "line.3.horizontal") }
+                .tag(4)
         }
         .tint(LpspFacebookTokens.fbCareYellow)
         
@@ -481,9 +493,37 @@ private struct LpspFacebookProfileTabScreen: View {
     }
 }
 
+private struct LpspFacebookCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspFacebookCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspFacebookTokens.fbCareYellow)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspFacebookTokens.fbCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspFacebookSocialTabScreen: View {
     let title: String
-    var body: some View { LpspFacebookGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspFacebookCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspFacebookExploreTabScreen() }
+        else if low.contains("reel") { LpspFacebookReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspFacebookProfileTabScreen() }
+        else { LpspFacebookFeedTabScreen() }
+    }
 }
 
 private struct LpspFacebookGenericFeedCard: View {
@@ -503,6 +543,36 @@ private struct LpspFacebookGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspFacebookSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("f").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+            Text("facebook").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(spacing: 12) {
+                    Circle().fill(LinearGradient(colors: [Color(red:1,green:0.84,blue:0.6), Color(red:1,green:0.89,blue:0.58)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 30, height: 30)
+                        Text("Sarah Johnson").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                            Text("🌍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("⋯").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                Text("Golden hour on the walk home. Can't believe we almost didn't go outside today.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                        Text("👍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                        Text("❤").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                        Text("😂").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("You, Maya and 1.2K others").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("84 comments").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("Like").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("Comment").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+                    Text("Share").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+            }
+        }
+        }
+        .background(Color(red: 0.941, green: 0.949, blue: 0.961).ignoresSafeArea())
     }
 }
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/productivity/dropbox/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/dropbox
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/dropbox
+// Meliwat/awesome-ios-design-md/productivity/dropbox/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeFichiersView: View {
     var body: some View {
@@ -305,12 +305,21 @@ private struct LpspFichiersShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspFichiersGenericTabScreen(title: "Offline", tabIndex: 0)
-                .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
+            LpspFichiersSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
-            LpspFichiersGenericTabScreen(title: "Account", tabIndex: 1)
-                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+            LpspFichiersFilesTabScreen(title: "Files", tabIndex: 1)
+                .tabItem { Label("Files", systemImage: "folder") }
                 .tag(1)
+            LpspFichiersFilesTabScreen(title: "Photos", tabIndex: 2)
+                .tabItem { Label("Photos", systemImage: "photo.on.rectangle") }
+                .tag(2)
+            LpspFichiersFilesTabScreen(title: "Offline", tabIndex: 3)
+                .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
+                .tag(3)
+            LpspFichiersFilesTabScreen(title: "Account", tabIndex: 4)
+                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+                .tag(4)
         }
         .tint(LpspFichiersTokens.dbxPdfRed)
         
@@ -341,9 +350,81 @@ private struct LpspFichiersGenericTabScreen: View {
 }
 
 
-private struct LpspFichiersMessagingTabScreen: View {
+
+private struct LpspFichiersDemoFile { let name: String; let meta: String; let kind: LpspFichiersDbxFileKind }
+private enum LpspFichiersDemoFiles {
+    static let items: [LpspFichiersDemoFile] = [
+        .init(name: "Showroom.pdf", meta: "Modifié hier", kind: .pdf),
+        .init(name: "Screenshots", meta: "12 fichiers", kind: .folder),
+    ]
+}
+
+private struct LpspFichiersFilesHomeTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { 
+                    ForEach(LpspFichiersDemoFiles.items, id: \.name) { f in
+                        LpspFichiersDbxFileRow(name: f.name, meta: f.meta, kind: f.kind, isSelected: false, onTap: {})
+                    }
+ }
+            .navigationTitle("Fichiers")
+        }
+    }
+}
+
+private struct LpspFichiersFilesRecentsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom.pdf", "Design.fig"], id: \.self) { Label($0, systemImage: "clock") }
+            .navigationTitle("Récents")
+        }
+    }
+}
+
+private struct LpspFichiersFilesTabScreen: View {
     let title: String
-    var body: some View { LpspFichiersGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if title.lowercased().contains("récent") || title.lowercased().contains("recent") { LpspFichiersFilesRecentsTabScreen() }
+        else { LpspFichiersFilesHomeTabScreen() }
+    }
+}
+
+
+private struct LpspFichiersSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            Text("Files").font(.system(size: 28.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            HStack(spacing: 16) {
+
+            } .foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        ScrollView {
+            VStack(spacing: 16) {
+            Text("Recents").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Q3 Report.pdf").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("2.4 MB · Today").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Mockup_v4.png").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("880 KB · Apr 14").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Budget.xlsx").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("44 KB · Apr 9").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("All files").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Q3 Report.pdf").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("2.4 MB · Modified Apr 12").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Design Assets").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("28 items").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Project Brief.paper").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("16 KB · Modified Apr 10").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Mockup_v4.png").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("880 KB · Modified Apr 8").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Budget Q3.xlsx").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("44 KB · Modified Apr 6").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Uploading 3 of 8 · 4.2 MB").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            .padding(.vertical, 8)
+        }
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/pinterest/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/pinterest
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/pinterest
+// Meliwat/awesome-ios-design-md/social/pinterest/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePinterestView: View {
     var body: some View {
@@ -392,7 +392,7 @@ private struct LpspPinterestShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPinterestFeedTabScreen()
+            LpspPinterestSpectrHomeTabScreen()
                 .tabItem { Label("Accueil", systemImage: "house.fill") }
                 .tag(0)
             LpspPinterestExploreTabScreen()
@@ -532,9 +532,37 @@ private struct LpspPinterestProfileTabScreen: View {
     }
 }
 
+private struct LpspPinterestCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspPinterestCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspPinterestTokens.pinterestRed)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspPinterestTokens.pinterestCanvasLight.ignoresSafeArea())
+    }
+}
+
 private struct LpspPinterestSocialTabScreen: View {
     let title: String
-    var body: some View { LpspPinterestGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspPinterestCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspPinterestExploreTabScreen() }
+        else if low.contains("reel") { LpspPinterestReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspPinterestProfileTabScreen() }
+        else { LpspPinterestFeedTabScreen() }
+    }
 }
 
 private struct LpspPinterestGenericFeedCard: View {
@@ -554,6 +582,34 @@ private struct LpspPinterestGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspPinterestSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 10) {
+            Text("Search for ideas").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.067, green: 0.067, blue: 0.067))
+        } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.941, green: 0.941, blue: 0.941)).clipShape(RoundedRectangle(cornerRadius: 28))
+        ScrollView {
+            VStack(spacing: 12) {
+            HStack(alignment: .top, spacing: 8) {
+                VStack(spacing: 8) {
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                } .frame(maxWidth: .infinity)
+                VStack(spacing: 8) {
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                    Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 10, height: 10)
+                } .frame(maxWidth: .infinity)
+            } .padding(.horizontal, 8)
+            }
+        }
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/chatgpt/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/chatgpt
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/chatgpt
+// Meliwat/awesome-ios-design-md/misc/chatgpt/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeChatGPTView: View {
     var body: some View {
@@ -537,10 +537,10 @@ private struct LpspChatGPTShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspChatGPTGenericTabScreen(title: "Chat", tabIndex: 0)
+            LpspChatGPTSpectrHomeTabScreen()
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
-            LpspChatGPTGenericTabScreen(title: "Historique", tabIndex: 1)
+            LpspChatGPTAiTabScreen(title: "Historique", tabIndex: 1)
                 .tabItem { Label("Historique", systemImage: "clock") }
                 .tag(1)
         }
@@ -573,9 +573,107 @@ private struct LpspChatGPTGenericTabScreen: View {
 }
 
 
-private struct LpspChatGPTMessagingTabScreen: View {
+private struct LpspChatGPTDemoBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspChatGPTTokens.gptErrorRed.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }
+    }
+}
+
+private struct LpspChatGPTDemoComposeBar: View {
+    @State private var text = ""
+    var body: some View {
+        HStack {
+            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+            Image(systemName: "paperplane.fill").foregroundStyle(LpspChatGPTTokens.gptErrorRed)
+        }
+        .padding(8)
+    }
+}
+
+private struct LpspChatGPTAiChatTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 12) {
+
+                    LpspChatGPTUserMessageBubble(text: "Explique-moi SwiftUI")
+                    LpspChatGPTAssistantMessage(text: "SwiftUI est le framework déclaratif d'Apple pour construire des interfaces iOS.")
+
+                }
+                .padding()
+            }
+            .background(LpspChatGPTTokens.gptCanvas.ignoresSafeArea())
+            
+            LpspChatGPTComposer(
+                text: .constant(""),
+                onSend: {},
+                onVoice: {},
+                onAttach: {},
+                onWebSearch: {}
+            )
+
+        }
+    }
+}
+
+
+private struct LpspChatGPTAiHistoryTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
+            .navigationTitle("Historique")
+        }
+    }
+}
+
+
+private struct LpspChatGPTAiTabScreen: View {
     let title: String
-    var body: some View { LpspChatGPTGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if tabIndex == 0 || title.lowercased().contains("chat") { LpspChatGPTAiChatTabScreen() }
+        else { LpspChatGPTAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspChatGPTSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Image(systemName: "line.3.horizontal").font(.title3)
+            Text("GPT-4o").font(.system(size: 15, weight: .semibold)).padding(.horizontal, 12).padding(.vertical, 6).background(Color(.systemGray6)).clipShape(Capsule())
+            Image(systemName: "square.and.pencil").font(.title3)
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+            Text("Write a haiku about sunrises").font(.system(size: 14.5, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            VStack(alignment: .leading, spacing: 8) {
+                Text("A haiku about sunrises:").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+                Text("Quiet golden line\nBirds rehearse the morning song\nDew remembers night").font(.system(size: 13)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            } .padding(12).background(Color(red: 0.118, green: 0.118, blue: 0.165)).clipShape(RoundedRectangle(cornerRadius: 16)).frame(maxWidth: .infinity, alignment: .leading)
+            Text("Try one with more imagery").font(.system(size: 14.5, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Amber spills slow-honey\nAcross the chimney rooftops\nSteam curls like a cat").font(.system(size: 13)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            } .padding(12).background(Color(red: 0.118, green: 0.118, blue: 0.165)).clipShape(RoundedRectangle(cornerRadius: 16)).frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(16)
+        }
+        VStack(spacing: 6) {
+            HStack {
+                Text("Message ChatGPT…").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+            } .padding(.horizontal, 12).padding(.vertical, 10).background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 24))
+            Text("ChatGPT can make mistakes. Check important info.").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
+        } .padding(.horizontal, 12).padding(.bottom, 8)
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

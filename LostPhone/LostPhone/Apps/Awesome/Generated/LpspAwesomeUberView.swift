@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/uber/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/uber
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/uber
+// Meliwat/awesome-ios-design-md/travel/uber/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeUberView: View {
     var body: some View {
@@ -350,21 +350,21 @@ private struct LpspUberShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspUberGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspUberSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspUberGenericTabScreen(title: "Services", tabIndex: 1)
+            LpspUberRideTabScreen(title: "Services", tabIndex: 1)
                 .tabItem { Label("Services", systemImage: "square.grid.2x2.fill") }
                 .tag(1)
-            LpspUberGenericTabScreen(title: "Activity", tabIndex: 2)
+            LpspUberRideTabScreen(title: "Activity", tabIndex: 2)
                 .tabItem { Label("Activity", systemImage: "clock.fill") }
                 .tag(2)
-            LpspUberGenericTabScreen(title: "Account", tabIndex: 3)
+            LpspUberRideTabScreen(title: "Account", tabIndex: 3)
                 .tabItem { Label("Account", systemImage: "person.fill") }
                 .tag(3)
         }
         .tint(LpspUberTokens.uberRed)
-        
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -392,9 +392,121 @@ private struct LpspUberGenericTabScreen: View {
 }
 
 
-private struct LpspUberMessagingTabScreen: View {
+private struct LpspUberRideHomeTabScreen: View {
+    @State private var selectedRide = 0
+    var body: some View {
+        ZStack(alignment: .top) {
+            LpspUberUberMapView().ignoresSafeArea()
+            VStack {
+                Spacer()
+                VStack(spacing: 0) {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color.gray.opacity(0.4))
+                        .frame(width: 36, height: 4)
+                        .padding(.top, 8)
+                    LpspUberWhereToInput
+                        .padding(.horizontal, 12)
+                        .padding(.top, 12)
+                    ForEach(Array(LpspUberDemoRides.items.enumerated()), id: \.offset) { idx, option in
+                        LpspUberRideOptionCard(
+                            name: option.name,
+                            eta: option.eta,
+                            capacity: option.capacity,
+                            price: option.price,
+                            isSelected: selectedRide == idx,
+                            carImage: Image(systemName: "car.fill"),
+                            action: { selectedRide = idx }
+                        )
+                        .padding(.horizontal, 12)
+                    }
+                    .padding(.vertical, 8)
+                }
+                .background(RoundedRectangle(cornerRadius: 16).fill(LpspUberTokens.uberCanvasDark).ignoresSafeArea(edges: .bottom))
+            }
+        }
+    }
+}
+
+private struct LpspUberDemoRideOption {
+    let name: String
+    let eta: String
+    let capacity: Int
+    let price: String
+}
+
+private enum LpspUberDemoRides {
+    static let items: [LpspUberDemoRideOption] = [
+        .init(name: "UberX", eta: "3 min", capacity: 4, price: "€12.40"),
+        .init(name: "Comfort", eta: "5 min", capacity: 4, price: "€16.80"),
+        .init(name: "Green", eta: "4 min", capacity: 4, price: "€13.20"),
+    ]
+}
+
+private struct LpspUberRideServicesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["UberX", "Uber Black", "Uber Green", "Uber Eats"], id: \.self) { Label($0, systemImage: "square.grid.2x2") }
+            .navigationTitle("Services")
+        }
+    }
+}
+
+private struct LpspUberRideActivityTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Course vers Gare du Nord", "Uber Eats · Sushi Shop"], id: \.self) { Label($0, systemImage: "clock") }
+            .navigationTitle("Activity")
+        }
+    }
+}
+
+private struct LpspUberRideAccountTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Paiements", systemImage: "creditcard"); Label("Sécurité", systemImage: "lock") }
+            .navigationTitle("Account")
+        }
+    }
+}
+
+private struct LpspUberRideTabScreen: View {
     let title: String
-    var body: some View { LpspUberGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("home") { LpspUberRideHomeTabScreen() }
+        else if low.contains("service") { LpspUberRideServicesTabScreen() }
+        else if low.contains("activ") { LpspUberRideActivityTabScreen() }
+        else { LpspUberRideAccountTabScreen() }
+    }
+}
+
+
+private struct LpspUberSpectrHomeTabScreen: View {
+    var body: some View {
+        ZStack(alignment: .bottom) {
+        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
+        VStack(spacing: 0) {
+            Text("Choose a ride").font(.system(size: 18.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Where to?").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Later").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("UberX").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("· 4").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("3 min away · 8:42 PM").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("$14.82").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("Comfort").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("· 4").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("5 min away · 8:44 PM").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("$19.14").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("VISA").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Personal · Visa ·· 4242").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("›").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Confirm UberX").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .background(Color(red: 0.047, green: 0.047, blue: 0.047)).clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .background(Color(red: 0.047, green: 0.047, blue: 0.047).ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
 }
 
 

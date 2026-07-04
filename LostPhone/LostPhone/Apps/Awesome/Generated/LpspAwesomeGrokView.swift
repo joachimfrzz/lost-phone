@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/grok/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/grok
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/grok
+// Meliwat/awesome-ios-design-md/misc/grok/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGrokView: View {
     var body: some View {
@@ -290,10 +290,10 @@ private struct LpspGrokShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGrokGenericTabScreen(title: "Chat", tabIndex: 0)
+            LpspGrokSpectrHomeTabScreen()
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
-            LpspGrokGenericTabScreen(title: "Historique", tabIndex: 1)
+            LpspGrokAiTabScreen(title: "Historique", tabIndex: 1)
                 .tabItem { Label("Historique", systemImage: "clock") }
                 .tag(1)
         }
@@ -326,9 +326,95 @@ private struct LpspGrokGenericTabScreen: View {
 }
 
 
-private struct LpspGrokMessagingTabScreen: View {
+private struct LpspGrokDemoBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspGrokTokens.grokAccentWhite.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }
+    }
+}
+
+private struct LpspGrokDemoComposeBar: View {
+    @State private var text = ""
+    var body: some View {
+        HStack {
+            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+            Image(systemName: "paperplane.fill").foregroundStyle(LpspGrokTokens.grokAccentWhite)
+        }
+        .padding(8)
+    }
+}
+
+private struct LpspGrokAiChatTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 12) {
+
+                    LpspGrokDemoBubble(text: "Bonjour !", outgoing: true)
+                    LpspGrokDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
+
+                }
+                .padding()
+            }
+            .background(LpspGrokTokens.grokCanvas.ignoresSafeArea())
+            LpspGrokDemoComposeBar()
+        }
+    }
+}
+
+
+private struct LpspGrokAiHistoryTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
+            .navigationTitle("Historique")
+        }
+    }
+}
+
+
+private struct LpspGrokAiTabScreen: View {
     let title: String
-    var body: some View { LpspGrokGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if tabIndex == 0 || title.lowercased().contains("chat") { LpspGrokAiChatTabScreen() }
+        else { LpspGrokAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspGrokSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+                Text("Regular").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                Text("Fun").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+            Text("What's the latest reaction to the Grok 4 launch on X?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                    Text("G").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                    Text("▍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("Devin Park").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("@devbuilds · 2h").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("𝕏").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                        Text("Grok 4's real-time X access is the actual moat here. Asked it about a thread from 10 minutes ago and it cited the exact posts.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("128").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("342").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("2.1K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+            }
+            .padding(16)
+        }
+                Text("Ask Grok anything").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
 }
 
 

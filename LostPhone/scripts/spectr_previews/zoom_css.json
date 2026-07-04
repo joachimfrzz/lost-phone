@@ -1,0 +1,13 @@
+{
+  "call-top": "padding: 50px 16px 8px; display: flex; align-items: center; justify-content: space-between;",
+  "rec": "display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; background: rgba(0,0,0,0.45); border-radius: 999px;",
+  "rec-dot": "width: 9px; height: 9px; border-radius: 50%; background: var(--red); animation: pulse 1.2s ease-in-out infinite;",
+  "call-timer": "font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text);",
+  "tile": "aspect-ratio: 16/9; border-radius: 8px; background: var(--surface-2); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;",
+  "tile-av": "width: 48px; height: 48px; border-radius: 50%; background: rgba(45,140,255,0.30); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; color: #fff;",
+  "tile-label": "position: absolute; left: 8px; bottom: 8px; display: flex; align-items: center; gap: 6px;",
+  "mute-badge": "width: 20px; height: 20px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center;",
+  "name-chip": "background: rgba(0,0,0,0.45); border-radius: 4px; padding: 3px 6px; font-size: 12px; font-weight: 700; color: #fff;",
+  "ctrl": "flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text);",
+  "ctrl-leave": "margin-left: 4px; background: var(--red); color: #fff; font-size: 14px; font-weight: 700; padding: 8px 16px; border-radius: 8px;"
+}

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/linkedin/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/linkedin
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/linkedin
+// Meliwat/awesome-ios-design-md/social/linkedin/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeLinkedInView: View {
     var body: some View {
@@ -368,7 +368,7 @@ private struct LpspLinkedInShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspLinkedInFeedTabScreen()
+            LpspLinkedInSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspLinkedInSocialTabScreen(title: "My Network")
@@ -541,9 +541,37 @@ private struct LpspLinkedInProfileTabScreen: View {
     }
 }
 
+private struct LpspLinkedInCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspLinkedInCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspLinkedInTokens.liTextPrimary)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspLinkedInTokens.liCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspLinkedInSocialTabScreen: View {
     let title: String
-    var body: some View { LpspLinkedInGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspLinkedInCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspLinkedInExploreTabScreen() }
+        else if low.contains("reel") { LpspLinkedInReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspLinkedInProfileTabScreen() }
+        else { LpspLinkedInFeedTabScreen() }
+    }
 }
 
 private struct LpspLinkedInGenericFeedCard: View {
@@ -563,6 +591,38 @@ private struct LpspLinkedInGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspLinkedInSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 36, height: 36).overlay(Text("MR").font(.caption.bold()).foregroundStyle(.white))
+                Text("Search").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 0) {
+                            Text("· 1st").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("Design Systems · Fintech").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("2h ·").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Big milestone: shipped our design system v2.0 today. 18 months, 140+ components, one team.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Rectangle().fill(LinearGradient(colors: [Color(red:0.20,green:0.12,blue:0.30), Color(red:0.82,green:0.29,blue:0.45)], startPoint: .topLeading, endPoint: .bottomTrailing)).aspectRatio(1, contentMode: .fill)
+                            Text("👍").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("👏").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("💡").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("127 reactions · 23 comments").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Like").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Comment").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Repost").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Send").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            }
+        }
+        }
+        .background(Color(red: 0.953, green: 0.949, blue: 0.937).ignoresSafeArea())
     }
 }
 

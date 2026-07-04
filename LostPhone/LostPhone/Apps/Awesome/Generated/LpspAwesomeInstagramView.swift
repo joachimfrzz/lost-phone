@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/instagram/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/instagram
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/instagram
+// Meliwat/awesome-ios-design-md/social/instagram/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeInstagramView: View {
     var body: some View {
@@ -253,15 +253,21 @@ private struct LpspInstagramShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspInstagramFeedTabScreen()
+            LpspInstagramSpectrHomeTabScreen()
                 .tabItem { Label("Accueil", systemImage: "house.fill") }
                 .tag(0)
             LpspInstagramExploreTabScreen()
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
+                .tabItem { Label("Explore", systemImage: "magnifyingglass") }
                 .tag(1)
+            LpspInstagramReelsTabScreen()
+                .tabItem { Label("Reels", systemImage: "play.rectangle") }
+                .tag(2)
+            LpspInstagramCreateTabScreen()
+                .tabItem { Label("Créer", systemImage: "plus.app") }
+                .tag(3)
             LpspInstagramProfileTabScreen()
                 .tabItem { Label("Profil", systemImage: "person.circle") }
-                .tag(2)
+                .tag(4)
         }
         .tint(LpspInstagramTokens.igActionBlue)
         
@@ -414,9 +420,37 @@ private struct LpspInstagramProfileTabScreen: View {
     }
 }
 
+private struct LpspInstagramCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspInstagramCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspInstagramTokens.igActionBlue)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspInstagramTokens.igCanvasLight.ignoresSafeArea())
+    }
+}
+
 private struct LpspInstagramSocialTabScreen: View {
     let title: String
-    var body: some View { LpspInstagramGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspInstagramCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspInstagramExploreTabScreen() }
+        else if low.contains("reel") { LpspInstagramReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspInstagramProfileTabScreen() }
+        else { LpspInstagramFeedTabScreen() }
+    }
 }
 
 private struct LpspInstagramGenericFeedCard: View {
@@ -436,6 +470,62 @@ private struct LpspInstagramGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspInstagramSpectrStoryItem: Identifiable {
+    let id = UUID()
+    let name: String
+    let unread: Bool
+}
+
+private enum LpspInstagramSpectrStoryData {
+    static let items: [LpspInstagramSpectrStoryItem] = [
+        .init(name: "Your story", unread: true),
+        .init(name: "maya_c", unread: true),
+        .init(name: "jordanp", unread: true),
+        .init(name: "_alex", unread: false),
+    ]
+}
+
+private struct LpspInstagramSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("Instagram").font(.custom("Snell Roundhand", size: 28)).fontWeight(.bold)
+                Spacer()
+                Image(systemName: "heart").font(.system(size: 22))
+                Image(systemName: "paperplane").font(.system(size: 22))
+            }
+            .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 6)
+            ScrollView {
+                VStack(spacing: 0) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(LpspInstagramSpectrStoryData.items) { s in
+                                VStack(spacing: 4) {
+                                    LpspInstagramStoryRing(avatar: Image(systemName: "person.circle.fill"), isUnread: s.unread, size: 56)
+                                    Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 56)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 14).padding(.vertical, 10)
+                    }
+                    .overlay(alignment: .bottom) { Divider().background(Color(red: 0.15, green: 0.15, blue: 0.15)) }
+                    LpspInstagramFeedPost(
+                        username: "maya_c",
+                        avatar: Image(systemName: "person.circle.fill"),
+                        photo: Image(systemName: "photo"),
+                        likes: 1247,
+                        caption: "golden hour on the walk home",
+                        timestamp: "2 HOURS AGO"
+                    )
+                }
+            }
+        }
+        .background(Color.black.ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

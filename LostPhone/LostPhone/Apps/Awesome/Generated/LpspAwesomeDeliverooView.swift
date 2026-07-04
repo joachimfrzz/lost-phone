@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/food/deliveroo/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/deliveroo
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/deliveroo
+// Meliwat/awesome-ios-design-md/food/deliveroo/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDeliverooView: View {
     var body: some View {
@@ -291,9 +291,21 @@ private struct LpspDeliverooShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDeliverooGenericTabScreen(title: "Favourites", tabIndex: 0)
-                .tabItem { Label("Favourites", systemImage: "heart") }
+            LpspDeliverooSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
+            LpspDeliverooFoodTabScreen(title: "Search", tabIndex: 1)
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .tag(1)
+            LpspDeliverooFoodTabScreen(title: "Orders", tabIndex: 2)
+                .tabItem { Label("Orders", systemImage: "list.bullet.rectangle") }
+                .tag(2)
+            LpspDeliverooFoodTabScreen(title: "Favourites", tabIndex: 3)
+                .tabItem { Label("Favourites", systemImage: "heart") }
+                .tag(3)
+            LpspDeliverooFoodTabScreen(title: "Account", tabIndex: 4)
+                .tabItem { Label("Account", systemImage: "person.crop.circle") }
+                .tag(4)
         }
         .tint(LpspDeliverooTokens.rooTextPrimary)
         
@@ -324,9 +336,101 @@ private struct LpspDeliverooGenericTabScreen: View {
 }
 
 
-private struct LpspDeliverooMessagingTabScreen: View {
+private struct LpspDeliverooDemoRestaurant { let name: String; let meta: String; let rating: Double; let fee: String; let badge: String?; let promo: Bool }
+private enum LpspDeliverooDemoRestaurants {
+    static let items: [LpspDeliverooDemoRestaurant] = [
+        .init(name: "Sushi Shop", meta: "Japonais · 25 min", rating: 4.8, fee: "€1,99", badge: "Promo", promo: true),
+        .init(name: "Pizza Roma", meta: "Italien · 20 min", rating: 4.6, fee: "€0,99", badge: nil, promo: false),
+    ]
+}
+private struct LpspDeliverooDemoMenuItem { let title: String; let sub: String; let price: String }
+private enum LpspDeliverooDemoMenu {
+    static let items: [LpspDeliverooDemoMenuItem] = [
+        .init(title: "Poke saumon", sub: "Riz, avocat", price: "€13,50"),
+    ]
+}
+
+private struct LpspDeliverooFoodHomeTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 16) { 
+                    ForEach(LpspDeliverooDemoRestaurants.items, id: \.name) { r in
+                        LpspDeliverooRestaurantCard(name: r.name, meta: r.meta, rating: r.rating, fee: r.fee, badge: r.badge, badgeIsPromo: r.promo, imageName: "photo")
+                            .padding(.horizontal)
+                    }
+ } .padding(.vertical) }
+            .background(LpspDeliverooTokens.rooCanvas.ignoresSafeArea())
+            .navigationTitle("Accueil")
+            .safeAreaInset(edge: .bottom) { LpspDeliverooBasketBar(itemCount: 2, subtotal: "€24,50", onCheckout: {}) }
+        }
+    }
+}
+
+private struct LpspDeliverooFoodSearchTabScreen: View {
+    var body: some View { NavigationStack { ScrollView { VStack { 
+                    ForEach(LpspDeliverooDemoMenu.items, id: \.title) { item in
+                        LpspDeliverooMenuItemRow(title: item.title, subtitle: item.sub, price: item.price, quantity: .constant(1)).padding(.horizontal)
+                    }
+ } } .navigationTitle("Rechercher") } }
+}
+
+private struct LpspDeliverooFoodOrdersTabScreen: View {
+    var body: some View { NavigationStack { List(["Commande en cours"], id: \.self) { Label($0, systemImage: "bag") } .navigationTitle("Commandes") } }
+}
+
+private struct LpspDeliverooFoodAccountTabScreen: View {
+    var body: some View { NavigationStack { List { Label("Adresses", systemImage: "mappin"); Label("Paiements", systemImage: "creditcard") } .navigationTitle("Compte") } }
+}
+
+private struct LpspDeliverooFoodTabScreen: View {
     let title: String
-    var body: some View { LpspDeliverooGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("home") || low.contains("accueil") { LpspDeliverooFoodHomeTabScreen() }
+        else if low.contains("recherch") || low.contains("search") { LpspDeliverooFoodSearchTabScreen() }
+        else if low.contains("command") || low.contains("order") || low.contains("activity") { LpspDeliverooFoodOrdersTabScreen() }
+        else { LpspDeliverooFoodAccountTabScreen() }
+    }
+}
+
+
+private struct LpspDeliverooSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+                Text("Deliver to").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("12 Hatton Garden").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                Text("Restaurants, groceries, dishes").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.149, green: 0.149, blue: 0.161)).clipShape(RoundedRectangle(cornerRadius: 28))
+        } .padding(.horizontal, 16).padding(.top, 8)
+            Text("deliveroo plus").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Free delivery on this order").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Join").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Restaurants").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Grocery").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Fast").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Treats").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Offers").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        ScrollView {
+            VStack(spacing: 12) {
+            Text("Popular near you").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("PLUS · Free delivery").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Franco Manca").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("4.7").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Pizza · Sourdough · 25–35 min").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("£1.49 delivery · Min £12").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("20% off, up to £10").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Wagamama").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("4.6").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Asian · Ramen · 30–40 min").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("£2.49 delivery · Min £15").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+        }
+        }
+        .background(Color(red: 0.071, green: 0.071, blue: 0.071).ignoresSafeArea())
+    }
 }
 
 

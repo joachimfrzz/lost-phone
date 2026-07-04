@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/waze/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/waze
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/waze
+// Meliwat/awesome-ios-design-md/travel/waze/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeWazeView: View {
     var body: some View {
@@ -486,13 +486,13 @@ private struct LpspWazeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspWazeGenericTabScreen(title: "Carte", tabIndex: 0)
+            LpspWazeSpectrHomeTabScreen()
                 .tabItem { Label("Carte", systemImage: "map.fill") }
                 .tag(0)
-            LpspWazeGenericTabScreen(title: "Itinéraire", tabIndex: 1)
+            LpspWazeMapsTabScreen(title: "Itinéraire", tabIndex: 1)
                 .tabItem { Label("Itinéraire", systemImage: "arrow.triangle.turn.up.right.diamond") }
                 .tag(1)
-            LpspWazeGenericTabScreen(title: "Profil", tabIndex: 2)
+            LpspWazeMapsTabScreen(title: "Profil", tabIndex: 2)
                 .tabItem { Label("Profil", systemImage: "person") }
                 .tag(2)
         }
@@ -525,9 +525,73 @@ private struct LpspWazeGenericTabScreen: View {
 }
 
 
-private struct LpspWazeMessagingTabScreen: View {
+private struct LpspWazeMapsHomeTabScreen: View {
+    var body: some View {
+        ZStack {
+            Color.gray.opacity(0.15).ignoresSafeArea()
+            VStack {
+                HStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.ultraThinMaterial)
+                        .frame(height: 48)
+                        .overlay(HStack { Image(systemName: "magnifyingglass"); Text("Rechercher") }.foregroundStyle(.secondary))
+                        .padding()
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
+    }
+}
+
+private struct LpspWazeMapsRoutesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Maison → Bureau", "Bureau → Gare"], id: \.self) { Label($0, systemImage: "arrow.triangle.turn.up.right.diamond") }
+            .navigationTitle("Itinéraire")
+        }
+    }
+}
+
+private struct LpspWazeMapsProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Adresses enregistrées", systemImage: "mappin"); Label("Historique", systemImage: "clock") }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspWazeMapsTabScreen: View {
     let title: String
-    var body: some View { LpspWazeGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspWazeMapsHomeTabScreen() }
+        else if low.contains("itin") || low.contains("route") { LpspWazeMapsRoutesTabScreen() }
+        else { LpspWazeMapsProfileTabScreen() }
+    }
+}
+
+
+private struct LpspWazeSpectrHomeTabScreen: View {
+    var body: some View {
+        ZStack(alignment: .bottom) {
+        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
+                Text("0.4 mi").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Market Street").font(.system(size: 18.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("then turn left in 0.6 mi").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("SPEED LIMIT").font(.system(size: 8.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("35").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("42").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("mph").font(.system(size: 9.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("12 min").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("5.2 mi · 6:14 PM").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Save 3 min").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("End").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

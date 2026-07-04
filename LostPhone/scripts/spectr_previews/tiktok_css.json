@@ -1,0 +1,17 @@
+{
+  "top-tab": "color: var(--text-tertiary); font-size: 17px; font-weight: 400; text-shadow: var(--shadow-text); position: relative; padding-bottom: 4px;",
+  "top-search": "position: absolute; top: 54px; right: 16px; color: #fff; z-index: 10; filter: drop-shadow(var(--shadow-icon));",
+  "avatar-wrap": "position: relative;",
+  "avatar": "width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fff; background: linear-gradient(135deg, #25F4EE, #2F2CCE); box-shadow: var(--shadow-icon);",
+  "plus-badge": "position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 18px; height: 18px; border-radius: 50%; background: var(--rose); display: flex; align-items: center; justify-content: center;",
+  "rail-icon": "display: flex; flex-direction: column; align-items: center; gap: 2px; color: #fff;",
+  "rail-count": "font-size: 13px; font-weight: 700; text-shadow: var(--shadow-text);",
+  "disc-art": "width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #25F4EE, #FE2C55);",
+  "caption-user": "font-size: 16px; font-weight: 700; color: #fff; text-shadow: var(--shadow-text); margin-bottom: 8px;",
+  "caption-text": "font-size: 15px; font-weight: 400; color: #fff; text-shadow: var(--shadow-text); line-height: 1.35; margin-bottom: 8px;",
+  "caption-hashtag": "font-weight: 700;",
+  "music-row": "display: flex; align-items: center; gap: 6px; color: #fff; text-shadow: var(--shadow-text); overflow: hidden;",
+  "music-marquee": "font-size: 13px; font-weight: 500; white-space: nowrap; animation: marquee 12s linear infinite;",
+  "scrubber-fill": "height: 100%; width: 62%; background: var(--rose);",
+  "tab": "display: flex; flex-direction: column; align-items: center; gap: 2px; color: rgba(255,255,255,0.5); font-size: 10px; font-weight: 600; filter: drop-shadow(var(--shadow-icon));"
+}

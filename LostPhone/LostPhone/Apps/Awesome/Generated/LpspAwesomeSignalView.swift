@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/signal/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/signal
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/signal
+// Meliwat/awesome-ios-design-md/messaging/signal/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSignalView: View {
     var body: some View {
@@ -253,7 +253,7 @@ private struct LpspSignalShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspSignalChatsTabScreen()
+            LpspSignalSpectrHomeTabScreen()
                 .tabItem { Label("Chats", systemImage: "message.fill") }
                 .tag(0)
             LpspSignalCallsTabScreen()
@@ -262,7 +262,7 @@ private struct LpspSignalShowroomRoot: View {
             LpspSignalMessagingTabScreen(title: "Stories")
                 .tabItem { Label("Stories", systemImage: "circle.dashed") }
                 .tag(2)
-            LpspSignalMessagingTabScreen(title: "Settings")
+            LpspSignalSettingsTabScreen()
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(3)
         }
@@ -352,6 +352,7 @@ private struct LpspSignalChatsTabScreen: View {
     }
 }
 
+
 private struct LpspSignalChatDetailScreen: View {
     let chat: LpspSignalDemoChat
     var body: some View {
@@ -372,6 +373,7 @@ private struct LpspSignalChatDetailScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 
 private struct LpspSignalCallsTabScreen: View {
     var body: some View {
@@ -395,7 +397,70 @@ private struct LpspSignalCallsTabScreen: View {
 
 private struct LpspSignalMessagingTabScreen: View {
     let title: String
-    var body: some View { LpspSignalGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("update") { LpspSignalUpdatesTabScreen() }
+        else if low.contains("setting") || low.contains("réglage") { LpspSignalSettingsTabScreen() }
+        else if low.contains("communit") { LpspSignalCommunitiesTabScreen() }
+        else if low.contains("contact") { LpspSignalContactsTabScreen() }
+        else { LpspSignalChatsTabScreen() }
+    }
+}
+
+private struct LpspSignalUpdatesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 14) {
+                    ForEach(LpspSignalDemoStories.items) { s in
+                        VStack(spacing: 4) {
+                            Circle().strokeBorder(LpspSignalTokens.sigTextPrimary, lineWidth: 2).frame(width: 66, height: 66)
+                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+                        }
+                    }
+                }
+                .padding(.horizontal, 12).padding(.vertical, 10)
+            }
+            .navigationTitle("Updates")
+        }
+    }
+}
+
+private struct LpspSignalDemoStoryItem: Identifiable { let id = UUID(); let name: String }
+private enum LpspSignalDemoStories {
+    static let items: [LpspSignalDemoStoryItem] = [
+        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
+    ]
+}
+
+private struct LpspSignalSettingsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
+                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
+            }
+            .navigationTitle("Settings")
+        }
+    }
+}
+
+private struct LpspSignalCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspSignalContactsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "person.circle") }
+            .navigationTitle("Contacts")
+        }
+    }
 }
 
 private struct LpspSignalDemoBubble: View {
@@ -428,6 +493,46 @@ private struct LpspSignalDemoComposeBar: View {
         }
         .padding(8)
         .background(.ultraThinMaterial)
+    }
+}
+
+
+private struct LpspSignalSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 10) {
+                Text("Renata Vogel").font(.system(size: 17.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("1 week").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 12).frame(height: 56)
+        ScrollView {
+            VStack(spacing: 8) {
+            Text("Messages and calls are end-to-end encrypted.").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Are we still on for the design review tomorrow?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("Pushed it to 2pm so the whole team can make it.").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                Text("Perfect, 2pm works.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("I'll bring the updated bubble specs and the timer-chip mocks.").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("See you then 🙌").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+            }
+            .padding(.vertical, 8)
+        }
+                Text("Signal message").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.106, green: 0.106, blue: 0.106).ignoresSafeArea())
     }
 }
 

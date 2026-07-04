@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/finance/revolut/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/revolut
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/revolut
+// Meliwat/awesome-ios-design-md/finance/revolut/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeRevolutView: View {
     var body: some View {
@@ -275,7 +275,7 @@ private struct LpspRevolutShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspRevolutFinanceHomeTabScreen()
+            LpspRevolutSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspRevolutFinanceHomeTabScreen()
@@ -330,24 +330,22 @@ private struct LpspRevolutFinanceHomeTabScreen: View {
                         Text("2 847,50 €").font(.system(size: 36, weight: .bold))
                     }
                     .padding(.horizontal)
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [LpspRevolutTokens.revBrand, LpspRevolutTokens.revBrand.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(height: 180)
-                        .overlay(alignment: .bottomLeading) {
-                            Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
-                        }
+
+                    LpspRevolutMetalCardHero()
                         .padding(.horizontal)
+
                     Text("Transactions").font(.headline).padding(.horizontal)
+
                     ForEach(LpspRevolutDemoTx.items) { tx in
-                        HStack {
-                            Circle().fill(LpspRevolutTokens.revBrand.opacity(0.15)).frame(width: 40, height: 40)
-                            VStack(alignment: .leading) { Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }
-                            Spacer()
-                            Text(tx.amount).font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
-                        }
-                        .padding(.horizontal)
+                        LpspRevolutTransactionRow(
+                            merchant: tx.title,
+                            meta: tx.date,
+                            amount: tx.amount,
+                            incoming: tx.incoming,
+                            logo: Image(systemName: tx.icon)
+                        )
                     }
+
                 }
                 .padding(.vertical)
             }
@@ -360,7 +358,15 @@ private struct LpspRevolutFinanceHomeTabScreen: View {
 private struct LpspRevolutFinanceCardsTabScreen: View {
     var body: some View {
         NavigationStack {
-            Text("Gérez vos cartes").padding().navigationTitle("Cartes")
+            ScrollView {
+                VStack(spacing: 16) {
+                    LpspRevolutMetalCardHero()
+                    Text("Gérez vos cartes").font(.headline)
+                }
+                .padding(.vertical)
+            }
+            .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
+            .navigationTitle("Cartes")
         }
     }
 }
@@ -370,10 +376,71 @@ private struct LpspRevolutDemoTx: Identifiable {
     let title: String
     let date: String
     let amount: String
+    let incoming: Bool
+    let icon: String
     static let items: [LpspRevolutDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €"),
+        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
+        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
+}
+
+
+private struct LpspRevolutSpectrHomeTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+            Text("Alex Mercer").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 44)
+        VStack(spacing: 4) {
+            Text("Total balance").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.604, green: 0.604, blue: 0.667))
+            Text("£12,480.65").font(.system(size: 36, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .frame(maxWidth: .infinity).padding(.horizontal, 20).padding(.top, 8)
+        HStack(spacing: 0) {
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Add").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Exchange").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
+                Text("Send").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity)
+            VStack(spacing: 6) {
+                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
+                Text("More").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity)
+        } .padding(.horizontal, 8).padding(.vertical, 16)
+            RoundedRectangle(cornerRadius: 16).fill(LinearGradient(colors: [Color(red: 0.357, green: 0.420, blue: 1.000), Color(red: 0.612, green: 0.420, blue: 1.000)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(height: 120).padding(.horizontal, 16)
+        VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                Text("🇬🇧").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("GBP").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("British Pound").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("£8,240.10").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
+            HStack(spacing: 12) {
+                Text("🇪🇺").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("EUR").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Euro").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("€3,180.55").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
+            HStack(spacing: 12) {
+                Text("🇺🇸").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("USD").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("US Dollar").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("$1,060.00").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
+        } .padding(.horizontal, 16).padding(.top, 8)
+            }
+        }
+        .background(Color(red: 0.039, green: 0.039, blue: 0.059).ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
 }
 
 

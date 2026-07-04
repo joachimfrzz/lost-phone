@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/gemini/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/gemini
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/gemini
+// Meliwat/awesome-ios-design-md/misc/gemini/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGeminiView: View {
     var body: some View {
@@ -286,10 +286,10 @@ private struct LpspGeminiShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGeminiGenericTabScreen(title: "Chat", tabIndex: 0)
+            LpspGeminiSpectrHomeTabScreen()
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
-            LpspGeminiGenericTabScreen(title: "Historique", tabIndex: 1)
+            LpspGeminiAiTabScreen(title: "Historique", tabIndex: 1)
                 .tabItem { Label("Historique", systemImage: "clock") }
                 .tag(1)
         }
@@ -322,9 +322,86 @@ private struct LpspGeminiGenericTabScreen: View {
 }
 
 
-private struct LpspGeminiMessagingTabScreen: View {
+private struct LpspGeminiDemoBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspGeminiTokens.gemCoral.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }
+    }
+}
+
+private struct LpspGeminiDemoComposeBar: View {
+    @State private var text = ""
+    var body: some View {
+        HStack {
+            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+            Image(systemName: "paperplane.fill").foregroundStyle(LpspGeminiTokens.gemCoral)
+        }
+        .padding(8)
+    }
+}
+
+private struct LpspGeminiAiChatTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 12) {
+
+                    LpspGeminiDemoBubble(text: "Bonjour !", outgoing: true)
+                    LpspGeminiDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
+
+                }
+                .padding()
+            }
+            .background(LpspGeminiTokens.gemCanvas.ignoresSafeArea())
+            LpspGeminiDemoComposeBar()
+        }
+    }
+}
+
+
+private struct LpspGeminiAiHistoryTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
+            .navigationTitle("Historique")
+        }
+    }
+}
+
+
+private struct LpspGeminiAiTabScreen: View {
     let title: String
-    var body: some View { LpspGeminiGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if tabIndex == 0 || title.lowercased().contains("chat") { LpspGeminiAiChatTabScreen() }
+        else { LpspGeminiAiHistoryTabScreen() }
+    }
+}
+
+
+private struct LpspGeminiSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("Gemini").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+            Text("Explain what a transformer is, simply.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("transformer").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("attention").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            .padding(16)
+        }
+                    Text("Ask a follow-up…").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

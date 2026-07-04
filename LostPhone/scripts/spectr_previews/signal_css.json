@@ -1,0 +1,16 @@
+{
+  "status": "height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; font-size: 14px; font-weight: 600;",
+  "th-avatar": "width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #6C9BC9, #2E5C8F); flex-shrink: 0;",
+  "th-name": "font-size: 17px; font-weight: 600;",
+  "th-timer": "display: flex; align-items: center; gap: 3px; color: var(--text-secondary); font-size: 12px; font-weight: 500;",
+  "th-actions": "margin-left: auto; display: flex; gap: 18px;",
+  "sys-note": "display: flex; align-items: center; justify-content: center; gap: 5px; color: var(--text-secondary); font-size: 13px; padding: 4px 16px 14px; text-align: center;",
+  "msg-row": "display: flex; padding: 0 12px;",
+  "gap": "height: 6px;",
+  "bubble": "max-width: 75%; padding: 9px 13px; font-size: 16px; line-height: 1.4;",
+  "b-meta": "display: flex; gap: 4px; justify-content: flex-end; margin-top: 3px; font-size: 12px;",
+  "comp-pill": "flex: 1; display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 12px; border-radius: 18px; background: var(--surface);",
+  "comp-ph": "flex: 1; font-size: 16px; color: var(--text-tertiary); padding: 8px 0;",
+  "send": "width: 32px; height: 32px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; flex-shrink: 0;",
+  "tab": "display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-secondary); font-size: 10px; font-weight: 500;"
+}

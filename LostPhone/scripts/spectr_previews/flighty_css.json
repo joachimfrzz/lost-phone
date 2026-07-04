@@ -1,0 +1,21 @@
+{
+  "status": "height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; font-size: 14px; font-weight: 600; color: var(--text); position: relative; z-index: 5;",
+  "land": "position: absolute; background: var(--map-land); border-radius: 40% 55% 50% 45%;",
+  "arc-svg": "position: absolute; inset: 0; width: 100%; height: 100%;",
+  "map-scrim": "position: absolute; top: 0; left: 0; right: 0; height: 60px; background: linear-gradient(180deg, rgba(11,11,15,0.7), transparent);",
+  "pin": "position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.15);",
+  "pin-label": "position: absolute; font-size: 11px; font-weight: 700; color: #fff; letter-spacing: 0.5px;",
+  "grabber": "width: 36px; height: 4px; border-radius: 2px; background: var(--divider); margin: 0 auto 14px;",
+  "fc-head": "display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;",
+  "fc-title": "font-size: 17px; font-weight: 600;",
+  "chip": "padding: 5px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; letter-spacing: 0.3px;",
+  "fc-route": "display: flex; align-items: center; gap: 16px; margin-bottom: 14px;",
+  "fc-code": "font-size: 24px; font-weight: 700; letter-spacing: 0.5px;",
+  "fc-arc-mini": "flex: 1; height: 1px; background: linear-gradient(90deg, var(--blue), var(--arc-remaining)); position: relative;",
+  "fc-times": "display: flex; justify-content: space-between; margin-bottom: 12px;",
+  "fc-t": "font-size: 32px; font-weight: 700; letter-spacing: -0.5px;",
+  "fc-g": "font-size: 15px; font-weight: 600; letter-spacing: 0.5px; color: var(--text-secondary); margin-top: 4px; font-feature-settings: 'tnum';",
+  "fc-end": "text-align: right;",
+  "fc-meta": "font-size: 13px; color: var(--text-secondary); padding-bottom: 14px;",
+  "tab": "display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-secondary); font-size: 11px; font-weight: 600;"
+}

@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/dating/happn/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/happn
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/happn
+// Meliwat/awesome-ios-design-md/dating/happn/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeHappnView: View {
     var body: some View {
@@ -307,16 +307,16 @@ private struct LpspHappnShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspHappnGenericTabScreen(title: "Timeline", tabIndex: 0)
+            LpspHappnSpectrHomeTabScreen()
                 .tabItem { Label("Timeline", systemImage: "heart.text.square") }
                 .tag(0)
-            LpspHappnGenericTabScreen(title: "Map", tabIndex: 1)
+            LpspHappnDatingTabScreen(title: "Map", tabIndex: 1)
                 .tabItem { Label("Map", systemImage: "map") }
                 .tag(1)
-            LpspHappnGenericTabScreen(title: "Chats", tabIndex: 2)
+            LpspHappnDatingMessagesTabScreen()
                 .tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right") }
                 .tag(2)
-            LpspHappnGenericTabScreen(title: "Profile", tabIndex: 3)
+            LpspHappnDatingProfileTabScreen()
                 .tabItem { Label("Profile", systemImage: "person") }
                 .tag(3)
         }
@@ -349,11 +349,16 @@ private struct LpspHappnGenericTabScreen: View {
 }
 
 
-private struct LpspHappnDemoDatingProfile {
-    let name: String
-    let age: Int
-    let bio: String
-    static let sample = LpspHappnDemoDatingProfile(name: "Alex", age: 28, bio: "Paris · Photo · Voyage")
+private struct LpspHappnDemoChatBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspHappnTokens.happnTextPrimary.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }.padding(.horizontal)
+    }
 }
 
 private struct LpspHappnDatingDiscoverTabScreen: View {
@@ -362,6 +367,58 @@ private struct LpspHappnDatingDiscoverTabScreen: View {
             Color(.systemBackground).ignoresSafeArea()
             LpspHappnDemoSwipeCard(accent: LpspHappnTokens.happnTextPrimary)
         }
+    }
+}
+
+private struct LpspHappnDatingMessagesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView { LazyVStack(spacing: 8) { 
+                    LpspHappnDemoChatBubble(text: "Salut ! On se voit ce week-end ?", outgoing: false)
+                    LpspHappnDemoChatBubble(text: "Avec plaisir 😊", outgoing: true)
+ } .padding(.vertical) }
+                HStack {
+                    TextField("Message", text: .constant(""))
+                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+                }.padding(8)
+            }
+            .navigationTitle("Messages")
+        }
+    }
+}
+
+private struct LpspHappnDatingTopPicksTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { LpspHappnDemoSwipeCard(accent: LpspHappnTokens.happnTextPrimary).padding() }
+            .navigationTitle("Top Picks")
+        }
+    }
+}
+
+private struct LpspHappnDatingProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspHappnTokens.happnTextPrimary.gradient).frame(width: 88, height: 88)
+                Text("Alex, 28").font(.title2.bold())
+                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
+            }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspHappnDatingTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspHappnDatingDiscoverTabScreen() }
+        else if low.contains("message") || low.contains("chat") { LpspHappnDatingMessagesTabScreen() }
+        else if low.contains("star") || low.contains("top") { LpspHappnDatingTopPicksTabScreen() }
+        else { LpspHappnDatingProfileTabScreen() }
     }
 }
 
@@ -378,6 +435,28 @@ private struct LpspHappnDemoSwipeCard: View {
                 }
                 .padding(20)
             }
+    }
+}
+
+
+private struct LpspHappnSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+                Text("n").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Crossed paths today").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("12 people near you · sorted by latest").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Camille, 27").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Le Marais · 11 min ago").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("You crossed paths 3 times").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Léa, 24").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Canal Saint-Martin · 1 h ago").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("You crossed paths once").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Manon, 29").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("République · 2 h ago").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("You crossed paths 5 times").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.055, green: 0.055, blue: 0.071).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

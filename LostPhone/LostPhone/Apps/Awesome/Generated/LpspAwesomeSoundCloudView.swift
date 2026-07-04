@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/soundcloud/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/soundcloud
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/soundcloud
+// Meliwat/awesome-ios-design-md/music/soundcloud/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSoundCloudView: View {
     var body: some View {
@@ -277,7 +277,7 @@ private struct LpspSoundCloudShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspSoundCloudMusicHomeTabScreen()
+            LpspSoundCloudSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspSoundCloudMusicSearchTabScreen()
@@ -322,6 +322,19 @@ private struct LpspSoundCloudGenericTabScreen: View {
 }
 
 
+private enum LpspSoundCloudDemoTracks {
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}
 private struct LpspSoundCloudMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
@@ -338,6 +351,17 @@ private struct LpspSoundCloudMusicHomeTabScreen: View {
                         }
                     }
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+
+                    ForEach(LpspSoundCloudDemoTracks.items) { track in
+                        LpspSoundCloudSCTrackRow(
+                            title: track.title,
+                            artist: track.artist,
+                            artwork: Image(systemName: "music.note"),
+                            isPlaying: track.isPlaying
+                        )
+                    }
+
                 }
             }
             .background(LpspSoundCloudTokens.scCanvas.ignoresSafeArea())
@@ -376,6 +400,38 @@ private struct LpspSoundCloudMusicLibraryTabScreen: View {
             }
             .navigationTitle("Bibliothèque")
         }
+    }
+}
+
+
+
+private struct LpspSoundCloudSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack {
+                Text("Playing from Playlist").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.600, green: 0.600, blue: 0.600))
+                Text("Late Night Uploads").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.600, green: 0.600, blue: 0.600))
+            Text("⌄").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+        } .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 6)
+        ScrollView {
+            VStack(spacing: 16) {
+            RoundedRectangle(cornerRadius: 8).fill(LinearGradient(colors: [Color(red:0.3,green:0.2,blue:0.5), Color(red:0.1,green:0.1,blue:0.2)], startPoint: .topLeading, endPoint: .bottomTrailing)).aspectRatio(1, contentMode: .fit).padding(.horizontal, 24)
+            Text("Smoke & Static").font(.system(size: 22.0, weight: .semibold)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+            Text("novaa").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                Text("2:08").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                Text("-1:24").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+            HStack(spacing: 16) {
+                    Text("1.2K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                    Text("340").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                    Text("88").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+            } .font(.system(size: 22)).padding(.horizontal, 14).frame(height: 44)
+            }
+            .padding(.vertical, 8)
+        }
+                Text("Smoke & Static").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+                Text("novaa").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

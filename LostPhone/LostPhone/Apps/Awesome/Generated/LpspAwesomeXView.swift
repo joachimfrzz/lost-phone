@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/x-twitter/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/x-twitter
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/x-twitter
+// Meliwat/awesome-ios-design-md/social/x-twitter/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeXView: View {
     var body: some View {
@@ -314,15 +314,21 @@ private struct LpspXShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspXFeedTabScreen()
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
+            LpspXSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspXExploreTabScreen()
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspXProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle") }
+            LpspXCommunitiesTabScreen()
+                .tabItem { Label("Communities", systemImage: "person.3.fill") }
                 .tag(2)
+            LpspXSocialTabScreen(title: "Notifications")
+                .tabItem { Label("Notifications", systemImage: "bell.fill") }
+                .tag(3)
+            LpspXSocialTabScreen(title: "Messages")
+                .tabItem { Label("Messages", systemImage: "envelope.fill") }
+                .tag(4)
         }
         .tint(LpspXTokens.xErrorRed)
         
@@ -454,9 +460,37 @@ private struct LpspXProfileTabScreen: View {
     }
 }
 
+private struct LpspXCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspXCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspXTokens.xErrorRed)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspXTokens.xCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspXSocialTabScreen: View {
     let title: String
-    var body: some View { LpspXGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspXCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspXExploreTabScreen() }
+        else if low.contains("reel") { LpspXReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspXProfileTabScreen() }
+        else { LpspXFeedTabScreen() }
+    }
 }
 
 private struct LpspXGenericFeedCard: View {
@@ -476,6 +510,35 @@ private struct LpspXGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspXSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("𝕏").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+            Text("✦").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+        } .padding(.horizontal, 16).frame(height: 44)
+            Text("For you").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+            Text("Following").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+            VStack(alignment: .leading, spacing: 0) {
+                Circle().fill(LinearGradient(colors: [Color(red:1,green:0.84,blue:0.6), Color(red:1,green:0.89,blue:0.58)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 30, height: 30)
+                        Text("Nova Palmer").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                        Text("@novapalmer").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                        Text("·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                        Text("2h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                        Text("⋯").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                        Text("#shipit").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("24").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("148").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("1.2K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+                            Text("24K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+            }
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

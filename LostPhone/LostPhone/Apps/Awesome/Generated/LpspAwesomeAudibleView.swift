@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/audible/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/audible
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/audible
+// Meliwat/awesome-ios-design-md/music/audible/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAudibleView: View {
     var body: some View {
@@ -329,7 +329,7 @@ private struct LpspAudibleShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAudibleMusicHomeTabScreen()
+            LpspAudibleSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspAudibleMusicLibraryTabScreen()
@@ -371,6 +371,19 @@ private struct LpspAudibleGenericTabScreen: View {
 }
 
 
+private enum LpspAudibleDemoTracks {
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}
 private struct LpspAudibleMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
@@ -387,6 +400,14 @@ private struct LpspAudibleMusicHomeTabScreen: View {
                         }
                     }
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+
+                    ForEach(0..<4, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
+                            .frame(height: 56)
+                            .padding(.horizontal)
+                    }
+
                 }
             }
             .background(LpspAudibleTokens.audCanvas.ignoresSafeArea())
@@ -425,6 +446,33 @@ private struct LpspAudibleMusicLibraryTabScreen: View {
             }
             .navigationTitle("Bibliothèque")
         }
+    }
+}
+
+
+
+private struct LpspAudibleSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack {
+            Text("Now Playing").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 6)
+        ScrollView {
+            VStack(spacing: 16) {
+            Text("The Song of Achilles").font(.system(size: 26.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("By Madeline Miller").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Narrated by Frazer Douglas").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("30").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("30").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("8 hrs 14 min left").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("1.5×").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            .padding(.vertical, 8)
+        }
+                Text("The Song of Achilles").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Madeline Miller").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.102, green: 0.102, blue: 0.102).ignoresSafeArea())
     }
 }
 

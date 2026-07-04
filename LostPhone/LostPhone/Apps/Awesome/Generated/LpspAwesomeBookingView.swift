@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/booking/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/booking
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/booking
+// Meliwat/awesome-ios-design-md/travel/booking/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeBookingView: View {
     var body: some View {
@@ -268,9 +268,21 @@ private struct LpspBookingShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspBookingGenericTabScreen(title: "Bookings", tabIndex: 0)
-                .tabItem { Label("Bookings", systemImage: "suitcase") }
+            LpspBookingSpectrHomeTabScreen()
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
+            LpspBookingTravelTabScreen(title: "Saved", tabIndex: 1)
+                .tabItem { Label("Saved", systemImage: "heart") }
+                .tag(1)
+            LpspBookingTravelTabScreen(title: "Bookings", tabIndex: 2)
+                .tabItem { Label("Bookings", systemImage: "suitcase") }
+                .tag(2)
+            LpspBookingTravelTabScreen(title: "Profile", tabIndex: 3)
+                .tabItem { Label("Profile", systemImage: "person") }
+                .tag(3)
+            LpspBookingTravelTabScreen(title: "Help", tabIndex: 4)
+                .tabItem { Label("Help", systemImage: "questionmark.circle") }
+                .tag(4)
         }
         .tint(LpspBookingTokens.bkYellow)
         
@@ -301,9 +313,133 @@ private struct LpspBookingGenericTabScreen: View {
 }
 
 
-private struct LpspBookingMessagingTabScreen: View {
+private struct LpspBookingTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspBookingTokens.bkYellow.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspBookingTokens.bkCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspBookingTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspBookingTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspBookingTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspBookingTokens.bkYellow.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
+}
+
+private struct LpspBookingTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspBookingTravelTabScreen: View {
     let title: String
-    var body: some View { LpspBookingGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspBookingTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspBookingTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspBookingTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspBookingTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspBookingTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspBookingTravelExploreTabScreen() }
+        else { LpspBookingTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspBookingSpectrHomeTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            HStack {
+                    Text("Lisbon").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Fri 12 Jul — Sun 14 Jul · 2 adults").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+            } .padding(.horizontal, 16).frame(height: 48)
+        }
+        ScrollView {
+            VStack(spacing: 16) {
+                    Text("Lisbon, Portugal").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Fri 12 Jul — Sun 14 Jul").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("2 adults · 0 children · 1 room").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                Text("Search").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Genius").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("You're a Genius level 1 member").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                Text("10% off").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Grand Plaza Hotel").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("City centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("· 0.5 km from centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Free cancellation").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("8.9").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Fabulous").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("· 1,284 reviews").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("$240").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("$198").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Includes taxes and fees").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Only 2 rooms left").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Riverside Boutique Inn").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Alfama").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("· 1.2 km from centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                    Text("Breakfast included").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("9.2").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Superb").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("· 642 reviews").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("$164").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                        Text("Includes taxes and fees").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+            }
+            .padding(.vertical, 8)
+        }
+            }
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

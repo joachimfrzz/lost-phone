@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/dating/tinder/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/tinder
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/tinder
+// Meliwat/awesome-ios-design-md/dating/tinder/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTinderView: View {
     var body: some View {
@@ -373,15 +373,18 @@ private struct LpspTinderShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTinderDatingDiscoverTabScreen()
+            LpspTinderSpectrHomeTabScreen()
                 .tabItem { Label("Découvrir", systemImage: "flame.fill") }
                 .tag(0)
-            LpspTinderGenericTabScreen(title: "Messages", tabIndex: 1)
-                .tabItem { Label("Messages", systemImage: "bubble.left") }
+            LpspTinderDatingTopPicksTabScreen()
+                .tabItem { Label("Top Picks", systemImage: "star.fill") }
                 .tag(1)
-            LpspTinderGenericTabScreen(title: "Profil", tabIndex: 2)
-                .tabItem { Label("Profil", systemImage: "person.fill") }
+            LpspTinderDatingMessagesTabScreen()
+                .tabItem { Label("Messages", systemImage: "bubble.left.fill") }
                 .tag(2)
+            LpspTinderDatingProfileTabScreen()
+                .tabItem { Label("Profil", systemImage: "person.circle") }
+                .tag(3)
         }
         .tint(LpspTinderTokens.tdrNopeRed)
         
@@ -412,11 +415,16 @@ private struct LpspTinderGenericTabScreen: View {
 }
 
 
-private struct LpspTinderDemoDatingProfile {
-    let name: String
-    let age: Int
-    let bio: String
-    static let sample = LpspTinderDemoDatingProfile(name: "Alex", age: 28, bio: "Paris · Photo · Voyage")
+private struct LpspTinderDemoChatBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspTinderTokens.tdrNopeRed.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }.padding(.horizontal)
+    }
 }
 
 private struct LpspTinderDatingDiscoverTabScreen: View {
@@ -434,6 +442,58 @@ private struct LpspTinderDatingDiscoverTabScreen: View {
     }
 }
 
+private struct LpspTinderDatingMessagesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView { LazyVStack(spacing: 8) { 
+                    LpspTinderTinderChatBubble(text: "Salut ! On se voit ce week-end ?", sender: .them)
+                    LpspTinderTinderChatBubble(text: "Avec plaisir 😊", sender: .me)
+ } .padding(.vertical) }
+                HStack {
+                    TextField("Message", text: .constant(""))
+                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+                }.padding(8)
+            }
+            .navigationTitle("Messages")
+        }
+    }
+}
+
+private struct LpspTinderDatingTopPicksTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { LpspTinderDemoSwipeCard(accent: LpspTinderTokens.tdrNopeRed).padding() }
+            .navigationTitle("Top Picks")
+        }
+    }
+}
+
+private struct LpspTinderDatingProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspTinderTokens.tdrNopeRed.gradient).frame(width: 88, height: 88)
+                Text("Alex, 28").font(.title2.bold())
+                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
+            }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspTinderDatingTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspTinderDatingDiscoverTabScreen() }
+        else if low.contains("message") || low.contains("chat") { LpspTinderDatingMessagesTabScreen() }
+        else if low.contains("star") || low.contains("top") { LpspTinderDatingTopPicksTabScreen() }
+        else { LpspTinderDatingProfileTabScreen() }
+    }
+}
+
 private struct LpspTinderDemoSwipeCard: View {
     let accent: Color
     var body: some View {
@@ -447,6 +507,38 @@ private struct LpspTinderDemoSwipeCard: View {
                 }
                 .padding(20)
             }
+    }
+}
+
+
+private struct LpspTinderSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack {
+
+        } .padding(.horizontal, 16).frame(height: 48)
+        ZStack {
+            ZStack(alignment: .bottomLeading) {
+                LinearGradient(colors: [Color(red:0.55,green:0.35,blue:0.45), Color(red:0.25,green:0.18,blue:0.35)], startPoint: .top, endPoint: .bottom).frame(maxWidth: .infinity, maxHeight: .infinity)
+                Text("NOPE").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                LinearGradient(colors: [.clear, .black.opacity(0.75)], startPoint: .center, endPoint: .bottom).frame(height: 180)
+                HStack(alignment: .bottom) {
+                            Text("Maya,").font(.system(size: 24.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                            Text("27").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("📍 3 mi away · Designer").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("i").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                } .padding(16)
+            } .frame(maxWidth: .infinity).frame(height: 480).clipShape(RoundedRectangle(cornerRadius: 12))
+            HStack(spacing: 18) {
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
+            } .padding(.bottom, 8)
+        } .padding(.horizontal, 12)
+        }
+        .background(Color(red: 0.071, green: 0.071, blue: 0.071).ignoresSafeArea())
     }
 }
 

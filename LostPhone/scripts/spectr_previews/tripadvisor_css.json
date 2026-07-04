@@ -1,0 +1,22 @@
+{
+  "status": "height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; font-size: 14px; font-weight: 600; color: var(--text);",
+  "owl": "width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;",
+  "loc-pill": "font-size: 15px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 4px;",
+  "avatar": "width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #34E0A1, #21C589);",
+  "search-pill": "display: flex; align-items: center; height: 48px; border-radius: 999px; background: var(--surface); padding: 0 18px; gap: 10px;",
+  "search-text": "flex: 1; font-size: 15px; color: var(--text-secondary);",
+  "cat-tile": "background: var(--surface); border-radius: 16px; height: 84px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;",
+  "cat-label": "font-size: 14px; font-weight: 600; color: var(--text);",
+  "place": "margin-bottom: 20px;",
+  "photo": "width: 100%; aspect-ratio: 3/2; border-radius: 16px; position: relative; overflow: hidden;",
+  "badge": "position: absolute; top: 12px; left: 12px; background: var(--green); color: #000; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; padding: 4px 10px; border-radius: 999px;",
+  "heart": "position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 18px; background: rgba(0,0,0,0.30); display: flex; align-items: center; justify-content: center;",
+  "dots": "position: absolute; bottom: 12px; left: 0; right: 0; display: flex; justify-content: center; gap: 4px;",
+  "dot": "width: 6px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.5);",
+  "bubble-row": "display: flex; gap: 2px;",
+  "bubble": "width: 16px; height: 16px; border-radius: 50%; background: var(--empty-bubble); overflow: hidden;",
+  "bubble-count": "font-size: 13px; color: var(--text-secondary);",
+  "place-name": "font-size: 17px; font-weight: 700; color: var(--text); margin-top: 6px;",
+  "place-meta": "font-size: 13px; color: var(--text-secondary); margin-top: 4px;",
+  "tab": "display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); font-size: 11px; font-weight: 600; gap: 3px; letter-spacing: 0.2px;"
+}

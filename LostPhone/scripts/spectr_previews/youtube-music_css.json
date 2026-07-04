@@ -1,0 +1,23 @@
+{
+  "status": "height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; font-size: 14px; font-weight: 600; color: var(--text-primary); z-index: 5;",
+  "np-art-backdrop": "position: absolute; inset: -20% -20% 40% -20%;\n    background: radial-gradient(circle at 50% 30%, #6B4A8C 0%, #422E5C 45%, transparent 72%);\n    filter: blur(40px); opacity: 0.85;",
+  "np-top": "display: flex; align-items: center; justify-content: space-between; padding: 6px 20px 0; position: relative; z-index: 2;",
+  "np-source": "font-size: 11px; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.6px; text-transform: uppercase;",
+  "np-art": "width: 232px; height: 232px; border-radius: 8px; margin: 26px auto 0;\n    background: linear-gradient(140deg, #C13584 0%, #833AB4 45%, #5851DB 100%);\n    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.7); position: relative; z-index: 2; overflow: hidden;",
+  "np-toggle": "display: flex; gap: 6px; justify-content: center; margin: 22px auto 0; background: rgba(255,255,255,0.08); padding: 4px; border-radius: 999px; position: relative; z-index: 2;",
+  "np-meta": "padding: 22px 24px 0; position: relative; z-index: 2;",
+  "np-track": "font-size: 22px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px;",
+  "np-artist": "font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-top: 4px;",
+  "np-scrub": "padding: 20px 24px 0; position: relative; z-index: 2;",
+  "np-bar": "height: 3px; background: rgba(255,255,255,0.22); border-radius: 2px; position: relative;",
+  "np-time": "display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums;",
+  "np-ctrls": "display: flex; align-items: center; justify-content: space-between; padding: 14px 32px 0; position: relative; z-index: 2;",
+  "np-ic": "width: 26px; height: 26px;",
+  "np-play": "width: 64px; height: 64px; border-radius: 50%; background: var(--yt-white); display: flex; align-items: center; justify-content: center;",
+  "np-upnext": "margin-top: auto; padding: 16px 22px 14px; position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; border-top: 0.5px solid rgba(255,255,255,0.12);",
+  "np-upnext-art": "width: 40px; height: 40px; border-radius: 4px; background: linear-gradient(135deg, #FF8A00, #E52E71); flex-shrink: 0;",
+  "np-upnext-txt": "flex: 1; line-height: 1.25;",
+  "np-upnext-label": "font-size: 10px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.6px; text-transform: uppercase;",
+  "np-upnext-track": "font-size: 13px; font-weight: 500; color: var(--text-primary); margin-top: 2px;",
+  "tab": "display: flex; flex-direction: column; align-items: center; color: var(--text-tertiary); font-size: 10px; font-weight: 500; gap: 3px;"
+}

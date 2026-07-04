@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/tiktok/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/tiktok
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/tiktok
+// Meliwat/awesome-ios-design-md/social/tiktok/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTikTokView: View {
     var body: some View {
@@ -443,18 +443,21 @@ private struct LpspTikTokShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTikTokFeedTabScreen()
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
+            LpspTikTokSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspTikTokExploreTabScreen()
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
+            LpspTikTokShortVideoDiscoverTabScreen()
+                .tabItem { Label("Discover", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspTikTokProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle") }
+            LpspTikTokShortVideoInboxTabScreen()
+                .tabItem { Label("Inbox", systemImage: "tray.fill") }
                 .tag(2)
+            LpspTikTokShortVideoProfileTabScreen()
+                .tabItem { Label("Profile", systemImage: "person.fill") }
+                .tag(3)
         }
         .tint(LpspTikTokTokens.tiktokTextPrimary)
-        
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -482,129 +485,144 @@ private struct LpspTikTokGenericTabScreen: View {
 }
 
 
-private struct LpspTikTokDemoStory: Identifiable {
-    let id = UUID()
-    let name: String
-    let unread: Bool
-}
-
-private enum LpspTikTokDemoStories {
-    static let items: [LpspTikTokDemoStory] = [
-        .init(name: "Votre story", unread: false),
-        .init(name: "Alex", unread: true),
-        .init(name: "Léa", unread: true),
-    ]
-}
-
-private struct LpspTikTokFeedTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 14) {
-                            ForEach(LpspTikTokDemoStories.items) { s in
-                                VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspTikTokTokens.tiktokTextPrimary, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.2)).frame(width: 58, height: 58))
-                                    Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 10)
-                    }
-
-
-                    ForEach(0..<3, id: \.self) { i in
-                        LpspTikTokGenericFeedCard(index: i, accent: LpspTikTokTokens.tiktokTextPrimary)
-                    }
-
-                }
-            }
-            .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-
-private struct LpspTikTokExploreTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 2) {
-                    ForEach(0..<15, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.08 + Double(i) * 0.04))
-                            .aspectRatio(1, contentMode: .fit)
-                    }
-                }
-            }
-            .navigationTitle("Explorer")
-        }
-    }
-}
-
-private struct LpspTikTokReelsTabScreen: View {
+private struct LpspTikTokShortVideoFeedTabScreen: View {
+    @State private var isFollowed = false
+    @State private var isLiked = true
+    @State private var likeCount = 12800
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            LinearGradient(
+                colors: [Color(red: 0.1, green: 0.05, blue: 0.15), LpspTikTokTokens.tiktokCanvas, .black],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
             VStack {
                 Spacer()
-                Image(systemName: "play.rectangle.fill").font(.system(size: 64)).foregroundStyle(.white.opacity(0.85))
-                Text("Reels").font(.title2.bold()).foregroundStyle(.white)
-                Spacer()
+                HStack(alignment: .bottom) {
+                    LpspTikTokCaptionOverlay(username: "lost.phone", caption: "Showroom Lost Phone #fyp #swiftui", musicTitle: "Original Sound - lost.phone")
+                    LpspTikTokActionRail(
+                        avatarURL: nil,
+                        isFollowed: $isFollowed,
+                        likeCount: $likeCount,
+                        isLiked: $isLiked,
+                        commentCount: 420,
+                        bookmarkCount: 89,
+                        shareCount: 156,
+                        musicArtwork: nil
+                    )
+                }
+                LpspTikTokVideoScrubber(progress: 0.42)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
             }
         }
     }
 }
 
-private struct LpspTikTokProfileTabScreen: View {
+private struct LpspTikTokShortVideoDiscoverTabScreen: View {
+    let cols = [GridItem(.flexible()), GridItem(.flexible())]
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: cols, spacing: 4) {
+                    ForEach(0..<12, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.12 + Double(i) * 0.04))
+                            .aspectRatio(9/16, contentMode: .fit)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("#trend \(i + 1)").font(.caption.bold()).foregroundStyle(.white).padding(6)
+                            }
+                    }
+                }
+                .padding(8)
+            }
+            .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
+            .navigationTitle("Discover")
+        }
+    }
+}
+
+private struct LpspTikTokShortVideoInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Alex t'a mentionné", "Nouveau follower", "Live maintenant"], id: \.self) { item in
+                HStack {
+                    Circle().fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.2)).frame(width: 40, height: 40)
+                    Text(item)
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspTikTokShortVideoProfileTabScreen: View {
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
                     Circle().fill(LpspTikTokTokens.tiktokTextPrimary.gradient).frame(width: 88, height: 88)
                         .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("lost.phone").font(.system(size: 20, weight: .bold))
-                    Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)
-                    HStack(spacing: 32) {
-                        VStack { Text("128").font(.headline); Text("Publications").font(.caption) }
-                        VStack { Text("1,2 k").font(.headline); Text("Abonnés").font(.caption) }
-                        VStack { Text("340").font(.headline); Text("Abonnements").font(.caption) }
+                    Text("@lost.phone").font(.title3.bold()).foregroundStyle(.white)
+                    HStack(spacing: 24) {
+                        VStack { Text("128").bold(); Text("Following").font(.caption) }
+                        VStack { Text("12.4K").bold(); Text("Followers").font(.caption) }
+                        VStack { Text("89K").bold(); Text("Likes").font(.caption) }
                     }
+                    .foregroundStyle(.white)
                 }
                 .padding()
             }
-            .navigationTitle("Profil")
+            .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
+            .navigationTitle("Profile")
         }
     }
 }
 
-private struct LpspTikTokSocialTabScreen: View {
-    let title: String
-    var body: some View { LpspTikTokGenericTabScreen(title: title, tabIndex: 0) }
-}
 
-private struct LpspTikTokGenericFeedCard: View {
-    let index: Int
-    let accent: Color
+private struct LpspTikTokSpectrHomeTabScreen: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Circle().fill(accent.opacity(0.2)).frame(width: 32, height: 32)
-                Text("utilisateur_\(index)").font(.system(size: 14, weight: .semibold))
-                Spacer()
+        ZStack(alignment: .bottomLeading) {
+            LinearGradient(colors: [Color(red:0.08,green:0.05,blue:0.12), Color(red: 0.004, green: 0.004, blue: 0.004)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .ignoresSafeArea()
+        LinearGradient(colors: [Color(red:0.08,green:0.05,blue:0.12), Color.primary], startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
+        HStack(spacing: 20) {
+            Text("Following").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("For You").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.top, 52)
+        Image(systemName: "magnifyingglass").font(.system(size: 20)).foregroundStyle(.white).padding(.trailing, 16)
+        VStack(spacing: 20) {
+            ZStack(alignment: .bottom) {
+                Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
             }
-            .padding(.horizontal, 12)
-            RoundedRectangle(cornerRadius: 0).fill(accent.opacity(0.12)).frame(height: 280)
-            HStack(spacing: 16) {
-                Image(systemName: "heart"); Image(systemName: "bubble.right"); Spacer(); Image(systemName: "bookmark")
+            VStack(spacing: 4) {
+                Text("812.1K").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
             }
-            .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
+            VStack(spacing: 4) {
+                Text("4,567").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            VStack(spacing: 4) {
+                Text("42.8K").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            VStack(spacing: 4) {
+                Text("Share").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            Circle().fill(.black).frame(width: 44, height: 44).overlay(Circle().fill(Color.red.opacity(0.8)).frame(width: 26, height: 26))
+        } .padding(.trailing, 12)
+        VStack(alignment: .leading, spacing: 6) {
+            Text("@kellenvoss").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("tokyo station on a rainy tuesday #tokyo #rainy #streetfilm").font(.system(size: 15)).foregroundStyle(.white)
+            HStack(spacing: 8) {
+                Text("neon ritual - slow amber trio · neon ritual - slow amber trio · neon ritual").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .foregroundStyle(.white.opacity(0.9))
+        } .padding(.horizontal, 14).padding(.bottom, 8)
+        Capsule().fill(.white.opacity(0.25)).frame(height: 4).padding(.horizontal, 24)
         }
+        .background(Color(red: 0.004, green: 0.004, blue: 0.004).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

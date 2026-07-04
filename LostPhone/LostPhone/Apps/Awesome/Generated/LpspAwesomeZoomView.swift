@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/productivity/zoom/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/zoom
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/zoom
+// Meliwat/awesome-ios-design-md/productivity/zoom/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeZoomView: View {
     var body: some View {
@@ -278,9 +278,21 @@ private struct LpspZoomShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspZoomGenericTabScreen(title: "Team Chat", tabIndex: 0)
-                .tabItem { Label("Team Chat", systemImage: "bubble.left.and.bubble.right.fill") }
+            LpspZoomSpectrHomeTabScreen()
+                .tabItem { Label("Meetings", systemImage: "video.fill") }
                 .tag(0)
+            LpspZoomMeetingsTabScreen(title: "Team Chat", tabIndex: 1)
+                .tabItem { Label("Team Chat", systemImage: "bubble.left.and.bubble.right.fill") }
+                .tag(1)
+            LpspZoomMeetingsTabScreen(title: "Mail", tabIndex: 2)
+                .tabItem { Label("Mail", systemImage: "envelope.fill") }
+                .tag(2)
+            LpspZoomMeetingsTabScreen(title: "Phone", tabIndex: 3)
+                .tabItem { Label("Phone", systemImage: "phone.fill") }
+                .tag(3)
+            LpspZoomMeetingsTabScreen(title: "More", tabIndex: 4)
+                .tabItem { Label("More", systemImage: "ellipsis") }
+                .tag(4)
         }
         .tint(LpspZoomTokens.zoomHandYellow)
         
@@ -311,9 +323,84 @@ private struct LpspZoomGenericTabScreen: View {
 }
 
 
-private struct LpspZoomMessagingTabScreen: View {
+
+private struct LpspZoomDemoParticipant { let name: String; let isMuted: Bool; let isSpeaking: Bool }
+private enum LpspZoomDemoParticipants {
+    static let items: [LpspZoomDemoParticipant] = [
+        .init(name: "Alex", isMuted: false, isSpeaking: true),
+        .init(name: "Léa", isMuted: true, isSpeaking: false),
+    ]
+}
+
+private struct LpspZoomMeetingsListTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 8) { 
+                    LpspZoomMeetingRow(time: "10:00", topic: "Standup Lost Phone", subtitle: "ID: 123 456 789", onJoin: {})
+                    LpspZoomMeetingRow(time: "14:00", topic: "Review Spectr", subtitle: "Récurrent", onJoin: {})
+                        .padding(.vertical, 4)
+ } }
+            .background(LpspZoomTokens.zoomCanvas.ignoresSafeArea())
+            .navigationTitle("Meetings")
+        }
+    }
+}
+
+private struct LpspZoomMeetingsChatTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            LpspZoomGalleryGrid(participants: LpspZoomDemoParticipants.items)
+            .navigationTitle("Chat")
+        }
+    }
+}
+
+private struct LpspZoomMeetingsMailTabScreen: View {
+    var body: some View { NavigationStack { List(["Inbox", "Sent"], id: \.self) { Label($0, systemImage: "envelope") } .navigationTitle("Mail") } }
+}
+
+private struct LpspZoomMeetingsPhoneTabScreen: View {
+    var body: some View { NavigationStack { List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "phone") } .navigationTitle("Phone") } }
+}
+
+private struct LpspZoomMeetingsMoreTabScreen: View {
+    var body: some View { NavigationStack { List(["Settings", "Help"], id: \.self) { Label($0, systemImage: "gearshape") } .navigationTitle("More") } }
+}
+
+private struct LpspZoomMeetingsTabScreen: View {
     let title: String
-    var body: some View { LpspZoomGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("meeting") || low.contains("video") || tabIndex == 0 { LpspZoomMeetingsListTabScreen() }
+        else if low.contains("chat") || low.contains("team") { LpspZoomMeetingsChatTabScreen() }
+        else if low.contains("mail") { LpspZoomMeetingsMailTabScreen() }
+        else if low.contains("phone") { LpspZoomMeetingsPhoneTabScreen() }
+        else { LpspZoomMeetingsMoreTabScreen() }
+    }
+}
+
+
+private struct LpspZoomSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+                Text("Recording").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("12:34").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
+            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
+            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
+            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
+        } .padding(8)
+                Text("Unmute").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Video").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Participants").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("React").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Leave").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.102, green: 0.102, blue: 0.102).ignoresSafeArea())
+    }
 }
 
 

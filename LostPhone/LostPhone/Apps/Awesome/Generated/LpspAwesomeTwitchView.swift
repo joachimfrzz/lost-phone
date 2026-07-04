@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/twitch/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/twitch
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/twitch
+// Meliwat/awesome-ios-design-md/video/twitch/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTwitchView: View {
     var body: some View {
@@ -241,9 +241,21 @@ private struct LpspTwitchShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
+            LpspTwitchSpectrHomeTabScreen()
+                .tabItem { Label("Following", systemImage: "heart.fill") }
+                .tag(0)
+            LpspTwitchVideoHomeTabScreen()
+                .tabItem { Label("Browse", systemImage: "play.square.stack.fill") }
+                .tag(1)
+            LpspTwitchVideoHomeTabScreen()
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .tag(2)
             LpspTwitchVideoHomeTabScreen()
                 .tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .tag(0)
+                .tag(3)
+            LpspTwitchProfilePickerTabScreen()
+                .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
+                .tag(4)
         }
         .tint(LpspTwitchTokens.twitchLiveRed)
         .preferredColorScheme(.dark)
@@ -274,6 +286,16 @@ private struct LpspTwitchGenericTabScreen: View {
 }
 
 
+private struct LpspTwitchDemoPosterURLs {
+    static let items: [URL] = [
+        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+    ]
+}
 private struct LpspTwitchDemoProfile: Identifiable {
     let id = UUID()
     let name: String
@@ -314,6 +336,7 @@ private struct LpspTwitchVideoHomeTabScreen: View {
                     Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(0..<6, id: \.self) { i in
@@ -340,6 +363,41 @@ private struct LpspTwitchProfilePickerTabScreen: View {
     }
 }
 
+private struct LpspTwitchVideoNewTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+
+                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+                }
+                .padding(.vertical, 8)
+            }
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+        }
+    }
+}
+
+private struct LpspTwitchVideoDownloadsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
+                HStack {
+                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
+                    VStack(alignment: .leading) {
+                        Text(title).font(.headline).foregroundStyle(.white)
+                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Downloads")
+        }
+    }
+}
+
 private struct LpspTwitchDemoProfilePicker: View {
     var body: some View {
         ZStack {
@@ -354,6 +412,42 @@ private struct LpspTwitchDemoProfilePicker: View {
                 }
             }
         }
+    }
+}
+
+
+private struct LpspTwitchSpectrHomeTabScreen: View {
+    var body: some View {
+        ZStack {
+        ZStack {
+            Text("LIVE").font(.system(size: 14))
+            Text("12.4K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+        } .background(Color.black)
+                Text("novaplays").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                Text("Just Chatting · 12.4K").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+            Text("Follow").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+            Text("Stream Chat").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+            ScrollView {
+                VStack(spacing: 8) {
+                    Text("pixelgremlin").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("harborwave").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("modbot").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("kellen_v").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("hana.r").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("drift_").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                    Text("harborwave").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+                }
+                .padding(.vertical, 8)
+            }
+            Text("Send a message").font(.system(size: 14))
+            }
+            .padding(16)
+        }
+        }
+        .background(Color(red: 0.055, green: 0.055, blue: 0.063).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

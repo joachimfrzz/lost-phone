@@ -1,0 +1,21 @@
+{
+  "status": "height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; font-size: 14px; font-weight: 600; color: var(--text-primary);",
+  "np-body": "flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 0 24px;",
+  "np-top": "display: flex; align-items: center; justify-content: space-between; padding: 4px 0 18px;",
+  "np-ctx": "text-align: center; line-height: 1.25;",
+  "np-ctx-label": "font-size: 10px; font-weight: 700; letter-spacing: 1.2px; color: var(--text-secondary); text-transform: uppercase;",
+  "np-ctx-title": "font-size: 13px; font-weight: 700; color: var(--text-primary); margin-top: 2px;",
+  "flow-badge": "position: absolute; top: 16px; left: 16px; display: flex; align-items: center; gap: 7px; background: rgba(15,13,19,0.55); backdrop-filter: blur(8px); padding: 7px 13px 7px 11px; border-radius: 999px;",
+  "eqbars": "position: absolute; bottom: 0; left: 0; right: 0; height: 46%; display: flex; align-items: flex-end; gap: 4px; padding: 0 18px 22px;",
+  "eqbar": "flex: 1; background: rgba(255,255,255,0.62); border-radius: 3px 3px 0 0;",
+  "np-meta": "padding: 22px 0 12px;",
+  "np-title": "font-size: 24px; font-weight: 800; letter-spacing: -0.4px; color: var(--text-primary);",
+  "np-artist": "font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-top: 4px;",
+  "np-titlerow": "display: flex; align-items: flex-start; justify-content: space-between;",
+  "scrub-track": "height: 4px; border-radius: 2px; background: var(--surface-2); position: relative;",
+  "scrub-fill": "position: absolute; left: 0; top: 0; height: 100%; width: 42%; border-radius: 2px; background: linear-gradient(90deg, var(--flow-1), var(--flow-2));",
+  "scrub-knob": "position: absolute; left: 42%; top: 50%; width: 13px; height: 13px; border-radius: 50%; background: #FFF; transform: translate(-50%, -50%); box-shadow: 0 2px 6px rgba(0,0,0,0.5);",
+  "scrub-time": "display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: var(--text-secondary); margin-top: 9px; font-variant-numeric: tabular-nums;",
+  "tp-play": "width: 68px; height: 68px; border-radius: 50%; background: linear-gradient(135deg, var(--flow-1), var(--flow-2)); display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 28px -8px rgba(255,0,146,0.6);",
+  "tab": "display: flex; flex-direction: column; align-items: center; color: var(--text-tertiary); font-size: 10px; font-weight: 600; gap: 4px; letter-spacing: 0.1px;"
+}

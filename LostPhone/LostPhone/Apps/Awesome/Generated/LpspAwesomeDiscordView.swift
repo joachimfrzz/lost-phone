@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/discord/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/discord
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/discord
+// Meliwat/awesome-ios-design-md/messaging/discord/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDiscordView: View {
     var body: some View {
@@ -473,21 +473,21 @@ private struct LpspDiscordShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDiscordMessagingTabScreen(title: "Servers")
+            LpspDiscordSpectrHomeTabScreen()
                 .tabItem { Label("Servers", systemImage: "square.grid.2x2.fill") }
                 .tag(0)
-            LpspDiscordChatsTabScreen()
+            LpspDiscordDiscordMessagesTabScreen()
                 .tabItem { Label("Messages", systemImage: "bubble.left.and.bubble.right.fill") }
                 .tag(1)
-            LpspDiscordMessagingTabScreen(title: "Notifications")
+            LpspDiscordDiscordNotificationsTabScreen()
                 .tabItem { Label("Notifications", systemImage: "bell.fill") }
                 .tag(2)
-            LpspDiscordMessagingTabScreen(title: "You")
+            LpspDiscordDiscordYouTabScreen()
                 .tabItem { Label("You", systemImage: "person.crop.circle.fill") }
                 .tag(3)
         }
         .tint(LpspDiscordTokens.dcIdleYellow)
-        
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -515,23 +515,145 @@ private struct LpspDiscordGenericTabScreen: View {
 }
 
 
-private struct LpspDiscordPlaceholderChatRow: View {
+private struct LpspDiscordDiscordDemoServer: Identifiable {
+    let id: String
     let name: String
-    let preview: String
-    let time: String
+    let initials: String
+    let unreadCount: Int
+    let mentionCount: Int
+}
+
+private enum LpspDiscordDiscordDemoData {
+    static let servers: [LpspDiscordDiscordDemoServer] = [
+        .init(id: "s1", name: "Lost Phone", initials: "LP", unreadCount: 0, mentionCount: 2),
+        .init(id: "s2", name: "SwiftUI", initials: "SW", unreadCount: 3, mentionCount: 0),
+        .init(id: "s3", name: "Paris", initials: "PA", unreadCount: 0, mentionCount: 0),
+    ]
+    static let channels = ["general", "showroom", "design-review"]
+}
+
+private struct LpspDiscordDiscordServersTabScreen: View {
+    @State private var activeServerId: String? = "s1"
     var body: some View {
-        HStack(spacing: 12) {
-            Circle().fill(LpspDiscordTokens.dcIdleYellow.opacity(0.2)).frame(width: 48, height: 48)
-                .overlay(Text(String(name.prefix(1))).font(.headline).foregroundStyle(LpspDiscordTokens.dcIdleYellow))
-            VStack(alignment: .leading) {
-                Text(name).font(.system(size: 17, weight: .semibold))
-                Text(preview).font(.system(size: 15)).foregroundStyle(.secondary).lineLimit(1)
+        HStack(spacing: 0) {
+            LpspDiscordDCServerRail(servers: LpspDiscordDiscordDemoData.servers.map {
+                LpspDiscordServer(id: $0.id, name: $0.name, imageUri: nil, initials: $0.initials, unreadCount: $0.unreadCount, mentionCount: $0.mentionCount)
+            }, activeServerId: $activeServerId)
+            VStack(spacing: 0) {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        Text("TEXT CHANNELS").font(.caption.bold()).foregroundStyle(.secondary).padding(.horizontal, 12).padding(.top, 8)
+                        ForEach(Array(LpspDiscordDiscordDemoData.channels.enumerated()), id: \.offset) { idx, name in
+                            LpspDiscordDCChannelRow(name: name, type: .text, isActive: idx == 0, unreadCount: idx == 1 ? 2 : 0, mentionCount: idx == 0 ? 1 : 0)
+                        }
+                        ForEach(0..<4, id: \.self) { i in
+                            LpspDiscordDCMessageRow(
+                                avatar: Image(systemName: "person.circle.fill"),
+                                username: i == 0 ? "Alex" : "Léa",
+                                roleColor: LpspDiscordTokens.dcIdleYellow,
+                                timestamp: "10:2\(i)",
+                                message: i == 0 ? "Showroom Spectr prêt !" : "Super rendu 👍",
+                                presenceStatus: .online,
+                                isGroupedWithPrevious: i > 0
+                            )
+                        }
+                    }
+                }
+                .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+                LpspDiscordDCComposeBar(channelName: "general")
             }
-            Spacer()
-            Text(time).font(.system(size: 12)).foregroundStyle(.secondary)
         }
-        .padding(.horizontal, 16)
-        .frame(height: 72)
+        .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspDiscordDiscordMessagesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(LpspDiscordDemoChats.chats) { chat in
+                    NavigationLink {
+                        LpspDiscordDiscordDMDetailScreen(chat: chat)
+                    } label: {
+                        HStack(spacing: 12) {
+                            Circle().fill(LpspDiscordTokens.dcIdleYellow.opacity(0.2)).frame(width: 48, height: 48)
+                            VStack(alignment: .leading) {
+                                Text(chat.name).font(.headline)
+                                Text(chat.preview).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                            }
+                            Spacer()
+                            Text(chat.time).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+            .navigationTitle("Messages")
+        }
+    }
+}
+
+private struct LpspDiscordDiscordDMDetailScreen: View {
+    let chat: LpspDiscordDemoChat
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    LpspDiscordDCMessageRow(
+                        avatar: Image(systemName: "person.circle.fill"),
+                        username: chat.name,
+                        roleColor: LpspDiscordTokens.dcIdleYellow,
+                        timestamp: "10:24",
+                        message: "On se voit ce soir ?",
+                        presenceStatus: .online,
+                        isGroupedWithPrevious: false
+                    )
+                    LpspDiscordDCMessageRow(
+                        avatar: Image(systemName: "person.circle.fill"),
+                        username: "Vous",
+                        roleColor: .white,
+                        timestamp: "10:25",
+                        message: "Oui, j'arrive !",
+                        presenceStatus: .online,
+                        isGroupedWithPrevious: false
+                    )
+                }
+                .padding(.vertical, 8)
+            }
+            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+            LpspDiscordDCComposeBar(channelName: "general")
+        }
+        .navigationTitle(chat.name)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct LpspDiscordDiscordNotificationsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Mention in #general", "Nouveau message de Alex", "Invitation serveur"], id: \.self) { item in
+                Label(item, systemImage: "bell.fill")
+            }
+            .scrollContentBackground(.hidden)
+            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+            .navigationTitle("Notifications")
+        }
+    }
+}
+
+private struct LpspDiscordDiscordYouTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspDiscordTokens.dcIdleYellow.gradient).frame(width: 80, height: 80)
+                Text("lost.phone").font(.title2.bold())
+                Text("En ligne").foregroundStyle(.green)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+            .navigationTitle("You")
+        }
     }
 }
 
@@ -540,114 +662,69 @@ private struct LpspDiscordDemoChat: Identifiable {
     let name: String
     let preview: String
     let time: String
-    let unread: Int
-    let hasRing: Bool
 }
 
 private enum LpspDiscordDemoChats {
     static let chats: [LpspDiscordDemoChat] = [
-        .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24", unread: 2, hasRing: true),
-        .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier", unread: 0, hasRing: false),
-        .init(name: "Famille", preview: "Photo: vacances", time: "Lun.", unread: 5, hasRing: true),
+        .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24"),
+        .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier"),
     ]
 }
 
-private struct LpspDiscordChatsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List {
 
-                ForEach(LpspDiscordDemoChats.chats) { chat in
-                    NavigationLink {
-                        LpspDiscordChatDetailScreen(chat: chat)
-                    } label: {
-                        LpspDiscordPlaceholderChatRow(name: chat.name, preview: chat.preview, time: chat.time)
-                    }
-                }
-
-            }
-            .listStyle(.plain)
-            .navigationTitle("Chats")
-        }
-    }
-}
-
-private struct LpspDiscordChatDetailScreen: View {
-    let chat: LpspDiscordDemoChat
+private struct LpspDiscordSpectrHomeTabScreen: View {
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 8) {
+        VStack(spacing: 20) {
+            VStack(spacing: 4) {
 
-                    LpspDiscordDemoBubble(text: "Salut, tu es dispo ?", outgoing: true)
-                    LpspDiscordDemoBubble(text: "Oui, j'arrive !", outgoing: false)
-
-                }
-                .padding(.vertical, 8)
             }
-            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
-            LpspDiscordDCComposeBar(channelName: chat.name)
-        }
-        .navigationTitle(chat.name)
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-private struct LpspDiscordCallsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(LpspDiscordDemoChats.chats) { chat in
-                HStack {
-                    Circle().fill(LpspDiscordTokens.dcIdleYellow.opacity(0.15)).frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspDiscordTokens.dcIdleYellow))
-                    VStack(alignment: .leading) {
-                        Text(chat.name).font(.system(size: 17, weight: .semibold))
-                        Text("Appel vocal · Hier").font(.subheadline).foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Image(systemName: "info.circle").foregroundStyle(.secondary)
-                }
+            VStack(spacing: 4) {
+                Text("DS").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
             }
-            .navigationTitle("Appels")
+            VStack(spacing: 4) {
+                Text("G").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            }
+            VStack(spacing: 4) {
+                Text("IX").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                Text("3").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            }
+            VStack(spacing: 4) {
+                Text("FM").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            }
+            Text("+").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+        } .padding(.trailing, 12)
+                Text("#").font(.system(size: 18.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                Text("general").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                            Text("Aria").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("Today at 10:18 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("v4.2.0-rc1").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("🔥 3").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("😀 2").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("👍 5").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                            Text("statbot").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("BOT").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("10:19 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("rc1").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("@aria").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                            Text("Jules").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("10:21 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                        Text("on it — deploying preview now.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("🚀 4").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+                            Text("makenzie").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                            Text("10:23 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                        Text("the presence dots look so clean on this canvas 😌").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            VStack(spacing: 6) {
+                    Text("+").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+                    Text("Message #general").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
+            } .padding(.horizontal, 12).padding(.bottom, 8)
         }
-    }
-}
-
-private struct LpspDiscordMessagingTabScreen: View {
-    let title: String
-    var body: some View { LpspDiscordGenericTabScreen(title: title, tabIndex: 0) }
-}
-
-private struct LpspDiscordDemoBubble: View {
-    let text: String
-    var outgoing: Bool = true
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 60) }
-            Text(text)
-                .font(.system(size: 17))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspDiscordTokens.dcIdleYellow.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 60) }
-        }
-        .padding(.horizontal, 8)
-    }
-}
-
-private struct LpspDiscordDemoComposeBar: View {
-    @State private var text = ""
-    var body: some View {
-        HStack {
-            TextField("Message", text: $text)
-                .padding(10)
-                .background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-            Image(systemName: "paperplane.fill")
-                .foregroundStyle(LpspDiscordTokens.dcIdleYellow)
-                .font(.title2)
-        }
-        .padding(8)
-        .background(.ultraThinMaterial)
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

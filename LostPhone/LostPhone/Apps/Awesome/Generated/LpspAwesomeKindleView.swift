@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/kindle/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/kindle
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/kindle
+// Meliwat/awesome-ios-design-md/misc/kindle/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeKindleView: View {
     var body: some View {
@@ -267,16 +267,16 @@ private struct LpspKindleShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspKindleGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspKindleSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspKindleGenericTabScreen(title: "Library", tabIndex: 1)
+            LpspKindleReaderTabScreen(title: "Library", tabIndex: 1)
                 .tabItem { Label("Library", systemImage: "books.vertical.fill") }
                 .tag(1)
-            LpspKindleGenericTabScreen(title: "Discover", tabIndex: 2)
+            LpspKindleReaderTabScreen(title: "Discover", tabIndex: 2)
                 .tabItem { Label("Discover", systemImage: "magnifyingglass") }
                 .tag(2)
-            LpspKindleGenericTabScreen(title: "More", tabIndex: 3)
+            LpspKindleReaderTabScreen(title: "More", tabIndex: 3)
                 .tabItem { Label("More", systemImage: "ellipsis") }
                 .tag(3)
         }
@@ -309,9 +309,65 @@ private struct LpspKindleGenericTabScreen: View {
 }
 
 
-private struct LpspKindleMessagingTabScreen: View {
+private struct LpspKindleDemoBook { let title: String; let author: String; let progress: Double }
+private enum LpspKindleDemoBooks {
+    static let items: [LpspKindleDemoBook] = [
+        .init(title: "SwiftUI Patterns", author: "Meliwat", progress: 0.42),
+        .init(title: "Design Systems", author: "Spectr", progress: 0.08),
+    ]
+}
+
+private struct LpspKindleReaderLibraryTabScreen: View {
+    var body: some View { NavigationStack { ScrollView { 
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                        ForEach(LpspKindleDemoBooks.items, id: \.title) { b in
+                        LpspKindleLibraryCover(imageUrl: nil, progress: b.progress, author: b.author)
+                        }
+                    }
+                    .padding()
+ } .navigationTitle("Bibliothèque") } }
+}
+
+private struct LpspKindleReaderReadingTabScreen: View {
+    var body: some View {
+        ZStack {
+            LpspKindleTokens.kdlChromeCanvas.ignoresSafeArea()
+            LpspKindleReadingPage()
+        }
+    }
+}
+
+private struct LpspKindleReaderTabScreen: View {
     let title: String
-    var body: some View { LpspKindleGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("read") || low.contains("lecture") { LpspKindleReaderReadingTabScreen() }
+        else { LpspKindleReaderLibraryTabScreen() }
+    }
+}
+
+
+private struct LpspKindleSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        ScrollView {
+                Text("Chapter Seven").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("The Lighthouse at Dawn").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("T").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("At the top the lamp still turned, patient and enormous, throwing its long arm of light across water the color of slate. She rested her palm on the brass and felt the faint warmth that never quite left it.").font(.system(size: 15.5, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Below, the village was a scatter of dark roofs. Somewhere down there a boat was already missing, though no one knew it yet but her.").font(.system(size: 15.5, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("38%").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("14 min left in chapter").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(20)
+                Text("Aa").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Brightness").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Layout").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Go To").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.055, green: 0.055, blue: 0.055).ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
 }
 
 

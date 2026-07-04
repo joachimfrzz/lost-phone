@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/dating/bumble/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/bumble
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/bumble
+// Meliwat/awesome-ios-design-md/dating/bumble/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeBumbleView: View {
     var body: some View {
@@ -423,12 +423,21 @@ private struct LpspBumbleShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspBumbleGenericTabScreen(title: "Matches", tabIndex: 0)
-                .tabItem { Label("Matches", systemImage: "heart.fill") }
+            LpspBumbleSpectrHomeTabScreen()
+                .tabItem { Label("People", systemImage: "person.2") }
                 .tag(0)
-            LpspBumbleGenericTabScreen(title: "Profile", tabIndex: 1)
-                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+            LpspBumbleDatingTabScreen(title: "Hives", tabIndex: 1)
+                .tabItem { Label("Hives", systemImage: "hexagon.fill") }
                 .tag(1)
+            LpspBumbleDatingTabScreen(title: "Matches", tabIndex: 2)
+                .tabItem { Label("Matches", systemImage: "heart.fill") }
+                .tag(2)
+            LpspBumbleDatingMessagesTabScreen()
+                .tabItem { Label("Chats", systemImage: "bubble.left.fill") }
+                .tag(3)
+            LpspBumbleDatingProfileTabScreen()
+                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+                .tag(4)
         }
         .tint(LpspBumbleTokens.bumbleYellow)
         
@@ -459,11 +468,16 @@ private struct LpspBumbleGenericTabScreen: View {
 }
 
 
-private struct LpspBumbleDemoDatingProfile {
-    let name: String
-    let age: Int
-    let bio: String
-    static let sample = LpspBumbleDemoDatingProfile(name: "Alex", age: 28, bio: "Paris · Photo · Voyage")
+private struct LpspBumbleDemoChatBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspBumbleTokens.bumbleYellow.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }.padding(.horizontal)
+    }
 }
 
 private struct LpspBumbleDatingDiscoverTabScreen: View {
@@ -481,6 +495,58 @@ private struct LpspBumbleDatingDiscoverTabScreen: View {
     }
 }
 
+private struct LpspBumbleDatingMessagesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView { LazyVStack(spacing: 8) { 
+                    LpspBumbleDemoChatBubble(text: "Salut ! On se voit ce week-end ?", outgoing: false)
+                    LpspBumbleDemoChatBubble(text: "Avec plaisir 😊", outgoing: true)
+ } .padding(.vertical) }
+                HStack {
+                    TextField("Message", text: .constant(""))
+                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+                }.padding(8)
+            }
+            .navigationTitle("Messages")
+        }
+    }
+}
+
+private struct LpspBumbleDatingTopPicksTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { LpspBumbleDemoSwipeCard(accent: LpspBumbleTokens.bumbleYellow).padding() }
+            .navigationTitle("Top Picks")
+        }
+    }
+}
+
+private struct LpspBumbleDatingProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspBumbleTokens.bumbleYellow.gradient).frame(width: 88, height: 88)
+                Text("Alex, 28").font(.title2.bold())
+                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
+            }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspBumbleDatingTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspBumbleDatingDiscoverTabScreen() }
+        else if low.contains("message") || low.contains("chat") { LpspBumbleDatingMessagesTabScreen() }
+        else if low.contains("star") || low.contains("top") { LpspBumbleDatingTopPicksTabScreen() }
+        else { LpspBumbleDatingProfileTabScreen() }
+    }
+}
+
 private struct LpspBumbleDemoSwipeCard: View {
     let accent: Color
     var body: some View {
@@ -494,6 +560,29 @@ private struct LpspBumbleDemoSwipeCard: View {
                 }
                 .padding(20)
             }
+    }
+}
+
+
+private struct LpspBumbleSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack {
+            Text("People").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 48)
+        ZStack {
+            ZStack(alignment: .bottomLeading) {
+                    Text("Sigrún, 28").font(.system(size: 14))
+                    Text("2 mi away · Engineer at a coffee co-op").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("i").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(maxWidth: .infinity).frame(height: 480).clipShape(RoundedRectangle(cornerRadius: 12))
+            HStack(spacing: 18) {
+
+            } .padding(.bottom, 8)
+            Text("Your turn: 23h 14m").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

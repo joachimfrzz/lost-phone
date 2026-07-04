@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/flighty/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/flighty
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/flighty
+// Meliwat/awesome-ios-design-md/travel/flighty/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeFlightyView: View {
     var body: some View {
@@ -242,16 +242,16 @@ private struct LpspFlightyShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspFlightyGenericTabScreen(title: "Flights", tabIndex: 0)
+            LpspFlightySpectrHomeTabScreen()
                 .tabItem { Label("Flights", systemImage: "airplane") }
                 .tag(0)
-            LpspFlightyGenericTabScreen(title: "Search", tabIndex: 1)
+            LpspFlightyTravelTabScreen(title: "Search", tabIndex: 1)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspFlightyGenericTabScreen(title: "Airport", tabIndex: 2)
+            LpspFlightyTravelTabScreen(title: "Airport", tabIndex: 2)
                 .tabItem { Label("Airport", systemImage: "building.2.fill") }
                 .tag(2)
-            LpspFlightyGenericTabScreen(title: "Profile", tabIndex: 3)
+            LpspFlightyTravelTabScreen(title: "Profile", tabIndex: 3)
                 .tabItem { Label("Profile", systemImage: "person.fill") }
                 .tag(3)
         }
@@ -284,9 +284,106 @@ private struct LpspFlightyGenericTabScreen: View {
 }
 
 
-private struct LpspFlightyMessagingTabScreen: View {
+private struct LpspFlightyTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspFlightyTokens.fltTextPrimary.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspFlightyTokens.fltCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspFlightyTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspFlightyTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspFlightyTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspFlightyTokens.fltTextPrimary.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
+}
+
+private struct LpspFlightyTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspFlightyTravelTabScreen: View {
     let title: String
-    var body: some View { LpspFlightyGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspFlightyTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspFlightyTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspFlightyTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspFlightyTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspFlightyTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspFlightyTravelExploreTabScreen() }
+        else { LpspFlightyTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspFlightySpectrHomeTabScreen: View {
+    var body: some View {
+        ZStack(alignment: .bottom) {
+        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
+        VStack(spacing: 0) {
+                Text("United · UA 482").font(.system(size: 17.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("DELAYED 22m").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("SFO").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("JFK").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("7:45 AM").font(.system(size: 32.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Gate B24 · Term 2").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("4:34 PM").font(.system(size: 32.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Gate 7 · Term 4").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("5h 42m · 2,586 mi · Nonstop · 62% complete").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .background(Color(red: 0.043, green: 0.043, blue: 0.059)).clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .background(Color(red: 0.043, green: 0.043, blue: 0.059).ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
 }
 
 

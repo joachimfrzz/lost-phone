@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/dating/hinge/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/hinge
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/hinge
+// Meliwat/awesome-ios-design-md/dating/hinge/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeHingeView: View {
     var body: some View {
@@ -388,15 +388,21 @@ private struct LpspHingeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspHingeDatingDiscoverTabScreen()
-                .tabItem { Label("Découvrir", systemImage: "flame.fill") }
+            LpspHingeSpectrHomeTabScreen()
+                .tabItem { Label("Discover", systemImage: "safari") }
                 .tag(0)
-            LpspHingeGenericTabScreen(title: "Messages", tabIndex: 1)
-                .tabItem { Label("Messages", systemImage: "bubble.left") }
+            LpspHingeDatingTabScreen(title: "Likes You", tabIndex: 1)
+                .tabItem { Label("Likes You", systemImage: "heart") }
                 .tag(1)
-            LpspHingeGenericTabScreen(title: "Profil", tabIndex: 2)
-                .tabItem { Label("Profil", systemImage: "person.fill") }
+            LpspHingeDatingTopPicksTabScreen()
+                .tabItem { Label("Standouts", systemImage: "star") }
                 .tag(2)
+            LpspHingeDatingTabScreen(title: "Matches", tabIndex: 3)
+                .tabItem { Label("Matches", systemImage: "bubble.left") }
+                .tag(3)
+            LpspHingeDatingProfileTabScreen()
+                .tabItem { Label("Profile", systemImage: "person") }
+                .tag(4)
         }
         .tint(LpspHingeTokens.hingeMatchGreen)
         
@@ -427,11 +433,16 @@ private struct LpspHingeGenericTabScreen: View {
 }
 
 
-private struct LpspHingeDemoDatingProfile {
-    let name: String
-    let age: Int
-    let bio: String
-    static let sample = LpspHingeDemoDatingProfile(name: "Alex", age: 28, bio: "Paris · Photo · Voyage")
+private struct LpspHingeDemoChatBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspHingeTokens.hingeMatchGreen.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }.padding(.horizontal)
+    }
 }
 
 private struct LpspHingeDatingDiscoverTabScreen: View {
@@ -440,6 +451,58 @@ private struct LpspHingeDatingDiscoverTabScreen: View {
             Color(.systemBackground).ignoresSafeArea()
             LpspHingeDemoSwipeCard(accent: LpspHingeTokens.hingeMatchGreen)
         }
+    }
+}
+
+private struct LpspHingeDatingMessagesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView { LazyVStack(spacing: 8) { 
+                    LpspHingeDemoChatBubble(text: "Salut ! On se voit ce week-end ?", outgoing: false)
+                    LpspHingeDemoChatBubble(text: "Avec plaisir 😊", outgoing: true)
+ } .padding(.vertical) }
+                HStack {
+                    TextField("Message", text: .constant(""))
+                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+                }.padding(8)
+            }
+            .navigationTitle("Messages")
+        }
+    }
+}
+
+private struct LpspHingeDatingTopPicksTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { LpspHingeStandoutsCard(name: "Léa", age: 27, prompt: "Mon spot préféré à Paris").padding() }
+            .navigationTitle("Top Picks")
+        }
+    }
+}
+
+private struct LpspHingeDatingProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspHingeTokens.hingeMatchGreen.gradient).frame(width: 88, height: 88)
+                Text("Alex, 28").font(.title2.bold())
+                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
+            }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspHingeDatingTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspHingeDatingDiscoverTabScreen() }
+        else if low.contains("message") || low.contains("chat") { LpspHingeDatingMessagesTabScreen() }
+        else if low.contains("star") || low.contains("top") { LpspHingeDatingTopPicksTabScreen() }
+        else { LpspHingeDatingProfileTabScreen() }
     }
 }
 
@@ -456,6 +519,33 @@ private struct LpspHingeDemoSwipeCard: View {
                 }
                 .padding(20)
             }
+    }
+}
+
+
+private struct LpspHingeSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack {
+            Text("H").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Discover").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 48)
+        ScrollView {
+                Text("Sigrún, 28").font(.system(size: 26.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("2 mi away").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("5'9\"").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Engineer").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("SF").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("I geek out on _").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Specialty coffee, vintage Vespas, and the chess opening called the Sicilian Najdorf.").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("My simple pleasures").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Sunday mornings with a record on.").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        HStack(spacing: 16) {
+
+        } .font(.system(size: 22)).padding(.horizontal, 14).frame(height: 44)
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

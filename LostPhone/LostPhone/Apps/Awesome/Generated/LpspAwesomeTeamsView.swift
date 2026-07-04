@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/productivity/microsoft-teams/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/microsoft-teams
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/microsoft-teams
+// Meliwat/awesome-ios-design-md/productivity/microsoft-teams/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTeamsView: View {
     var body: some View {
@@ -297,12 +297,21 @@ private struct LpspTeamsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTeamsGenericTabScreen(title: "Activity", tabIndex: 0)
+            LpspTeamsSpectrHomeTabScreen()
                 .tabItem { Label("Activity", systemImage: "bell.fill") }
                 .tag(0)
-            LpspTeamsGenericTabScreen(title: "Calendar", tabIndex: 1)
-                .tabItem { Label("Calendar", systemImage: "calendar") }
+            LpspTeamsMeetingsTabScreen(title: "Chat", tabIndex: 1)
+                .tabItem { Label("Chat", systemImage: "bubble.left.and.bubble.right.fill") }
                 .tag(1)
+            LpspTeamsMeetingsTabScreen(title: "Teams", tabIndex: 2)
+                .tabItem { Label("Teams", systemImage: "person.3.fill") }
+                .tag(2)
+            LpspTeamsMeetingsTabScreen(title: "Calendar", tabIndex: 3)
+                .tabItem { Label("Calendar", systemImage: "calendar") }
+                .tag(3)
+            LpspTeamsMeetingsTabScreen(title: "Calls", tabIndex: 4)
+                .tabItem { Label("Calls", systemImage: "phone.fill") }
+                .tag(4)
         }
         .tint(LpspTeamsTokens.teamsPurpleLight)
         
@@ -333,9 +342,106 @@ private struct LpspTeamsGenericTabScreen: View {
 }
 
 
-private struct LpspTeamsMessagingTabScreen: View {
+
+private enum LpspTeamsDemoChannel {
+    static let general = LpspTeamsTeamsChannel(name: "general", unread: false)
+}
+
+private struct LpspTeamsDemoParticipant { let name: String; let isMuted: Bool; let isSpeaking: Bool }
+private enum LpspTeamsDemoParticipants {
+    static let items: [LpspTeamsDemoParticipant] = [
+        .init(name: "Alex", isMuted: false, isSpeaking: true),
+        .init(name: "Léa", isMuted: true, isSpeaking: false),
+    ]
+}
+
+private struct LpspTeamsMeetingsListTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 8) { 
+                    ForEach(0..<3, id: \.self) { i in HStack { Text("10:00"); Text("Réunion \(i+1)") }.padding(.horizontal) }
+ } }
+            .background(LpspTeamsTokens.teamsLightCanvas.ignoresSafeArea())
+            .navigationTitle("Meetings")
+        }
+    }
+}
+
+private struct LpspTeamsMeetingsChatTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            
+                ScrollView {
+                    LazyVStack(alignment: .leading) {
+                        LpspTeamsChannelRow(channel: LpspTeamsDemoChannel.general, isActive: true)
+                        LpspTeamsMessageCard(author: "Alex", initials: "AM", presence: .online, timestamp: "10:24", postText: "Showroom prêt !", replyCount: 3)
+                    }
+                }
+
+            .navigationTitle("Chat")
+        }
+    }
+}
+
+private struct LpspTeamsMeetingsMailTabScreen: View {
+    var body: some View { NavigationStack { List(["Inbox", "Sent"], id: \.self) { Label($0, systemImage: "envelope") } .navigationTitle("Mail") } }
+}
+
+private struct LpspTeamsMeetingsPhoneTabScreen: View {
+    var body: some View { NavigationStack { List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "phone") } .navigationTitle("Phone") } }
+}
+
+private struct LpspTeamsMeetingsMoreTabScreen: View {
+    var body: some View { NavigationStack { List(["Settings", "Help"], id: \.self) { Label($0, systemImage: "gearshape") } .navigationTitle("More") } }
+}
+
+private struct LpspTeamsMeetingsTabScreen: View {
     let title: String
-    var body: some View { LpspTeamsGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("meeting") || low.contains("video") || tabIndex == 0 { LpspTeamsMeetingsListTabScreen() }
+        else if low.contains("chat") || low.contains("team") { LpspTeamsMeetingsChatTabScreen() }
+        else if low.contains("mail") { LpspTeamsMeetingsMailTabScreen() }
+        else if low.contains("phone") { LpspTeamsMeetingsPhoneTabScreen() }
+        else { LpspTeamsMeetingsMoreTabScreen() }
+    }
+}
+
+
+private struct LpspTeamsSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack {
+                Text("YA").font(.system(size: 14))
+                Text("Teams").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .padding(.horizontal, 16).frame(height: 48)
+            Text("Weekly Sync · in progress").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Join").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("DG").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Design Guild").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("general").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("design-crit").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("handoff").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("EN").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("Engineering").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("releases").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("incidents").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("PA").font(.system(size: 14))
+                        Text("Priya Anand").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("10:42 AM").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Pushed the build — can someone review the redirect fix?").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("👍 3").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("❤️ 1").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("💬 3 replies · Last reply 2h ago").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.122, green: 0.122, blue: 0.122).ignoresSafeArea())
+    }
 }
 
 

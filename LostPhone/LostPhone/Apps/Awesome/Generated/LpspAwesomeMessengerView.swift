@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/messenger/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/messenger
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/messenger
+// Meliwat/awesome-ios-design-md/messaging/messenger/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeMessengerView: View {
     var body: some View {
@@ -276,7 +276,7 @@ private struct LpspMessengerShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspMessengerChatsTabScreen()
+            LpspMessengerSpectrHomeTabScreen()
                 .tabItem { Label("Chats", systemImage: "message.fill") }
                 .tag(0)
             LpspMessengerMessagingTabScreen(title: "Marketplace")
@@ -372,6 +372,7 @@ private struct LpspMessengerChatsTabScreen: View {
     }
 }
 
+
 private struct LpspMessengerChatDetailScreen: View {
     let chat: LpspMessengerDemoChat
     var body: some View {
@@ -392,6 +393,7 @@ private struct LpspMessengerChatDetailScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 
 private struct LpspMessengerCallsTabScreen: View {
     var body: some View {
@@ -415,7 +417,70 @@ private struct LpspMessengerCallsTabScreen: View {
 
 private struct LpspMessengerMessagingTabScreen: View {
     let title: String
-    var body: some View { LpspMessengerGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("update") { LpspMessengerUpdatesTabScreen() }
+        else if low.contains("setting") || low.contains("réglage") { LpspMessengerSettingsTabScreen() }
+        else if low.contains("communit") { LpspMessengerCommunitiesTabScreen() }
+        else if low.contains("contact") { LpspMessengerContactsTabScreen() }
+        else { LpspMessengerChatsTabScreen() }
+    }
+}
+
+private struct LpspMessengerUpdatesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 14) {
+                    ForEach(LpspMessengerDemoStories.items) { s in
+                        VStack(spacing: 4) {
+                            Circle().strokeBorder(LpspMessengerTokens.msgActiveGreen, lineWidth: 2).frame(width: 66, height: 66)
+                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+                        }
+                    }
+                }
+                .padding(.horizontal, 12).padding(.vertical, 10)
+            }
+            .navigationTitle("Updates")
+        }
+    }
+}
+
+private struct LpspMessengerDemoStoryItem: Identifiable { let id = UUID(); let name: String }
+private enum LpspMessengerDemoStories {
+    static let items: [LpspMessengerDemoStoryItem] = [
+        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
+    ]
+}
+
+private struct LpspMessengerSettingsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
+                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
+            }
+            .navigationTitle("Settings")
+        }
+    }
+}
+
+private struct LpspMessengerCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspMessengerContactsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "person.circle") }
+            .navigationTitle("Contacts")
+        }
+    }
 }
 
 private struct LpspMessengerDemoBubble: View {
@@ -448,6 +513,47 @@ private struct LpspMessengerDemoComposeBar: View {
         }
         .padding(8)
         .background(.ultraThinMaterial)
+    }
+}
+
+
+private struct LpspMessengerSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 10) {
+                Text("Theo Marchetti").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("Active now").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+        } .padding(.horizontal, 12).frame(height: 56)
+        ScrollView {
+            VStack(spacing: 8) {
+                Text("Did you see the new gradient bubbles?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("They flow down the whole conversation now 🌈").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                Text("Yes! It looks like one continuous ribbon.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                HStack {
+                    Spacer(minLength: 48)
+                    Text("Way more fun than a flat color.").font(.system(size: 16)).foregroundStyle(.white)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                Text("Long-press one to react 👇").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("👍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("❤️").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("😆").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("😮").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("😢").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+                Text("😡").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+            }
+            .padding(.vertical, 8)
+        }
+                Text("Aa").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
+        }
+        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

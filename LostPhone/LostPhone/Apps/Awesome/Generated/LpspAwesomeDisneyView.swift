@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/disney-plus/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/disney-plus
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/disney-plus
+// Meliwat/awesome-ios-design-md/video/disney-plus/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDisneyView: View {
     var body: some View {
@@ -224,7 +224,7 @@ private struct LpspDisneyShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDisneyVideoHomeTabScreen()
+            LpspDisneySpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspDisneyVideoHomeTabScreen()
@@ -233,7 +233,7 @@ private struct LpspDisneyShowroomRoot: View {
             LpspDisneyProfilePickerTabScreen()
                 .tabItem { Label("Watchlist", systemImage: "plus.rectangle.on.rectangle") }
                 .tag(2)
-            LpspDisneyVideoHomeTabScreen()
+            LpspDisneyVideoDownloadsTabScreen()
                 .tabItem { Label("Downloads", systemImage: "arrow.down.circle") }
                 .tag(3)
             LpspDisneyProfilePickerTabScreen()
@@ -269,6 +269,16 @@ private struct LpspDisneyGenericTabScreen: View {
 }
 
 
+private struct LpspDisneyDemoPosterURLs {
+    static let items: [URL] = [
+        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+    ]
+}
 private struct LpspDisneyDemoProfile: Identifiable {
     let id = UUID()
     let name: String
@@ -309,6 +319,7 @@ private struct LpspDisneyVideoHomeTabScreen: View {
                     LpspDisneyDPPlayButton(label: "Lecture", action: {})
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(0..<6, id: \.self) { i in
@@ -335,6 +346,41 @@ private struct LpspDisneyProfilePickerTabScreen: View {
     }
 }
 
+private struct LpspDisneyVideoNewTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+
+                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+                }
+                .padding(.vertical, 8)
+            }
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+        }
+    }
+}
+
+private struct LpspDisneyVideoDownloadsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
+                HStack {
+                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
+                    VStack(alignment: .leading) {
+                        Text(title).font(.headline).foregroundStyle(.white)
+                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Downloads")
+        }
+    }
+}
+
 private struct LpspDisneyDemoProfilePicker: View {
     var body: some View {
         ZStack {
@@ -349,6 +395,35 @@ private struct LpspDisneyDemoProfilePicker: View {
                 }
             }
         }
+    }
+}
+
+
+private struct LpspDisneySpectrHomeTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        ScrollView {
+            VStack(spacing: 16) {
+            ZStack(alignment: .bottomLeading) {
+                    Text("ANDOR").font(.system(size: 30.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Action · Sci-Fi · TV-14 · 2024").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Play").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Watchlist").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .frame(height: 380)
+                Text("DISNEY").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("PIXAR").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("MARVEL").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("STAR WARS").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("NAT GEO").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Continue Watching").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            }
+            .padding(.vertical, 8)
+        }
+            }
+        }
+        .background(Color(red: 0.039, green: 0.055, blue: 0.165).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

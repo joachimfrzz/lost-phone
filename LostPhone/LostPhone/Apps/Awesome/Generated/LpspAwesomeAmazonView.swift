@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/misc/amazon/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/amazon
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/amazon
+// Meliwat/awesome-ios-design-md/misc/amazon/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAmazonView: View {
     var body: some View {
@@ -358,9 +358,21 @@ private struct LpspAmazonShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAmazonGenericTabScreen(title: "Search", tabIndex: 0)
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+            LpspAmazonSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
+            LpspAmazonCommerceTabScreen(title: "Menu", tabIndex: 1)
+                .tabItem { Label("Menu", systemImage: "line.3.horizontal") }
+                .tag(1)
+            LpspAmazonCommerceTabScreen(title: "Cart", tabIndex: 2)
+                .tabItem { Label("Cart", systemImage: "cart.fill") }
+                .tag(2)
+            LpspAmazonCommerceTabScreen(title: "You", tabIndex: 3)
+                .tabItem { Label("You", systemImage: "person.fill") }
+                .tag(3)
+            LpspAmazonCommerceTabScreen(title: "Search", tabIndex: 4)
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
+                .tag(4)
         }
         .tint(LpspAmazonTokens.amzYellow)
         
@@ -391,9 +403,84 @@ private struct LpspAmazonGenericTabScreen: View {
 }
 
 
-private struct LpspAmazonMessagingTabScreen: View {
+private struct LpspAmazonCommerceHomeTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    LpspAmazonAmazonTopNav(cartCount: 2, onSearch: {}).padding(.horizontal)
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+
+                        LpspAmazonAmazonProductCard(
+                            title: "Echo Dot (5e gen)",
+                            rating: 4.5,
+                            reviewCount: 12840,
+                            price: "€49,99",
+                            originalPrice: "€59,99",
+                            isPrime: true,
+                            deliveryLine: "Demain",
+                            imageUrl: URL(string: "https://picsum.photos/seed/amz/200/200")
+                        )
+
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            .background(LpspAmazonTokens.amzCanvas.ignoresSafeArea())
+            .navigationTitle("Accueil")
+        }
+    }
+}
+
+private struct LpspAmazonCommerceCartTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Echo Dot", systemImage: "shippingbox"); Label("Coque iPhone", systemImage: "iphone") }
+            .navigationTitle("Panier")
+        }
+    }
+}
+
+private struct LpspAmazonCommerceTabScreen: View {
     let title: String
-    var body: some View { LpspAmazonGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("accueil") || low.contains("home") { LpspAmazonCommerceHomeTabScreen() }
+        else if low.contains("panier") || low.contains("cart") { LpspAmazonCommerceCartTabScreen() }
+        else { LpspAmazonCommerceHomeTabScreen() }
+    }
+}
+
+
+private struct LpspAmazonSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 8) {
+            Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+                Text("Apple AirPods Pro").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                Text("3").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+        } .padding(.horizontal, 12).frame(height: 48)
+            Text("Brooklyn, 11201").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                Text("Visit the Apple Store").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                Text("Apple AirPods Pro (2nd Generation) with MagSafe Charging Case (USB-C)").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("★★★★★").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("4,231 ratings").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("Limited time deal").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                        Text("$").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                        Text("00").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                        Text("List Price: $299.00").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                        Text("Save $50 (17%)").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("prime").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("FREE delivery").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("Tomorrow").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("In Stock").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("Add to Cart").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                    Text("Buy Now").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.059, green: 0.067, blue: 0.067))
+                Text("Frequently bought together").font(.system(size: 14))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

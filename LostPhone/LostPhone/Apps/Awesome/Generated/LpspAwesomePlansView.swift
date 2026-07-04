@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/google-maps/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/google-maps
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/google-maps
+// Meliwat/awesome-ios-design-md/travel/google-maps/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePlansView: View {
     var body: some View {
@@ -380,9 +380,21 @@ private struct LpspPlansShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPlansGenericTabScreen(title: "Contribute", tabIndex: 0)
-                .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
+            LpspPlansSpectrHomeTabScreen()
+                .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
+            LpspPlansMapsTabScreen(title: "Go", tabIndex: 1)
+                .tabItem { Label("Go", systemImage: "location.north.circle.fill") }
+                .tag(1)
+            LpspPlansMapsTabScreen(title: "Saved", tabIndex: 2)
+                .tabItem { Label("Saved", systemImage: "bookmark.fill") }
+                .tag(2)
+            LpspPlansMapsTabScreen(title: "Contribute", tabIndex: 3)
+                .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
+                .tag(3)
+            LpspPlansMapsTabScreen(title: "Updates", tabIndex: 4)
+                .tabItem { Label("Updates", systemImage: "newspaper.fill") }
+                .tag(4)
         }
         .tint(LpspPlansTokens.gmYellow)
         
@@ -413,9 +425,74 @@ private struct LpspPlansGenericTabScreen: View {
 }
 
 
-private struct LpspPlansMessagingTabScreen: View {
+private struct LpspPlansMapsHomeTabScreen: View {
+    var body: some View {
+        ZStack {
+            Color.gray.opacity(0.15).ignoresSafeArea()
+            VStack {
+                HStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.ultraThinMaterial)
+                        .frame(height: 48)
+                        .overlay(HStack { Image(systemName: "magnifyingglass"); Text("Rechercher") }.foregroundStyle(.secondary))
+                        .padding()
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
+    }
+}
+
+private struct LpspPlansMapsRoutesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Maison → Bureau", "Bureau → Gare"], id: \.self) { Label($0, systemImage: "arrow.triangle.turn.up.right.diamond") }
+            .navigationTitle("Itinéraire")
+        }
+    }
+}
+
+private struct LpspPlansMapsProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Adresses enregistrées", systemImage: "mappin"); Label("Historique", systemImage: "clock") }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspPlansMapsTabScreen: View {
     let title: String
-    var body: some View { LpspPlansGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspPlansMapsHomeTabScreen() }
+        else if low.contains("itin") || low.contains("route") { LpspPlansMapsRoutesTabScreen() }
+        else { LpspPlansMapsProfileTabScreen() }
+    }
+}
+
+
+private struct LpspPlansSpectrHomeTabScreen: View {
+    var body: some View {
+        ZStack(alignment: .bottom) {
+        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
+            Text("Search here").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+            Text("M").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+        VStack(spacing: 0) {
+                    Text("Sanborn's Café").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                        Text("4.6").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                        Text("★★★★★").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                        Text("(142)").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                        Text("Open").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                Text("Directions").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                Text("Call").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+                Text("Save").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
+        } .background(Color(red: 1.000, green: 1.000, blue: 1.000)).clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

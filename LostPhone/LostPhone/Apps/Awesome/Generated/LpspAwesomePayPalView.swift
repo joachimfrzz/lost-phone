@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/finance/paypal/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/paypal
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/paypal
+// Meliwat/awesome-ios-design-md/finance/paypal/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePayPalView: View {
     var body: some View {
@@ -345,12 +345,21 @@ private struct LpspPayPalShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPayPalFinanceHomeTabScreen()
-                .tabItem { Label("Activity", systemImage: "clock") }
+            LpspPayPalSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
             LpspPayPalFinanceHomeTabScreen()
-                .tabItem { Label("Finances", systemImage: "chart.line.uptrend.xyaxis") }
+                .tabItem { Label("Send", systemImage: "paperplane") }
                 .tag(1)
+            LpspPayPalFinanceHomeTabScreen()
+                .tabItem { Label("Wallet", systemImage: "wallet.pass") }
+                .tag(2)
+            LpspPayPalFinanceHomeTabScreen()
+                .tabItem { Label("Activity", systemImage: "clock") }
+                .tag(3)
+            LpspPayPalFinanceHomeTabScreen()
+                .tabItem { Label("Finances", systemImage: "chart.line.uptrend.xyaxis") }
+                .tag(4)
         }
         .tint(LpspPayPalTokens.ppTextPrimary)
         
@@ -391,6 +400,7 @@ private struct LpspPayPalFinanceHomeTabScreen: View {
                         Text("2 847,50 €").font(.system(size: 36, weight: .bold))
                     }
                     .padding(.horizontal)
+
                     RoundedRectangle(cornerRadius: 16)
                         .fill(LinearGradient(colors: [LpspPayPalTokens.ppTextPrimary, LpspPayPalTokens.ppTextPrimary.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(height: 180)
@@ -398,7 +408,9 @@ private struct LpspPayPalFinanceHomeTabScreen: View {
                             Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
                         }
                         .padding(.horizontal)
+
                     Text("Transactions").font(.headline).padding(.horizontal)
+
                     ForEach(LpspPayPalDemoTx.items) { tx in
                         HStack {
                             Circle().fill(LpspPayPalTokens.ppTextPrimary.opacity(0.15)).frame(width: 40, height: 40)
@@ -409,6 +421,7 @@ private struct LpspPayPalFinanceHomeTabScreen: View {
                         }
                         .padding(.horizontal)
                     }
+
                 }
                 .padding(.vertical)
             }
@@ -421,7 +434,15 @@ private struct LpspPayPalFinanceHomeTabScreen: View {
 private struct LpspPayPalFinanceCardsTabScreen: View {
     var body: some View {
         NavigationStack {
-            Text("Gérez vos cartes").padding().navigationTitle("Cartes")
+            ScrollView {
+                VStack(spacing: 16) {
+                    RoundedRectangle(cornerRadius: 16).fill(LpspPayPalTokens.ppTextPrimary).frame(height: 180).padding(.horizontal)
+                    Text("Gérez vos cartes").font(.headline)
+                }
+                .padding(.vertical)
+            }
+            .background(LpspPayPalTokens.ppCanvas.ignoresSafeArea())
+            .navigationTitle("Cartes")
         }
     }
 }
@@ -431,10 +452,46 @@ private struct LpspPayPalDemoTx: Identifiable {
     let title: String
     let date: String
     let amount: String
+    let incoming: Bool
+    let icon: String
     static let items: [LpspPayPalDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €"),
+        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
+        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
     ]
+}
+
+
+private struct LpspPayPalSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+                Text("P").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("P").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+            HStack(spacing: 16) {
+
+            } .foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("PayPal balance").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.173, green: 0.180, blue: 0.184))
+                Text("$1,247.92").font(.system(size: 36.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("Add Money").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("Transfer").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("All").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("Sent").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("Received").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                Text("Pending").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Sarah Kim").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Today, 2:18 PM · Completed").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("+$42.00").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Marcus Lin").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Yesterday · Completed").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("$18.50").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Whole Foods Market").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Dec 1 · Visa debit ·· 4242").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("$67.84").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Cashback Reward").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                        Text("Nov 28 · From PayPal").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+                    Text("+$3.42").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
 }
 
 

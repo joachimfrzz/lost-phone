@@ -1,0 +1,17 @@
+{
+  "live-pill": "position: absolute; top: 10px; left: 10px; display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 4px; background: var(--live); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.4px;",
+  "live-dot": "width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: pulse 1.6s ease-in-out infinite;",
+  "ch-ring": "padding: 2px; border-radius: 50%; border: 2px solid var(--live);",
+  "ch-avatar": "width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #6B4AAE, #2C1666); display: block;",
+  "ch-info": "flex: 1;",
+  "ch-name": "font-size: 16px; font-weight: 700;",
+  "ch-meta": "font-size: 12px; color: var(--text-secondary); margin-top: 2px;",
+  "follow-btn": "display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 6px; background: var(--purple); color: #fff; font-size: 14px; font-weight: 700; border: none; box-shadow: 0 6px 18px rgba(145,70,255,0.35);",
+  "chat-head": "font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-secondary); padding: 10px 12px 6px;",
+  "chat-body": "flex: 1; overflow: hidden; padding: 0 0 4px;",
+  "chat-line": "padding: 4px 12px; font-size: 14px; line-height: 1.35;",
+  "cu": "font-weight: 700;",
+  "emote": "display: inline-block; width: 18px; height: 18px; border-radius: 3px; background: linear-gradient(135deg, #9146FF, #772CE8); vertical-align: -4px; margin: 0 1px;",
+  "chat-input": "display: flex; align-items: center; gap: 8px; margin: 8px 12px; height: 40px; padding: 0 12px; border-radius: 8px; background: var(--surface-2); color: var(--text-secondary); font-size: 14px;",
+  "tab": "display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); font-size: 10px; font-weight: 600; gap: 3px; letter-spacing: 0.2px; position: relative;"
+}

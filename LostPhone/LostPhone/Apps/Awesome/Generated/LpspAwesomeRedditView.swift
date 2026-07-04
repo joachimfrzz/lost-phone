@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/social/reddit/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/reddit
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/reddit
+// Meliwat/awesome-ios-design-md/social/reddit/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeRedditView: View {
     var body: some View {
@@ -398,13 +398,13 @@ private struct LpspRedditShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspRedditFeedTabScreen()
+            LpspRedditSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspRedditSocialTabScreen(title: "Communities")
+            LpspRedditCommunitiesTabScreen()
                 .tabItem { Label("Communities", systemImage: "person.3.fill") }
                 .tag(1)
-            LpspRedditSocialTabScreen(title: "Create")
+            LpspRedditCreateTabScreen()
                 .tabItem { Label("Create", systemImage: "plus.circle.fill") }
                 .tag(2)
             LpspRedditSocialTabScreen(title: "Chat")
@@ -572,9 +572,37 @@ private struct LpspRedditProfileTabScreen: View {
     }
 }
 
+private struct LpspRedditCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspRedditCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspRedditTokens.rdBrandRed)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspRedditTokens.rdCanvasLight.ignoresSafeArea())
+    }
+}
+
 private struct LpspRedditSocialTabScreen: View {
     let title: String
-    var body: some View { LpspRedditGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspRedditCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspRedditExploreTabScreen() }
+        else if low.contains("reel") { LpspRedditReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspRedditProfileTabScreen() }
+        else { LpspRedditFeedTabScreen() }
+    }
 }
 
 private struct LpspRedditGenericFeedCard: View {
@@ -594,6 +622,49 @@ private struct LpspRedditGenericFeedCard: View {
             }
             .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+    }
+}
+
+
+private struct LpspRedditSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 12) {
+            Text("MS").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                Text("Search Reddit").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+            Text("AV").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+        } .padding(.horizontal, 16).frame(height: 44)
+        ScrollView {
+            VStack(spacing: 12) {
+                    Text("4.2k").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                VStack(alignment: .leading, spacing: 0) {
+                        Text("d").font(.system(size: 8.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                        Text("r/dataisbeautiful").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                        Text("3h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    Text("OC").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    Text("Why crow populations dropped in North American cities over the last 30 years").font(.system(size: 14.5, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    HStack(spacing: 18) {
+                            Text("342").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                            Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                            Text("Save").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    } .padding(.bottom, 8)
+                }
+                    Text("892").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                VStack(alignment: .leading, spacing: 0) {
+                        Text("a").font(.system(size: 8.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                        Text("r/AskReddit").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                        Text("5h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    Text("What's a skill you picked up that you thought would be useless, but completely changed your life?").font(.system(size: 14.5, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    HStack(spacing: 18) {
+                            Text("1.2k").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                            Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                            Text("Save").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
+                    } .padding(.bottom, 8)
+                }
+            }
+        }
+        }
+        .background(Color(red: 0.965, green: 0.969, blue: 0.973).ignoresSafeArea())
     }
 }
 

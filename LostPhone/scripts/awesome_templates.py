@@ -52,15 +52,92 @@ def extract_fonts(md: str) -> list[tuple[str, str]]:
 
 def extract_tabs(md: str) -> list[tuple[str, str]]:
     tab_items: list[tuple[str, str]] = []
-    pattern = re.compile(
-        r"struct (\w+(?:TabView|RootTabView|RootView))\s*:\s*View\s*\{.*?\n\s*var body: some View \{(.*?)\n\s*\}\n\}",
-        re.DOTALL,
-    )
-    m = pattern.search(md)
-    if m:
-        body = m.group(2)
-        for lm in re.finditer(r'Label\("([^"]+)", systemImage: "([^"]+)"\)', body):
-            tab_items.append((lm.group(1), lm.group(2)))
+    seen: set[tuple[str, str]] = set()
+
+    view_labels: dict[str, tuple[str, str]] = {
+        "HomeFeed": ("Accueil", "house.fill"),
+        "ExploreView": ("Explorer", "magnifyingglass"),
+        "ReelsView": ("Reels", "play.rectangle"),
+        "CreateView": ("Créer", "plus.app"),
+        "ProfileView": ("Profil", "person.circle"),
+        "SwipeView": ("Découvrir", "flame.fill"),
+        "TopPicksView": ("Top Picks", "star.fill"),
+        "ChatsView": ("Messages", "bubble.left.fill"),
+        "MeetingsView": ("Meetings", "video.fill"),
+        "ChatView": ("Team Chat", "bubble.left.and.bubble.right.fill"),
+        "MailView": ("Mail", "envelope.fill"),
+        "PhoneView": ("Phone", "phone.fill"),
+        "MoreView": ("More", "ellipsis"),
+        "ExploreView": ("Explore", "magnifyingglass"),
+        "WishlistsView": ("Wishlists", "heart"),
+        "TripsView": ("Trips", "airplane"),
+        "InboxView": ("Inbox", "message"),
+    }
+
+    def add(label: str, icon: str) -> None:
+        key = (label, icon)
+        if key not in seen:
+            seen.add(key)
+            tab_items.append(key)
+
+    # ViewName().tabItem { ... systemName: "icon" ... } — preserves tab order (Instagram, Tinder)
+    for m in re.finditer(
+        r"(\w+)\(\)\s*\.tabItem\s*\{[^}]*systemName:[^\"']*[\"']([^\"']+)[\"']",
+        md,
+    ):
+        view_name, icon = m.group(1), m.group(2)
+        if view_name in view_labels:
+            add(*view_labels[view_name])
+        else:
+            add(view_name.replace("View", ""), icon)
+
+    if tab_items:
+        return tab_items
+
+    # Primary: Label(...) inside .tabItem anywhere in the spec
+    for m in re.finditer(
+        r'\.tabItem\s*\{[^}]*Label\("([^"]+)",\s*systemImage:\s*"([^"]+)"\)',
+        md,
+    ):
+        add(m.group(1), m.group(2))
+
+    if tab_items:
+        return tab_items
+
+    # Custom bottom bars: tab(.home, icon: "house.fill", label: "Home")
+    for m in re.finditer(
+        r'tab\(\.\w+,\s*icon:\s*"([^"]+)",\s*label:\s*"([^"]+)"\)',
+        md,
+    ):
+        add(m.group(2), m.group(1))
+
+    if tab_items:
+        return tab_items
+
+    # Icon-only tabItem (Instagram-style): infer labels from SF Symbols
+    icon_labels = {
+        "house.fill": "Accueil",
+        "house": "Accueil",
+        "magnifyingglass": "Explorer",
+        "play.rectangle": "Reels",
+        "play.rectangle.fill": "Reels",
+        "plus.app": "Créer",
+        "person.circle": "Profil",
+        "person.circle.fill": "Profil",
+        "person.fill": "Profil",
+        "tray.fill": "Boîte",
+        "bubble.left.and.bubble.right.fill": "Messages",
+        "bubble.left.fill": "Messages",
+        "flame.fill": "Découvrir",
+        "star.fill": "Top Picks",
+    }
+    for m in re.finditer(
+        r'\.tabItem\s*\{[^}]*Image\(systemName:\s*"([^"]+)"\)',
+        md,
+    ):
+        icon = m.group(1)
+        add(icon_labels.get(icon, icon.replace(".", " ").replace("_", " ").title()), icon)
+
     return tab_items
 
 
@@ -99,8 +176,10 @@ def category_from_path(rel: str) -> str:
         return "reader"
     if name in ("shazam",):
         return "shazam"
-    if name in ("google-maps", "waze", "uber"):
+    if name in ("google-maps", "waze"):
         return "maps"
+    if name == "uber":
+        return "ride"
     if name in ("booking", "airbnb", "expedia", "flighty", "tripadvisor"):
         return "travel"
     if name in ("google-calendar",):

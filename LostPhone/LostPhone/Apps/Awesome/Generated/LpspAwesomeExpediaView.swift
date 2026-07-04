@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/travel/expedia/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/expedia
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/expedia
+// Meliwat/awesome-ios-design-md/travel/expedia/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeExpediaView: View {
     var body: some View {
@@ -289,19 +289,19 @@ private struct LpspExpediaShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspExpediaGenericTabScreen(title: "Search", tabIndex: 0)
+            LpspExpediaSpectrHomeTabScreen()
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
-            LpspExpediaGenericTabScreen(title: "Saved", tabIndex: 1)
+            LpspExpediaTravelTabScreen(title: "Saved", tabIndex: 1)
                 .tabItem { Label("Saved", systemImage: "heart") }
                 .tag(1)
-            LpspExpediaGenericTabScreen(title: "Trips", tabIndex: 2)
+            LpspExpediaTravelTabScreen(title: "Trips", tabIndex: 2)
                 .tabItem { Label("Trips", systemImage: "suitcase") }
                 .tag(2)
-            LpspExpediaGenericTabScreen(title: "Support", tabIndex: 3)
+            LpspExpediaTravelTabScreen(title: "Support", tabIndex: 3)
                 .tabItem { Label("Support", systemImage: "questionmark.circle") }
                 .tag(3)
-            LpspExpediaGenericTabScreen(title: "Account", tabIndex: 4)
+            LpspExpediaTravelTabScreen(title: "Account", tabIndex: 4)
                 .tabItem { Label("Account", systemImage: "person.crop.circle") }
                 .tag(4)
         }
@@ -334,9 +334,127 @@ private struct LpspExpediaGenericTabScreen: View {
 }
 
 
-private struct LpspExpediaMessagingTabScreen: View {
+private struct LpspExpediaTravelExploreTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(0..<6, id: \.self) { i in
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspExpediaTokens.expActionBlue.opacity(0.1 + Double(i) * 0.05))
+                            .frame(height: 180)
+                            .overlay(alignment: .bottomLeading) {
+                                Text("Logement \(i + 1)").font(.headline).padding(8)
+                            }
+                    }
+                }
+                .padding()
+            }
+            .background(LpspExpediaTokens.expCanvas.ignoresSafeArea())
+            .navigationTitle("Explore")
+        }
+    }
+}
+
+private struct LpspExpediaTravelTripsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
+                Label(trip, systemImage: "airplane")
+            }
+            .navigationTitle("Trips")
+        }
+    }
+}
+
+private struct LpspExpediaTravelInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
+                Label(msg, systemImage: "message")
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspExpediaTravelProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspExpediaTokens.expActionBlue.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Profile")
+        }
+    }
+}
+
+private struct LpspExpediaTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspExpediaTravelTabScreen: View {
     let title: String
-    var body: some View { LpspExpediaGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspExpediaTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspExpediaTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspExpediaTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspExpediaTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspExpediaTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspExpediaTravelExploreTabScreen() }
+        else { LpspExpediaTravelTripsTabScreen() }
+    }
+}
+
+
+private struct LpspExpediaSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+                Text("Expedia").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("12,480 One Key").font(.system(size: 14))
+            Text("Stays").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Flights").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Cars").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("Bundle").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                    Text("San Diego, CA").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Oct 12 – 17 · 2 travelers · 1 room").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.122, green: 0.149, blue: 0.188)).clipShape(RoundedRectangle(cornerRadius: 28))
+        } .padding(.horizontal, 16).padding(.top, 8)
+            Text("Bundle + Save deals").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Text("See all").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("−24% Bundle").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Hotel Republic San Diego").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Downtown · Gaslamp Quarter").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("9.2").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Wonderful").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("· 1,847 reviews").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("$268").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("$204").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("/ night").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Earn 2,040 One Key cash").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Member price").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("The Guild Hotel, Autograph").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Marina District · 0.4 mi from center").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("8.8").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Excellent").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("· 932 reviews").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("$251").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("/ night").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Earn 2,510 One Key cash").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        }
+        .background(Color(red: 0.055, green: 0.067, blue: 0.086).ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
 }
 
 

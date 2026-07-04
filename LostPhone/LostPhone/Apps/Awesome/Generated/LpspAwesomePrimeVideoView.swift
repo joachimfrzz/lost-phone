@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/video/prime-video/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/prime-video
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/prime-video
+// Meliwat/awesome-ios-design-md/video/prime-video/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePrimeVideoView: View {
     var body: some View {
@@ -245,9 +245,21 @@ private struct LpspPrimeVideoShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPrimeVideoVideoHomeTabScreen()
-                .tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
+            LpspPrimeVideoSpectrHomeTabScreen()
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
+            LpspPrimeVideoVideoHomeTabScreen()
+                .tabItem { Label("Store", systemImage: "bag.fill") }
+                .tag(1)
+            LpspPrimeVideoVideoHomeTabScreen()
+                .tabItem { Label("Live", systemImage: "dot.radiowaves.left.and.right") }
+                .tag(2)
+            LpspPrimeVideoVideoHomeTabScreen()
+                .tabItem { Label("Find", systemImage: "magnifyingglass") }
+                .tag(3)
+            LpspPrimeVideoVideoDownloadsTabScreen()
+                .tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
+                .tag(4)
         }
         .tint(LpspPrimeVideoTokens.primeImdbYellow)
         .preferredColorScheme(.dark)
@@ -278,6 +290,16 @@ private struct LpspPrimeVideoGenericTabScreen: View {
 }
 
 
+private struct LpspPrimeVideoDemoPosterURLs {
+    static let items: [URL] = [
+        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
+        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+    ]
+}
 private struct LpspPrimeVideoDemoProfile: Identifiable {
     let id = UUID()
     let name: String
@@ -318,6 +340,7 @@ private struct LpspPrimeVideoVideoHomeTabScreen: View {
                     LpspPrimeVideoPrimePlayButton(title: "Lecture", action: {})
                         .padding(.horizontal, 12)
                     Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(0..<6, id: \.self) { i in
@@ -344,6 +367,41 @@ private struct LpspPrimeVideoProfilePickerTabScreen: View {
     }
 }
 
+private struct LpspPrimeVideoVideoNewTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+
+                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+                }
+                .padding(.vertical, 8)
+            }
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+        }
+    }
+}
+
+private struct LpspPrimeVideoVideoDownloadsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
+                HStack {
+                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
+                    VStack(alignment: .leading) {
+                        Text(title).font(.headline).foregroundStyle(.white)
+                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Downloads")
+        }
+    }
+}
+
 private struct LpspPrimeVideoDemoProfilePicker: View {
     var body: some View {
         ZStack {
@@ -358,6 +416,43 @@ private struct LpspPrimeVideoDemoProfilePicker: View {
                 }
             }
         }
+    }
+}
+
+
+private struct LpspPrimeVideoSpectrHomeTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+        ZStack(alignment: .bottomLeading) {
+            LinearGradient(colors: [Color(red:0.05,green:0.08,blue:0.2), Color(red:0.02,green:0.02,blue:0.06)], startPoint: .top, endPoint: .bottom).frame(maxWidth: .infinity, maxHeight: .infinity)
+                Text("The Citadel Files").font(.system(size: 28.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("★ 8.4 IMDb").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Play").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Watchlist").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("In this scene").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("N. Palmer").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Agent Cole").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("K. Voss").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Director").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("H. Ruiz").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                        Text("Mara").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        } .frame(height: 380)
+                Text("Included with Prime").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Text("See more").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    Text("Included with Prime").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Included with Prime").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Included with Prime").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                    Text("Included with Prime").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                }
+                .padding(.horizontal, 12)
+            }
+            }
+        }
+        .background(Color(red: 0.059, green: 0.090, blue: 0.118).ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

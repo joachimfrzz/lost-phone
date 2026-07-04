@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/music/apple-music/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/apple-music
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/apple-music
+// Meliwat/awesome-ios-design-md/music/apple-music/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAppleMusicView: View {
     var body: some View {
@@ -452,7 +452,7 @@ private struct LpspAppleMusicShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAppleMusicMusicHomeTabScreen()
+            LpspAppleMusicSpectrHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspAppleMusicMusicHomeTabScreen()
@@ -497,6 +497,19 @@ private struct LpspAppleMusicGenericTabScreen: View {
 }
 
 
+private enum LpspAppleMusicDemoTracks {
+    struct Item: Identifiable {
+        let id = UUID()
+        let title: String
+        let artist: String
+        let isPlaying: Bool
+    }
+    static let items: [Item] = [
+        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
+        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
+        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
+    ]
+}
 private struct LpspAppleMusicMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
@@ -513,6 +526,17 @@ private struct LpspAppleMusicMusicHomeTabScreen: View {
                         }
                     }
                     .padding(.horizontal)
+                    Text("Récemment joué").font(.headline).padding(.horizontal)
+
+                    ForEach(LpspAppleMusicDemoTracks.items) { track in
+                        LpspAppleMusicTrackRow(
+                            title: track.title,
+                            artist: track.artist,
+                            artwork: Image(systemName: "music.note"),
+                            isPlaying: track.isPlaying
+                        )
+                    }
+
                 }
             }
             .background(LpspAppleMusicTokens.amCanvasLight.ignoresSafeArea())
@@ -551,6 +575,32 @@ private struct LpspAppleMusicMusicLibraryTabScreen: View {
             }
             .navigationTitle("Bibliothèque")
         }
+    }
+}
+
+private struct LpspAppleMusicMusicNowPlayingTabScreen: View {
+    var body: some View {
+        LpspAppleMusicNowPlayingScreen(
+            trackTitle: "Blinding Lights",
+            artist: "The Weeknd",
+            artwork: Image(systemName: "music.note"),
+            dominantColor: LpspAppleMusicTokens.amCoral
+        )
+    }
+}
+
+
+
+private struct LpspAppleMusicSpectrHomeTabScreen: View {
+    var body: some View {
+        LpspAppleMusicNowPlayingScreen(
+            trackTitle: "Listen Now",
+            artist: "Midnight Frequency",
+            artwork: Image(systemName: "music.note"),
+            dominantColor: LpspAppleMusicTokens.amCoral
+        )
+        .background(LpspAppleMusicTokens.amCanvasLight.ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 

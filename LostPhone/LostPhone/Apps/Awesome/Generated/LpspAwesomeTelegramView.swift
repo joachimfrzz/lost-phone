@@ -1,7 +1,7 @@
 import SwiftUI
 
-// Fidélité Spectr — Meliwat/awesome-ios-design-md/messaging/telegram/DESIGN-swiftui.md
-// Gallery : https://www.spectr.to/gallery/telegram
+// Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/telegram
+// Meliwat/awesome-ios-design-md/messaging/telegram/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTelegramView: View {
     var body: some View {
@@ -381,7 +381,7 @@ private struct LpspTelegramShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTelegramMessagingTabScreen(title: "Contacts")
+            LpspTelegramSpectrHomeTabScreen()
                 .tabItem { Label("Contacts", systemImage: "person.2.fill") }
                 .tag(0)
             LpspTelegramCallsTabScreen()
@@ -390,7 +390,7 @@ private struct LpspTelegramShowroomRoot: View {
             LpspTelegramChatsTabScreen()
                 .tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right.fill") }
                 .tag(2)
-            LpspTelegramMessagingTabScreen(title: "Settings")
+            LpspTelegramSettingsTabScreen()
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(3)
         }
@@ -460,6 +460,7 @@ private struct LpspTelegramChatsTabScreen: View {
     }
 }
 
+
 private struct LpspTelegramChatDetailScreen: View {
     let chat: LpspTelegramDemoChat
     var body: some View {
@@ -480,6 +481,7 @@ private struct LpspTelegramChatDetailScreen: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 
 private struct LpspTelegramCallsTabScreen: View {
     var body: some View {
@@ -503,7 +505,70 @@ private struct LpspTelegramCallsTabScreen: View {
 
 private struct LpspTelegramMessagingTabScreen: View {
     let title: String
-    var body: some View { LpspTelegramGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("update") { LpspTelegramUpdatesTabScreen() }
+        else if low.contains("setting") || low.contains("réglage") { LpspTelegramSettingsTabScreen() }
+        else if low.contains("communit") { LpspTelegramCommunitiesTabScreen() }
+        else if low.contains("contact") { LpspTelegramContactsTabScreen() }
+        else { LpspTelegramChatsTabScreen() }
+    }
+}
+
+private struct LpspTelegramUpdatesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 14) {
+                    ForEach(LpspTelegramDemoStories.items) { s in
+                        VStack(spacing: 4) {
+                            Circle().strokeBorder(LpspTelegramTokens.tgAccent, lineWidth: 2).frame(width: 66, height: 66)
+                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+                        }
+                    }
+                }
+                .padding(.horizontal, 12).padding(.vertical, 10)
+            }
+            .navigationTitle("Updates")
+        }
+    }
+}
+
+private struct LpspTelegramDemoStoryItem: Identifiable { let id = UUID(); let name: String }
+private enum LpspTelegramDemoStories {
+    static let items: [LpspTelegramDemoStoryItem] = [
+        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
+    ]
+}
+
+private struct LpspTelegramSettingsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
+                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
+            }
+            .navigationTitle("Settings")
+        }
+    }
+}
+
+private struct LpspTelegramCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspTelegramContactsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "person.circle") }
+            .navigationTitle("Contacts")
+        }
+    }
 }
 
 private struct LpspTelegramDemoBubble: View {
@@ -536,6 +601,64 @@ private struct LpspTelegramDemoComposeBar: View {
         }
         .padding(8)
         .background(.ultraThinMaterial)
+    }
+}
+
+
+private struct LpspTelegramSpectrHomeTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        HStack(spacing: 10) {
+            Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
+            Text("OP").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Olivia Park").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("last seen recently").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.439, green: 0.459, blue: 0.475))
+            }
+        } .padding(.horizontal, 12).frame(height: 56)
+                Text("Pinned Message").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                Text("Demo day Friday — bring a laptop.").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        ScrollView {
+            VStack(spacing: 8) {
+            HStack {
+                Text("Ok quick update — the gradient prototype is running.").font(.system(size: 16)).foregroundStyle(.primary)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
+                Spacer(minLength: 48)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
+            HStack {
+                Spacer(minLength: 48)
+                Text("Amazing, want me to test on the old iPhone?").font(.system(size: 16)).foregroundStyle(.white)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+            }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+                Text("10:22").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+            HStack {
+                Text("yes pls 🙏").font(.system(size: 16)).foregroundStyle(.primary)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
+                Spacer(minLength: 48)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
+            HStack {
+                Spacer(minLength: 48)
+                Text("").font(.system(size: 16)).foregroundStyle(.white)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
+            }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
+            HStack {
+                Text("perfect, on it").font(.system(size: 16)).foregroundStyle(.primary)
+                    .padding(.horizontal, 12).padding(.vertical, 8)
+                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
+                Spacer(minLength: 48)
+            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
+            }
+            .padding(.vertical, 8)
+        }
+        HStack(spacing: 12) {
+            Text("Message").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+        } .padding(.horizontal, 8).padding(.vertical, 6).background(Color(red: 0.122, green: 0.173, blue: 0.204))
+        }
+        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

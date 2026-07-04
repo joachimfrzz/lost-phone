@@ -347,19 +347,19 @@ private struct LpspAirbnbShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAirbnbTravelExploreTabScreen()
+            LpspAirbnbTravelTabScreen(title: "Explore", tabIndex: 0)
                 .tabItem { Label("Explore", systemImage: "magnifyingglass") }
                 .tag(0)
-            LpspAirbnbTravelTripsTabScreen()
+            LpspAirbnbTravelTabScreen(title: "Wishlists", tabIndex: 1)
                 .tabItem { Label("Wishlists", systemImage: "heart") }
                 .tag(1)
-            LpspAirbnbTravelTripsTabScreen()
+            LpspAirbnbTravelTabScreen(title: "Trips", tabIndex: 2)
                 .tabItem { Label("Trips", systemImage: "airplane") }
                 .tag(2)
-            LpspAirbnbTravelInboxTabScreen()
+            LpspAirbnbTravelTabScreen(title: "Inbox", tabIndex: 3)
                 .tabItem { Label("Inbox", systemImage: "message") }
                 .tag(3)
-            LpspAirbnbTravelProfileTabScreen()
+            LpspAirbnbTravelTabScreen(title: "Profile", tabIndex: 4)
                 .tabItem { Label("Profile", systemImage: "person.circle") }
                 .tag(4)
         }
@@ -445,6 +445,30 @@ private struct LpspAirbnbTravelProfileTabScreen: View {
             }
             .navigationTitle("Profile")
         }
+    }
+}
+
+private struct LpspAirbnbTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspAirbnbTravelTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspAirbnbTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspAirbnbTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspAirbnbTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspAirbnbTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspAirbnbTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspAirbnbTravelExploreTabScreen() }
+        else { LpspAirbnbTravelTripsTabScreen() }
     }
 }
 

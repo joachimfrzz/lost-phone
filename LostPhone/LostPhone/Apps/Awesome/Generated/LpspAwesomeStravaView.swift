@@ -355,16 +355,16 @@ private struct LpspStravaShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspStravaGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspStravaFitnessTabScreen(title: "Home", tabIndex: 0)
                 .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
-            LpspStravaGenericTabScreen(title: "Maps", tabIndex: 1)
+            LpspStravaFitnessTabScreen(title: "Maps", tabIndex: 1)
                 .tabItem { Label("Maps", systemImage: "map") }
                 .tag(1)
-            LpspStravaGenericTabScreen(title: "Groups", tabIndex: 2)
+            LpspStravaFitnessTabScreen(title: "Groups", tabIndex: 2)
                 .tabItem { Label("Groups", systemImage: "person.3") }
                 .tag(2)
-            LpspStravaGenericTabScreen(title: "You", tabIndex: 3)
+            LpspStravaFitnessTabScreen(title: "You", tabIndex: 3)
                 .tabItem { Label("You", systemImage: "person.crop.circle") }
                 .tag(3)
         }
@@ -397,9 +397,59 @@ private struct LpspStravaGenericTabScreen: View {
 }
 
 
-private struct LpspStravaMessagingTabScreen: View {
+private struct LpspStravaFitnessFeedTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 12) { 
+                    LpspStravaActivityCard(
+                        athleteAvatar: Image(systemName: "person.circle.fill"),
+                        athleteName: "Alex Martin",
+                        timestamp: "Aujourd'hui · 07:42",
+                        activityTitle: "Course matinale",
+                        routeCoords: [CLLocationCoordinate2D(latitude: 48.86, longitude: 2.35), CLLocationCoordinate2D(latitude: 48.87, longitude: 2.36)],
+                        distance: "5,2 km",
+                        elapsed: "28:14",
+                        pace: "5:26 /km",
+                        kudosCount: 12
+                    )
+                    .padding(.horizontal)
+ } }
+            .background(LpspStravaTokens.stravaCanvas.ignoresSafeArea())
+            .navigationTitle("Fil")
+        }
+    }
+}
+
+private struct LpspStravaFitnessMapTabScreen: View {
+    var body: some View {
+        ZStack {
+            Color.gray.opacity(0.12).ignoresSafeArea()
+            VStack { Spacer(); LpspStravaRecordButton(action: {}).padding(.bottom, 40) }
+        }
+    }
+}
+
+private struct LpspStravaFitnessYouTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspStravaTokens.stravaHeartRed.gradient).frame(width: 72, height: 72)
+                Text("lost.phone").font(.title2.bold())
+            }
+            .navigationTitle("Vous")
+        }
+    }
+}
+
+private struct LpspStravaFitnessTabScreen: View {
     let title: String
-    var body: some View { LpspStravaGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("carte") || low.contains("map") { LpspStravaFitnessMapTabScreen() }
+        else if low.contains("vous") || low.contains("profile") || low.contains("profil") { LpspStravaFitnessYouTabScreen() }
+        else { LpspStravaFitnessFeedTabScreen() }
+    }
 }
 
 

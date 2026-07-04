@@ -268,19 +268,19 @@ private struct LpspBookingShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspBookingTravelExploreTabScreen()
+            LpspBookingTravelTabScreen(title: "Search", tabIndex: 0)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
-            LpspBookingGenericTabScreen(title: "Saved", tabIndex: 1)
+            LpspBookingTravelTabScreen(title: "Saved", tabIndex: 1)
                 .tabItem { Label("Saved", systemImage: "heart") }
                 .tag(1)
-            LpspBookingGenericTabScreen(title: "Bookings", tabIndex: 2)
+            LpspBookingTravelTabScreen(title: "Bookings", tabIndex: 2)
                 .tabItem { Label("Bookings", systemImage: "suitcase") }
                 .tag(2)
-            LpspBookingTravelProfileTabScreen()
+            LpspBookingTravelTabScreen(title: "Profile", tabIndex: 3)
                 .tabItem { Label("Profile", systemImage: "person") }
                 .tag(3)
-            LpspBookingGenericTabScreen(title: "Help", tabIndex: 4)
+            LpspBookingTravelTabScreen(title: "Help", tabIndex: 4)
                 .tabItem { Label("Help", systemImage: "questionmark.circle") }
                 .tag(4)
         }
@@ -366,6 +366,30 @@ private struct LpspBookingTravelProfileTabScreen: View {
             }
             .navigationTitle("Profile")
         }
+    }
+}
+
+private struct LpspBookingTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspBookingTravelTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspBookingTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspBookingTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspBookingTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspBookingTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspBookingTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspBookingTravelExploreTabScreen() }
+        else { LpspBookingTravelTripsTabScreen() }
     }
 }
 

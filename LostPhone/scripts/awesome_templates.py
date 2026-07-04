@@ -54,11 +54,45 @@ def extract_tabs(md: str) -> list[tuple[str, str]]:
     tab_items: list[tuple[str, str]] = []
     seen: set[tuple[str, str]] = set()
 
+    view_labels: dict[str, tuple[str, str]] = {
+        "HomeFeed": ("Accueil", "house.fill"),
+        "ExploreView": ("Explorer", "magnifyingglass"),
+        "ReelsView": ("Reels", "play.rectangle"),
+        "CreateView": ("Créer", "plus.app"),
+        "ProfileView": ("Profil", "person.circle"),
+        "SwipeView": ("Découvrir", "flame.fill"),
+        "TopPicksView": ("Top Picks", "star.fill"),
+        "ChatsView": ("Messages", "bubble.left.fill"),
+        "MeetingsView": ("Meetings", "video.fill"),
+        "ChatView": ("Team Chat", "bubble.left.and.bubble.right.fill"),
+        "MailView": ("Mail", "envelope.fill"),
+        "PhoneView": ("Phone", "phone.fill"),
+        "MoreView": ("More", "ellipsis"),
+        "ExploreView": ("Explore", "magnifyingglass"),
+        "WishlistsView": ("Wishlists", "heart"),
+        "TripsView": ("Trips", "airplane"),
+        "InboxView": ("Inbox", "message"),
+    }
+
     def add(label: str, icon: str) -> None:
         key = (label, icon)
         if key not in seen:
             seen.add(key)
             tab_items.append(key)
+
+    # ViewName().tabItem { ... systemName: "icon" ... } — preserves tab order (Instagram, Tinder)
+    for m in re.finditer(
+        r"(\w+)\(\)\s*\.tabItem\s*\{[^}]*systemName:[^\"']*[\"']([^\"']+)[\"']",
+        md,
+    ):
+        view_name, icon = m.group(1), m.group(2)
+        if view_name in view_labels:
+            add(*view_labels[view_name])
+        else:
+            add(view_name.replace("View", ""), icon)
+
+    if tab_items:
+        return tab_items
 
     # Primary: Label(...) inside .tabItem anywhere in the spec
     for m in re.finditer(
@@ -90,15 +124,19 @@ def extract_tabs(md: str) -> list[tuple[str, str]]:
         "plus.app": "Créer",
         "person.circle": "Profil",
         "person.circle.fill": "Profil",
+        "person.fill": "Profil",
         "tray.fill": "Boîte",
         "bubble.left.and.bubble.right.fill": "Messages",
+        "bubble.left.fill": "Messages",
+        "flame.fill": "Découvrir",
+        "star.fill": "Top Picks",
     }
     for m in re.finditer(
         r'\.tabItem\s*\{[^}]*Image\(systemName:\s*"([^"]+)"\)',
         md,
     ):
         icon = m.group(1)
-        add(icon_labels.get(icon, icon.replace(".", " ").title()), icon)
+        add(icon_labels.get(icon, icon.replace(".", " ").replace("_", " ").title()), icon)
 
     return tab_items
 

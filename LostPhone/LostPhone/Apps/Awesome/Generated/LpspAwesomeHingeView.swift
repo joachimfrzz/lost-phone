@@ -391,16 +391,16 @@ private struct LpspHingeShowroomRoot: View {
             LpspHingeDatingDiscoverTabScreen()
                 .tabItem { Label("Discover", systemImage: "safari") }
                 .tag(0)
-            LpspHingeGenericTabScreen(title: "Likes You", tabIndex: 1)
+            LpspHingeDatingTabScreen(title: "Likes You", tabIndex: 1)
                 .tabItem { Label("Likes You", systemImage: "heart") }
                 .tag(1)
-            LpspHingeGenericTabScreen(title: "Standouts", tabIndex: 2)
+            LpspHingeDatingTopPicksTabScreen()
                 .tabItem { Label("Standouts", systemImage: "star") }
                 .tag(2)
-            LpspHingeGenericTabScreen(title: "Matches", tabIndex: 3)
+            LpspHingeDatingTabScreen(title: "Matches", tabIndex: 3)
                 .tabItem { Label("Matches", systemImage: "bubble.left") }
                 .tag(3)
-            LpspHingeGenericTabScreen(title: "Profile", tabIndex: 4)
+            LpspHingeDatingProfileTabScreen()
                 .tabItem { Label("Profile", systemImage: "person") }
                 .tag(4)
         }
@@ -433,11 +433,16 @@ private struct LpspHingeGenericTabScreen: View {
 }
 
 
-private struct LpspHingeDemoDatingProfile {
-    let name: String
-    let age: Int
-    let bio: String
-    static let sample = LpspHingeDemoDatingProfile(name: "Alex", age: 28, bio: "Paris · Photo · Voyage")
+private struct LpspHingeDemoChatBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspHingeTokens.hingeMatchGreen.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }.padding(.horizontal)
+    }
 }
 
 private struct LpspHingeDatingDiscoverTabScreen: View {
@@ -446,6 +451,58 @@ private struct LpspHingeDatingDiscoverTabScreen: View {
             Color(.systemBackground).ignoresSafeArea()
             LpspHingeDemoSwipeCard(accent: LpspHingeTokens.hingeMatchGreen)
         }
+    }
+}
+
+private struct LpspHingeDatingMessagesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView { LazyVStack(spacing: 8) { 
+                    LpspHingeDemoChatBubble(text: "Salut ! On se voit ce week-end ?", outgoing: false)
+                    LpspHingeDemoChatBubble(text: "Avec plaisir 😊", outgoing: true)
+ } .padding(.vertical) }
+                HStack {
+                    TextField("Message", text: .constant(""))
+                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+                }.padding(8)
+            }
+            .navigationTitle("Messages")
+        }
+    }
+}
+
+private struct LpspHingeDatingTopPicksTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { LpspHingeStandoutsCard(name: "Léa", age: 27, prompt: "Mon spot préféré à Paris").padding() }
+            .navigationTitle("Top Picks")
+        }
+    }
+}
+
+private struct LpspHingeDatingProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspHingeTokens.hingeMatchGreen.gradient).frame(width: 88, height: 88)
+                Text("Alex, 28").font(.title2.bold())
+                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
+            }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspHingeDatingTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspHingeDatingDiscoverTabScreen() }
+        else if low.contains("message") || low.contains("chat") { LpspHingeDatingMessagesTabScreen() }
+        else if low.contains("star") || low.contains("top") { LpspHingeDatingTopPicksTabScreen() }
+        else { LpspHingeDatingProfileTabScreen() }
     }
 }
 

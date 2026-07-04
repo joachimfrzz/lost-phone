@@ -338,19 +338,19 @@ private struct LpspThreadsShowroomRoot: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             LpspThreadsFeedTabScreen()
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspThreadsExploreTabScreen()
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspThreadsSocialTabScreen(title: "Plus Square")
-                .tabItem { Label("Plus Square", systemImage: "plus.square") }
+            LpspThreadsSocialTabScreen(title: "Compose")
+                .tabItem { Label("Compose", systemImage: "plus.square") }
                 .tag(2)
-            LpspThreadsSocialTabScreen(title: "Heart Fill")
-                .tabItem { Label("Heart Fill", systemImage: "heart.fill") }
+            LpspThreadsSocialTabScreen(title: "Activity")
+                .tabItem { Label("Activity", systemImage: "heart.fill") }
                 .tag(3)
             LpspThreadsProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle.fill") }
+                .tabItem { Label("Profil", systemImage: "person.circle") }
                 .tag(4)
         }
         .tint(LpspThreadsTokens.threadsLikeCoral)
@@ -483,9 +483,37 @@ private struct LpspThreadsProfileTabScreen: View {
     }
 }
 
+private struct LpspThreadsCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspThreadsCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspThreadsTokens.threadsLikeCoral)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspThreadsTokens.threadsCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspThreadsSocialTabScreen: View {
     let title: String
-    var body: some View { LpspThreadsGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspThreadsCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspThreadsExploreTabScreen() }
+        else if low.contains("reel") { LpspThreadsReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspThreadsProfileTabScreen() }
+        else { LpspThreadsFeedTabScreen() }
+    }
 }
 
 private struct LpspThreadsGenericFeedCard: View {

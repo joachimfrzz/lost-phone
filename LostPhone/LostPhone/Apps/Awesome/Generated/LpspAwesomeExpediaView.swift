@@ -289,19 +289,19 @@ private struct LpspExpediaShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspExpediaTravelExploreTabScreen()
+            LpspExpediaTravelTabScreen(title: "Search", tabIndex: 0)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(0)
-            LpspExpediaGenericTabScreen(title: "Saved", tabIndex: 1)
+            LpspExpediaTravelTabScreen(title: "Saved", tabIndex: 1)
                 .tabItem { Label("Saved", systemImage: "heart") }
                 .tag(1)
-            LpspExpediaTravelTripsTabScreen()
+            LpspExpediaTravelTabScreen(title: "Trips", tabIndex: 2)
                 .tabItem { Label("Trips", systemImage: "suitcase") }
                 .tag(2)
-            LpspExpediaGenericTabScreen(title: "Support", tabIndex: 3)
+            LpspExpediaTravelTabScreen(title: "Support", tabIndex: 3)
                 .tabItem { Label("Support", systemImage: "questionmark.circle") }
                 .tag(3)
-            LpspExpediaGenericTabScreen(title: "Account", tabIndex: 4)
+            LpspExpediaTravelTabScreen(title: "Account", tabIndex: 4)
                 .tabItem { Label("Account", systemImage: "person.crop.circle") }
                 .tag(4)
         }
@@ -387,6 +387,30 @@ private struct LpspExpediaTravelProfileTabScreen: View {
             }
             .navigationTitle("Profile")
         }
+    }
+}
+
+private struct LpspExpediaTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspExpediaTravelTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspExpediaTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspExpediaTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspExpediaTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspExpediaTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspExpediaTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspExpediaTravelExploreTabScreen() }
+        else { LpspExpediaTravelTripsTabScreen() }
     }
 }
 

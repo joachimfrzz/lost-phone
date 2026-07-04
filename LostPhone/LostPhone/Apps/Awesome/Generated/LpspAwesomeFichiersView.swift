@@ -305,19 +305,19 @@ private struct LpspFichiersShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspFichiersGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspFichiersFilesTabScreen(title: "Home", tabIndex: 0)
                 .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
-            LpspFichiersGenericTabScreen(title: "Files", tabIndex: 1)
+            LpspFichiersFilesTabScreen(title: "Files", tabIndex: 1)
                 .tabItem { Label("Files", systemImage: "folder") }
                 .tag(1)
-            LpspFichiersGenericTabScreen(title: "Photos", tabIndex: 2)
+            LpspFichiersFilesTabScreen(title: "Photos", tabIndex: 2)
                 .tabItem { Label("Photos", systemImage: "photo.on.rectangle") }
                 .tag(2)
-            LpspFichiersGenericTabScreen(title: "Offline", tabIndex: 3)
+            LpspFichiersFilesTabScreen(title: "Offline", tabIndex: 3)
                 .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
                 .tag(3)
-            LpspFichiersGenericTabScreen(title: "Account", tabIndex: 4)
+            LpspFichiersFilesTabScreen(title: "Account", tabIndex: 4)
                 .tabItem { Label("Account", systemImage: "person.crop.circle") }
                 .tag(4)
         }
@@ -350,9 +350,44 @@ private struct LpspFichiersGenericTabScreen: View {
 }
 
 
-private struct LpspFichiersMessagingTabScreen: View {
+
+private struct LpspFichiersDemoFile { let name: String; let meta: String; let kind: LpspFichiersDbxFileKind }
+private enum LpspFichiersDemoFiles {
+    static let items: [LpspFichiersDemoFile] = [
+        .init(name: "Showroom.pdf", meta: "Modifié hier", kind: .pdf),
+        .init(name: "Screenshots", meta: "12 fichiers", kind: .folder),
+    ]
+}
+
+private struct LpspFichiersFilesHomeTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { 
+                    ForEach(LpspFichiersDemoFiles.items, id: \.name) { f in
+                        LpspFichiersDbxFileRow(name: f.name, meta: f.meta, kind: f.kind, isSelected: false, onTap: {})
+                    }
+ }
+            .navigationTitle("Fichiers")
+        }
+    }
+}
+
+private struct LpspFichiersFilesRecentsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom.pdf", "Design.fig"], id: \.self) { Label($0, systemImage: "clock") }
+            .navigationTitle("Récents")
+        }
+    }
+}
+
+private struct LpspFichiersFilesTabScreen: View {
     let title: String
-    var body: some View { LpspFichiersGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if title.lowercased().contains("récent") || title.lowercased().contains("recent") { LpspFichiersFilesRecentsTabScreen() }
+        else { LpspFichiersFilesHomeTabScreen() }
+    }
 }
 
 

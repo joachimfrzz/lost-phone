@@ -474,16 +474,16 @@ private struct LpspGoogleCalendarShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGoogleCalendarGenericTabScreen(title: "Schedule", tabIndex: 0)
+            LpspGoogleCalendarCalendarTabScreen(title: "Schedule", tabIndex: 0)
                 .tabItem { Label("Schedule", systemImage: "list.bullet") }
                 .tag(0)
-            LpspGoogleCalendarGenericTabScreen(title: "Day", tabIndex: 1)
+            LpspGoogleCalendarCalendarTabScreen(title: "Day", tabIndex: 1)
                 .tabItem { Label("Day", systemImage: "calendar.day.timeline.left") }
                 .tag(1)
-            LpspGoogleCalendarGenericTabScreen(title: "Week", tabIndex: 2)
+            LpspGoogleCalendarCalendarTabScreen(title: "Week", tabIndex: 2)
                 .tabItem { Label("Week", systemImage: "calendar") }
                 .tag(2)
-            LpspGoogleCalendarGenericTabScreen(title: "Month", tabIndex: 3)
+            LpspGoogleCalendarCalendarTabScreen(title: "Month", tabIndex: 3)
                 .tabItem { Label("Month", systemImage: "calendar") }
                 .tag(3)
         }
@@ -516,9 +516,39 @@ private struct LpspGoogleCalendarGenericTabScreen: View {
 }
 
 
-private struct LpspGoogleCalendarMessagingTabScreen: View {
+private struct LpspGoogleCalendarCalendarScheduleTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 12) { 
+                    LpspGoogleCalendarEventCard(title: "Standup Lost Phone", timeRange: "9:00 – 9:30", location: "Zoom", calendarColor: LpspGoogleCalendarTokens.gcalEventYellow)
+                    LpspGoogleCalendarEventCard(title: "Review Spectr", timeRange: "14:00 – 15:00", location: nil, calendarColor: LpspGoogleCalendarTokens.gcalEventYellow.opacity(0.7))
+                        .padding(.horizontal)
+ } }
+            .background(LpspGoogleCalendarTokens.gcalCanvas.ignoresSafeArea())
+            .navigationTitle("Agenda")
+            .overlay(alignment: .bottomTrailing) { LpspGoogleCalendarGcalFAB(action: {}).padding() }
+        }
+    }
+}
+
+private struct LpspGoogleCalendarCalendarMonthTabScreen: View {
+    var body: some View { NavigationStack { ScrollView { 
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 4) {
+                        ForEach(1...28, id: \.self) { day in
+                            LpspGoogleCalendarMonthCell(day: day, isToday: day == 4, isCurrentMonth: true, events: [LpspGoogleCalendarTokens.gcalEventYellow])
+                        }
+                    }
+                    .padding()
+ } .navigationTitle("Mois") } }
+}
+
+private struct LpspGoogleCalendarCalendarTabScreen: View {
     let title: String
-    var body: some View { LpspGoogleCalendarGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if title.lowercased().contains("mois") || title.lowercased().contains("month") { LpspGoogleCalendarCalendarMonthTabScreen() }
+        else { LpspGoogleCalendarCalendarScheduleTabScreen() }
+    }
 }
 
 

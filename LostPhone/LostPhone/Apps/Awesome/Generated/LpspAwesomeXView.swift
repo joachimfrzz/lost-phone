@@ -315,19 +315,19 @@ private struct LpspXShowroomRoot: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             LpspXFeedTabScreen()
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             LpspXExploreTabScreen()
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspXSocialTabScreen(title: "Person 3 Fill")
-                .tabItem { Label("Person 3 Fill", systemImage: "person.3.fill") }
+            LpspXCommunitiesTabScreen()
+                .tabItem { Label("Communities", systemImage: "person.3.fill") }
                 .tag(2)
-            LpspXSocialTabScreen(title: "Bell Fill")
-                .tabItem { Label("Bell Fill", systemImage: "bell.fill") }
+            LpspXSocialTabScreen(title: "Notifications")
+                .tabItem { Label("Notifications", systemImage: "bell.fill") }
                 .tag(3)
-            LpspXSocialTabScreen(title: "Envelope Fill")
-                .tabItem { Label("Envelope Fill", systemImage: "envelope.fill") }
+            LpspXSocialTabScreen(title: "Messages")
+                .tabItem { Label("Messages", systemImage: "envelope.fill") }
                 .tag(4)
         }
         .tint(LpspXTokens.xErrorRed)
@@ -460,9 +460,37 @@ private struct LpspXProfileTabScreen: View {
     }
 }
 
+private struct LpspXCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspXCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspXTokens.xErrorRed)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspXTokens.xCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspXSocialTabScreen: View {
     let title: String
-    var body: some View { LpspXGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspXCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspXExploreTabScreen() }
+        else if low.contains("reel") { LpspXReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspXProfileTabScreen() }
+        else { LpspXFeedTabScreen() }
+    }
 }
 
 private struct LpspXGenericFeedCard: View {

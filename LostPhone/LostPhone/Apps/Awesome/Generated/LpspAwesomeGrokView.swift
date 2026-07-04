@@ -290,10 +290,10 @@ private struct LpspGrokShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGrokGenericTabScreen(title: "Chat", tabIndex: 0)
+            LpspGrokAiTabScreen(title: "Chat", tabIndex: 0)
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
-            LpspGrokGenericTabScreen(title: "Historique", tabIndex: 1)
+            LpspGrokAiTabScreen(title: "Historique", tabIndex: 1)
                 .tabItem { Label("Historique", systemImage: "clock") }
                 .tag(1)
         }
@@ -326,9 +326,65 @@ private struct LpspGrokGenericTabScreen: View {
 }
 
 
-private struct LpspGrokMessagingTabScreen: View {
+private struct LpspGrokDemoBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspGrokTokens.grokAccentWhite.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }
+    }
+}
+
+private struct LpspGrokDemoComposeBar: View {
+    @State private var text = ""
+    var body: some View {
+        HStack {
+            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+            Image(systemName: "paperplane.fill").foregroundStyle(LpspGrokTokens.grokAccentWhite)
+        }
+        .padding(8)
+    }
+}
+
+private struct LpspGrokAiChatTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 12) {
+
+                    LpspGrokDemoBubble(text: "Bonjour !", outgoing: true)
+                    LpspGrokDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
+
+                }
+                .padding()
+            }
+            .background(LpspGrokTokens.grokCanvas.ignoresSafeArea())
+            LpspGrokDemoComposeBar()
+        }
+    }
+}
+
+
+private struct LpspGrokAiHistoryTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
+            .navigationTitle("Historique")
+        }
+    }
+}
+
+
+private struct LpspGrokAiTabScreen: View {
     let title: String
-    var body: some View { LpspGrokGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if tabIndex == 0 || title.lowercased().contains("chat") { LpspGrokAiChatTabScreen() }
+        else { LpspGrokAiHistoryTabScreen() }
+    }
 }
 
 

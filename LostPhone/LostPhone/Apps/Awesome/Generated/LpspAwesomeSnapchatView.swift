@@ -576,9 +576,37 @@ private struct LpspSnapchatProfileTabScreen: View {
     }
 }
 
+private struct LpspSnapchatCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspSnapchatCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspSnapchatTokens.snapYellow)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspSnapchatTokens.snapCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspSnapchatSocialTabScreen: View {
     let title: String
-    var body: some View { LpspSnapchatGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspSnapchatCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspSnapchatExploreTabScreen() }
+        else if low.contains("reel") { LpspSnapchatReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspSnapchatProfileTabScreen() }
+        else { LpspSnapchatFeedTabScreen() }
+    }
 }
 
 private struct LpspSnapchatGenericFeedCard: View {

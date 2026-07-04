@@ -380,19 +380,19 @@ private struct LpspGoogleMapsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspGoogleMapsMapsHomeTabScreen()
+            LpspGoogleMapsMapsTabScreen(title: "Explore", tabIndex: 0)
                 .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
-            LpspGoogleMapsGenericTabScreen(title: "Go", tabIndex: 1)
+            LpspGoogleMapsMapsTabScreen(title: "Go", tabIndex: 1)
                 .tabItem { Label("Go", systemImage: "location.north.circle.fill") }
                 .tag(1)
-            LpspGoogleMapsGenericTabScreen(title: "Saved", tabIndex: 2)
+            LpspGoogleMapsMapsTabScreen(title: "Saved", tabIndex: 2)
                 .tabItem { Label("Saved", systemImage: "bookmark.fill") }
                 .tag(2)
-            LpspGoogleMapsGenericTabScreen(title: "Contribute", tabIndex: 3)
+            LpspGoogleMapsMapsTabScreen(title: "Contribute", tabIndex: 3)
                 .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
                 .tag(3)
-            LpspGoogleMapsGenericTabScreen(title: "Updates", tabIndex: 4)
+            LpspGoogleMapsMapsTabScreen(title: "Updates", tabIndex: 4)
                 .tabItem { Label("Updates", systemImage: "newspaper.fill") }
                 .tag(4)
         }
@@ -441,6 +441,35 @@ private struct LpspGoogleMapsMapsHomeTabScreen: View {
                 Spacer()
             }
         }
+    }
+}
+
+private struct LpspGoogleMapsMapsRoutesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Maison → Bureau", "Bureau → Gare"], id: \.self) { Label($0, systemImage: "arrow.triangle.turn.up.right.diamond") }
+            .navigationTitle("Itinéraire")
+        }
+    }
+}
+
+private struct LpspGoogleMapsMapsProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Adresses enregistrées", systemImage: "mappin"); Label("Historique", systemImage: "clock") }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspGoogleMapsMapsTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspGoogleMapsMapsHomeTabScreen() }
+        else if low.contains("itin") || low.contains("route") { LpspGoogleMapsMapsRoutesTabScreen() }
+        else { LpspGoogleMapsMapsProfileTabScreen() }
     }
 }
 

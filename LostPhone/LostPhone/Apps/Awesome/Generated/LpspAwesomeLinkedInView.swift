@@ -541,9 +541,37 @@ private struct LpspLinkedInProfileTabScreen: View {
     }
 }
 
+private struct LpspLinkedInCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspLinkedInCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspLinkedInTokens.liTextPrimary)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspLinkedInTokens.liCanvas.ignoresSafeArea())
+    }
+}
+
 private struct LpspLinkedInSocialTabScreen: View {
     let title: String
-    var body: some View { LpspLinkedInGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspLinkedInCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspLinkedInExploreTabScreen() }
+        else if low.contains("reel") { LpspLinkedInReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspLinkedInProfileTabScreen() }
+        else { LpspLinkedInFeedTabScreen() }
+    }
 }
 
 private struct LpspLinkedInGenericFeedCard: View {

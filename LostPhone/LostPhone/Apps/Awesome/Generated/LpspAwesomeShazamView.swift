@@ -315,12 +315,9 @@ private struct LpspShazamShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspShazamGenericTabScreen(title: "Accueil", tabIndex: 0)
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
+            LpspShazamShazamTabScreen(title: "Shazam", tabIndex: 0)
+                .tabItem { Label("Shazam", systemImage: "waveform.circle") }
                 .tag(0)
-            LpspShazamGenericTabScreen(title: "Explorer", tabIndex: 1)
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
-                .tag(1)
         }
         .tint(LpspShazamTokens.shazamErrorRed)
         
@@ -351,9 +348,32 @@ private struct LpspShazamGenericTabScreen: View {
 }
 
 
-private struct LpspShazamMessagingTabScreen: View {
+
+private struct LpspShazamShazamHomeTabScreen: View {
+    var body: some View { LpspShazamShazamHome }
+}
+
+
+private struct LpspShazamShazamLibraryTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LpspShazamShazamResultCard(title: "Blinding Lights", artist: "The Weeknd", artwork: Image(systemName: "music.note"))
+                    .padding()
+            }
+            .navigationTitle("Bibliothèque")
+        }
+    }
+}
+
+
+private struct LpspShazamShazamTabScreen: View {
     let title: String
-    var body: some View { LpspShazamGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if tabIndex == 0 || title.lowercased().contains("shazam") || title.lowercased().contains("accueil") { LpspShazamShazamHomeTabScreen() }
+        else { LpspShazamShazamLibraryTabScreen() }
+    }
 }
 
 

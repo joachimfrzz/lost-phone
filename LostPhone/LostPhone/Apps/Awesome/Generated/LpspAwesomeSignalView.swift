@@ -262,7 +262,7 @@ private struct LpspSignalShowroomRoot: View {
             LpspSignalMessagingTabScreen(title: "Stories")
                 .tabItem { Label("Stories", systemImage: "circle.dashed") }
                 .tag(2)
-            LpspSignalMessagingTabScreen(title: "Settings")
+            LpspSignalSettingsTabScreen()
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(3)
         }
@@ -397,7 +397,70 @@ private struct LpspSignalCallsTabScreen: View {
 
 private struct LpspSignalMessagingTabScreen: View {
     let title: String
-    var body: some View { LpspSignalGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("update") { LpspSignalUpdatesTabScreen() }
+        else if low.contains("setting") || low.contains("réglage") { LpspSignalSettingsTabScreen() }
+        else if low.contains("communit") { LpspSignalCommunitiesTabScreen() }
+        else if low.contains("contact") { LpspSignalContactsTabScreen() }
+        else { LpspSignalChatsTabScreen() }
+    }
+}
+
+private struct LpspSignalUpdatesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 14) {
+                    ForEach(LpspSignalDemoStories.items) { s in
+                        VStack(spacing: 4) {
+                            Circle().strokeBorder(LpspSignalTokens.sigTextPrimary, lineWidth: 2).frame(width: 66, height: 66)
+                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+                        }
+                    }
+                }
+                .padding(.horizontal, 12).padding(.vertical, 10)
+            }
+            .navigationTitle("Updates")
+        }
+    }
+}
+
+private struct LpspSignalDemoStoryItem: Identifiable { let id = UUID(); let name: String }
+private enum LpspSignalDemoStories {
+    static let items: [LpspSignalDemoStoryItem] = [
+        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
+    ]
+}
+
+private struct LpspSignalSettingsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
+                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
+            }
+            .navigationTitle("Settings")
+        }
+    }
+}
+
+private struct LpspSignalCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspSignalContactsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "person.circle") }
+            .navigationTitle("Contacts")
+        }
+    }
 }
 
 private struct LpspSignalDemoBubble: View {

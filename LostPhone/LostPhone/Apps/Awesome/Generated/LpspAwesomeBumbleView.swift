@@ -423,19 +423,19 @@ private struct LpspBumbleShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspBumbleGenericTabScreen(title: "People", tabIndex: 0)
+            LpspBumbleDatingTabScreen(title: "People", tabIndex: 0)
                 .tabItem { Label("People", systemImage: "person.2") }
                 .tag(0)
-            LpspBumbleGenericTabScreen(title: "Hives", tabIndex: 1)
+            LpspBumbleDatingTabScreen(title: "Hives", tabIndex: 1)
                 .tabItem { Label("Hives", systemImage: "hexagon.fill") }
                 .tag(1)
-            LpspBumbleGenericTabScreen(title: "Matches", tabIndex: 2)
+            LpspBumbleDatingTabScreen(title: "Matches", tabIndex: 2)
                 .tabItem { Label("Matches", systemImage: "heart.fill") }
                 .tag(2)
-            LpspBumbleGenericTabScreen(title: "Chats", tabIndex: 3)
+            LpspBumbleDatingMessagesTabScreen()
                 .tabItem { Label("Chats", systemImage: "bubble.left.fill") }
                 .tag(3)
-            LpspBumbleGenericTabScreen(title: "Profile", tabIndex: 4)
+            LpspBumbleDatingProfileTabScreen()
                 .tabItem { Label("Profile", systemImage: "person.crop.circle") }
                 .tag(4)
         }
@@ -468,11 +468,16 @@ private struct LpspBumbleGenericTabScreen: View {
 }
 
 
-private struct LpspBumbleDemoDatingProfile {
-    let name: String
-    let age: Int
-    let bio: String
-    static let sample = LpspBumbleDemoDatingProfile(name: "Alex", age: 28, bio: "Paris · Photo · Voyage")
+private struct LpspBumbleDemoChatBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspBumbleTokens.bumbleYellow.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }.padding(.horizontal)
+    }
 }
 
 private struct LpspBumbleDatingDiscoverTabScreen: View {
@@ -487,6 +492,58 @@ private struct LpspBumbleDatingDiscoverTabScreen: View {
                 isVerified: true
             )
         }
+    }
+}
+
+private struct LpspBumbleDatingMessagesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView { LazyVStack(spacing: 8) { 
+                    LpspBumbleDemoChatBubble(text: "Salut ! On se voit ce week-end ?", outgoing: false)
+                    LpspBumbleDemoChatBubble(text: "Avec plaisir 😊", outgoing: true)
+ } .padding(.vertical) }
+                HStack {
+                    TextField("Message", text: .constant(""))
+                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+                }.padding(8)
+            }
+            .navigationTitle("Messages")
+        }
+    }
+}
+
+private struct LpspBumbleDatingTopPicksTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { LpspBumbleDemoSwipeCard(accent: LpspBumbleTokens.bumbleYellow).padding() }
+            .navigationTitle("Top Picks")
+        }
+    }
+}
+
+private struct LpspBumbleDatingProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspBumbleTokens.bumbleYellow.gradient).frame(width: 88, height: 88)
+                Text("Alex, 28").font(.title2.bold())
+                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
+            }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspBumbleDatingTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspBumbleDatingDiscoverTabScreen() }
+        else if low.contains("message") || low.contains("chat") { LpspBumbleDatingMessagesTabScreen() }
+        else if low.contains("star") || low.contains("top") { LpspBumbleDatingTopPicksTabScreen() }
+        else { LpspBumbleDatingProfileTabScreen() }
     }
 }
 

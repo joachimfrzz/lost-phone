@@ -541,10 +541,10 @@ private struct LpspClaudeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspClaudeGenericTabScreen(title: "Chat", tabIndex: 0)
+            LpspClaudeAiTabScreen(title: "Chat", tabIndex: 0)
                 .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
                 .tag(0)
-            LpspClaudeGenericTabScreen(title: "Historique", tabIndex: 1)
+            LpspClaudeAiTabScreen(title: "Historique", tabIndex: 1)
                 .tabItem { Label("Historique", systemImage: "clock") }
                 .tag(1)
         }
@@ -577,9 +577,65 @@ private struct LpspClaudeGenericTabScreen: View {
 }
 
 
-private struct LpspClaudeMessagingTabScreen: View {
+private struct LpspClaudeDemoBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspClaudeTokens.claudeCream.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }
+    }
+}
+
+private struct LpspClaudeDemoComposeBar: View {
+    @State private var text = ""
+    var body: some View {
+        HStack {
+            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+            Image(systemName: "paperplane.fill").foregroundStyle(LpspClaudeTokens.claudeCream)
+        }
+        .padding(8)
+    }
+}
+
+private struct LpspClaudeAiChatTabScreen: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(spacing: 12) {
+
+                    LpspClaudeDemoBubble(text: "Bonjour !", outgoing: true)
+                    LpspClaudeDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
+
+                }
+                .padding()
+            }
+            .background(LpspClaudeTokens.claudeDarkCanvas.ignoresSafeArea())
+            LpspClaudeDemoComposeBar()
+        }
+    }
+}
+
+
+private struct LpspClaudeAiHistoryTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
+            .navigationTitle("Historique")
+        }
+    }
+}
+
+
+private struct LpspClaudeAiTabScreen: View {
     let title: String
-    var body: some View { LpspClaudeGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if tabIndex == 0 || title.lowercased().contains("chat") { LpspClaudeAiChatTabScreen() }
+        else { LpspClaudeAiHistoryTabScreen() }
+    }
 }
 
 

@@ -375,21 +375,21 @@ private struct LpspYouTubeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspYouTubeShortVideoFeedTabScreen()
+            LpspYouTubeYoutubeTabScreen(title: "Home", tabIndex: 0)
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspYouTubeGenericTabScreen(title: "Shorts", tabIndex: 1)
+            LpspYouTubeYoutubeTabScreen(title: "Shorts", tabIndex: 1)
                 .tabItem { Label("Shorts", systemImage: "play.rectangle.fill") }
                 .tag(1)
-            LpspYouTubeGenericTabScreen(title: "Subscriptions", tabIndex: 2)
+            LpspYouTubeYoutubeTabScreen(title: "Subscriptions", tabIndex: 2)
                 .tabItem { Label("Subscriptions", systemImage: "play.square.stack.fill") }
                 .tag(2)
-            LpspYouTubeGenericTabScreen(title: "You", tabIndex: 3)
+            LpspYouTubeYoutubeTabScreen(title: "You", tabIndex: 3)
                 .tabItem { Label("You", systemImage: "person.crop.circle.fill") }
                 .tag(3)
         }
         .tint(LpspYouTubeTokens.ytRed)
-        .preferredColorScheme(.dark)
+        
     }
 }
 
@@ -417,100 +417,69 @@ private struct LpspYouTubeGenericTabScreen: View {
 }
 
 
-private struct LpspYouTubeShortVideoFeedTabScreen: View {
-    @State private var isFollowed = false
-    @State private var isLiked = true
-    @State private var likeCount = 12800
+private struct LpspYouTubeYoutubeHomeTabScreen: View {
     var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 12) { 
+                    LpspYouTubeVideoCard(
+                        thumbnailURL: URL(string: "https://picsum.photos/seed/yt/320/180")!,
+                        duration: "10:24",
+                        isLive: false,
+                        title: "Showroom Lost Phone",
+                        channelName: "lost.phone",
+                        channelAvatarURL: URL(string: "https://picsum.photos/seed/ytav/40/40")!,
+                        viewCount: "12 k vues",
+                        uploadedAgo: "il y a 2 j"
+                    )
+                    .padding(.horizontal)
+ } }
+            .background(LpspYouTubeTokens.ytCanvasLight.ignoresSafeArea())
+            .navigationTitle("Accueil")
+        }
+    }
+}
+
+private struct LpspYouTubeYoutubeShortsTabScreen: View {
+    var body: some View { 
         ZStack {
-            LinearGradient(
-                colors: [Color(red: 0.1, green: 0.05, blue: 0.15), LpspYouTubeTokens.ytCanvasLight, .black],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            Color.black.ignoresSafeArea()
             VStack {
                 Spacer()
-                HStack(alignment: .bottom) {
-                    LpspYouTubeDemoCaption(username: "lost.phone", caption: "Showroom Lost Phone #fyp #swiftui", musicTitle: "Original Sound - lost.phone")
+                HStack {
+                    Spacer()
                     LpspYouTubeShortsActionRail(
                         avatarURL: nil,
-                        isFollowed: $isFollowed,
-                        likeCount: $likeCount,
-                        isLiked: $isLiked,
-                        commentCount: 420,
+                        isFollowed: .constant(false),
+                        likeCount: .constant(4200),
+                        isLiked: .constant(true),
+                        commentCount: 120,
                         bookmarkCount: 89,
-                        shareCount: 156,
+                        shareCount: 45,
                         musicArtwork: nil
                     )
                 }
-                LpspYouTubeDemoScrubber(progress: 0.42)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 8)
             }
         }
-    }
+ }
 }
 
-private struct LpspYouTubeShortVideoDiscoverTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible())]
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 4) {
-                    ForEach(0..<12, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(LpspYouTubeTokens.ytRed.opacity(0.12 + Double(i) * 0.04))
-                            .aspectRatio(9/16, contentMode: .fit)
-                            .overlay(alignment: .bottomLeading) {
-                                Text("#trend \(i + 1)").font(.caption.bold()).foregroundStyle(.white).padding(6)
-                            }
-                    }
-                }
-                .padding(8)
-            }
-            .background(LpspYouTubeTokens.ytCanvasLight.ignoresSafeArea())
-            .navigationTitle("Discover")
-        }
-    }
+private struct LpspYouTubeYoutubeSubscriptionsTabScreen: View {
+    var body: some View { NavigationStack { List(["lost.phone", "Apple Dev"], id: \.self) { Label($0, systemImage: "play.rectangle") } .navigationTitle("Abonnements") } }
 }
 
-private struct LpspYouTubeShortVideoInboxTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Alex t'a mentionné", "Nouveau follower", "Live maintenant"], id: \.self) { item in
-                HStack {
-                    Circle().fill(LpspYouTubeTokens.ytRed.opacity(0.2)).frame(width: 40, height: 40)
-                    Text(item)
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(LpspYouTubeTokens.ytCanvasLight.ignoresSafeArea())
-            .navigationTitle("Inbox")
-        }
-    }
+private struct LpspYouTubeYoutubeLibraryTabScreen: View {
+    var body: some View { NavigationStack { List(["Historique", "Playlists"], id: \.self) { Label($0, systemImage: "clock") } .navigationTitle("Bibliothèque") } }
 }
 
-private struct LpspYouTubeShortVideoProfileTabScreen: View {
+private struct LpspYouTubeYoutubeTabScreen: View {
+    let title: String
+    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    Circle().fill(LpspYouTubeTokens.ytRed.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("@lost.phone").font(.title3.bold()).foregroundStyle(.white)
-                    HStack(spacing: 24) {
-                        VStack { Text("128").bold(); Text("Following").font(.caption) }
-                        VStack { Text("12.4K").bold(); Text("Followers").font(.caption) }
-                        VStack { Text("89K").bold(); Text("Likes").font(.caption) }
-                    }
-                    .foregroundStyle(.white)
-                }
-                .padding()
-            }
-            .background(LpspYouTubeTokens.ytCanvasLight.ignoresSafeArea())
-            .navigationTitle("Profile")
-        }
+        let low = title.lowercased()
+        if low.contains("short") { LpspYouTubeYoutubeShortsTabScreen() }
+        else if low.contains("abonn") || low.contains("subscri") { LpspYouTubeYoutubeSubscriptionsTabScreen() }
+        else if low.contains("biblio") || low.contains("library") { LpspYouTubeYoutubeLibraryTabScreen() }
+        else { LpspYouTubeYoutubeHomeTabScreen() }
     }
 }
 

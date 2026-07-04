@@ -267,16 +267,16 @@ private struct LpspKindleShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspKindleGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspKindleReaderTabScreen(title: "Home", tabIndex: 0)
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspKindleGenericTabScreen(title: "Library", tabIndex: 1)
+            LpspKindleReaderTabScreen(title: "Library", tabIndex: 1)
                 .tabItem { Label("Library", systemImage: "books.vertical.fill") }
                 .tag(1)
-            LpspKindleGenericTabScreen(title: "Discover", tabIndex: 2)
+            LpspKindleReaderTabScreen(title: "Discover", tabIndex: 2)
                 .tabItem { Label("Discover", systemImage: "magnifyingglass") }
                 .tag(2)
-            LpspKindleGenericTabScreen(title: "More", tabIndex: 3)
+            LpspKindleReaderTabScreen(title: "More", tabIndex: 3)
                 .tabItem { Label("More", systemImage: "ellipsis") }
                 .tag(3)
         }
@@ -309,9 +309,42 @@ private struct LpspKindleGenericTabScreen: View {
 }
 
 
-private struct LpspKindleMessagingTabScreen: View {
+private struct LpspKindleDemoBook { let title: String; let author: String; let progress: Double }
+private enum LpspKindleDemoBooks {
+    static let items: [LpspKindleDemoBook] = [
+        .init(title: "SwiftUI Patterns", author: "Meliwat", progress: 0.42),
+        .init(title: "Design Systems", author: "Spectr", progress: 0.08),
+    ]
+}
+
+private struct LpspKindleReaderLibraryTabScreen: View {
+    var body: some View { NavigationStack { ScrollView { 
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                        ForEach(LpspKindleDemoBooks.items, id: \.title) { b in
+                        LpspKindleLibraryCover(imageUrl: nil, progress: b.progress, author: b.author)
+                        }
+                    }
+                    .padding()
+ } .navigationTitle("Bibliothèque") } }
+}
+
+private struct LpspKindleReaderReadingTabScreen: View {
+    var body: some View {
+        ZStack {
+            LpspKindleTokens.kdlChromeCanvas.ignoresSafeArea()
+            LpspKindleReadingPage()
+        }
+    }
+}
+
+private struct LpspKindleReaderTabScreen: View {
     let title: String
-    var body: some View { LpspKindleGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("read") || low.contains("lecture") { LpspKindleReaderReadingTabScreen() }
+        else { LpspKindleReaderLibraryTabScreen() }
+    }
 }
 
 

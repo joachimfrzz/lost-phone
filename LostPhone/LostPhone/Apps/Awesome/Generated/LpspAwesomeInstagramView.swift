@@ -253,18 +253,21 @@ private struct LpspInstagramShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspInstagramExploreTabScreen()
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
+            LpspInstagramFeedTabScreen()
+                .tabItem { Label("Accueil", systemImage: "house.fill") }
                 .tag(0)
+            LpspInstagramExploreTabScreen()
+                .tabItem { Label("Explore", systemImage: "magnifyingglass") }
+                .tag(1)
             LpspInstagramReelsTabScreen()
                 .tabItem { Label("Reels", systemImage: "play.rectangle") }
-                .tag(1)
-            LpspInstagramSocialTabScreen(title: "Créer")
-                .tabItem { Label("Créer", systemImage: "plus.app") }
                 .tag(2)
+            LpspInstagramCreateTabScreen()
+                .tabItem { Label("Créer", systemImage: "plus.app") }
+                .tag(3)
             LpspInstagramProfileTabScreen()
                 .tabItem { Label("Profil", systemImage: "person.circle") }
-                .tag(3)
+                .tag(4)
         }
         .tint(LpspInstagramTokens.igActionBlue)
         
@@ -417,9 +420,37 @@ private struct LpspInstagramProfileTabScreen: View {
     }
 }
 
+private struct LpspInstagramCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspInstagramCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspInstagramTokens.igActionBlue)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspInstagramTokens.igCanvasLight.ignoresSafeArea())
+    }
+}
+
 private struct LpspInstagramSocialTabScreen: View {
     let title: String
-    var body: some View { LpspInstagramGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspInstagramCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspInstagramExploreTabScreen() }
+        else if low.contains("reel") { LpspInstagramReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspInstagramProfileTabScreen() }
+        else { LpspInstagramFeedTabScreen() }
+    }
 }
 
 private struct LpspInstagramGenericFeedCard: View {

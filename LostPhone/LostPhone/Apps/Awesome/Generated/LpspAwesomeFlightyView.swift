@@ -242,16 +242,16 @@ private struct LpspFlightyShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspFlightyGenericTabScreen(title: "Flights", tabIndex: 0)
+            LpspFlightyTravelTabScreen(title: "Flights", tabIndex: 0)
                 .tabItem { Label("Flights", systemImage: "airplane") }
                 .tag(0)
-            LpspFlightyTravelExploreTabScreen()
+            LpspFlightyTravelTabScreen(title: "Search", tabIndex: 1)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspFlightyGenericTabScreen(title: "Airport", tabIndex: 2)
+            LpspFlightyTravelTabScreen(title: "Airport", tabIndex: 2)
                 .tabItem { Label("Airport", systemImage: "building.2.fill") }
                 .tag(2)
-            LpspFlightyTravelProfileTabScreen()
+            LpspFlightyTravelTabScreen(title: "Profile", tabIndex: 3)
                 .tabItem { Label("Profile", systemImage: "person.fill") }
                 .tag(3)
         }
@@ -337,6 +337,30 @@ private struct LpspFlightyTravelProfileTabScreen: View {
             }
             .navigationTitle("Profile")
         }
+    }
+}
+
+private struct LpspFlightyTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspFlightyTravelTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspFlightyTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspFlightyTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspFlightyTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspFlightyTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspFlightyTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspFlightyTravelExploreTabScreen() }
+        else { LpspFlightyTravelTripsTabScreen() }
     }
 }
 

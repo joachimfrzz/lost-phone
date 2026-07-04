@@ -239,19 +239,19 @@ private struct LpspTripAdvisorShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTripAdvisorTravelExploreTabScreen()
+            LpspTripAdvisorTravelTabScreen(title: "Explore", tabIndex: 0)
                 .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
-            LpspTripAdvisorTravelExploreTabScreen()
+            LpspTripAdvisorTravelTabScreen(title: "Search", tabIndex: 1)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspTripAdvisorTravelTripsTabScreen()
+            LpspTripAdvisorTravelTabScreen(title: "Trips", tabIndex: 2)
                 .tabItem { Label("Trips", systemImage: "suitcase.fill") }
                 .tag(2)
-            LpspTripAdvisorGenericTabScreen(title: "Review", tabIndex: 3)
+            LpspTripAdvisorTravelTabScreen(title: "Review", tabIndex: 3)
                 .tabItem { Label("Review", systemImage: "square.and.pencil") }
                 .tag(3)
-            LpspTripAdvisorGenericTabScreen(title: "More", tabIndex: 4)
+            LpspTripAdvisorTravelTabScreen(title: "More", tabIndex: 4)
                 .tabItem { Label("More", systemImage: "ellipsis") }
                 .tag(4)
         }
@@ -337,6 +337,30 @@ private struct LpspTripAdvisorTravelProfileTabScreen: View {
             }
             .navigationTitle("Profile")
         }
+    }
+}
+
+private struct LpspTripAdvisorTravelWishlistsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
+            .navigationTitle("Wishlists")
+        }
+    }
+}
+
+private struct LpspTripAdvisorTravelTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("wishlist") || low.contains("favori") { LpspTripAdvisorTravelWishlistsTabScreen() }
+        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspTripAdvisorTravelExploreTabScreen() }
+        else if low.contains("trip") || low.contains("voyage") { LpspTripAdvisorTravelTripsTabScreen() }
+        else if low.contains("inbox") || low.contains("message") { LpspTripAdvisorTravelInboxTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspTripAdvisorTravelProfileTabScreen() }
+        else if tabIndex == 0 { LpspTripAdvisorTravelExploreTabScreen() }
+        else { LpspTripAdvisorTravelTripsTabScreen() }
     }
 }
 

@@ -486,13 +486,13 @@ private struct LpspWazeShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspWazeMapsHomeTabScreen()
+            LpspWazeMapsTabScreen(title: "Carte", tabIndex: 0)
                 .tabItem { Label("Carte", systemImage: "map.fill") }
                 .tag(0)
-            LpspWazeGenericTabScreen(title: "Itinéraire", tabIndex: 1)
+            LpspWazeMapsTabScreen(title: "Itinéraire", tabIndex: 1)
                 .tabItem { Label("Itinéraire", systemImage: "arrow.triangle.turn.up.right.diamond") }
                 .tag(1)
-            LpspWazeGenericTabScreen(title: "Profil", tabIndex: 2)
+            LpspWazeMapsTabScreen(title: "Profil", tabIndex: 2)
                 .tabItem { Label("Profil", systemImage: "person") }
                 .tag(2)
         }
@@ -541,6 +541,35 @@ private struct LpspWazeMapsHomeTabScreen: View {
                 Spacer()
             }
         }
+    }
+}
+
+private struct LpspWazeMapsRoutesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Maison → Bureau", "Bureau → Gare"], id: \.self) { Label($0, systemImage: "arrow.triangle.turn.up.right.diamond") }
+            .navigationTitle("Itinéraire")
+        }
+    }
+}
+
+private struct LpspWazeMapsProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Adresses enregistrées", systemImage: "mappin"); Label("Historique", systemImage: "clock") }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspWazeMapsTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspWazeMapsHomeTabScreen() }
+        else if low.contains("itin") || low.contains("route") { LpspWazeMapsRoutesTabScreen() }
+        else { LpspWazeMapsProfileTabScreen() }
     }
 }
 

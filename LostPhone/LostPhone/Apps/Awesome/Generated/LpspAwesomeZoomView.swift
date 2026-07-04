@@ -278,19 +278,19 @@ private struct LpspZoomShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspZoomGenericTabScreen(title: "Meetings", tabIndex: 0)
+            LpspZoomMeetingsTabScreen(title: "Meetings", tabIndex: 0)
                 .tabItem { Label("Meetings", systemImage: "video.fill") }
                 .tag(0)
-            LpspZoomGenericTabScreen(title: "Team Chat", tabIndex: 1)
+            LpspZoomMeetingsTabScreen(title: "Team Chat", tabIndex: 1)
                 .tabItem { Label("Team Chat", systemImage: "bubble.left.and.bubble.right.fill") }
                 .tag(1)
-            LpspZoomGenericTabScreen(title: "Mail", tabIndex: 2)
+            LpspZoomMeetingsTabScreen(title: "Mail", tabIndex: 2)
                 .tabItem { Label("Mail", systemImage: "envelope.fill") }
                 .tag(2)
-            LpspZoomGenericTabScreen(title: "Phone", tabIndex: 3)
+            LpspZoomMeetingsTabScreen(title: "Phone", tabIndex: 3)
                 .tabItem { Label("Phone", systemImage: "phone.fill") }
                 .tag(3)
-            LpspZoomGenericTabScreen(title: "More", tabIndex: 4)
+            LpspZoomMeetingsTabScreen(title: "More", tabIndex: 4)
                 .tabItem { Label("More", systemImage: "ellipsis") }
                 .tag(4)
         }
@@ -323,9 +323,61 @@ private struct LpspZoomGenericTabScreen: View {
 }
 
 
-private struct LpspZoomMessagingTabScreen: View {
+
+private struct LpspZoomDemoParticipant { let name: String; let isMuted: Bool; let isSpeaking: Bool }
+private enum LpspZoomDemoParticipants {
+    static let items: [LpspZoomDemoParticipant] = [
+        .init(name: "Alex", isMuted: false, isSpeaking: true),
+        .init(name: "Léa", isMuted: true, isSpeaking: false),
+    ]
+}
+
+private struct LpspZoomMeetingsListTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 8) { 
+                    LpspZoomMeetingRow(time: "10:00", topic: "Standup Lost Phone", subtitle: "ID: 123 456 789", onJoin: {})
+                    LpspZoomMeetingRow(time: "14:00", topic: "Review Spectr", subtitle: "Récurrent", onJoin: {})
+                        .padding(.vertical, 4)
+ } }
+            .background(LpspZoomTokens.zoomCanvas.ignoresSafeArea())
+            .navigationTitle("Meetings")
+        }
+    }
+}
+
+private struct LpspZoomMeetingsChatTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            LpspZoomGalleryGrid(participants: LpspZoomDemoParticipants.items)
+            .navigationTitle("Chat")
+        }
+    }
+}
+
+private struct LpspZoomMeetingsMailTabScreen: View {
+    var body: some View { NavigationStack { List(["Inbox", "Sent"], id: \.self) { Label($0, systemImage: "envelope") } .navigationTitle("Mail") } }
+}
+
+private struct LpspZoomMeetingsPhoneTabScreen: View {
+    var body: some View { NavigationStack { List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "phone") } .navigationTitle("Phone") } }
+}
+
+private struct LpspZoomMeetingsMoreTabScreen: View {
+    var body: some View { NavigationStack { List(["Settings", "Help"], id: \.self) { Label($0, systemImage: "gearshape") } .navigationTitle("More") } }
+}
+
+private struct LpspZoomMeetingsTabScreen: View {
     let title: String
-    var body: some View { LpspZoomGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("meeting") || low.contains("video") || tabIndex == 0 { LpspZoomMeetingsListTabScreen() }
+        else if low.contains("chat") || low.contains("team") { LpspZoomMeetingsChatTabScreen() }
+        else if low.contains("mail") { LpspZoomMeetingsMailTabScreen() }
+        else if low.contains("phone") { LpspZoomMeetingsPhoneTabScreen() }
+        else { LpspZoomMeetingsMoreTabScreen() }
+    }
 }
 
 

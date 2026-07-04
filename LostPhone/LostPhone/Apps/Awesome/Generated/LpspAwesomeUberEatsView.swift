@@ -294,19 +294,19 @@ private struct LpspUberEatsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspUberEatsGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspUberEatsFoodTabScreen(title: "Home", tabIndex: 0)
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspUberEatsGenericTabScreen(title: "Browse", tabIndex: 1)
+            LpspUberEatsFoodTabScreen(title: "Browse", tabIndex: 1)
                 .tabItem { Label("Browse", systemImage: "square.grid.2x2.fill") }
                 .tag(1)
-            LpspUberEatsGenericTabScreen(title: "Search", tabIndex: 2)
+            LpspUberEatsFoodTabScreen(title: "Search", tabIndex: 2)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(2)
-            LpspUberEatsGenericTabScreen(title: "Cart", tabIndex: 3)
+            LpspUberEatsFoodTabScreen(title: "Cart", tabIndex: 3)
                 .tabItem { Label("Cart", systemImage: "cart.fill") }
                 .tag(3)
-            LpspUberEatsGenericTabScreen(title: "Account", tabIndex: 4)
+            LpspUberEatsFoodTabScreen(title: "Account", tabIndex: 4)
                 .tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
                 .tag(4)
         }
@@ -339,9 +339,62 @@ private struct LpspUberEatsGenericTabScreen: View {
 }
 
 
-private struct LpspUberEatsMessagingTabScreen: View {
+private struct LpspUberEatsDemoRestaurant { let name: String; let meta: String; let rating: Double; let fee: String; let badge: String?; let promo: Bool }
+private enum LpspUberEatsDemoRestaurants {
+    static let items: [LpspUberEatsDemoRestaurant] = [
+        .init(name: "Sushi Shop", meta: "Japonais · 25 min", rating: 4.8, fee: "€1,99", badge: "Promo", promo: true),
+        .init(name: "Pizza Roma", meta: "Italien · 20 min", rating: 4.6, fee: "€0,99", badge: nil, promo: false),
+    ]
+}
+private struct LpspUberEatsDemoMenuItem { let title: String; let sub: String; let price: String }
+private enum LpspUberEatsDemoMenu {
+    static let items: [LpspUberEatsDemoMenuItem] = [
+        .init(title: "Poke saumon", sub: "Riz, avocat", price: "€13,50"),
+    ]
+}
+
+private struct LpspUberEatsFoodHomeTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 16) { 
+                    ForEach(LpspUberEatsDemoRestaurants.items, id: \.name) { r in
+                        LpspUberEatsUERestaurantCard(name: r.name, meta: r.meta, rating: r.rating, fee: r.fee, badge: r.badge, badgeIsPromo: r.promo, imageName: "photo")
+                            .padding(.horizontal)
+                    }
+ } .padding(.vertical) }
+            .background(LpspUberEatsTokens.ueCanvas.ignoresSafeArea())
+            .navigationTitle("Accueil")
+            .safeAreaInset(edge: .bottom) { LpspUberEatsUEStickyCartBar(itemCount: 2, subtotal: "€24,50", onCheckout: {}) }
+        }
+    }
+}
+
+private struct LpspUberEatsFoodSearchTabScreen: View {
+    var body: some View { NavigationStack { ScrollView { VStack { 
+                    ForEach(LpspUberEatsDemoMenu.items, id: \.title) { item in
+                        LpspUberEatsUEMenuItemRow(title: item.title, subtitle: item.sub, price: item.price, quantity: .constant(1)).padding(.horizontal)
+                    }
+ } } .navigationTitle("Rechercher") } }
+}
+
+private struct LpspUberEatsFoodOrdersTabScreen: View {
+    var body: some View { NavigationStack { LpspUberEatsUEOrderTrackingView() .navigationTitle("Commandes") } }
+}
+
+private struct LpspUberEatsFoodAccountTabScreen: View {
+    var body: some View { NavigationStack { List { Label("Adresses", systemImage: "mappin"); Label("Paiements", systemImage: "creditcard") } .navigationTitle("Compte") } }
+}
+
+private struct LpspUberEatsFoodTabScreen: View {
     let title: String
-    var body: some View { LpspUberEatsGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("home") || low.contains("accueil") { LpspUberEatsFoodHomeTabScreen() }
+        else if low.contains("recherch") || low.contains("search") { LpspUberEatsFoodSearchTabScreen() }
+        else if low.contains("command") || low.contains("order") || low.contains("activity") { LpspUberEatsFoodOrdersTabScreen() }
+        else { LpspUberEatsFoodAccountTabScreen() }
+    }
 }
 
 

@@ -353,13 +353,13 @@ private struct LpspUberShowroomRoot: View {
             LpspUberRideHomeTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspUberGenericTabScreen(title: "Services", tabIndex: 1)
+            LpspUberRideTabScreen(title: "Services", tabIndex: 1)
                 .tabItem { Label("Services", systemImage: "square.grid.2x2.fill") }
                 .tag(1)
-            LpspUberGenericTabScreen(title: "Activity", tabIndex: 2)
+            LpspUberRideTabScreen(title: "Activity", tabIndex: 2)
                 .tabItem { Label("Activity", systemImage: "clock.fill") }
                 .tag(2)
-            LpspUberGenericTabScreen(title: "Account", tabIndex: 3)
+            LpspUberRideTabScreen(title: "Account", tabIndex: 3)
                 .tabItem { Label("Account", systemImage: "person.fill") }
                 .tag(3)
         }
@@ -440,6 +440,45 @@ private enum LpspUberDemoRides {
         .init(name: "Comfort", eta: "5 min", capacity: 4, price: "€16.80"),
         .init(name: "Green", eta: "4 min", capacity: 4, price: "€13.20"),
     ]
+}
+
+private struct LpspUberRideServicesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["UberX", "Uber Black", "Uber Green", "Uber Eats"], id: \.self) { Label($0, systemImage: "square.grid.2x2") }
+            .navigationTitle("Services")
+        }
+    }
+}
+
+private struct LpspUberRideActivityTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Course vers Gare du Nord", "Uber Eats · Sushi Shop"], id: \.self) { Label($0, systemImage: "clock") }
+            .navigationTitle("Activity")
+        }
+    }
+}
+
+private struct LpspUberRideAccountTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Paiements", systemImage: "creditcard"); Label("Sécurité", systemImage: "lock") }
+            .navigationTitle("Account")
+        }
+    }
+}
+
+private struct LpspUberRideTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("home") { LpspUberRideHomeTabScreen() }
+        else if low.contains("service") { LpspUberRideServicesTabScreen() }
+        else if low.contains("activ") { LpspUberRideActivityTabScreen() }
+        else { LpspUberRideAccountTabScreen() }
+    }
 }
 
 

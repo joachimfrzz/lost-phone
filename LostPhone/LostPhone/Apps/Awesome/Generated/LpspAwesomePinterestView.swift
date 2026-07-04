@@ -532,9 +532,37 @@ private struct LpspPinterestProfileTabScreen: View {
     }
 }
 
+private struct LpspPinterestCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspPinterestCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspPinterestTokens.pinterestRed)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspPinterestTokens.pinterestCanvasLight.ignoresSafeArea())
+    }
+}
+
 private struct LpspPinterestSocialTabScreen: View {
     let title: String
-    var body: some View { LpspPinterestGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspPinterestCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspPinterestExploreTabScreen() }
+        else if low.contains("reel") { LpspPinterestReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspPinterestProfileTabScreen() }
+        else { LpspPinterestFeedTabScreen() }
+    }
 }
 
 private struct LpspPinterestGenericFeedCard: View {

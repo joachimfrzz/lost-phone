@@ -297,19 +297,19 @@ private struct LpspTeamsShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTeamsGenericTabScreen(title: "Activity", tabIndex: 0)
+            LpspTeamsMeetingsTabScreen(title: "Activity", tabIndex: 0)
                 .tabItem { Label("Activity", systemImage: "bell.fill") }
                 .tag(0)
-            LpspTeamsGenericTabScreen(title: "Chat", tabIndex: 1)
+            LpspTeamsMeetingsTabScreen(title: "Chat", tabIndex: 1)
                 .tabItem { Label("Chat", systemImage: "bubble.left.and.bubble.right.fill") }
                 .tag(1)
-            LpspTeamsGenericTabScreen(title: "Teams", tabIndex: 2)
+            LpspTeamsMeetingsTabScreen(title: "Teams", tabIndex: 2)
                 .tabItem { Label("Teams", systemImage: "person.3.fill") }
                 .tag(2)
-            LpspTeamsGenericTabScreen(title: "Calendar", tabIndex: 3)
+            LpspTeamsMeetingsTabScreen(title: "Calendar", tabIndex: 3)
                 .tabItem { Label("Calendar", systemImage: "calendar") }
                 .tag(3)
-            LpspTeamsGenericTabScreen(title: "Calls", tabIndex: 4)
+            LpspTeamsMeetingsTabScreen(title: "Calls", tabIndex: 4)
                 .tabItem { Label("Calls", systemImage: "phone.fill") }
                 .tag(4)
         }
@@ -342,9 +342,70 @@ private struct LpspTeamsGenericTabScreen: View {
 }
 
 
-private struct LpspTeamsMessagingTabScreen: View {
+
+private enum LpspTeamsDemoChannel {
+    static let general = LpspTeamsTeamsChannel(name: "general", unread: false)
+}
+
+private struct LpspTeamsDemoParticipant { let name: String; let isMuted: Bool; let isSpeaking: Bool }
+private enum LpspTeamsDemoParticipants {
+    static let items: [LpspTeamsDemoParticipant] = [
+        .init(name: "Alex", isMuted: false, isSpeaking: true),
+        .init(name: "Léa", isMuted: true, isSpeaking: false),
+    ]
+}
+
+private struct LpspTeamsMeetingsListTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 8) { 
+                    ForEach(0..<3, id: \.self) { i in HStack { Text("10:00"); Text("Réunion \(i+1)") }.padding(.horizontal) }
+ } }
+            .background(LpspTeamsTokens.teamsLightCanvas.ignoresSafeArea())
+            .navigationTitle("Meetings")
+        }
+    }
+}
+
+private struct LpspTeamsMeetingsChatTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            
+                ScrollView {
+                    LazyVStack(alignment: .leading) {
+                        LpspTeamsChannelRow(channel: LpspTeamsDemoChannel.general, isActive: true)
+                        LpspTeamsMessageCard(author: "Alex", initials: "AM", presence: .online, timestamp: "10:24", postText: "Showroom prêt !", replyCount: 3)
+                    }
+                }
+
+            .navigationTitle("Chat")
+        }
+    }
+}
+
+private struct LpspTeamsMeetingsMailTabScreen: View {
+    var body: some View { NavigationStack { List(["Inbox", "Sent"], id: \.self) { Label($0, systemImage: "envelope") } .navigationTitle("Mail") } }
+}
+
+private struct LpspTeamsMeetingsPhoneTabScreen: View {
+    var body: some View { NavigationStack { List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "phone") } .navigationTitle("Phone") } }
+}
+
+private struct LpspTeamsMeetingsMoreTabScreen: View {
+    var body: some View { NavigationStack { List(["Settings", "Help"], id: \.self) { Label($0, systemImage: "gearshape") } .navigationTitle("More") } }
+}
+
+private struct LpspTeamsMeetingsTabScreen: View {
     let title: String
-    var body: some View { LpspTeamsGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("meeting") || low.contains("video") || tabIndex == 0 { LpspTeamsMeetingsListTabScreen() }
+        else if low.contains("chat") || low.contains("team") { LpspTeamsMeetingsChatTabScreen() }
+        else if low.contains("mail") { LpspTeamsMeetingsMailTabScreen() }
+        else if low.contains("phone") { LpspTeamsMeetingsPhoneTabScreen() }
+        else { LpspTeamsMeetingsMoreTabScreen() }
+    }
 }
 
 

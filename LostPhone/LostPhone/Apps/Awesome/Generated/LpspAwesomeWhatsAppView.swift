@@ -378,19 +378,19 @@ private struct LpspWhatsAppShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspWhatsAppMessagingTabScreen(title: "Updates")
+            LpspWhatsAppUpdatesTabScreen()
                 .tabItem { Label("Updates", systemImage: "circle.dashed") }
                 .tag(0)
             LpspWhatsAppCallsTabScreen()
                 .tabItem { Label("Calls", systemImage: "phone.fill") }
                 .tag(1)
-            LpspWhatsAppMessagingTabScreen(title: "Communities")
+            LpspWhatsAppCommunitiesTabScreen()
                 .tabItem { Label("Communities", systemImage: "person.3.fill") }
                 .tag(2)
             LpspWhatsAppChatsTabScreen()
                 .tabItem { Label("Chats", systemImage: "message.fill") }
                 .tag(3)
-            LpspWhatsAppMessagingTabScreen(title: "Settings")
+            LpspWhatsAppSettingsTabScreen()
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(4)
         }
@@ -493,7 +493,70 @@ private struct LpspWhatsAppCallsTabScreen: View {
 
 private struct LpspWhatsAppMessagingTabScreen: View {
     let title: String
-    var body: some View { LpspWhatsAppGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("update") { LpspWhatsAppUpdatesTabScreen() }
+        else if low.contains("setting") || low.contains("réglage") { LpspWhatsAppSettingsTabScreen() }
+        else if low.contains("communit") { LpspWhatsAppCommunitiesTabScreen() }
+        else if low.contains("contact") { LpspWhatsAppContactsTabScreen() }
+        else { LpspWhatsAppChatsTabScreen() }
+    }
+}
+
+private struct LpspWhatsAppUpdatesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 14) {
+                    ForEach(LpspWhatsAppDemoStories.items) { s in
+                        VStack(spacing: 4) {
+                            Circle().strokeBorder(LpspWhatsAppTokens.waErrorRed, lineWidth: 2).frame(width: 66, height: 66)
+                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+                        }
+                    }
+                }
+                .padding(.horizontal, 12).padding(.vertical, 10)
+            }
+            .navigationTitle("Updates")
+        }
+    }
+}
+
+private struct LpspWhatsAppDemoStoryItem: Identifiable { let id = UUID(); let name: String }
+private enum LpspWhatsAppDemoStories {
+    static let items: [LpspWhatsAppDemoStoryItem] = [
+        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
+    ]
+}
+
+private struct LpspWhatsAppSettingsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
+                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
+            }
+            .navigationTitle("Settings")
+        }
+    }
+}
+
+private struct LpspWhatsAppCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspWhatsAppContactsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "person.circle") }
+            .navigationTitle("Contacts")
+        }
+    }
 }
 
 private struct LpspWhatsAppDemoBubble: View {

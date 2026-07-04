@@ -291,19 +291,19 @@ private struct LpspDeliverooShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDeliverooGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspDeliverooFoodTabScreen(title: "Home", tabIndex: 0)
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspDeliverooGenericTabScreen(title: "Search", tabIndex: 1)
+            LpspDeliverooFoodTabScreen(title: "Search", tabIndex: 1)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            LpspDeliverooGenericTabScreen(title: "Orders", tabIndex: 2)
+            LpspDeliverooFoodTabScreen(title: "Orders", tabIndex: 2)
                 .tabItem { Label("Orders", systemImage: "list.bullet.rectangle") }
                 .tag(2)
-            LpspDeliverooGenericTabScreen(title: "Favourites", tabIndex: 3)
+            LpspDeliverooFoodTabScreen(title: "Favourites", tabIndex: 3)
                 .tabItem { Label("Favourites", systemImage: "heart") }
                 .tag(3)
-            LpspDeliverooGenericTabScreen(title: "Account", tabIndex: 4)
+            LpspDeliverooFoodTabScreen(title: "Account", tabIndex: 4)
                 .tabItem { Label("Account", systemImage: "person.crop.circle") }
                 .tag(4)
         }
@@ -336,9 +336,62 @@ private struct LpspDeliverooGenericTabScreen: View {
 }
 
 
-private struct LpspDeliverooMessagingTabScreen: View {
+private struct LpspDeliverooDemoRestaurant { let name: String; let meta: String; let rating: Double; let fee: String; let badge: String?; let promo: Bool }
+private enum LpspDeliverooDemoRestaurants {
+    static let items: [LpspDeliverooDemoRestaurant] = [
+        .init(name: "Sushi Shop", meta: "Japonais · 25 min", rating: 4.8, fee: "€1,99", badge: "Promo", promo: true),
+        .init(name: "Pizza Roma", meta: "Italien · 20 min", rating: 4.6, fee: "€0,99", badge: nil, promo: false),
+    ]
+}
+private struct LpspDeliverooDemoMenuItem { let title: String; let sub: String; let price: String }
+private enum LpspDeliverooDemoMenu {
+    static let items: [LpspDeliverooDemoMenuItem] = [
+        .init(title: "Poke saumon", sub: "Riz, avocat", price: "€13,50"),
+    ]
+}
+
+private struct LpspDeliverooFoodHomeTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { VStack(spacing: 16) { 
+                    ForEach(LpspDeliverooDemoRestaurants.items, id: \.name) { r in
+                        LpspDeliverooRestaurantCard(name: r.name, meta: r.meta, rating: r.rating, fee: r.fee, badge: r.badge, badgeIsPromo: r.promo, imageName: "photo")
+                            .padding(.horizontal)
+                    }
+ } .padding(.vertical) }
+            .background(LpspDeliverooTokens.rooCanvas.ignoresSafeArea())
+            .navigationTitle("Accueil")
+            .safeAreaInset(edge: .bottom) { LpspDeliverooBasketBar(itemCount: 2, subtotal: "€24,50", onCheckout: {}) }
+        }
+    }
+}
+
+private struct LpspDeliverooFoodSearchTabScreen: View {
+    var body: some View { NavigationStack { ScrollView { VStack { 
+                    ForEach(LpspDeliverooDemoMenu.items, id: \.title) { item in
+                        LpspDeliverooMenuItemRow(title: item.title, subtitle: item.sub, price: item.price, quantity: .constant(1)).padding(.horizontal)
+                    }
+ } } .navigationTitle("Rechercher") } }
+}
+
+private struct LpspDeliverooFoodOrdersTabScreen: View {
+    var body: some View { NavigationStack { List(["Commande en cours"], id: \.self) { Label($0, systemImage: "bag") } .navigationTitle("Commandes") } }
+}
+
+private struct LpspDeliverooFoodAccountTabScreen: View {
+    var body: some View { NavigationStack { List { Label("Adresses", systemImage: "mappin"); Label("Paiements", systemImage: "creditcard") } .navigationTitle("Compte") } }
+}
+
+private struct LpspDeliverooFoodTabScreen: View {
     let title: String
-    var body: some View { LpspDeliverooGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("home") || low.contains("accueil") { LpspDeliverooFoodHomeTabScreen() }
+        else if low.contains("recherch") || low.contains("search") { LpspDeliverooFoodSearchTabScreen() }
+        else if low.contains("command") || low.contains("order") || low.contains("activity") { LpspDeliverooFoodOrdersTabScreen() }
+        else { LpspDeliverooFoodAccountTabScreen() }
+    }
 }
 
 

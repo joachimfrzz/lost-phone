@@ -373,17 +373,17 @@ private struct LpspTinderShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspTinderGenericTabScreen(title: "Flame Fill", tabIndex: 0)
-                .tabItem { Label("Flame Fill", systemImage: "flame.fill") }
+            LpspTinderDatingDiscoverTabScreen()
+                .tabItem { Label("Découvrir", systemImage: "flame.fill") }
                 .tag(0)
-            LpspTinderGenericTabScreen(title: "Star Fill", tabIndex: 1)
-                .tabItem { Label("Star Fill", systemImage: "star.fill") }
+            LpspTinderDatingTopPicksTabScreen()
+                .tabItem { Label("Top Picks", systemImage: "star.fill") }
                 .tag(1)
-            LpspTinderGenericTabScreen(title: "Bubble Left Fill", tabIndex: 2)
-                .tabItem { Label("Bubble Left Fill", systemImage: "bubble.left.fill") }
+            LpspTinderDatingMessagesTabScreen()
+                .tabItem { Label("Messages", systemImage: "bubble.left.fill") }
                 .tag(2)
-            LpspTinderGenericTabScreen(title: "Person Fill", tabIndex: 3)
-                .tabItem { Label("Person Fill", systemImage: "person.fill") }
+            LpspTinderDatingProfileTabScreen()
+                .tabItem { Label("Profil", systemImage: "person.circle") }
                 .tag(3)
         }
         .tint(LpspTinderTokens.tdrNopeRed)
@@ -415,11 +415,16 @@ private struct LpspTinderGenericTabScreen: View {
 }
 
 
-private struct LpspTinderDemoDatingProfile {
-    let name: String
-    let age: Int
-    let bio: String
-    static let sample = LpspTinderDemoDatingProfile(name: "Alex", age: 28, bio: "Paris · Photo · Voyage")
+private struct LpspTinderDemoChatBubble: View {
+    let text: String
+    var outgoing: Bool
+    var body: some View {
+        HStack {
+            if outgoing { Spacer(minLength: 40) }
+            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspTinderTokens.tdrNopeRed.opacity(0.2) : Color(.systemGray5)))
+            if !outgoing { Spacer(minLength: 40) }
+        }.padding(.horizontal)
+    }
 }
 
 private struct LpspTinderDatingDiscoverTabScreen: View {
@@ -434,6 +439,58 @@ private struct LpspTinderDatingDiscoverTabScreen: View {
                 photoURLs: []
             )
         }
+    }
+}
+
+private struct LpspTinderDatingMessagesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView { LazyVStack(spacing: 8) { 
+                    LpspTinderTinderChatBubble(text: "Salut ! On se voit ce week-end ?", sender: .them)
+                    LpspTinderTinderChatBubble(text: "Avec plaisir 😊", sender: .me)
+ } .padding(.vertical) }
+                HStack {
+                    TextField("Message", text: .constant(""))
+                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
+                }.padding(8)
+            }
+            .navigationTitle("Messages")
+        }
+    }
+}
+
+private struct LpspTinderDatingTopPicksTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView { LpspTinderDemoSwipeCard(accent: LpspTinderTokens.tdrNopeRed).padding() }
+            .navigationTitle("Top Picks")
+        }
+    }
+}
+
+private struct LpspTinderDatingProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Circle().fill(LpspTinderTokens.tdrNopeRed.gradient).frame(width: 88, height: 88)
+                Text("Alex, 28").font(.title2.bold())
+                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
+            }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspTinderDatingTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspTinderDatingDiscoverTabScreen() }
+        else if low.contains("message") || low.contains("chat") { LpspTinderDatingMessagesTabScreen() }
+        else if low.contains("star") || low.contains("top") { LpspTinderDatingTopPicksTabScreen() }
+        else { LpspTinderDatingProfileTabScreen() }
     }
 }
 

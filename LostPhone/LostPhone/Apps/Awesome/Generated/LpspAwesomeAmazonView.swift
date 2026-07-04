@@ -358,19 +358,19 @@ private struct LpspAmazonShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspAmazonGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspAmazonCommerceTabScreen(title: "Home", tabIndex: 0)
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspAmazonGenericTabScreen(title: "Menu", tabIndex: 1)
+            LpspAmazonCommerceTabScreen(title: "Menu", tabIndex: 1)
                 .tabItem { Label("Menu", systemImage: "line.3.horizontal") }
                 .tag(1)
-            LpspAmazonGenericTabScreen(title: "Cart", tabIndex: 2)
+            LpspAmazonCommerceTabScreen(title: "Cart", tabIndex: 2)
                 .tabItem { Label("Cart", systemImage: "cart.fill") }
                 .tag(2)
-            LpspAmazonGenericTabScreen(title: "You", tabIndex: 3)
+            LpspAmazonCommerceTabScreen(title: "You", tabIndex: 3)
                 .tabItem { Label("You", systemImage: "person.fill") }
                 .tag(3)
-            LpspAmazonGenericTabScreen(title: "Search", tabIndex: 4)
+            LpspAmazonCommerceTabScreen(title: "Search", tabIndex: 4)
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(4)
         }
@@ -403,9 +403,53 @@ private struct LpspAmazonGenericTabScreen: View {
 }
 
 
-private struct LpspAmazonMessagingTabScreen: View {
+private struct LpspAmazonCommerceHomeTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    LpspAmazonAmazonTopNav(cartCount: 2, onSearch: {}).padding(.horizontal)
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+
+                        LpspAmazonAmazonProductCard(
+                            title: "Echo Dot (5e gen)",
+                            rating: 4.5,
+                            reviewCount: 12840,
+                            price: "€49,99",
+                            originalPrice: "€59,99",
+                            isPrime: true,
+                            deliveryLine: "Demain",
+                            imageUrl: URL(string: "https://picsum.photos/seed/amz/200/200")
+                        )
+
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            .background(LpspAmazonTokens.amzCanvas.ignoresSafeArea())
+            .navigationTitle("Accueil")
+        }
+    }
+}
+
+private struct LpspAmazonCommerceCartTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Echo Dot", systemImage: "shippingbox"); Label("Coque iPhone", systemImage: "iphone") }
+            .navigationTitle("Panier")
+        }
+    }
+}
+
+private struct LpspAmazonCommerceTabScreen: View {
     let title: String
-    var body: some View { LpspAmazonGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("accueil") || low.contains("home") { LpspAmazonCommerceHomeTabScreen() }
+        else if low.contains("panier") || low.contains("cart") { LpspAmazonCommerceCartTabScreen() }
+        else { LpspAmazonCommerceHomeTabScreen() }
+    }
 }
 
 

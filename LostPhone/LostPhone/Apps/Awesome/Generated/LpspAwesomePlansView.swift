@@ -380,19 +380,19 @@ private struct LpspPlansShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspPlansMapsHomeTabScreen()
+            LpspPlansMapsTabScreen(title: "Explore", tabIndex: 0)
                 .tabItem { Label("Explore", systemImage: "safari.fill") }
                 .tag(0)
-            LpspPlansGenericTabScreen(title: "Go", tabIndex: 1)
+            LpspPlansMapsTabScreen(title: "Go", tabIndex: 1)
                 .tabItem { Label("Go", systemImage: "location.north.circle.fill") }
                 .tag(1)
-            LpspPlansGenericTabScreen(title: "Saved", tabIndex: 2)
+            LpspPlansMapsTabScreen(title: "Saved", tabIndex: 2)
                 .tabItem { Label("Saved", systemImage: "bookmark.fill") }
                 .tag(2)
-            LpspPlansGenericTabScreen(title: "Contribute", tabIndex: 3)
+            LpspPlansMapsTabScreen(title: "Contribute", tabIndex: 3)
                 .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
                 .tag(3)
-            LpspPlansGenericTabScreen(title: "Updates", tabIndex: 4)
+            LpspPlansMapsTabScreen(title: "Updates", tabIndex: 4)
                 .tabItem { Label("Updates", systemImage: "newspaper.fill") }
                 .tag(4)
         }
@@ -441,6 +441,35 @@ private struct LpspPlansMapsHomeTabScreen: View {
                 Spacer()
             }
         }
+    }
+}
+
+private struct LpspPlansMapsRoutesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Maison → Bureau", "Bureau → Gare"], id: \.self) { Label($0, systemImage: "arrow.triangle.turn.up.right.diamond") }
+            .navigationTitle("Itinéraire")
+        }
+    }
+}
+
+private struct LpspPlansMapsProfileTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { Label("Adresses enregistrées", systemImage: "mappin"); Label("Historique", systemImage: "clock") }
+            .navigationTitle("Profil")
+        }
+    }
+}
+
+private struct LpspPlansMapsTabScreen: View {
+    let title: String
+    let tabIndex: Int
+    var body: some View {
+        let low = title.lowercased()
+        if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspPlansMapsHomeTabScreen() }
+        else if low.contains("itin") || low.contains("route") { LpspPlansMapsRoutesTabScreen() }
+        else { LpspPlansMapsProfileTabScreen() }
     }
 }
 

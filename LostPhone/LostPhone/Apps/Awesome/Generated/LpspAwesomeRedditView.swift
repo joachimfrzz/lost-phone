@@ -401,10 +401,10 @@ private struct LpspRedditShowroomRoot: View {
             LpspRedditFeedTabScreen()
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
-            LpspRedditSocialTabScreen(title: "Communities")
+            LpspRedditCommunitiesTabScreen()
                 .tabItem { Label("Communities", systemImage: "person.3.fill") }
                 .tag(1)
-            LpspRedditSocialTabScreen(title: "Create")
+            LpspRedditCreateTabScreen()
                 .tabItem { Label("Create", systemImage: "plus.circle.fill") }
                 .tag(2)
             LpspRedditSocialTabScreen(title: "Chat")
@@ -572,9 +572,37 @@ private struct LpspRedditProfileTabScreen: View {
     }
 }
 
+private struct LpspRedditCommunitiesTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
+            .navigationTitle("Communities")
+        }
+    }
+}
+
+private struct LpspRedditCreateTabScreen: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspRedditTokens.rdBrandRed)
+            Text("Nouvelle publication").font(.title2.bold())
+            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspRedditTokens.rdCanvasLight.ignoresSafeArea())
+    }
+}
+
 private struct LpspRedditSocialTabScreen: View {
     let title: String
-    var body: some View { LpspRedditGenericTabScreen(title: title, tabIndex: 0) }
+    var body: some View {
+        let low = title.lowercased()
+        if low.contains("créer") || low.contains("create") { LpspRedditCreateTabScreen() }
+        else if low.contains("explor") || low.contains("search") { LpspRedditExploreTabScreen() }
+        else if low.contains("reel") { LpspRedditReelsTabScreen() }
+        else if low.contains("profil") || low.contains("profile") { LpspRedditProfileTabScreen() }
+        else { LpspRedditFeedTabScreen() }
+    }
 }
 
 private struct LpspRedditGenericFeedCard: View {

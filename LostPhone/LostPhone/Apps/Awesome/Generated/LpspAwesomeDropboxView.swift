@@ -305,19 +305,19 @@ private struct LpspDropboxShowroomRoot: View {
     @State private var selectedTab = 0
     var body: some View {
         TabView(selection: $selectedTab) {
-            LpspDropboxGenericTabScreen(title: "Home", tabIndex: 0)
+            LpspDropboxFilesTabScreen(title: "Home", tabIndex: 0)
                 .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
-            LpspDropboxGenericTabScreen(title: "Files", tabIndex: 1)
+            LpspDropboxFilesTabScreen(title: "Files", tabIndex: 1)
                 .tabItem { Label("Files", systemImage: "folder") }
                 .tag(1)
-            LpspDropboxGenericTabScreen(title: "Photos", tabIndex: 2)
+            LpspDropboxFilesTabScreen(title: "Photos", tabIndex: 2)
                 .tabItem { Label("Photos", systemImage: "photo.on.rectangle") }
                 .tag(2)
-            LpspDropboxGenericTabScreen(title: "Offline", tabIndex: 3)
+            LpspDropboxFilesTabScreen(title: "Offline", tabIndex: 3)
                 .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
                 .tag(3)
-            LpspDropboxGenericTabScreen(title: "Account", tabIndex: 4)
+            LpspDropboxFilesTabScreen(title: "Account", tabIndex: 4)
                 .tabItem { Label("Account", systemImage: "person.crop.circle") }
                 .tag(4)
         }
@@ -350,9 +350,44 @@ private struct LpspDropboxGenericTabScreen: View {
 }
 
 
-private struct LpspDropboxMessagingTabScreen: View {
+
+private struct LpspDropboxDemoFile { let name: String; let meta: String; let kind: LpspDropboxDbxFileKind }
+private enum LpspDropboxDemoFiles {
+    static let items: [LpspDropboxDemoFile] = [
+        .init(name: "Showroom.pdf", meta: "Modifié hier", kind: .pdf),
+        .init(name: "Screenshots", meta: "12 fichiers", kind: .folder),
+    ]
+}
+
+private struct LpspDropboxFilesHomeTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List { 
+                    ForEach(LpspDropboxDemoFiles.items, id: \.name) { f in
+                        LpspDropboxDbxFileRow(name: f.name, meta: f.meta, kind: f.kind, isSelected: false, onTap: {})
+                    }
+ }
+            .navigationTitle("Fichiers")
+        }
+    }
+}
+
+private struct LpspDropboxFilesRecentsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Showroom.pdf", "Design.fig"], id: \.self) { Label($0, systemImage: "clock") }
+            .navigationTitle("Récents")
+        }
+    }
+}
+
+private struct LpspDropboxFilesTabScreen: View {
     let title: String
-    var body: some View { LpspDropboxGenericTabScreen(title: title, tabIndex: 0) }
+    let tabIndex: Int
+    var body: some View {
+        if title.lowercased().contains("récent") || title.lowercased().contains("recent") { LpspDropboxFilesRecentsTabScreen() }
+        else { LpspDropboxFilesHomeTabScreen() }
+    }
 }
 
 

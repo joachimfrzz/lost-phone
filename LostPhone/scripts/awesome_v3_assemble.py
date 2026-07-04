@@ -863,18 +863,30 @@ private struct {prefix}DemoTx: Identifiable {{
 """
 
 
-def _dating_screens(prefix, tokens, accent, swipe_card) -> str:
-    card = (
-        f"""{swipe_card}(
+def _dating_swipe_card_call(swipe_card: str | None, prefix: str, accent: str) -> str:
+    if swipe_card and "BumbleSwipeCard" in swipe_card:
+        return f"""{swipe_card}(
+                photos: [Image(systemName: "person.fill")],
+                name: "Alex",
+                age: 28,
+                bio: "Paris · Photo · Voyage",
+                isVerified: true
+            )"""
+    if swipe_card and "TinderSwipeCard" in swipe_card:
+        return f"""{swipe_card}(
                 name: "Alex",
                 age: 28,
                 distance: "5 km",
                 occupation: "Designer",
                 photoURLs: []
             )"""
-        if swipe_card
-        else f"{prefix}DemoSwipeCard(accent: {accent})"
-    )
+    if swipe_card:
+        return f"{swipe_card}(name: \"Alex\", age: 28, bio: \"Paris · Photo · Voyage\", isVerified: false)"
+    return f"{prefix}DemoSwipeCard(accent: {accent})"
+
+
+def _dating_screens(prefix, tokens, accent, swipe_card) -> str:
+    card = _dating_swipe_card_call(swipe_card, prefix, accent)
     return f"""
 private struct {prefix}DemoDatingProfile {{
     let name: String

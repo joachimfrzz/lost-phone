@@ -307,6 +307,8 @@ fileprivate struct LpspAudibleCaptionsPanel: View {
 // LpspAudibleFlowLayout: a simple wrapping Layout (omitted for brevity).
 
 fileprivate struct LpspAudibleFlowLayout: Layout {
+    var spacing: CGFloat = 8
+    init(spacing: CGFloat = 8) { self.spacing = spacing }
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         proposal.replacingUnspecifiedDimensions(by: CGSize(width: 300, height: 40))
     }
@@ -315,7 +317,7 @@ fileprivate struct LpspAudibleFlowLayout: Layout {
         for subview in subviews {
             let size = subview.sizeThatFits(.unspecified)
             subview.place(at: CGPoint(x: x, y: bounds.minY), proposal: .unspecified)
-            x += size.width + 8
+            x += size.width + spacing
         }
     }
 }

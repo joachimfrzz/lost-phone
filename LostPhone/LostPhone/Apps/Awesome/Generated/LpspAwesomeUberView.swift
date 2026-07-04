@@ -109,7 +109,7 @@ fileprivate struct LpspUberWhereToInput: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(Capsule().fill(LpspUberTokens.uberWhite))
-            .overlay(Capsule().strokeBorder(LpspUberTokens.uberGray200, lineWidth: 1))
+            .overlay(Capsule().stroke(LpspUberTokens.uberGray200, lineWidth: 1))
             .padding(.trailing, 8)
         }
         .frame(height: 56)

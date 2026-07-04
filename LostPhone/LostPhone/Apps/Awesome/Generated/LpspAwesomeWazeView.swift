@@ -363,7 +363,7 @@ fileprivate struct LpspWazeWazeETABar: View {
                     .padding(.vertical, 12).padding(.horizontal, 20)
                     .background(
                         Capsule().fill(LpspWazeTokens.wazeCardCanvas)
-                            .overlay(Capsule().strokeBorder(LpspWazeTokens.wazeError, lineWidth: 1.5))
+                            .overlay(Capsule().stroke(LpspWazeTokens.wazeError, lineWidth: 1.5))
                     )
             }
             .buttonStyle(.plain)
@@ -478,7 +478,7 @@ fileprivate struct LpspWazeWazerAvatar: View {
             .font(.system(size: 20))
             .frame(width: 24, height: 24)
             .background(Circle().fill(Color.white))
-            .overlay(Circle().strokeBorder(Color.white, lineWidth: 2))
+            .overlay(Circle().stroke(Color.white, lineWidth: 2))
             .scaleEffect(pop)
             .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
             .onTapGesture {

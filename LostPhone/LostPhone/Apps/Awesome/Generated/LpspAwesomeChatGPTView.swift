@@ -300,7 +300,7 @@ fileprivate struct LpspChatGPTModelSelectorChip: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(Capsule().fill(Color.clear))
-            .overlay(Capsule().strokeBorder(LpspChatGPTTokens.gptDivider, lineWidth: 1))
+            .overlay(Capsule().stroke(LpspChatGPTTokens.gptDivider, lineWidth: 1))
         }
     }
 }

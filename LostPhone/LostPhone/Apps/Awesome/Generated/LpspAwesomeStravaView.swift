@@ -137,12 +137,12 @@ fileprivate struct LpspStravaRouteMapSnapshot: View {
                 // Start / end markers
                 if let start = coordinates.first {
                     Annotation("", coordinate: start) {
-                        Circle().fill(.white).overlay(Circle().strokeBorder(LpspStravaTokens.stravaOrange, lineWidth: 2)).frame(width: 12, height: 12)
+                        Circle().fill(.white).overlay(Circle().stroke(LpspStravaTokens.stravaOrange, lineWidth: 2)).frame(width: 12, height: 12)
                     }
                 }
                 if let end = coordinates.last {
                     Annotation("", coordinate: end) {
-                        Circle().fill(LpspStravaTokens.stravaOrange).overlay(Circle().strokeBorder(.white, lineWidth: 2)).frame(width: 12, height: 12)
+                        Circle().fill(LpspStravaTokens.stravaOrange).overlay(Circle().stroke(.white, lineWidth: 2)).frame(width: 12, height: 12)
                     }
                 }
             }

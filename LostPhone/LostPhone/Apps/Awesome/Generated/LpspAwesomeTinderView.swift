@@ -236,7 +236,7 @@ fileprivate struct LpspTinderTinderActionButton: View {
                 .frame(width: size, height: size)
                 .background(
                     Circle().fill(Color.white)
-                        .overlay(Circle().strokeBorder(color, lineWidth: 2))
+                        .overlay(Circle().stroke(color, lineWidth: 2))
                         .shadow(color: .black.opacity(0.1), radius: 8, y: 2)
                 )
         }
@@ -312,7 +312,7 @@ fileprivate struct LpspTinderTinderMatchScreen: View {
                             .foregroundStyle(.white)
                             .padding(.vertical, 14).padding(.horizontal, 32)
                             .frame(maxWidth: .infinity)
-                            .overlay(Capsule().strokeBorder(.white, lineWidth: 2))
+                            .overlay(Capsule().stroke(.white, lineWidth: 2))
                     }
                 }
                 .padding(.horizontal, 24)
@@ -333,7 +333,7 @@ fileprivate struct LpspTinderMatchAvatar: View {
         }
         .frame(width: 120, height: 120)
         .clipShape(Circle())
-        .overlay(Circle().strokeBorder(.white, lineWidth: 3))
+        .overlay(Circle().stroke(.white, lineWidth: 3))
     }
 }
 

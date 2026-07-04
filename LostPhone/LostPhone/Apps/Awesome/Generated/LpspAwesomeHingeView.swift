@@ -251,7 +251,7 @@ fileprivate struct LpspHingeRoseCTA: View {
             .background(
                 Capsule()
                     .fill(LpspHingeTokens.hingeBlack)
-                    .overlay(Capsule().strokeBorder(LpspHingeTokens.hingeRose, lineWidth: 1))
+                    .overlay(Capsule().stroke(LpspHingeTokens.hingeRose, lineWidth: 1))
             )
         }
         .buttonStyle(.plain)

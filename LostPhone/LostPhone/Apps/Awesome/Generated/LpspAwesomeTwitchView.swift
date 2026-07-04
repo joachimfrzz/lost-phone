@@ -196,7 +196,7 @@ fileprivate struct LpspTwitchTwitchAvatarRing: View {
             .resizable()
             .frame(width: size, height: size)
             .clipShape(Circle())
-            .overlay(Circle().strokeBorder(isLive ? LpspTwitchTokens.twitchLiveRed : LpspTwitchTokens.twitchPurple, lineWidth: 2))
+            .overlay(Circle().stroke(isLive ? LpspTwitchTokens.twitchLiveRed : LpspTwitchTokens.twitchPurple, lineWidth: 2))
             .padding(2)
     }
 }

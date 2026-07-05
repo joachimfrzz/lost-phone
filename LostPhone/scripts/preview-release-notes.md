@@ -1,3 +1,8 @@
+## Branche artisanale (61 apps Awesome — WIP)
+
+- Tag **`appetize-preview`** : build depuis `cursor/awesome-artisanal-a052` (validation sans merge dans `main`)
+- Tag **`appetize-latest`** : build stable depuis `main`
+
 ## Voir l'app sans Appetize (recommandé)
 
 1. Télécharge **`preview-demo.mov`** — vidéo du simulateur iOS

@@ -7,7 +7,9 @@ name: iOS Preview (Simulator)
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - cursor/awesome-artisanal-a052
     paths:
       - "LostPhone/**"
       - "public/stories/**"
@@ -23,6 +25,12 @@ on:
 
 permissions:
   contents: write
+
+env:
+  # main → tags stables ; branche artisanale → preview sans merge
+  IS_MAIN: ${{ github.ref == 'refs/heads/main' }}
+  APPETIZE_RELEASE_TAG: ${{ github.ref == 'refs/heads/main' && 'appetize-latest' || 'appetize-preview' }}
+  PREVIEW_RELEASE_TAG: ${{ github.ref == 'refs/heads/main' && 'preview-latest' || 'preview-artisanal' }}
 
 jobs:
   preview:
@@ -97,23 +105,23 @@ jobs:
 
       - name: Publish preview (Release)
         run: |
-          gh release delete preview-latest -y 2>/dev/null || true
-          gh release create preview-latest \
+          gh release delete "${{ env.PREVIEW_RELEASE_TAG }}" -y 2>/dev/null || true
+          gh release create "${{ env.PREVIEW_RELEASE_TAG }}" \
             preview-artifacts/LostPhone-simulator.app.zip \
             preview-artifacts/preview-demo.mov \
             preview-artifacts/01-menu-accueil.png \
-            --title "Preview Lost Phone — vidéo + app" \
+            --title "Preview Lost Phone — vidéo + app (${{ github.ref_name }})" \
             --notes-file LostPhone/scripts/preview-release-notes.md
         env:
           GH_TOKEN: ${{ github.token }}
 
       - name: Publish Appetize zip alias (legacy tag)
         run: |
-          gh release delete appetize-latest -y 2>/dev/null || true
-          gh release create appetize-latest \
+          gh release delete "${{ env.APPETIZE_RELEASE_TAG }}" -y 2>/dev/null || true
+          gh release create "${{ env.APPETIZE_RELEASE_TAG }}" \
             preview-artifacts/LostPhone-simulator.app.zip \
-            --title "Appetize — zip simulateur" \
-            --notes "Showroom : menu → **Showroom — 14 apps Reddit** (sans PIN). J-3 : PIN **1503**. PC/Mac + iOS **17.2**."
+            --title "Appetize — zip simulateur (${{ github.ref_name }})" \
+            --notes "Branche **${{ github.ref_name }}**. Showroom : menu → **Showroom — 14 apps Reddit** (sans PIN). J-3 : PIN **1503**. PC/Mac + iOS **17.2**."
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -130,11 +138,15 @@ jobs:
       - name: Job summary
         run: |
           {
-            echo "## Preview Lost Phone"
+            echo "## Preview Lost Phone (\`${{ github.ref_name }}\`)"
             echo ""
-            echo "**Sans Appetize (recommandé)** : [preview-latest Release](https://github.com/${{ github.repository }}/releases/tag/preview-latest) → \`preview-demo.mov\`"
+            echo "**Sans Appetize (recommandé)** : [${{ env.PREVIEW_RELEASE_TAG }} Release](https://github.com/${{ github.repository }}/releases/tag/${{ env.PREVIEW_RELEASE_TAG }}) → \`preview-demo.mov\`"
             echo ""
-            echo "**Appetize** (PC/Mac uniquement) : [appetize-latest](https://github.com/${{ github.repository }}/releases/tag/appetize-latest) · iOS **17.2** · PIN **1503**"
+            echo "**Appetize** (PC/Mac uniquement) : [${{ env.APPETIZE_RELEASE_TAG }}](https://github.com/${{ github.repository }}/releases/tag/${{ env.APPETIZE_RELEASE_TAG }}) · iOS **17.2** · PIN **1503**"
+            if [[ "${{ env.IS_MAIN }}" != "true" ]]; then
+              echo ""
+              echo "_Branche artisanale — merge dans \`main\` seulement quand un lot d’apps est validé._"
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload preview artifacts (screenshots + full bundle)

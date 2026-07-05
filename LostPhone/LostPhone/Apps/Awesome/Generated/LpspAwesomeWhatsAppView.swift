@@ -152,7 +152,7 @@ fileprivate struct LpspWhatsAppWAOutgoingBubble: View {
 }
 
 fileprivate struct LpspWhatsAppWAChatListRow<Avatar: View>: View {
-    @ViewBuilder let avatar: Avatar
+    let avatar: Avatar
     let name: String
     let preview: String
     let timestamp: String
@@ -636,7 +636,7 @@ private struct LpspWhatsAppMessagingTabScreen: View {
         else if low.contains("setting") || low.contains("réglage") { LpspWhatsAppSettingsTabScreen() }
         else if low.contains("communit") { LpspWhatsAppCommunitiesTabScreen() }
         else if low.contains("contact") { LpspWhatsAppContactsTabScreen() }
-        else { LpspWhatsAppChatsTabScreen() }
+        else { LpspWhatsAppChatsTabScreen(path: .constant(NavigationPath())) }
     }
 }
 

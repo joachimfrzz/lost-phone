@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDropboxView: View {
     var body: some View {
-        LpspDropboxShowroomRoot()
+        LpspDropboxShowroomRoot(store: LpspDropboxStore())
     }
 }
 
@@ -299,131 +299,460 @@ fileprivate struct LpspDropboxDbxPhotoGrid: View {
     }
 }
 
+// MARK: - Données & état (showroom Spectr)
+
+private enum LpspDropboxShowroomTab: String, CaseIterable, Identifiable {
+    case home
+    case files
+    case photos
+    case offline
+    case account
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: return "Home"
+        case .files: return "Files"
+        case .photos: return "Photos"
+        case .offline: return "Offline"
+        case .account: return "Account"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: return "house"
+        case .files: return "folder"
+        case .photos: return "photo.on.rectangle"
+        case .offline: return "arrow.down.circle"
+        case .account: return "person.crop.circle"
+        }
+    }
+}
+
+fileprivate struct LpspDropboxFileItem: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let meta: String
+    let recentMeta: String?
+    let kind: LpspDropboxDbxFileKind
+    var isSelected: Bool
+    var isOffline: Bool
+}
+
+private enum LpspDropboxShowroomData {
+    static let files: [LpspDropboxFileItem] = [
+        .init(
+            id: "q3-report",
+            name: "Q3 Report.pdf",
+            meta: "2.4 MB · Modified Apr 12",
+            recentMeta: "2.4 MB · Today",
+            kind: .pdf,
+            isSelected: true,
+            isOffline: true
+        ),
+        .init(
+            id: "design-assets",
+            name: "Design Assets",
+            meta: "28 items",
+            recentMeta: nil,
+            kind: .folder,
+            isSelected: false,
+            isOffline: false
+        ),
+        .init(
+            id: "project-brief",
+            name: "Project Brief.paper",
+            meta: "16 KB · Modified Apr 10",
+            recentMeta: nil,
+            kind: .doc,
+            isSelected: false,
+            isOffline: false
+        ),
+        .init(
+            id: "mockup-v4",
+            name: "Mockup_v4.png",
+            meta: "880 KB · Modified Apr 8",
+            recentMeta: "880 KB · Apr 14",
+            kind: .image,
+            isSelected: false,
+            isOffline: true
+        ),
+        .init(
+            id: "budget-q3",
+            name: "Budget Q3.xlsx",
+            meta: "44 KB · Modified Apr 6",
+            recentMeta: "44 KB · Apr 9",
+            kind: .sheet,
+            isSelected: false,
+            isOffline: false
+        ),
+    ]
+
+    static let recentIDs = ["q3-report", "mockup-v4", "budget-q3"]
+
+    static let photoNames = ["Mockup_v4.png", "Hero_shot.jpg", "Wireframe_02.png", "Palette.png", "Launch_day.jpg", "Team_photo.png"]
+}
+
+@MainActor
+fileprivate final class LpspDropboxStore: ObservableObject {
+    @Published var selectedTab: LpspDropboxShowroomTab = .files
+    @Published var files: [LpspDropboxFileItem]
+    @Published var uploadProgress: Double = 0.375
+    @Published var uploadLabel = "Uploading 3 of 8 · 4.2 MB"
+    @Published var isUploading = true
+    @Published var searchQuery = ""
+    @Published var selectedPhotoIndices: Set<Int> = []
+
+    init() {
+        files = LpspDropboxShowroomData.files
+    }
+
+    var recentFiles: [LpspDropboxFileItem] {
+        LpspDropboxShowroomData.recentIDs.compactMap { id in
+            files.first { $0.id == id }
+        }
+    }
+
+    var offlineFiles: [LpspDropboxFileItem] {
+        files.filter(\.isOffline)
+    }
+
+    var filteredFiles: [LpspDropboxFileItem] {
+        guard !searchQuery.isEmpty else { return files }
+        return files.filter { $0.name.localizedCaseInsensitiveContains(searchQuery) }
+    }
+
+    func selectFile(_ id: String) {
+        files = files.map { item in
+            var copy = item
+            copy.isSelected = item.id == id
+            return copy
+        }
+    }
+
+    func toggleOffline(_ id: String) {
+        files = files.map { item in
+            guard item.id == id else { return item }
+            var copy = item
+            copy.isOffline.toggle()
+            return copy
+        }
+    }
+
+    func startUpload() {
+        isUploading = true
+        uploadProgress = min(uploadProgress + 0.125, 1.0)
+        let completed = Int(uploadProgress * 8)
+        uploadLabel = completed >= 8
+            ? "Upload complete · 8 of 8"
+            : "Uploading \(completed) of 8 · 4.2 MB"
+        if completed >= 8 {
+            isUploading = false
+        }
+    }
+
+    func togglePhotoSelection(_ index: Int) {
+        if selectedPhotoIndices.contains(index) {
+            selectedPhotoIndices.remove(index)
+        } else {
+            selectedPhotoIndices.insert(index)
+        }
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspDropboxShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspDropboxStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspDropboxSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house") }
-                .tag(0)
-            LpspDropboxFilesTabScreen(title: "Files", tabIndex: 1)
-                .tabItem { Label("Files", systemImage: "folder") }
-                .tag(1)
-            LpspDropboxFilesTabScreen(title: "Photos", tabIndex: 2)
-                .tabItem { Label("Photos", systemImage: "photo.on.rectangle") }
-                .tag(2)
-            LpspDropboxFilesTabScreen(title: "Offline", tabIndex: 3)
-                .tabItem { Label("Offline", systemImage: "arrow.down.circle") }
-                .tag(3)
-            LpspDropboxFilesTabScreen(title: "Account", tabIndex: 4)
-                .tabItem { Label("Account", systemImage: "person.crop.circle") }
-                .tag(4)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspDropboxShowroomTab.allCases) { tab in
+                LpspDropboxShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
+                    }
+                    .tag(tab)
+            }
         }
-        .tint(LpspDropboxTokens.dbxPdfRed)
-        
+        .tint(LpspDropboxTokens.dbxBlue)
+        .preferredColorScheme(.light)
     }
 }
 
+private struct LpspDropboxShowroomTabScreen: View {
+    @ObservedObject var store: LpspDropboxStore
+    let tab: LpspDropboxShowroomTab
 
-private struct LpspDropboxGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspDropboxTokens.dbxPdfRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDropboxTokens.dbxPdfRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+            Group {
+                switch tab {
+                case .home:
+                    LpspDropboxHomeTabScreen(store: store)
+                case .files:
+                    LpspDropboxFilesTabScreen(store: store)
+                case .photos:
+                    LpspDropboxPhotosTabScreen(store: store)
+                case .offline:
+                    LpspDropboxOfflineTabScreen(store: store)
+                case .account:
+                    LpspDropboxAccountTabScreen()
                 }
             }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-
-private struct LpspDropboxDemoFile { let name: String; let meta: String; let kind: LpspDropboxDbxFileKind }
-private enum LpspDropboxDemoFiles {
-    static let items: [LpspDropboxDemoFile] = [
-        .init(name: "Showroom.pdf", meta: "Modifié hier", kind: .pdf),
-        .init(name: "Screenshots", meta: "12 fichiers", kind: .folder),
-    ]
-}
-
-private struct LpspDropboxFilesHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List { 
-                    ForEach(LpspDropboxDemoFiles.items, id: \.name) { f in
-                        LpspDropboxDbxFileRow(name: f.name, meta: f.meta, kind: f.kind, isSelected: false, onTap: {})
-                    }
- }
-            .navigationTitle("Fichiers")
-        }
-    }
-}
-
-private struct LpspDropboxFilesRecentsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Showroom.pdf", "Design.fig"], id: \.self) { Label($0, systemImage: "clock") }
-            .navigationTitle("Récents")
+            .background(LpspDropboxTokens.dbxCanvas.ignoresSafeArea())
         }
     }
 }
 
 private struct LpspDropboxFilesTabScreen: View {
-    let title: String
-    let tabIndex: Int
+    @ObservedObject var store: LpspDropboxStore
+
     var body: some View {
-        if title.lowercased().contains("récent") || title.lowercased().contains("recent") { LpspDropboxFilesRecentsTabScreen() }
-        else { LpspDropboxFilesHomeTabScreen() }
+        ZStack(alignment: .bottomTrailing) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    LpspDropboxFilesNavBar(searchQuery: $store.searchQuery)
+
+                    Text("Recents")
+                        .font(LpspDropboxFonts.dbxLabelUpper.weight(.semibold))
+                        .foregroundStyle(LpspDropboxTokens.dbxTextSecondary)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                        .padding(.bottom, 8)
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(store.recentFiles) { file in
+                                Button {
+                                    store.selectFile(file.id)
+                                } label: {
+                                    LpspDropboxDbxRecentCard(
+                                        name: file.name,
+                                        meta: file.recentMeta ?? file.meta,
+                                        thumbnail: nil
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
+
+                    Text("All files")
+                        .font(LpspDropboxFonts.dbxLabelUpper.weight(.semibold))
+                        .foregroundStyle(LpspDropboxTokens.dbxTextSecondary)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 20)
+                        .padding(.bottom, 4)
+
+                    VStack(spacing: 0) {
+                        ForEach(store.filteredFiles) { file in
+                            LpspDropboxDbxFileRow(
+                                name: file.name,
+                                meta: file.meta,
+                                kind: file.kind,
+                                isSelected: file.isSelected,
+                                onTap: { store.selectFile(file.id) }
+                            )
+
+                            if file.id != store.filteredFiles.last?.id {
+                                Divider()
+                                    .background(LpspDropboxTokens.dbxDivider)
+                                    .padding(.leading, 68)
+                            }
+                        }
+                    }
+                    .padding(.bottom, store.isUploading ? 88 : 72)
+                }
+            }
+
+            if store.isUploading {
+                VStack {
+                    Spacer()
+                    LpspDropboxDbxUploadBar(
+                        label: store.uploadLabel,
+                        progress: store.uploadProgress,
+                        done: store.uploadProgress >= 1.0
+                    )
+                }
+            }
+
+            LpspDropboxDbxUploadFAB {
+                store.startUpload()
+            }
+        }
+        .navigationBarHidden(true)
     }
 }
 
+private struct LpspDropboxFilesNavBar: View {
+    @Binding var searchQuery: String
 
-private struct LpspDropboxSpectrHomeTabScreen: View {
     var body: some View {
-        VStack(spacing: 0) {
-            Text("Files").font(.system(size: 28.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            HStack(spacing: 16) {
+        HStack {
+            Text("Files")
+                .font(LpspDropboxFonts.dbxTitleLarge.weight(.bold))
+                .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
 
-            } .foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Spacer()
+
+            Button {
+                searchQuery = searchQuery.isEmpty ? "Q3" : ""
+            } label: {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
+            }
+
+            Button {} label: {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+    }
+}
+
+private struct LpspDropboxHomeTabScreen: View {
+    @ObservedObject var store: LpspDropboxStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Good afternoon")
+                    .font(LpspDropboxFonts.dbxSection.weight(.semibold))
+                    .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
+
+                Text("Jump back into your recent work")
+                    .font(LpspDropboxFonts.dbxBody)
+                    .foregroundStyle(LpspDropboxTokens.dbxTextSecondary)
+
+                ForEach(store.recentFiles.prefix(2)) { file in
+                    LpspDropboxDbxFileRow(
+                        name: file.name,
+                        meta: file.recentMeta ?? file.meta,
+                        kind: file.kind,
+                        isSelected: false,
+                        onTap: {
+                            store.selectFile(file.id)
+                            store.selectedTab = .files
+                        }
+                    )
+                }
+
+                LpspDropboxDbxPrimaryButton(title: "Open Files") {
+                    store.selectedTab = .files
+                }
+            }
+            .padding(16)
+        }
+        .navigationTitle("Home")
+    }
+}
+
+private struct LpspDropboxPhotosTabScreen: View {
+    @ObservedObject var store: LpspDropboxStore
+
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 3)
+
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 2) {
+                ForEach(LpspDropboxShowroomData.photoNames.indices, id: \.self) { index in
+                    Button {
+                        store.togglePhotoSelection(index)
+                    } label: {
+                        RoundedRectangle(cornerRadius: 0)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        LpspDropboxTokens.dbxImageTeal.opacity(0.35),
+                                        LpspDropboxTokens.dbxSurface,
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .aspectRatio(1, contentMode: .fill)
+                            .overlay(alignment: .topTrailing) {
+                                if store.selectedPhotoIndices.contains(index) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(LpspDropboxTokens.dbxBlue, .white)
+                                        .padding(6)
+                                }
+                            }
+                            .overlay(
+                                Rectangle()
+                                    .strokeBorder(
+                                        store.selectedPhotoIndices.contains(index)
+                                            ? LpspDropboxTokens.dbxBlue
+                                            : .clear,
+                                        lineWidth: 4
+                                    )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .navigationTitle("Photos")
+    }
+}
+
+private struct LpspDropboxOfflineTabScreen: View {
+    @ObservedObject var store: LpspDropboxStore
+
+    var body: some View {
+        List {
+            ForEach(store.offlineFiles) { file in
+                LpspDropboxDbxFileRow(
+                    name: file.name,
+                    meta: file.meta,
+                    kind: file.kind,
+                    isSelected: file.isSelected,
+                    onTap: { store.selectFile(file.id) }
+                )
+                .listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden)
+            }
+        }
+        .listStyle(.plain)
+        .navigationTitle("Offline")
+    }
+}
+
+private struct LpspDropboxAccountTabScreen: View {
+    var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-            Text("Recents").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Q3 Report.pdf").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("2.4 MB · Today").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Mockup_v4.png").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("880 KB · Apr 14").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Budget.xlsx").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("44 KB · Apr 9").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("All files").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Q3 Report.pdf").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("2.4 MB · Modified Apr 12").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Design Assets").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("28 items").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Project Brief.paper").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("16 KB · Modified Apr 10").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Mockup_v4.png").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("880 KB · Modified Apr 8").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Budget Q3.xlsx").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("44 KB · Modified Apr 6").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Uploading 3 of 8 · 4.2 MB").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                Circle()
+                    .fill(LpspDropboxTokens.dbxBlueTint)
+                    .frame(width: 84, height: 84)
+                    .overlay {
+                        Text("Y")
+                            .font(.title.weight(.bold))
+                            .foregroundStyle(LpspDropboxTokens.dbxBlue)
+                    }
+
+                Text("your.name@email.com")
+                    .font(LpspDropboxFonts.dbxCardTitle.weight(.semibold))
+                    .foregroundStyle(LpspDropboxTokens.dbxTextPrimary)
+
+                Text("Dropbox Plus · 2.1 GB of 2 TB used")
+                    .font(LpspDropboxFonts.dbxMeta)
+                    .foregroundStyle(LpspDropboxTokens.dbxTextSecondary)
+
+                LpspDropboxDbxPrimaryButton(title: "Manage account") {}
+                    .padding(.horizontal, 16)
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 24)
         }
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        .navigationTitle("Account")
     }
 }
 

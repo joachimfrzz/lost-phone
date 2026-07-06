@@ -57,44 +57,55 @@ fileprivate struct LpspUberPressableStyle: ButtonStyle {
 }
 
 fileprivate struct LpspUberWhereToInput: View {
-    var darkMode = true
+    let destination: String?
+    let action: () -> Void
 
     var body: some View {
-        HStack(spacing: 14) {
-            VStack(spacing: 4) {
-                Circle().fill(darkMode ? .white : LpspUberTokens.uberBlack).frame(width: 8, height: 8)
-                ForEach(0..<3, id: \.self) { _ in
-                    Rectangle().fill(LpspUberTokens.uberGray600).frame(width: 1, height: 3)
+        Button(action: action) {
+            HStack(spacing: 14) {
+                VStack(spacing: 4) {
+                    Circle().fill(.white).frame(width: 8, height: 8)
+                    ForEach(0..<3, id: \.self) { _ in
+                        Rectangle().fill(LpspUberTokens.uberGray600).frame(width: 1, height: 3)
+                    }
+                    RoundedRectangle(cornerRadius: 1).fill(.white).frame(width: 8, height: 8)
                 }
-                RoundedRectangle(cornerRadius: 1).fill(darkMode ? .white : LpspUberTokens.uberBlack).frame(width: 8, height: 8)
+                .padding(.leading, 16)
+
+                if let destination {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Current location")
+                            .font(.system(size: 13, weight: .regular))
+                            .foregroundStyle(LpspUberTokens.uberGray600)
+                        Text(destination)
+                            .font(LpspUberFonts.uberWhereTo)
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                    }
+                } else {
+                    Text("Where to?")
+                        .font(LpspUberFonts.uberWhereTo)
+                        .foregroundStyle(.white)
+                }
+
+                Spacer()
+
+                HStack(spacing: 6) {
+                    Image(systemName: "clock").font(.system(size: 14, weight: .medium))
+                    Text("Later").font(.system(size: 15, weight: .regular))
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Capsule().fill(LpspUberTokens.uberGray900))
+                .overlay(Capsule().stroke(LpspUberTokens.uberGray700, lineWidth: 1))
+                .padding(.trailing, 8)
             }
-            .padding(.leading, 16)
-
-            Text("Where to?")
-                .font(LpspUberFonts.uberWhereTo)
-                .foregroundStyle(darkMode ? .white : .black)
-
-            Spacer()
-
-            HStack(spacing: 6) {
-                Image(systemName: "clock").font(.system(size: 14, weight: .medium))
-                Text("Later").font(.system(size: 15, weight: .regular))
-            }
-            .foregroundStyle(darkMode ? .white : .black)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                Capsule()
-                    .fill(darkMode ? LpspUberTokens.uberGray900 : LpspUberTokens.uberWhite)
-            )
-            .overlay(Capsule().stroke(LpspUberTokens.uberGray700, lineWidth: 1))
-            .padding(.trailing, 8)
+            .frame(height: 56)
+            .background(RoundedRectangle(cornerRadius: 8).fill(LpspUberTokens.uberGray950))
+            .contentShape(Rectangle())
         }
-        .frame(height: 56)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(darkMode ? LpspUberTokens.uberGray950 : LpspUberTokens.uberGray50)
-        )
+        .buttonStyle(LpspUberPressableStyle())
     }
 }
 
@@ -104,6 +115,7 @@ fileprivate struct LpspUberRideOptionCard: View {
     let capacity: Int
     let price: String
     let isSelected: Bool
+    let isEnabled: Bool
     let action: () -> Void
 
     var body: some View {
@@ -111,7 +123,7 @@ fileprivate struct LpspUberRideOptionCard: View {
             HStack(spacing: 12) {
                 Image(systemName: "car.side.fill")
                     .font(.system(size: 28))
-                    .foregroundStyle(.white.opacity(0.85))
+                    .foregroundStyle(.white.opacity(isEnabled ? 0.85 : 0.35))
                     .frame(width: 56, height: 56)
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -123,16 +135,16 @@ fileprivate struct LpspUberRideOptionCard: View {
                         }
                         .foregroundStyle(LpspUberTokens.uberGray600)
                     }
-                    Text("\(eta) away · 8:42 PM")
+                    Text("\(eta) away")
                         .font(LpspUberFonts.uberCaption)
                         .foregroundStyle(LpspUberTokens.uberGray600)
                 }
 
                 Spacer()
 
-                Text(price)
+                Text(isEnabled ? price : "—")
                     .font(LpspUberFonts.uberPrice)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(isEnabled ? .white : LpspUberTokens.uberGray600)
             }
             .padding(.horizontal, 16)
             .frame(height: 72)
@@ -146,11 +158,14 @@ fileprivate struct LpspUberRideOptionCard: View {
             )
         }
         .buttonStyle(LpspUberPressableStyle())
+        .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : 0.45)
         .sensoryFeedback(.selection, trigger: isSelected)
     }
 }
 
 fileprivate struct LpspUberMapView: View {
+    var showsRoute: Bool
     private let pickup = CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522)
     private let destination = CLLocationCoordinate2D(latitude: 48.8738, longitude: 2.2950)
     @State private var camera: MapCameraPosition = .automatic
@@ -159,13 +174,15 @@ fileprivate struct LpspUberMapView: View {
         Map(position: $camera) {
             Marker("Pickup", systemImage: "circle.fill", coordinate: pickup)
                 .tint(.black)
-            Annotation("Destination", coordinate: destination) {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.black)
-                    .frame(width: 28, height: 28)
+            if showsRoute {
+                Annotation("Destination", coordinate: destination) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.black)
+                        .frame(width: 28, height: 28)
+                }
+                MapPolyline(coordinates: [pickup, destination])
+                    .stroke(.black, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
             }
-            MapPolyline(coordinates: [pickup, destination])
-                .stroke(.black, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
         }
         .mapStyle(.standard(pointsOfInterest: .excludingAll))
         .mapControlVisibility(.hidden)
@@ -198,6 +215,9 @@ fileprivate struct LpspUberShowroomService: Identifiable {
 fileprivate final class LpspUberStore: ObservableObject {
     @Published var selectedRideOption = 0
     @Published var isBooking = false
+    @Published var destination: String?
+    @Published var showDestinationPicker = false
+    @Published var showMapMenu = false
     @Published private(set) var trips: [LpspUberShowroomTrip]
     @Published var account: LpspUberShowroomAccount
 
@@ -206,20 +226,40 @@ fileprivate final class LpspUberStore: ObservableObject {
         self.account = account
     }
 
+    var hasDestination: Bool {
+        guard let destination else { return false }
+        return !destination.isEmpty
+    }
+
     var selectedOption: LpspUberShowroomRideOption {
         LpspUberShowroomData.rideOptions[selectedRideOption]
     }
 
+    func selectDestination(_ place: String) {
+        destination = place
+        selectedRideOption = 0
+        showDestinationPicker = false
+        showMapMenu = false
+    }
+
+    func clearDestination() {
+        destination = nil
+        selectedRideOption = 0
+        isBooking = false
+    }
+
     func confirmRide() {
+        guard hasDestination else { return }
         isBooking = true
     }
 
     func completeBooking() {
         isBooking = false
+        let dropoff = destination ?? "Destination"
         let newTrip = LpspUberShowroomTrip(
             id: "trip-\(UUID().uuidString.prefix(6))",
             pickup: "Current location",
-            dropoff: "Musée du Louvre",
+            dropoff: dropoff,
             dateLabel: "Just now",
             duration: selectedOption.eta.replacingOccurrences(of: " min", with: "") + " min",
             price: selectedOption.price,
@@ -229,6 +269,8 @@ fileprivate final class LpspUberStore: ObservableObject {
             plate: "AB-123-CD"
         )
         trips.insert(newTrip, at: 0)
+        destination = nil
+        selectedRideOption = 0
     }
 
     static func trips(from lpspRides: [LpspRide]) -> [LpspUberShowroomTrip] {
@@ -404,12 +446,12 @@ private struct LpspUberHomeTabScreen: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            LpspUberMapView().ignoresSafeArea()
+            LpspUberMapView(showsRoute: store.hasDestination).ignoresSafeArea()
 
             VStack {
                 HStack {
                     Spacer()
-                    Button { } label: {
+                    Button { store.showMapMenu = true } label: {
                         Image(systemName: "line.3.horizontal")
                             .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(.black)
@@ -437,65 +479,79 @@ private struct LpspUberHomeTabScreen: View {
                             .padding(.horizontal, 12)
                             .padding(.top, 12)
                     } else {
-                        Text("Choose a ride")
+                        Text(store.hasDestination ? "Choose a ride" : "Plan your ride")
                             .font(LpspUberFonts.uberSheetTitle)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
                             .padding(.top, 14)
 
-                        LpspUberWhereToInput(darkMode: true)
-                            .padding(.horizontal, 12)
-                            .padding(.top, 10)
-
-                        ForEach(Array(LpspUberShowroomData.rideOptions.enumerated()), id: \.element.id) { idx, option in
-                            LpspUberRideOptionCard(
-                                name: option.name,
-                                eta: option.eta,
-                                capacity: option.capacity,
-                                price: option.price,
-                                isSelected: store.selectedRideOption == idx,
-                                action: { store.selectedRideOption = idx }
-                            )
-                            .padding(.horizontal, 12)
-                        }
-                        .padding(.vertical, 8)
-
-                        HStack {
-                            Text("VISA")
-                                .font(.system(size: 11, weight: .bold))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 3)
-                                .background(RoundedRectangle(cornerRadius: 3).fill(Color.blue))
-                            Text(store.account.paymentMethod)
-                                .font(LpspUberFonts.uberMeta)
-                                .foregroundStyle(.white)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(LpspUberTokens.uberGray600)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 10)
-
-                        Button {
-                            store.confirmRide()
-                            Task {
-                                try? await Task.sleep(for: .milliseconds(1800))
-                                await MainActor.run { store.completeBooking() }
-                            }
-                        } label: {
-                            Text("Confirm \(store.selectedOption.name)")
-                                .font(LpspUberFonts.uberButton)
-                                .foregroundStyle(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(RoundedRectangle(cornerRadius: 8).fill(.white))
-                        }
-                        .buttonStyle(LpspUberPressableStyle())
+                        LpspUberWhereToInput(
+                            destination: store.destination,
+                            action: { store.showDestinationPicker = true }
+                        )
                         .padding(.horizontal, 12)
-                        .padding(.bottom, 12)
+                        .padding(.top, 10)
+
+                        if store.hasDestination {
+                            ForEach(Array(LpspUberShowroomData.rideOptions.enumerated()), id: \.element.id) { idx, option in
+                                LpspUberRideOptionCard(
+                                    name: option.name,
+                                    eta: option.eta,
+                                    capacity: option.capacity,
+                                    price: option.price,
+                                    isSelected: store.selectedRideOption == idx,
+                                    isEnabled: true,
+                                    action: { store.selectedRideOption = idx }
+                                )
+                                .padding(.horizontal, 12)
+                            }
+                            .padding(.vertical, 8)
+
+                            HStack {
+                                Text("VISA")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 3)
+                                    .background(RoundedRectangle(cornerRadius: 3).fill(Color.blue))
+                                Text(store.account.paymentMethod)
+                                    .font(LpspUberFonts.uberMeta)
+                                    .foregroundStyle(.white)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(LpspUberTokens.uberGray600)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 10)
+
+                            Button {
+                                store.confirmRide()
+                                Task {
+                                    try? await Task.sleep(for: .milliseconds(1800))
+                                    await MainActor.run { store.completeBooking() }
+                                }
+                            } label: {
+                                Text("Confirm \(store.selectedOption.name)")
+                                    .font(LpspUberFonts.uberButton)
+                                    .foregroundStyle(.black)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 16)
+                                    .background(RoundedRectangle(cornerRadius: 8).fill(.white))
+                            }
+                            .buttonStyle(LpspUberPressableStyle())
+                            .padding(.horizontal, 12)
+                            .padding(.bottom, 12)
+                        } else {
+                            Text("Enter a destination to see prices and ride options.")
+                                .font(LpspUberFonts.uberCaption)
+                                .foregroundStyle(LpspUberTokens.uberGray600)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.top, 12)
+                                .padding(.bottom, 20)
+                        }
                     }
                 }
                 .background(
@@ -505,6 +561,125 @@ private struct LpspUberHomeTabScreen: View {
                 )
             }
         }
+        .sheet(isPresented: $store.showDestinationPicker) {
+            LpspUberDestinationPickerSheet(store: store)
+        }
+        .sheet(isPresented: $store.showMapMenu) {
+            LpspUberMapMenuSheet(store: store)
+        }
+    }
+}
+
+private struct LpspUberDestinationPickerSheet: View {
+    @ObservedObject var store: LpspUberStore
+    @Environment(\.dismiss) private var dismiss
+
+    private let suggestions = [
+        "Gare du Nord",
+        "Musée du Louvre — Pyramide",
+        "Charles de Gaulle T2E",
+        "Parc de la Villette",
+    ]
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Saved places") {
+                    ForEach(store.account.savedPlaces, id: \.label) { place in
+                        Button {
+                            store.selectDestination(place.address)
+                            dismiss()
+                        } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(place.label)
+                                    .font(LpspUberFonts.uberRowTitle)
+                                    .foregroundStyle(.white)
+                                Text(place.address)
+                                    .font(LpspUberFonts.uberCaption)
+                                    .foregroundStyle(LpspUberTokens.uberGray600)
+                            }
+                        }
+                        .listRowBackground(LpspUberTokens.uberGray950)
+                    }
+                }
+
+                Section("Suggestions") {
+                    ForEach(suggestions, id: \.self) { place in
+                        Button {
+                            store.selectDestination(place)
+                            dismiss()
+                        } label: {
+                            Text(place)
+                                .font(LpspUberFonts.uberMeta)
+                                .foregroundStyle(.white)
+                        }
+                        .listRowBackground(LpspUberTokens.uberGray950)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .navigationTitle("Where to?")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
+        .presentationDetents([.medium, .large])
+        .preferredColorScheme(.dark)
+    }
+}
+
+private struct LpspUberMapMenuSheet: View {
+    @ObservedObject var store: LpspUberStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Button {
+                    dismiss()
+                    store.showDestinationPicker = true
+                } label: {
+                    Label("Set destination", systemImage: "mappin.and.ellipse")
+                        .foregroundStyle(.white)
+                }
+                .listRowBackground(LpspUberTokens.uberGray950)
+
+                if store.hasDestination {
+                    Button {
+                        store.clearDestination()
+                        dismiss()
+                    } label: {
+                        Label("Clear destination", systemImage: "xmark.circle")
+                            .foregroundStyle(.white)
+                    }
+                    .listRowBackground(LpspUberTokens.uberGray950)
+                }
+
+                Label("Safety", systemImage: "shield")
+                    .foregroundStyle(.white)
+                    .listRowBackground(LpspUberTokens.uberGray950)
+                Label("Help", systemImage: "questionmark.circle")
+                    .foregroundStyle(.white)
+                    .listRowBackground(LpspUberTokens.uberGray950)
+            }
+            .scrollContentBackground(.hidden)
+            .navigationTitle("Menu")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
+        .presentationDetents([.medium])
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -532,7 +707,7 @@ private struct LpspUberActiveBookingCard: View {
 
             HStack(spacing: 8) {
                 Image(systemName: "mappin.circle.fill")
-                Text("Musée du Louvre")
+                Text(store.destination ?? "Destination")
                     .font(LpspUberFonts.uberMeta)
                     .foregroundStyle(.white)
             }
@@ -653,17 +828,15 @@ private struct LpspUberActivityTabScreen: View {
 
 private struct LpspUberTripDetailScreen: View {
     let trip: LpspUberShowroomTrip
+    @State private var showMessage = false
+    @State private var showCall = false
+    @State private var showShare = false
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 12) {
-                    tripRow(icon: "circle.fill", color: .white, title: trip.pickup, subtitle: "Pickup")
-                    Rectangle().fill(LpspUberTokens.uberGray700).frame(width: 2, height: 24).padding(.leading, 7)
-                    tripRow(icon: "square.fill", color: .white, title: trip.dropoff, subtitle: "Dropoff")
-                }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 12).fill(LpspUberTokens.uberGray950))
+            VStack(spacing: 20) {
+                LpspUberRouteSummaryCard(pickup: trip.pickup, dropoff: trip.dropoff)
+                    .frame(maxWidth: .infinity)
 
                 HStack(spacing: 12) {
                     Circle()
@@ -686,13 +859,15 @@ private struct LpspUberTripDetailScreen: View {
                 }
                 .padding()
                 .background(RoundedRectangle(cornerRadius: 12).fill(LpspUberTokens.uberGray950))
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 HStack(spacing: 24) {
-                    actionButton("message", "Message")
-                    actionButton("phone", "Call")
-                    actionButton("square.and.arrow.up", "Share")
+                    actionButton("message", "Message") { showMessage = true }
+                    actionButton("phone", "Call") { showCall = true }
+                    actionButton("square.and.arrow.up", "Share") { showShare = true }
                     Spacer()
                 }
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, 4)
             }
             .padding(16)
@@ -701,30 +876,217 @@ private struct LpspUberTripDetailScreen: View {
         .navigationTitle(trip.dateLabel)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .sheet(isPresented: $showMessage) {
+            LpspUberDriverMessageSheet(driver: trip.driver)
+        }
+        .sheet(isPresented: $showCall) {
+            LpspUberDriverCallSheet(driver: trip.driver)
+        }
+        .sheet(isPresented: $showShare) {
+            LpspUberTripShareSheet(trip: trip)
+        }
     }
 
-    private func tripRow(icon: String, color: Color, title: String, subtitle: String) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon).font(.system(size: 10)).foregroundStyle(color)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(subtitle.uppercased())
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(LpspUberTokens.uberGray600)
-                Text(title)
+    private func actionButton(_ icon: String, _ label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                ZStack {
+                    Circle().fill(LpspUberTokens.uberGray950).frame(width: 44, height: 44)
+                    Image(systemName: icon).font(.system(size: 18)).foregroundStyle(.white)
+                }
+                Text(label).font(LpspUberFonts.uberCaption).foregroundStyle(LpspUberTokens.uberGray600)
+            }
+        }
+        .buttonStyle(LpspUberPressableStyle())
+    }
+}
+
+private struct LpspUberRouteSummaryCard: View {
+    let pickup: String
+    let dropoff: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 16) {
+            VStack(spacing: 0) {
+                Circle()
+                    .fill(.white)
+                    .frame(width: 10, height: 10)
+                Rectangle()
+                    .fill(LpspUberTokens.uberGray700)
+                    .frame(width: 2, height: 36)
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(.white)
+                    .frame(width: 10, height: 10)
+            }
+            .padding(.top, 4)
+
+            VStack(alignment: .leading, spacing: 20) {
+                routeRow(title: pickup, subtitle: "Pickup")
+                routeRow(title: dropoff, subtitle: "Dropoff")
+            }
+            Spacer(minLength: 0)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .center)
+        .background(RoundedRectangle(cornerRadius: 12).fill(LpspUberTokens.uberGray950))
+    }
+
+    private func routeRow(title: String, subtitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(subtitle.uppercased())
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(LpspUberTokens.uberGray600)
+            Text(title)
+                .font(LpspUberFonts.uberMeta)
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct LpspUberDriverMessageSheet: View {
+    let driver: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var draft = ""
+    @FocusState private var inputFocused: Bool
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Hi, I'm on my way.")
+                            .font(LpspUberFonts.uberMeta)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(RoundedRectangle(cornerRadius: 16).fill(LpspUberTokens.uberGray900))
+                        Text("Thanks! See you at the pickup point.")
+                            .font(LpspUberFonts.uberMeta)
+                            .foregroundStyle(.black)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(RoundedRectangle(cornerRadius: 16).fill(.white))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .padding(16)
+                }
+                HStack(spacing: 10) {
+                    TextField("Message \(driver)", text: $draft)
+                        .focused($inputFocused)
+                        .font(LpspUberFonts.uberMeta)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(RoundedRectangle(cornerRadius: 20).fill(LpspUberTokens.uberGray950))
+                    Button {
+                        draft = ""
+                        inputFocused = false
+                    } label: {
+                        Image(systemName: "paperplane.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.black)
+                            .frame(width: 40, height: 40)
+                            .background(Circle().fill(.white))
+                    }
+                    .buttonStyle(LpspUberPressableStyle())
+                    .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .opacity(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.45 : 1)
+                }
+                .padding(12)
+                .background(LpspUberTokens.uberGray950)
+            }
+            .navigationTitle(driver)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
+}
+
+private struct LpspUberDriverCallSheet: View {
+    let driver: String
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            Circle()
+                .fill(LpspUberTokens.uberGray700)
+                .frame(width: 96, height: 96)
+                .overlay(Text(String(driver.prefix(1))).font(.largeTitle.bold()).foregroundStyle(.white))
+            Text(driver).font(.system(size: 24, weight: .semibold)).foregroundStyle(.white)
+            Text("Calling driver…")
+                .font(LpspUberFonts.uberMeta)
+                .foregroundStyle(LpspUberTokens.uberGray600)
+            Spacer()
+            Button { dismiss() } label: {
+                Image(systemName: "phone.down.fill")
+                    .font(.system(size: 28))
+                    .foregroundStyle(.white)
+                    .frame(width: 64, height: 64)
+                    .background(Circle().fill(Color.red))
+            }
+            .buttonStyle(LpspUberPressableStyle())
+            .padding(.bottom, 40)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
+}
+
+private struct LpspUberTripShareSheet: View {
+    let trip: LpspUberShowroomTrip
+    @Environment(\.dismiss) private var dismiss
+
+    private var summary: String {
+        "Uber ride · \(trip.dateLabel)\n\(trip.pickup) → \(trip.dropoff)\n\(trip.price) · \(trip.driver)"
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(summary)
                     .font(LpspUberFonts.uberMeta)
                     .foregroundStyle(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(RoundedRectangle(cornerRadius: 12).fill(LpspUberTokens.uberGray950))
+                Button {
+                    UIPasteboard.general.string = summary
+                    dismiss()
+                } label: {
+                    Text("Copy trip details")
+                        .font(LpspUberFonts.uberButton)
+                        .foregroundStyle(.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(.white))
+                }
+                .buttonStyle(LpspUberPressableStyle())
+                Spacer()
+            }
+            .padding(16)
+            .navigationTitle("Share trip")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
             }
         }
-    }
-
-    private func actionButton(_ icon: String, _ label: String) -> some View {
-        VStack(spacing: 6) {
-            ZStack {
-                Circle().fill(LpspUberTokens.uberGray950).frame(width: 44, height: 44)
-                Image(systemName: icon).font(.system(size: 18)).foregroundStyle(.white)
-            }
-            Text(label).font(LpspUberFonts.uberCaption).foregroundStyle(LpspUberTokens.uberGray600)
-        }
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
+        .presentationDetents([.medium])
+        .preferredColorScheme(.dark)
     }
 }
 

@@ -1121,7 +1121,7 @@ private struct LpspChatGPTSidebarSheet: View {
                 LpspChatGPTGPTSidebar(sections: store.sidebarSections.map { section in
                     .init(
                         title: section.title,
-                        chats: section.chats.map { .init(title: $0.title, id: $0.id) }
+                        chats: section.chats.map { .init(id: $0.id, title: $0.title) }
                     )
                 }, activeID: store.activeConversationID) { id in
                     store.selectConversation(id)

@@ -438,7 +438,7 @@ fileprivate final class LpspAmazonStore: ObservableObject {
     }
 
     var cartSubtotalLabel: String {
-        formatUSD(cents: cartSubtotalCents)
+        Self.formatUSD(cents: cartSubtotalCents)
     }
 
     var filteredProducts: [LpspAmazonProduct] {

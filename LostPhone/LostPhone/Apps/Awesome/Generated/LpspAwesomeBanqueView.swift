@@ -2,91 +2,58 @@ import SwiftUI
 
 // Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/revolut
 // Meliwat/awesome-ios-design-md/finance/revolut/DESIGN-swiftui.md
-// Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeBanqueView: View {
+    var bankData: LpspBankData?
+
     var body: some View {
-        LpspBanqueShowroomRoot()
+        let storyData = bankData
+        LpspBanqueShowroomRoot(
+            store: LpspBanqueStore(
+                profile: storyData.map { LpspBanqueStore.profile(from: $0) } ?? LpspBanqueShowroomData.profile,
+                accounts: storyData.map { LpspBanqueStore.accounts(from: $0) } ?? LpspBanqueShowroomData.accounts,
+                transactions: storyData.map { LpspBanqueStore.transactions(from: $0) } ?? LpspBanqueShowroomData.transactions,
+                cardSuffix: storyData?.cardPartial.isEmpty == false ? storyData!.cardPartial : LpspBanqueShowroomData.cardSuffix
+            ),
+            isStoryMode: storyData != nil
+        )
     }
 }
 
-// MARK: - Composants spec (préfixés)
+// MARK: - Tokens & composants
+
 private enum LpspBanqueFonts {
-    static let revBalance     = Font.system(size: 40, weight: .regular)
-    static let revTitleLarge  = Font.system(size: 28, weight: .regular)
-    static let revSection     = Font.system(size: 22, weight: .regular)
-    static let revTileBalance = Font.system(size: 22, weight: .regular)
-    static let revSubsection  = Font.system(size: 18, weight: .regular)
-    static let revAmount      = Font.system(size: 16, weight: .regular)
-    static let revMerchant    = Font.system(size: 16, weight: .regular)
-    static let revBody        = Font.system(size: 15, weight: .regular)
-    static let revButton      = Font.system(size: 16, weight: .regular)
-    static let revMeta        = Font.system(size: 13, weight: .regular)
-    static let revLabelUpper  = Font.system(size: 11, weight: .regular)
-    static let revTab         = Font.system(size: 10, weight: .regular)
-    static let revCaption     = Font.system(size: 11, weight: .regular)
-    static func rev(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
-    }
+    static let balance     = Font.system(size: 36, weight: .bold)
+    static let section     = Font.system(size: 22, weight: .semibold)
+    static let rowTitle    = Font.system(size: 16, weight: .semibold)
+    static let body        = Font.system(size: 15, weight: .regular)
+    static let meta        = Font.system(size: 13, weight: .regular)
+    static let tab         = Font.system(size: 10, weight: .regular)
+    static let button      = Font.system(size: 16, weight: .semibold)
 }
 
 private enum LpspBanqueTokens {
-    // MARK: - Canvas & Surfaces
-    static let revCanvas   = Color(red: 0.039, green: 0.039, blue: 0.059) // #0A0A0F
-    static let revSurface1 = Color(red: 0.086, green: 0.086, blue: 0.122) // #16161F
-    static let revSurface2 = Color(red: 0.118, green: 0.118, blue: 0.165) // #1E1E2A
-    static let revSurface3 = Color(red: 0.157, green: 0.157, blue: 0.227) // #28283A
-    static let revDivider  = Color(red: 0.165, green: 0.165, blue: 0.220) // #2A2A38
-    static let revBorder   = Color(red: 0.200, green: 0.200, blue: 0.290) // #33334A
-
-    // MARK: - Text
-    static let revTextPrimary   = Color.white                                  // #FFFFFF
-    static let revTextSecondary = Color(red: 0.604, green: 0.604, blue: 0.667) // #9A9AAA
-    static let revTextTertiary  = Color(red: 0.416, green: 0.416, blue: 0.494) // #6A6A7E
-
-    // MARK: - Brand
-    static let revGradStart = Color(red: 0.357, green: 0.420, blue: 1.000) // #5B6BFF
-    static let revGradEnd   = Color(red: 0.612, green: 0.420, blue: 1.000) // #9C6BFF
-    static let revBrand     = Color(red: 0.420, green: 0.357, blue: 1.000) // #6B5BFF
-    static let revBrandPressed = Color(red: 0.337, green: 0.282, blue: 0.839) // #5648D6
-    static let revBrandTint = Color(red: 0.110, green: 0.106, blue: 0.200) // #1C1B33
-
-    // MARK: - Semantic
-    static let revIncome = Color(red: 0.122, green: 0.820, blue: 0.482) // #1FD17B
-    static let revSpend  = Color(red: 1.000, green: 0.353, blue: 0.416) // #FF5A6A
-    static let revWarn   = Color(red: 1.000, green: 0.698, blue: 0.247) // #FFB23F
-    static let revCrypto = Color(red: 0.969, green: 0.788, blue: 0.282) // #F7C948
+    static let canvas      = Color(red: 0.039, green: 0.039, blue: 0.059)
+    static let surface1    = Color(red: 0.086, green: 0.086, blue: 0.122)
+    static let surface2    = Color(red: 0.118, green: 0.118, blue: 0.165)
+    static let surface3    = Color(red: 0.157, green: 0.157, blue: 0.227)
+    static let divider     = Color(red: 0.165, green: 0.165, blue: 0.220)
+    static let textSecondary = Color(red: 0.604, green: 0.604, blue: 0.667)
+    static let gradStart   = Color(red: 0.357, green: 0.420, blue: 1.000)
+    static let gradEnd     = Color(red: 0.612, green: 0.420, blue: 1.000)
+    static let brand       = Color(red: 0.420, green: 0.357, blue: 1.000)
+    static let income      = Color(red: 0.122, green: 0.820, blue: 0.482)
+    static let spend       = Color(red: 1.000, green: 0.353, blue: 0.416)
 }
 
 private enum LpspBanqueGradients {
-    static let revBrand = LinearGradient(
-        colors: [LpspBanqueTokens.revGradStart, LpspBanqueTokens.revGradEnd],
-        startPoint: .topLeading, endPoint: .bottomTrailing
+    static let brand = LinearGradient(
+        colors: [LpspBanqueTokens.gradStart, LpspBanqueTokens.gradEnd],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
     )
 }
 
-
-
-
-
-fileprivate struct LpspBanqueRevPrimaryButton: View {
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(LpspBanqueFonts.revButton)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, minHeight: 52)
-                .background(LpspBanqueGradients.revBrand, in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
-        }
-        .sensoryFeedback(.impact(weight: .light), trigger: UUID())
-        .buttonStyle(LpspBanqueRevPressableStyle())
-    }
-}
-
-fileprivate struct LpspBanqueRevPressableStyle: ButtonStyle {
+fileprivate struct LpspBanquePressableStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.85 : 1)
@@ -95,114 +62,100 @@ fileprivate struct LpspBanqueRevPressableStyle: ButtonStyle {
     }
 }
 
-fileprivate struct LpspBanqueRevSecondaryButton: View {
+fileprivate struct LpspBanqueQuickAction: View {
+    let icon: String
     let title: String
     let action: () -> Void
+
     var body: some View {
         Button(action: action) {
-            Text(title)
-                .font(LpspBanqueFonts.revButton)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity, minHeight: 52)
-                .background(LpspBanqueTokens.revSurface2, in: RoundedRectangle(cornerRadius: 16))
+            VStack(spacing: 8) {
+                Circle()
+                    .fill(LpspBanqueGradients.brand)
+                    .frame(width: 52, height: 52)
+                    .overlay(
+                        Image(systemName: icon)
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(.white)
+                    )
+                Text(title)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.white)
+            }
+            .frame(maxWidth: .infinity)
         }
-        .buttonStyle(LpspBanqueRevPressableStyle())
+        .buttonStyle(LpspBanquePressableStyle())
     }
 }
 
 fileprivate struct LpspBanqueCurrencyTile: View {
-    let flag: String      // emoji or asset
-    let code: String
-    let name: String
-    let balance: String
+    let account: LpspBanqueShowroomAccount
 
     var body: some View {
         HStack(spacing: 12) {
-            Text(flag)
+            Text(account.flag)
                 .font(.system(size: 20))
                 .frame(width: 28, height: 28)
-                .background(Circle().fill(LpspBanqueTokens.revSurface2))
+                .background(Circle().fill(LpspBanqueTokens.surface2))
             VStack(alignment: .leading, spacing: 2) {
-                Text(code).font(LpspBanqueFonts.revMerchant).foregroundStyle(.white)
-                Text(name).font(LpspBanqueFonts.revMeta).foregroundStyle(LpspBanqueTokens.revTextSecondary)
+                Text(account.code)
+                    .font(LpspBanqueFonts.rowTitle)
+                    .foregroundStyle(.white)
+                Text(account.name)
+                    .font(LpspBanqueFonts.meta)
+                    .foregroundStyle(LpspBanqueTokens.textSecondary)
             }
             Spacer()
-            Text(balance)
-                .font(LpspBanqueFonts.revTileBalance)
+            Text(account.balanceLabel)
+                .font(.system(size: 20, weight: .bold))
                 .monospacedDigit()
                 .foregroundStyle(.white)
         }
-        .padding(.horizontal, 16)
-        .frame(height: 72)
+        .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(LpspBanqueTokens.revSurface1)
-                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(LpspBanqueTokens.revDivider, lineWidth: 1))
+                .fill(LpspBanqueTokens.surface1)
+                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(LpspBanqueTokens.divider, lineWidth: 1))
         )
     }
 }
 
 fileprivate struct LpspBanqueTransactionRow: View {
-    let merchant: String
-    let meta: String
-    let amount: String
-    let incoming: Bool
-    let logo: Image
+    let transaction: LpspBanqueShowroomTransaction
 
     var body: some View {
         HStack(spacing: 12) {
-            logo
-                .resizable().aspectRatio(contentMode: .fill)
+            Circle()
+                .fill(transaction.incoming ? LpspBanqueTokens.income.opacity(0.18) : LpspBanqueTokens.surface2)
                 .frame(width: 40, height: 40)
-                .clipShape(Circle())
+                .overlay(
+                    Image(systemName: transaction.icon)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(transaction.incoming ? LpspBanqueTokens.income : .white)
+                )
             VStack(alignment: .leading, spacing: 2) {
-                Text(merchant).font(LpspBanqueFonts.revMerchant).foregroundStyle(.white).lineLimit(1)
-                Text(meta).font(LpspBanqueFonts.revMeta).foregroundStyle(LpspBanqueTokens.revTextSecondary).lineLimit(1)
+                Text(transaction.merchant)
+                    .font(LpspBanqueFonts.rowTitle)
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                Text(transaction.meta)
+                    .font(LpspBanqueFonts.meta)
+                    .foregroundStyle(LpspBanqueTokens.textSecondary)
+                    .lineLimit(1)
             }
             Spacer()
-            Text(amount)
-                .font(LpspBanqueFonts.revAmount)
+            Text(transaction.amountLabel)
+                .font(LpspBanqueFonts.rowTitle)
                 .monospacedDigit()
-                .foregroundStyle(incoming ? LpspBanqueTokens.revIncome : .white)
+                .foregroundStyle(transaction.incoming ? LpspBanqueTokens.income : .white)
         }
         .padding(.horizontal, 16)
         .frame(height: 64)
-        .contentShape(Rectangle())
     }
 }
 
-fileprivate struct LpspBanqueSpendDonut: View {
-    let total: String
-    let progress: Double // 0...1
-    @State private var animated: Double = 0
-
-    var body: some View {
-        VStack(spacing: 16) {
-            ZStack {
-                Circle().stroke(LpspBanqueTokens.revSurface3, lineWidth: 14)
-                Circle()
-                    .trim(from: 0, to: animated)
-                    .stroke(
-                        AngularGradient(colors: [LpspBanqueTokens.revGradStart, LpspBanqueTokens.revGradEnd], center: .center),
-                        style: StrokeStyle(lineWidth: 14, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-                VStack(spacing: 2) {
-                    Text(total).font(LpspBanqueFonts.revSection).monospacedDigit().foregroundStyle(.white)
-                    Text("this month").font(LpspBanqueFonts.revMeta).foregroundStyle(LpspBanqueTokens.revTextSecondary)
-                }
-            }
-            .frame(width: 180, height: 180)
-        }
-        .padding(20)
-        .background(RoundedRectangle(cornerRadius: 20).fill(LpspBanqueTokens.revSurface1))
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.7)) { animated = progress }
-        }
-    }
-}
-
-fileprivate struct LpspBanqueMetalCardHero: View {
+fileprivate struct LpspBanqueMetalCard: View {
+    let suffix: String
     @State private var flipped = false
     @State private var sheen: CGFloat = -1
 
@@ -210,23 +163,41 @@ fileprivate struct LpspBanqueMetalCardHero: View {
         ZStack {
             RoundedRectangle(cornerRadius: 16)
                 .fill(
-                    LinearGradient(colors: [Color(white: 0.18), Color(white: 0.07)],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                    LinearGradient(
+                        colors: [Color(white: 0.18), Color(white: 0.07)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
-            // diagonal sheen band
             RoundedRectangle(cornerRadius: 16)
                 .fill(
-                    LinearGradient(colors: [.clear, Color.white.opacity(0.18), .clear],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                    LinearGradient(
+                        colors: [.clear, Color.white.opacity(0.18), .clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
                 .offset(x: sheen * 260)
                 .mask(RoundedRectangle(cornerRadius: 16))
 
             VStack(alignment: .leading) {
-                Text("Revolut").font(LpspBanqueFonts.revSubsection).foregroundStyle(.white.opacity(0.9))
+                HStack {
+                    Text("Banque")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.9))
+                    Spacer()
+                    Image(systemName: "wave.3.right")
+                        .foregroundStyle(.white.opacity(0.8))
+                }
                 Spacer()
-                Text(flipped ? "CVV 042" : "•••• 4821")
-                    .font(LpspBanqueFonts.revAmount).monospacedDigit().foregroundStyle(.white)
+                Text(flipped ? "CVV  ·  042" : "••••  \(suffix)")
+                    .font(.system(size: 18, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                Text("MAYA RIVERA")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.75))
+                    .padding(.top, 4)
             }
             .padding(20)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
@@ -244,203 +215,726 @@ fileprivate struct LpspBanqueMetalCardHero: View {
     }
 }
 
-fileprivate extension View {
-    /// Apply the brand gradient as a foreground (e.g., active icon tint).
-    func revGradientForeground() -> some View {
-        self.overlay(LpspBanqueGradients.revBrand).mask(self)
-    }
-}
+fileprivate struct LpspBanqueSpendDonut: View {
+    let total: String
+    let progress: Double
+    @State private var animated = 0.0
 
-// Glow modifier for active / primary elements
-fileprivate struct LpspBanqueRevGlow: ViewModifier {
-    func body(content: Content) -> some View {
-        content.shadow(color: LpspBanqueTokens.revBrand.opacity(0.30), radius: 14, y: 8)
-    }
-}
-
-
-fileprivate struct LpspBanqueBalanceReveal: ViewModifier {
-    let hidden: Bool
-    func body(content: Content) -> some View {
-        content.blur(radius: hidden ? 12 : 0)
-            .animation(.easeInOut(duration: 0.25), value: hidden)
-    }
-}
-
-// Segmented thumb — matchedGeometryEffect on a gradient capsule, 0.22s ease
-
-// MARK: - Écrans showroom
-
-private struct LpspBanqueShowroomRoot: View {
-    @State private var selectedTab = 0
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspBanqueSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspBanqueFinanceHomeTabScreen()
-                .tabItem { Label("Invest", systemImage: "chart.line.uptrend.xyaxis") }
-                .tag(1)
-            LpspBanqueFinanceHomeTabScreen()
-                .tabItem { Label("Crypto", systemImage: "bitcoinsign.circle.fill") }
-                .tag(2)
-            LpspBanqueFinanceHomeTabScreen()
-                .tabItem { Label("Lifestyle", systemImage: "sparkles") }
-                .tag(3)
-            LpspBanqueFinanceCardsTabScreen()
-                .tabItem { Label("Cards", systemImage: "creditcard.fill") }
-                .tag(4)
-        }
-        .tint(LpspBanqueTokens.revBrand)
-        
-    }
-}
-
-
-private struct LpspBanqueGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspBanqueTokens.revBrand.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspBanqueTokens.revBrand))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
+        ZStack {
+            Circle().stroke(LpspBanqueTokens.surface3, lineWidth: 14)
+            Circle()
+                .trim(from: 0, to: animated)
+                .stroke(
+                    AngularGradient(colors: [LpspBanqueTokens.gradStart, LpspBanqueTokens.gradEnd], center: .center),
+                    style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+            VStack(spacing: 2) {
+                Text(total)
+                    .font(LpspBanqueFonts.section)
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                Text("ce mois-ci")
+                    .font(LpspBanqueFonts.meta)
+                    .foregroundStyle(LpspBanqueTokens.textSecondary)
             }
-            .navigationTitle(title)
+        }
+        .frame(width: 180, height: 180)
+        .padding(20)
+        .background(RoundedRectangle(cornerRadius: 20).fill(LpspBanqueTokens.surface1))
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.7)) { animated = progress }
         }
     }
 }
 
+// MARK: - Données & état
 
-private struct LpspBanqueFinanceHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Solde total").font(.subheadline).foregroundStyle(.secondary)
-                        Text("2 847,50 €").font(.system(size: 36, weight: .bold))
-                    }
-                    .padding(.horizontal)
-
-                    LpspBanqueMetalCardHero()
-                        .padding(.horizontal)
-
-                    Text("Transactions").font(.headline).padding(.horizontal)
-
-                    ForEach(LpspBanqueDemoTx.items) { tx in
-                        LpspBanqueTransactionRow(
-                            merchant: tx.title,
-                            meta: tx.date,
-                            amount: tx.amount,
-                            incoming: tx.incoming,
-                            logo: Image(systemName: tx.icon)
-                        )
-                    }
-
-                }
-                .padding(.vertical)
-            }
-            .background(LpspBanqueTokens.revCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-        }
-    }
+fileprivate struct LpspBanqueShowroomProfile {
+    let name: String
+    let initials: String
+    let accent: [Color]
 }
 
-private struct LpspBanqueFinanceCardsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    LpspBanqueMetalCardHero()
-                    Text("Gérez vos cartes").font(.headline)
-                }
-                .padding(.vertical)
-            }
-            .background(LpspBanqueTokens.revCanvas.ignoresSafeArea())
-            .navigationTitle("Cartes")
-        }
-    }
+fileprivate struct LpspBanqueShowroomAccount: Identifiable, Hashable {
+    let id: String
+    let flag: String
+    let code: String
+    let name: String
+    let balanceLabel: String
 }
 
-private struct LpspBanqueDemoTx: Identifiable {
-    let id = UUID()
-    let title: String
-    let date: String
-    let amount: String
+fileprivate struct LpspBanqueShowroomTransaction: Identifiable, Hashable {
+    let id: String
+    let merchant: String
+    let meta: String
+    let amountLabel: String
     let incoming: Bool
     let icon: String
-    static let items: [LpspBanqueDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
+    let category: String
+    let detail: String
+}
+
+private enum LpspBanqueSheet: Identifiable {
+    case send, exchange, addMoney, transaction(LpspBanqueShowroomTransaction)
+
+    var id: String {
+        switch self {
+        case .send: "send"
+        case .exchange: "exchange"
+        case .addMoney: "addMoney"
+        case .transaction(let tx): "tx-\(tx.id)"
+        }
+    }
+}
+
+@MainActor
+fileprivate final class LpspBanqueStore: ObservableObject {
+    @Published var selectedTab: LpspBanqueTab = .home
+    @Published var hideBalance = false
+    @Published var activeSheet: LpspBanqueSheet?
+    @Published var cardFrozen = false
+
+    let profile: LpspBanqueShowroomProfile
+    let accounts: [LpspBanqueShowroomAccount]
+    let transactions: [LpspBanqueShowroomTransaction]
+    let cardSuffix: String
+    let totalBalance: String
+    let monthlySpend: String
+    let spendProgress: Double
+
+    init(
+        profile: LpspBanqueShowroomProfile,
+        accounts: [LpspBanqueShowroomAccount],
+        transactions: [LpspBanqueShowroomTransaction],
+        cardSuffix: String,
+        totalBalance: String = LpspBanqueShowroomData.totalBalance,
+        monthlySpend: String = LpspBanqueShowroomData.monthlySpend,
+        spendProgress: Double = LpspBanqueShowroomData.spendProgress
+    ) {
+        self.profile = profile
+        self.accounts = accounts
+        self.transactions = transactions
+        self.cardSuffix = cardSuffix
+        self.totalBalance = totalBalance
+        self.monthlySpend = monthlySpend
+        self.spendProgress = spendProgress
+    }
+
+    static func profile(from data: LpspBankData) -> LpspBanqueShowroomProfile {
+        LpspBanqueShowroomProfile(
+            name: data.holderName.isEmpty ? LpspBanqueShowroomData.profile.name : data.holderName,
+            initials: String((data.holderName.isEmpty ? LpspBanqueShowroomData.profile.name : data.holderName).prefix(1)),
+            accent: [Color.orange, Color.pink]
+        )
+    }
+
+    static func accounts(from data: LpspBankData) -> [LpspBanqueShowroomAccount] {
+        data.accounts.enumerated().map { index, account in
+            LpspBanqueShowroomAccount(
+                id: account.id,
+                flag: account.currency == "EUR" ? "🇪🇺" : "💶",
+                code: account.currency,
+                name: account.type,
+                balanceLabel: formatCurrency(account.balance, currency: account.currency)
+            )
+        }
+    }
+
+    static func transactions(from data: LpspBankData) -> [LpspBanqueShowroomTransaction] {
+        data.operations.map { op in
+            LpspBanqueShowroomTransaction(
+                id: op.id,
+                merchant: op.label,
+                meta: LpspAdapters.formatShortDate(op.date, fallback: op.dateRaw),
+                amountLabel: formatSigned(op.amount, currency: "EUR"),
+                incoming: op.amount > 0,
+                icon: icon(for: op.category),
+                category: op.category,
+                detail: op.label
+            )
+        }
+    }
+
+    private static func formatCurrency(_ value: Double, currency: String) -> String {
+        let symbol = currency == "EUR" ? "€" : currency == "USD" ? "$" : "£"
+        return "\(symbol)\(String(format: "%.2f", abs(value)))"
+    }
+
+    private static func formatSigned(_ value: Double, currency: String) -> String {
+        let prefix = value >= 0 ? "+" : "−"
+        return "\(prefix)\(formatCurrency(abs(value), currency: currency))"
+    }
+
+    private static func icon(for category: String) -> String {
+        let low = category.lowercased()
+        if low.contains("transport") { return "car.fill" }
+        if low.contains("restaurant") || low.contains("food") { return "fork.knife" }
+        if low.contains("shopping") { return "bag.fill" }
+        if low.contains("virement") || low.contains("transfer") { return "arrow.left.arrow.right" }
+        return "creditcard.fill"
+    }
+}
+
+private enum LpspBanqueShowroomData {
+    static let profile = LpspBanqueShowroomProfile(
+        name: "Maya Rivera",
+        initials: "M",
+        accent: [Color.orange, Color.pink]
+    )
+    static let totalBalance = "€4 218,37"
+    static let monthlySpend = "€1 284,50"
+    static let spendProgress = 0.62
+    static let cardSuffix = "4242"
+
+    static let accounts: [LpspBanqueShowroomAccount] = [
+        .init(id: "eur", flag: "🇪🇺", code: "EUR", name: "Compte courant", balanceLabel: "€3 842,15"),
+        .init(id: "livret", flag: "🇪🇺", code: "EUR", name: "Livret A", balanceLabel: "€376,22"),
+        .init(id: "usd", flag: "🇺🇸", code: "USD", name: "Voyage", balanceLabel: "$412,00"),
+    ]
+
+    static let transactions: [LpspBanqueShowroomTransaction] = [
+        .init(id: "t1", merchant: "Musée du Louvre", meta: "Aujourd'hui · Shopping", amountLabel: "−€18,50", incoming: false, icon: "building.columns.fill", category: "Shopping", detail: "Boutique Pyramide"),
+        .init(id: "t2", merchant: "Uber", meta: "Hier · Transport", amountLabel: "−€12,40", incoming: false, icon: "car.fill", category: "Transport", detail: "Course Bastille → Louvre"),
+        .init(id: "t3", merchant: "Design Guild", meta: "12 juin · Salaire", amountLabel: "+€2 450,00", incoming: true, icon: "arrow.down.circle.fill", category: "Virement", detail: "Paie mensuelle"),
+        .init(id: "t4", merchant: "Boot Café", meta: "11 juin · Restaurant", amountLabel: "−€6,80", incoming: false, icon: "cup.and.saucer.fill", category: "Restaurant", detail: "Flat white"),
+        .init(id: "t5", merchant: "Spotify", meta: "10 juin · Abonnement", amountLabel: "−€10,99", incoming: false, icon: "music.note", category: "Loisirs", detail: "Premium"),
+        .init(id: "t6", merchant: "Jordan P.", meta: "8 juin · Virement", amountLabel: "−€45,00", incoming: false, icon: "paperplane.fill", category: "Virement", detail: "Remboursement tickets"),
     ]
 }
 
+// MARK: - Écrans showroom
 
-private struct LpspBanqueSpectrHomeTabScreen: View {
+private enum LpspBanqueTab: CaseIterable {
+    case home, invest, crypto, lifestyle, cards
+
+    var label: String {
+        switch self {
+        case .home: "Accueil"
+        case .invest: "Invest"
+        case .crypto: "Crypto"
+        case .lifestyle: "Lifestyle"
+        case .cards: "Cartes"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .invest: "chart.line.uptrend.xyaxis"
+        case .crypto: "bitcoinsign.circle.fill"
+        case .lifestyle: "sparkles"
+        case .cards: "creditcard.fill"
+        }
+    }
+}
+
+private struct LpspBanqueShowroomRoot: View {
+    @ObservedObject var store: LpspBanqueStore
+    var isStoryMode = false
+
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-            Text("Alex Mercer").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 16).frame(height: 44)
-        VStack(spacing: 4) {
-            Text("Total balance").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.604, green: 0.604, blue: 0.667))
-            Text("£12,480.65").font(.system(size: 36, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .frame(maxWidth: .infinity).padding(.horizontal, 20).padding(.top, 8)
-        HStack(spacing: 0) {
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Add").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Exchange").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Send").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
-                Text("More").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(maxWidth: .infinity)
-        } .padding(.horizontal, 8).padding(.vertical, 16)
-            RoundedRectangle(cornerRadius: 16).fill(LinearGradient(colors: [Color(red: 0.357, green: 0.420, blue: 1.000), Color(red: 0.612, green: 0.420, blue: 1.000)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(height: 120).padding(.horizontal, 16)
-        VStack(spacing: 8) {
-            HStack(spacing: 12) {
-                Text("🇬🇧").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("GBP").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("British Pound").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("£8,240.10").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
-            HStack(spacing: 12) {
-                Text("🇪🇺").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("EUR").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Euro").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("€3,180.55").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
-            HStack(spacing: 12) {
-                Text("🇺🇸").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("USD").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("US Dollar").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("$1,060.00").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
-        } .padding(.horizontal, 16).padding(.top, 8)
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspBanqueHomeTabScreen(store: store, isStoryMode: isStoryMode)
+                case .invest:
+                    LpspBanqueInvestTabScreen(store: store)
+                case .crypto:
+                    LpspBanqueCryptoTabScreen(store: store)
+                case .lifestyle:
+                    LpspBanqueLifestyleTabScreen(store: store)
+                case .cards:
+                    LpspBanqueCardsTabScreen(store: store)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspBanqueTabBar(selectedTab: $store.selectedTab)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+        .sheet(item: $store.activeSheet) { sheet in
+            switch sheet {
+            case .send:
+                LpspBanqueSendSheet()
+            case .exchange:
+                LpspBanqueExchangeSheet(accounts: store.accounts)
+            case .addMoney:
+                LpspBanqueAddMoneySheet()
+            case .transaction(let tx):
+                LpspBanqueTransactionDetailSheet(transaction: tx)
             }
         }
-        .background(Color(red: 0.039, green: 0.039, blue: 0.059).ignoresSafeArea())
+    }
+}
+
+private struct LpspBanqueTabBar: View {
+    @Binding var selectedTab: LpspBanqueTab
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspBanqueTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: selectedTab == tab ? .semibold : .regular))
+                            .foregroundStyle(selectedTab == tab ? LpspBanqueTokens.brand : LpspBanqueTokens.textSecondary)
+                        Text(tab.label)
+                            .font(LpspBanqueFonts.tab)
+                            .foregroundStyle(selectedTab == tab ? .white : LpspBanqueTokens.textSecondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(LpspBanquePressableStyle())
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(LpspBanqueTokens.surface1)
+    }
+}
+
+private struct LpspBanqueHomeTabScreen: View {
+    @ObservedObject var store: LpspBanqueStore
+    var isStoryMode = false
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
+                header
+                balanceBlock
+                quickActions
+                promoBanner
+                accountsSection
+                transactionsSection
+            }
+            .padding(.bottom, 24)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+    }
+
+    private var header: some View {
+        HStack(spacing: 12) {
+            Circle()
+                .fill(LinearGradient(colors: store.profile.accent, startPoint: .topLeading, endPoint: .bottomTrailing))
+                .frame(width: 48, height: 48)
+                .overlay(Text(store.profile.initials).font(.headline.bold()).foregroundStyle(.white))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Bonjour,")
+                    .font(LpspBanqueFonts.meta)
+                    .foregroundStyle(LpspBanqueTokens.textSecondary)
+                Text(store.profile.name)
+                    .font(LpspBanqueFonts.rowTitle)
+                    .foregroundStyle(.white)
+            }
+            Spacer()
+            Button { store.hideBalance.toggle() } label: {
+                Image(systemName: store.hideBalance ? "eye.slash" : "eye")
+                    .font(.system(size: 18))
+                    .foregroundStyle(.white)
+            }
+            .buttonStyle(LpspBanquePressableStyle())
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+    }
+
+    private var balanceBlock: some View {
+        VStack(spacing: 4) {
+            Text("Solde total")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(LpspBanqueTokens.textSecondary)
+            Text(store.totalBalance)
+                .font(LpspBanqueFonts.balance)
+                .foregroundStyle(.white)
+                .blur(radius: store.hideBalance ? 12 : 0)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var quickActions: some View {
+        HStack(spacing: 0) {
+            LpspBanqueQuickAction(icon: "plus", title: "Ajouter") {
+                store.activeSheet = .addMoney
+            }
+            LpspBanqueQuickAction(icon: "arrow.left.arrow.right", title: "Change") {
+                store.activeSheet = .exchange
+            }
+            LpspBanqueQuickAction(icon: "paperplane.fill", title: "Envoyer") {
+                store.activeSheet = .send
+            }
+            LpspBanqueQuickAction(icon: "ellipsis", title: "Plus") {
+                store.selectedTab = .lifestyle
+            }
+        }
+        .padding(.horizontal, 8)
+    }
+
+    private var promoBanner: some View {
+        RoundedRectangle(cornerRadius: 16)
+            .fill(LpspBanqueGradients.brand)
+            .frame(height: 110)
+            .overlay(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Vaults")
+                        .font(LpspBanqueFonts.section)
+                        .foregroundStyle(.white)
+                    Text("Épargnez pour votre prochain voyage à Paris.")
+                        .font(LpspBanqueFonts.meta)
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .padding(18)
+            }
+            .padding(.horizontal, 16)
+    }
+
+    private var accountsSection: some View {
+        VStack(spacing: 8) {
+            ForEach(store.accounts) { account in
+                LpspBanqueCurrencyTile(account: account)
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+
+    private var transactionsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Activité récente")
+                .font(LpspBanqueFonts.section)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+
+            ForEach(store.transactions) { tx in
+                Button {
+                    store.activeSheet = .transaction(tx)
+                } label: {
+                    LpspBanqueTransactionRow(transaction: tx)
+                }
+                .buttonStyle(LpspBanquePressableStyle())
+            }
+        }
+    }
+}
+
+private struct LpspBanqueInvestTabScreen: View {
+    @ObservedObject var store: LpspBanqueStore
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                Text("Portefeuille")
+                    .font(LpspBanqueFonts.section)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                LpspBanqueSpendDonut(total: store.monthlySpend, progress: store.spendProgress)
+
+                VStack(alignment: .leading, spacing: 12) {
+                    investRow("Actions US", "+4,2%", "€1 120,00")
+                    investRow("ETF Europe", "+1,8%", "€640,00")
+                    investRow("Tech Growth", "−0,6%", "€280,00")
+                }
+            }
+            .padding(16)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+    }
+
+    private func investRow(_ title: String, _ change: String, _ value: String) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(LpspBanqueFonts.rowTitle).foregroundStyle(.white)
+                Text(change)
+                    .font(LpspBanqueFonts.meta)
+                    .foregroundStyle(change.hasPrefix("+") ? LpspBanqueTokens.income : LpspBanqueTokens.spend)
+            }
+            Spacer()
+            Text(value).font(LpspBanqueFonts.rowTitle).foregroundStyle(.white)
+        }
+        .padding(14)
+        .background(RoundedRectangle(cornerRadius: 16).fill(LpspBanqueTokens.surface1))
+    }
+}
+
+private struct LpspBanqueCryptoTabScreen: View {
+    @ObservedObject var store: LpspBanqueStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Crypto")
+                    .font(LpspBanqueFonts.section)
+                    .foregroundStyle(.white)
+                cryptoRow("Bitcoin", "BTC", "€842,10", "+2,4%")
+                cryptoRow("Ethereum", "ETH", "€218,55", "+1,1%")
+                cryptoRow("Solana", "SOL", "€64,20", "−0,8%")
+            }
+            .padding(16)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+    }
+
+    private func cryptoRow(_ name: String, _ code: String, _ value: String, _ change: String) -> some View {
+        HStack {
+            Circle().fill(LpspBanqueTokens.surface2).frame(width: 40, height: 40)
+                .overlay(Text(code.prefix(1)).font(.caption.bold()).foregroundStyle(.white))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(name).font(LpspBanqueFonts.rowTitle).foregroundStyle(.white)
+                Text(change).font(LpspBanqueFonts.meta).foregroundStyle(change.hasPrefix("+") ? LpspBanqueTokens.income : LpspBanqueTokens.spend)
+            }
+            Spacer()
+            Text(value).font(LpspBanqueFonts.rowTitle).foregroundStyle(.white)
+        }
+        .padding(14)
+        .background(RoundedRectangle(cornerRadius: 16).fill(LpspBanqueTokens.surface1))
+    }
+}
+
+private struct LpspBanqueLifestyleTabScreen: View {
+    @ObservedObject var store: LpspBanqueStore
+
+    private let perks = ["Lounge CDG", "eSIM Voyage", "Assurance téléphone", "Cashback Louvre"]
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Lifestyle")
+                    .font(LpspBanqueFonts.section)
+                    .foregroundStyle(.white)
+                ForEach(perks, id: \.self) { perk in
+                    HStack {
+                        Image(systemName: "sparkles")
+                            .foregroundStyle(LpspBanqueTokens.brand)
+                        Text(perk)
+                            .font(LpspBanqueFonts.body)
+                            .foregroundStyle(.white)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(LpspBanqueTokens.textSecondary)
+                    }
+                    .padding(14)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(LpspBanqueTokens.surface1))
+                }
+            }
+            .padding(16)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspBanqueCardsTabScreen: View {
+    @ObservedObject var store: LpspBanqueStore
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                LpspBanqueMetalCard(suffix: store.cardSuffix)
+                    .padding(.horizontal, 16)
+                    .opacity(store.cardFrozen ? 0.45 : 1)
+
+                HStack(spacing: 12) {
+                    cardAction("snowflake", store.cardFrozen ? "Dégeler" : "Geler") {
+                        store.cardFrozen.toggle()
+                    }
+                    cardAction("chart.bar", "Limites") { }
+                    cardAction("lock", "PIN") { }
+                }
+                .padding(.horizontal, 16)
+
+                Text(store.cardFrozen ? "Carte gelée" : "Carte active")
+                    .font(LpspBanqueFonts.meta)
+                    .foregroundStyle(store.cardFrozen ? LpspBanqueTokens.spend : LpspBanqueTokens.income)
+            }
+            .padding(.vertical, 16)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+    }
+
+    private func cardAction(_ icon: String, _ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Image(systemName: icon).font(.title3)
+                Text(title).font(LpspBanqueFonts.meta)
+            }
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(RoundedRectangle(cornerRadius: 14).fill(LpspBanqueTokens.surface1))
+        }
+        .buttonStyle(LpspBanquePressableStyle())
+    }
+}
+
+// MARK: - Sheets
+
+private struct LpspBanqueSendSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var amount = "45,00"
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                ForEach(["Jordan P.", "Alex Chen", "Design Guild"], id: \.self) { contact in
+                    HStack {
+                        Circle().fill(LpspBanqueTokens.surface2).frame(width: 40, height: 40)
+                            .overlay(Text(String(contact.prefix(1))).foregroundStyle(.white))
+                        Text(contact).font(LpspBanqueFonts.rowTitle).foregroundStyle(.white)
+                        Spacer()
+                    }
+                    .padding(.vertical, 4)
+                }
+                TextField("Montant", text: $amount)
+                    .font(LpspBanqueFonts.section)
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 12).fill(LpspBanqueTokens.surface1))
+                Button("Envoyer €\(amount)") { dismiss() }
+                    .font(LpspBanqueFonts.button)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(LpspBanqueGradients.brand))
+                Spacer()
+            }
+            .padding(16)
+            .navigationTitle("Envoyer")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Fermer") { dismiss() }
+                }
+            }
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+        .presentationDetents([.medium])
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspBanqueExchangeSheet: View {
+    let accounts: [LpspBanqueShowroomAccount]
+    @Environment(\.dismiss) private var dismiss
 
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Convertir des devises")
+                    .font(LpspBanqueFonts.section)
+                    .foregroundStyle(.white)
+                ForEach(accounts) { account in
+                    LpspBanqueCurrencyTile(account: account)
+                }
+                Button("Convertir €100 → $108") { dismiss() }
+                    .font(LpspBanqueFonts.button)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(LpspBanqueGradients.brand))
+                Spacer()
+            }
+            .padding(16)
+            .navigationTitle("Change")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Fermer") { dismiss() }
+                }
+            }
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+        .presentationDetents([.medium, .large])
+        .preferredColorScheme(.dark)
+    }
+}
+
+private struct LpspBanqueAddMoneySheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 14) {
+                addOption("Carte bancaire", "creditcard.fill")
+                addOption("Virement", "building.columns.fill")
+                addOption("Apple Pay", "apple.logo")
+                Spacer()
+            }
+            .padding(16)
+            .navigationTitle("Ajouter de l'argent")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Fermer") { dismiss() }
+                }
+            }
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+        .presentationDetents([.medium])
+        .preferredColorScheme(.dark)
+    }
+
+    private func addOption(_ title: String, _ icon: String) -> some View {
+        Button { dismiss() } label: {
+            HStack(spacing: 12) {
+                Image(systemName: icon).font(.title3).foregroundStyle(LpspBanqueTokens.brand)
+                Text(title).font(LpspBanqueFonts.rowTitle).foregroundStyle(.white)
+                Spacer()
+            }
+            .padding(14)
+            .background(RoundedRectangle(cornerRadius: 14).fill(LpspBanqueTokens.surface1))
+        }
+        .buttonStyle(LpspBanquePressableStyle())
+    }
+}
+
+private struct LpspBanqueTransactionDetailSheet: View {
+    let transaction: LpspBanqueShowroomTransaction
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Circle()
+                        .fill(LpspBanqueTokens.surface2)
+                        .frame(width: 56, height: 56)
+                        .overlay(Image(systemName: transaction.icon).foregroundStyle(.white))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(transaction.merchant)
+                            .font(LpspBanqueFonts.section)
+                            .foregroundStyle(.white)
+                        Text(transaction.meta)
+                            .font(LpspBanqueFonts.meta)
+                            .foregroundStyle(LpspBanqueTokens.textSecondary)
+                    }
+                }
+                Text(transaction.amountLabel)
+                    .font(.system(size: 34, weight: .bold))
+                    .foregroundStyle(transaction.incoming ? LpspBanqueTokens.income : .white)
+                Text(transaction.detail)
+                    .font(LpspBanqueFonts.body)
+                    .foregroundStyle(.white)
+                Text("Catégorie : \(transaction.category)")
+                    .font(LpspBanqueFonts.meta)
+                    .foregroundStyle(LpspBanqueTokens.textSecondary)
+                Spacer()
+            }
+            .padding(16)
+            .navigationTitle("Détail")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Fermer") { dismiss() }
+                }
+            }
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+        .background(LpspBanqueTokens.canvas.ignoresSafeArea())
+        .presentationDetents([.medium])
+        .preferredColorScheme(.dark)
+    }
+}

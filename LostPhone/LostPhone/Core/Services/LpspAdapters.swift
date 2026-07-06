@@ -394,4 +394,36 @@ enum LpspAdapters {
         }
         return raw
     }
+
+    /// Heure affichée dans les bulles Signal (format Spectr : `9:38 AM`).
+    static func formatSignalBubbleTime(_ message: LpspMessage) -> String {
+        formatSignalBubbleTime(raw: message.dateRaw, date: message.date)
+    }
+
+    static func formatSignalBubbleTime(raw: String?, date: Date?) -> String {
+        if let date {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "h:mm a"
+            return formatter.string(from: date)
+        }
+        guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {
+            return ""
+        }
+        if let parsed = parseISO(raw) {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "h:mm a"
+            return formatter.string(from: parsed)
+        }
+        if raw.range(of: #"^\d{1,2}:\d{2}\s*(AM|PM)$"#, options: .regularExpression) != nil {
+            return raw
+        }
+        let parts = raw.split(separator: " ")
+        if parts.count >= 2, let last = parts.last, last == "AM" || last == "PM" {
+            return parts.suffix(2).joined(separator: " ")
+        }
+        if let last = parts.last, last.contains(":") {
+            return String(last)
+        }
+        return raw
+    }
 }

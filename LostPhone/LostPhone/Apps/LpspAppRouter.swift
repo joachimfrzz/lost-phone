@@ -113,7 +113,7 @@ struct LpspAppRouter: View {
         case "WhatsApp":
             LpspAwesomeWhatsAppView(conversations: LpspAdapters.whatsApp(from: payload))
         case "Signal":
-            AwesomeShowroomRouter.view(for: "Signal")
+            LpspAwesomeSignalView(conversations: LpspAdapters.signal(from: payload))
         case "Contacts":
             ContactsView(contacts: contacts)
         case "Uber":

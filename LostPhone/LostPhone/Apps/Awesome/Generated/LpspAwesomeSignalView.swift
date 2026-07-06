@@ -4,8 +4,15 @@ import SwiftUI
 // Meliwat/awesome-ios-design-md/messaging/signal/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSignalView: View {
+    var conversations: [LpspConversation]?
+
     var body: some View {
-        LpspSignalShowroomRoot()
+        let storyThreads = conversations?.isEmpty == false ? conversations : nil
+        let threads = storyThreads ?? LpspSignalShowroomData.conversations
+        LpspSignalShowroomRoot(
+            store: LpspSignalStore(conversations: threads),
+            isStoryMode: storyThreads != nil
+        )
     }
 }
 
@@ -64,93 +71,267 @@ private enum LpspSignalTokens {
 
 
 
-fileprivate struct LpspSignalMessageBubble: View {
-    let text: String
-    let time: String
-    let isOutgoing: Bool
-    let isLastInRun: Bool   // tighten the tail corner when true
+// MARK: - Données & état
 
-    private var tail: LpspSignalRoundedCorner {
-        LpspSignalRoundedCorner(radius: 18,
-                      tightCorner: isOutgoing ? .bottomRight : .bottomLeft,
-                      tightRadius: isLastInRun ? 6 : 18)
+@MainActor
+fileprivate final class LpspSignalStore: ObservableObject {
+    @Published private(set) var threads: [LpspConversation]
+    @Published var messagesByThread: [String: [LpspSignalDisplayMessage]]
+
+    init(conversations: [LpspConversation]) {
+        self.threads = conversations
+        self.messagesByThread = Dictionary(
+            uniqueKeysWithValues: conversations.map { ($0.id, LpspSignalStore.makeDisplayMessages(for: $0)) }
+        )
     }
 
+    func thread(id: String) -> LpspConversation? {
+        threads.first { $0.id == id }
+    }
+
+    func markAsRead(threadId: String) {
+        guard let index = threads.firstIndex(where: { $0.id == threadId }),
+              threads[index].isUnread else { return }
+        let old = threads[index]
+        threads[index] = LpspConversation(
+            id: old.id,
+            contactName: old.contactName,
+            messages: old.messages,
+            isUnread: false
+        )
+    }
+
+    func send(text: String, threadId: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let now = Date()
+        let time = LpspAdapters.formatSignalBubbleTime(raw: nil, date: now)
+        var bucket = messagesByThread[threadId, default: []]
+        if let last = bucket.last, last.isOutgoing {
+            bucket[bucket.count - 1] = LpspSignalDisplayMessage(
+                id: last.id,
+                text: last.text,
+                isOutgoing: true,
+                time: last.time,
+                showsMeta: false,
+                readState: last.readState
+            )
+        }
+        bucket.append(
+            LpspSignalDisplayMessage(
+                id: UUID().uuidString,
+                text: trimmed,
+                isOutgoing: true,
+                time: time,
+                showsMeta: true,
+                readState: .delivered
+            )
+        )
+        messagesByThread[threadId] = bucket
+
+        if let index = threads.firstIndex(where: { $0.id == threadId }) {
+            let old = threads[index]
+            let newMessage = LpspMessage(
+                id: "sent-\(UUID().uuidString)",
+                text: trimmed,
+                isUser: true,
+                date: now,
+                dateRaw: time
+            )
+            threads[index] = LpspConversation(
+                id: old.id,
+                contactName: old.contactName,
+                messages: old.messages + [newMessage],
+                isUnread: false
+            )
+        }
+    }
+
+    private static func makeDisplayMessages(for conversation: LpspConversation) -> [LpspSignalDisplayMessage] {
+        if conversation.id == LpspSignalShowroomData.renataThreadId {
+            return LpspSignalShowroomData.renataDisplayMessages
+        }
+        return buildDisplayMessages(from: conversation.messages)
+    }
+
+    static func buildDisplayMessages(from messages: [LpspMessage]) -> [LpspSignalDisplayMessage] {
+        messages.enumerated().map { index, message in
+            let isOutgoing = message.isUser
+            let nextSame = index < messages.count - 1 && messages[index + 1].isUser == isOutgoing
+            let showsMeta = !nextSame
+            let time = showsMeta ? LpspAdapters.formatSignalBubbleTime(message) : ""
+            let readState: LpspSignalReadState? = isOutgoing
+                ? (showsMeta ? .read : nil)
+                : nil
+            return LpspSignalDisplayMessage(
+                id: message.id,
+                text: message.text,
+                isOutgoing: isOutgoing,
+                time: time,
+                showsMeta: showsMeta,
+                readState: readState
+            )
+        }
+    }
+}
+
+fileprivate struct LpspSignalDisplayMessage: Identifiable {
+    let id: String
+    let text: String
+    let isOutgoing: Bool
+    let time: String
+    let showsMeta: Bool
+    let readState: LpspSignalReadState?
+}
+
+fileprivate enum LpspSignalReadState {
+    case sent, delivered, read
+}
+
+private enum LpspSignalShowroomData {
+    static let renataThreadId = "sig-renata-vogel"
+
+    static var conversations: [LpspConversation] {
+        [
+            LpspConversation(
+                id: renataThreadId,
+                contactName: "Renata Vogel",
+                messages: renataPlainMessages,
+                isUnread: false
+            ),
+            LpspConversation(
+                id: "sig-nadia-events",
+                contactName: "Nadia K. — Events",
+                messages: [
+                    LpspMessage(id: "sn1", text: "V. vient de m'appeler. Il dit que t'es retourné là-bas aujourd'hui.", isUser: false, date: nil, dateRaw: "2025-06-15T14:47:00"),
+                    LpspMessage(id: "sn2", text: "Dis-moi que c'est pas vrai.", isUser: false, date: nil, dateRaw: "2025-06-15T14:48:00"),
+                    LpspMessage(id: "sn3", text: "Tu ne réponds plus. J'espère que tu n'as pas fait de connerie.", isUser: false, date: nil, dateRaw: "2025-06-15T15:12:00"),
+                    LpspMessage(id: "sn4", text: "On ne revient pas sur ce qui a été dit. Tu restes loin.", isUser: false, date: nil, dateRaw: "2025-06-15T15:38:00"),
+                ],
+                isUnread: true
+            ),
+        ]
+    }
+
+    static let renataDisplayMessages: [LpspSignalDisplayMessage] = [
+        .init(id: "r1", text: "Are we still on for the design review tomorrow?", isOutgoing: false, time: "", showsMeta: false, readState: nil),
+        .init(id: "r2", text: "Pushed it to 2pm so the whole team can make it.", isOutgoing: false, time: "9:38 AM", showsMeta: true, readState: nil),
+        .init(id: "r3", text: "Perfect, 2pm works.", isOutgoing: true, time: "", showsMeta: false, readState: .read),
+        .init(id: "r4", text: "I'll bring the updated bubble specs and the timer-chip mocks.", isOutgoing: true, time: "9:40 AM", showsMeta: true, readState: .read),
+        .init(id: "r5", text: "See you then 🙌", isOutgoing: false, time: "9:41 AM", showsMeta: true, readState: nil),
+    ]
+
+    private static var renataPlainMessages: [LpspMessage] {
+        renataDisplayMessages.map { msg in
+            LpspMessage(
+                id: msg.id,
+                text: msg.text,
+                isUser: msg.isOutgoing,
+                date: nil,
+                dateRaw: msg.time.isEmpty ? nil : msg.time
+            )
+        }
+    }
+}
+
+fileprivate struct LpspSignalSpectrBubble: View {
+    let message: LpspSignalDisplayMessage
+
     var body: some View {
-        HStack {
-            if isOutgoing { Spacer(minLength: 0) }
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(text)
+        HStack(alignment: .bottom, spacing: 0) {
+            if message.isOutgoing { Spacer(minLength: UIScreen.main.bounds.width * 0.25) }
+
+            VStack(alignment: message.isOutgoing ? .trailing : .leading, spacing: 3) {
+                Text(message.text)
                     .font(LpspSignalFonts.sigMessageBody)
-                    .foregroundStyle(isOutgoing ? .white : LpspSignalTokens.sigTextPrimary)
-                HStack(spacing: 3) {
-                    Text(time).font(LpspSignalFonts.sigBubbleMeta)
-                    if isOutgoing {
-                        Image(systemName: "checkmark").font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(message.isOutgoing ? .white : LpspSignalTokens.sigTextPrimaryD)
+                    .multilineTextAlignment(message.isOutgoing ? .trailing : .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if message.showsMeta {
+                    HStack(spacing: 4) {
+                        if !message.time.isEmpty {
+                            Text(message.time)
+                                .font(LpspSignalFonts.sigBubbleMeta)
+                        }
+                        if message.isOutgoing, let state = message.readState {
+                            LpspSignalReadTicks(state: state)
+                        }
                     }
+                    .foregroundStyle(
+                        message.isOutgoing
+                            ? LpspSignalTokens.sigOutMeta
+                            : LpspSignalTokens.sigTextSecondary
+                    )
                 }
-                .foregroundStyle(isOutgoing ? LpspSignalTokens.sigOutMeta : LpspSignalTokens.sigTextSecondary)
             }
             .padding(.vertical, 9)
             .padding(.horizontal, 13)
-            .background(isOutgoing ? LpspSignalTokens.sigBlue : LpspSignalTokens.sigIncoming)
-            .clipShape(tail)
-            .frame(maxWidth: 280, alignment: isOutgoing ? .trailing : .leading)
-            if !isOutgoing { Spacer(minLength: 0) }
+            .background(
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(message.isOutgoing ? LpspSignalTokens.sigBlue : LpspSignalTokens.sigIncomingDark)
+            )
+            .frame(maxWidth: UIScreen.main.bounds.width * 0.75, alignment: message.isOutgoing ? .trailing : .leading)
+
+            if !message.isOutgoing { Spacer(minLength: UIScreen.main.bounds.width * 0.25) }
         }
         .padding(.horizontal, 12)
     }
 }
 
-// Per-corner radius shape for the same-sender tail
-fileprivate struct LpspSignalRoundedCorner: Shape {
-    var radius: CGFloat
-    var tightCorner: UIRectCorner
-    var tightRadius: CGFloat
-    func path(in rect: CGRect) -> Path {
-        let corners: UIRectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight]
-        var path = Path()
-        for c in [UIRectCorner.topLeft, .topRight, .bottomLeft, .bottomRight] where corners.contains(c) {
-            _ = c
+fileprivate struct LpspSignalReadTicks: View {
+    let state: LpspSignalReadState
+
+    var body: some View {
+        HStack(spacing: -4) {
+            Image(systemName: "checkmark")
+            if state != .sent {
+                Image(systemName: "checkmark")
+            }
         }
-        // Simplified: use a UIBezierPath with mixed radii
-        let p = UIBezierPath(roundedRect: rect, byRoundingCorners: corners,
-                             cornerRadii: CGSize(width: radius, height: radius))
-        path = Path(p.cgPath)
-        // Re-round the tight corner smaller
-        let tp = UIBezierPath(roundedRect: rect, byRoundingCorners: tightCorner,
-                              cornerRadii: CGSize(width: tightRadius, height: tightRadius))
-        return Path(tp.cgPath).intersection(path).isEmpty ? Path(p.cgPath) : path
+        .font(.system(size: 10, weight: .bold))
+        .foregroundStyle(state == .read ? LpspSignalTokens.sigOutMeta : LpspSignalTokens.sigOutMeta.opacity(0.7))
     }
 }
 
 fileprivate struct LpspSignalComposerBar: View {
-    @State private var text = ""
+    @Binding var text: String
+    let onSend: () -> Void
 
-    private var hasText: Bool { !text.trimmingCharacters(in: .whitespaces).isEmpty }
+    private var hasText: Bool { !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
     var body: some View {
         HStack(spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "plus")
-                    .font(.system(size: 22)).foregroundStyle(LpspSignalTokens.sigTextSecondary)
-                TextField("Signal message", text: $text, axis: .vertical)
-                    .font(LpspSignalFonts.sigMessageBody)
-                    .lineLimit(1...5)
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspSignalTokens.sigTextSecondary)
+                ZStack(alignment: .leading) {
+                    if text.isEmpty {
+                        Text("Signal message")
+                            .font(LpspSignalFonts.sigMessageBody)
+                            .foregroundStyle(LpspSignalTokens.sigTextTertiary)
+                    }
+                    TextField("", text: $text, axis: .vertical)
+                        .font(LpspSignalFonts.sigMessageBody)
+                        .foregroundStyle(LpspSignalTokens.sigTextPrimaryD)
+                        .lineLimit(1...5)
+                }
                 Image(systemName: "camera")
-                    .font(.system(size: 20)).foregroundStyle(LpspSignalTokens.sigTextSecondary)
+                    .font(.system(size: 20))
+                    .foregroundStyle(LpspSignalTokens.sigTextSecondary)
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 36)
-            .background(Capsule().fill(LpspSignalTokens.sigSurface))
+            .background(Capsule().fill(LpspSignalTokens.sigSurfaceDark))
 
-            // Send circle: only when text exists; mic when empty
             LpspSignalSendCircle(showSend: hasText) {
-                text = ""
+                onSend()
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
+        .background(LpspSignalTokens.sigCanvasDark)
         .animation(.spring(response: 0.18, dampingFraction: 0.8), value: hasText)
     }
 }
@@ -191,24 +372,45 @@ fileprivate struct LpspSignalConversationRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Circle().fill(LpspSignalTokens.sigSurface).frame(width: 48, height: 48)
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color(red: 0.424, green: 0.608, blue: 0.788), Color(red: 0.180, green: 0.361, blue: 0.561)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 48, height: 48)
+                .overlay(
+                    Text(LpspSignalContactStyle.initials(for: name))
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(.white)
+                )
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 5) {
-                    Text(name).font(LpspSignalFonts.sigConvoName).foregroundStyle(LpspSignalTokens.sigTextPrimary)
+                    Text(name)
+                        .font(LpspSignalFonts.sigConvoName)
+                        .foregroundStyle(LpspSignalTokens.sigTextPrimaryD)
                     if disappearing {
-                        Image(systemName: "timer").font(.system(size: 12))
+                        Image(systemName: "timer")
+                            .font(.system(size: 12))
                             .foregroundStyle(LpspSignalTokens.sigTextSecondary)
                     }
                 }
-                Text(preview).font(LpspSignalFonts.sigPreview).foregroundStyle(LpspSignalTokens.sigTextSecondary)
+                Text(preview)
+                    .font(LpspSignalFonts.sigPreview)
+                    .foregroundStyle(LpspSignalTokens.sigTextSecondary)
                     .lineLimit(1)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 6) {
-                Text(time).font(LpspSignalFonts.sigTimestamp).foregroundStyle(LpspSignalTokens.sigTextSecondary)
+                Text(time)
+                    .font(LpspSignalFonts.sigTimestamp)
+                    .foregroundStyle(LpspSignalTokens.sigTextSecondary)
                 if unread > 0 {
                     Text("\(unread)")
-                        .font(LpspSignalFonts.sigBubbleMeta).foregroundStyle(.white)
+                        .font(LpspSignalFonts.sigBubbleMeta)
+                        .foregroundStyle(.white)
                         .frame(minWidth: 20, minHeight: 20)
                         .background(Circle().fill(LpspSignalTokens.sigBlue))
                 }
@@ -247,292 +449,374 @@ fileprivate struct LpspSignalEncryptionNote: View {
 
 
 
-// MARK: - Écrans showroom
+// MARK: - Écrans interactifs (Spectr + LPSP)
+
+private enum LpspSignalTab: Int, CaseIterable {
+    case chats, calls, stories, settings
+
+    var label: String {
+        switch self {
+        case .chats: "Chats"
+        case .calls: "Calls"
+        case .stories: "Stories"
+        case .settings: "Settings"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .chats: "message.fill"
+        case .calls: "phone.fill"
+        case .stories: "circle.dashed"
+        case .settings: "gearshape.fill"
+        }
+    }
+}
+
+private enum LpspSignalChatRoute: Hashable {
+    case thread(String)
+}
+
+private enum LpspSignalContactStyle {
+    static func initials(for name: String) -> String {
+        let cleaned = name.filter { $0.isLetter || $0.isWhitespace }
+        let parts = cleaned.split(separator: " ")
+        if parts.count >= 2 {
+            return String(parts[0].prefix(1) + parts[1].prefix(1)).uppercased()
+        }
+        return String(cleaned.prefix(2)).uppercased()
+    }
+
+    static func timerLabel(for name: String, isStory: Bool) -> String {
+        if isStory && name.contains("Nadia") { return "Off" }
+        if name.contains("Renata") { return "1 week" }
+        return "Off"
+    }
+}
 
 private struct LpspSignalShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspSignalSpectrHomeTabScreen()
-                .tabItem { Label("Chats", systemImage: "message.fill") }
-                .tag(0)
-            LpspSignalCallsTabScreen()
-                .tabItem { Label("Calls", systemImage: "phone.fill") }
-                .tag(1)
-            LpspSignalMessagingTabScreen(title: "Stories")
-                .tabItem { Label("Stories", systemImage: "circle.dashed") }
-                .tag(2)
-            LpspSignalSettingsTabScreen()
-                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
-                .tag(3)
-        }
-        .tint(LpspSignalTokens.sigTextPrimary)
-        
-    }
-}
+    @ObservedObject var store: LpspSignalStore
+    var isStoryMode = false
+    @State private var selectedTab: LpspSignalTab = .chats
+    @State private var chatsPath = NavigationPath()
 
-
-private struct LpspSignalGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspSignalTokens.sigTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspSignalTokens.sigTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+        VStack(spacing: 0) {
+            Group {
+                switch selectedTab {
+                case .chats:
+                    LpspSignalChatsTabScreen(store: store, path: $chatsPath, isStoryMode: isStoryMode)
+                case .calls:
+                    LpspSignalCallsTabScreen(store: store)
+                case .stories:
+                    LpspSignalStoriesTabScreen(isStoryMode: isStoryMode)
+                case .settings:
+                    LpspSignalSettingsTabScreen()
                 }
             }
-            .navigationTitle(title)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspSignalSpectrTabBar(selectedTab: $selectedTab)
         }
+        .background(LpspSignalTokens.sigCanvasDark.ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspSignalSpectrTabBar: View {
+    @Binding var selectedTab: LpspSignalTab
 
-private struct LpspSignalPlaceholderChatRow: View {
-    let name: String
-    let preview: String
-    let time: String
     var body: some View {
-        HStack(spacing: 12) {
-            Circle().fill(LpspSignalTokens.sigTextPrimary.opacity(0.2)).frame(width: 48, height: 48)
-                .overlay(Text(String(name.prefix(1))).font(.headline).foregroundStyle(LpspSignalTokens.sigTextPrimary))
-            VStack(alignment: .leading) {
-                Text(name).font(.system(size: 17, weight: .semibold))
-                Text(preview).font(.system(size: 15)).foregroundStyle(.secondary).lineLimit(1)
+        HStack {
+            ForEach(LpspSignalTab.allCases, id: \.rawValue) { tab in
+                Button {
+                    selectedTab = tab
+                } label: {
+                    VStack(spacing: 3) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 22))
+                        Text(tab.label)
+                            .font(LpspSignalFonts.sigTab)
+                    }
+                    .foregroundStyle(
+                        selectedTab == tab
+                            ? LpspSignalTokens.sigBlue
+                            : LpspSignalTokens.sigTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
             }
-            Spacer()
-            Text(time).font(.system(size: 12)).foregroundStyle(.secondary)
         }
-        .padding(.horizontal, 16)
-        .frame(height: 72)
+        .padding(.top, 6)
+        .padding(.bottom, 4)
+        .background(LpspSignalTokens.sigCanvasDark)
     }
-}
-
-private struct LpspSignalDemoChat: Identifiable {
-    let id = UUID()
-    let name: String
-    let preview: String
-    let time: String
-    let unread: Int
-    let hasRing: Bool
-}
-
-private enum LpspSignalDemoChats {
-    static let chats: [LpspSignalDemoChat] = [
-        .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24", unread: 2, hasRing: true),
-        .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier", unread: 0, hasRing: false),
-        .init(name: "Famille", preview: "Photo: vacances", time: "Lun.", unread: 5, hasRing: true),
-    ]
 }
 
 private struct LpspSignalChatsTabScreen: View {
+    @ObservedObject var store: LpspSignalStore
+    @Binding var path: NavigationPath
+    var isStoryMode = false
+
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
-
-                ForEach(LpspSignalDemoChats.chats) { chat in
-                    NavigationLink {
-                        LpspSignalChatDetailScreen(chat: chat)
+                ForEach(store.threads) { thread in
+                    Button {
+                        path.append(LpspSignalChatRoute.thread(thread.id))
                     } label: {
-                        LpspSignalPlaceholderChatRow(name: chat.name, preview: chat.preview, time: chat.time)
+                        LpspSignalConversationRow(
+                            name: thread.contactName,
+                            preview: thread.preview,
+                            time: LpspAdapters.formatShortDate(thread.lastDate, fallback: thread.lastDateRaw),
+                            unread: thread.isUnread ? 1 : 0,
+                            disappearing: thread.contactName.contains("Renata")
+                        )
                     }
+                    .buttonStyle(.plain)
+                    .listRowBackground(LpspSignalTokens.sigCanvasDark)
+                    .listRowSeparatorTint(LpspSignalTokens.sigDividerDark)
                 }
-
             }
             .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(LpspSignalTokens.sigCanvasDark)
             .navigationTitle("Chats")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .navigationDestination(for: LpspSignalChatRoute.self) { route in
+                if case .thread(let id) = route {
+                    LpspSignalChatScreen(
+                        store: store,
+                        threadId: id,
+                        isStoryMode: isStoryMode,
+                        onBack: { path.removeLast() }
+                    )
+                }
+            }
         }
     }
 }
 
+private struct LpspSignalChatScreen: View {
+    @ObservedObject var store: LpspSignalStore
+    let threadId: String
+    var isStoryMode = false
+    let onBack: () -> Void
 
-private struct LpspSignalChatDetailScreen: View {
-    let chat: LpspSignalDemoChat
+    @State private var draft = ""
+    @FocusState private var inputFocused: Bool
+
+    private var thread: LpspConversation? { store.thread(id: threadId) }
+    private var contactName: String { thread?.contactName ?? "" }
+    private var messages: [LpspSignalDisplayMessage] { store.messagesByThread[threadId] ?? [] }
+
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 8) {
+            LpspSignalThreadHeader(
+                contactName: contactName,
+                timerLabel: LpspSignalContactStyle.timerLabel(for: contactName, isStory: isStoryMode),
+                onBack: onBack
+            )
+            LpspSignalThreadBody(messages: messages)
+            LpspSignalComposerBar(text: $draft, onSend: sendMessage)
+        }
+        .background(LpspSignalTokens.sigCanvasDark.ignoresSafeArea())
+        .navigationBarHidden(true)
+        .onAppear { store.markAsRead(threadId: threadId) }
+    }
 
-                    LpspSignalDemoBubble(text: "Salut, tu es dispo ?", outgoing: true)
-                    LpspSignalDemoBubble(text: "Oui, j'arrive !", outgoing: false)
+    private func sendMessage() {
+        store.send(text: draft, threadId: threadId)
+        draft = ""
+        inputFocused = false
+    }
+}
 
+private struct LpspSignalThreadHeader: View {
+    let contactName: String
+    let timerLabel: String
+    let onBack: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Button(action: onBack) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(LpspSignalTokens.sigBlue)
+            }
+            .buttonStyle(.plain)
+
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color(red: 0.424, green: 0.608, blue: 0.788), Color(red: 0.180, green: 0.361, blue: 0.561)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 32, height: 32)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(contactName)
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(LpspSignalTokens.sigTextPrimaryD)
+                LpspSignalTimerChip(duration: timerLabel)
+            }
+
+            Spacer()
+
+            HStack(spacing: 18) {
+                Image(systemName: "video.fill")
+                Image(systemName: "phone.fill")
+            }
+            .font(.system(size: 18))
+            .foregroundStyle(LpspSignalTokens.sigBlue)
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 56)
+        .background(LpspSignalTokens.sigCanvasDark)
+    }
+}
+
+private struct LpspSignalThreadBody: View {
+    let messages: [LpspSignalDisplayMessage]
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 2) {
+                    LpspSignalEncryptionNote()
+                    ForEach(Array(messages.enumerated()), id: \.element.id) { index, message in
+                        if index > 0 && messages[index - 1].isOutgoing != message.isOutgoing {
+                            Color.clear.frame(height: 6)
+                        }
+                        LpspSignalSpectrBubble(message: message)
+                            .id(message.id)
+                    }
                 }
                 .padding(.vertical, 8)
             }
-            .background(LpspSignalTokens.sigCanvas.ignoresSafeArea())
-            LpspSignalDemoComposeBar()
+            .background(LpspSignalTokens.sigCanvasDark)
+            .onAppear {
+                if let last = messages.last {
+                    proxy.scrollTo(last.id, anchor: .bottom)
+                }
+            }
+            .onChange(of: messages.count) { _, _ in
+                if let last = messages.last {
+                    withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
+                }
+            }
         }
-        .navigationTitle(chat.name)
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
-
 
 private struct LpspSignalCallsTabScreen: View {
+    @ObservedObject var store: LpspSignalStore
+
     var body: some View {
         NavigationStack {
-            List(LpspSignalDemoChats.chats) { chat in
-                HStack {
-                    Circle().fill(LpspSignalTokens.sigTextPrimary.opacity(0.15)).frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspSignalTokens.sigTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text(chat.name).font(.system(size: 17, weight: .semibold))
-                        Text("Appel vocal · Hier").font(.subheadline).foregroundStyle(.secondary)
+            List(store.threads) { thread in
+                HStack(spacing: 12) {
+                    Circle()
+                        .fill(LpspSignalTokens.sigSurfaceDark)
+                        .frame(width: 40, height: 40)
+                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspSignalTokens.sigBlue))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(thread.contactName)
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(LpspSignalTokens.sigTextPrimaryD)
+                        Text("Voice call · \(LpspAdapters.formatShortDate(thread.lastDate, fallback: thread.lastDateRaw))")
+                            .font(.system(size: 14))
+                            .foregroundStyle(LpspSignalTokens.sigTextSecondary)
                     }
                     Spacer()
-                    Image(systemName: "info.circle").foregroundStyle(.secondary)
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(LpspSignalTokens.sigTextSecondary)
                 }
+                .listRowBackground(LpspSignalTokens.sigCanvasDark)
             }
-            .navigationTitle("Appels")
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(LpspSignalTokens.sigCanvasDark)
+            .navigationTitle("Calls")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 }
 
-private struct LpspSignalMessagingTabScreen: View {
-    let title: String
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("update") { LpspSignalUpdatesTabScreen() }
-        else if low.contains("setting") || low.contains("réglage") { LpspSignalSettingsTabScreen() }
-        else if low.contains("communit") { LpspSignalCommunitiesTabScreen() }
-        else if low.contains("contact") { LpspSignalContactsTabScreen() }
-        else { LpspSignalChatsTabScreen() }
-    }
-}
+private struct LpspSignalStoriesTabScreen: View {
+    var isStoryMode = false
 
-private struct LpspSignalUpdatesTabScreen: View {
     var body: some View {
         NavigationStack {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 14) {
-                    ForEach(LpspSignalDemoStories.items) { s in
-                        VStack(spacing: 4) {
-                            Circle().strokeBorder(LpspSignalTokens.sigTextPrimary, lineWidth: 2).frame(width: 66, height: 66)
-                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+            Group {
+                if isStoryMode {
+                    ContentUnavailableView(
+                        "No stories",
+                        systemImage: "circle.dashed",
+                        description: Text("Stories from your contacts will appear here.")
+                    )
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 14) {
+                            ForEach(["My story", "Renata", "Alex"], id: \.self) { name in
+                                VStack(spacing: 4) {
+                                    Circle()
+                                        .strokeBorder(LpspSignalTokens.sigTextSecondary, lineWidth: 2)
+                                        .frame(width: 66, height: 66)
+                                    Text(name)
+                                        .font(.caption)
+                                        .foregroundStyle(LpspSignalTokens.sigTextPrimaryD)
+                                        .lineLimit(1)
+                                        .frame(width: 72)
+                                }
+                            }
                         }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
                     }
                 }
-                .padding(.horizontal, 12).padding(.vertical, 10)
             }
-            .navigationTitle("Updates")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(LpspSignalTokens.sigCanvasDark)
+            .navigationTitle("Stories")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
-}
-
-private struct LpspSignalDemoStoryItem: Identifiable { let id = UUID(); let name: String }
-private enum LpspSignalDemoStories {
-    static let items: [LpspSignalDemoStoryItem] = [
-        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
-    ]
 }
 
 private struct LpspSignalSettingsTabScreen: View {
+    @Environment(\.deviceOwner) private var owner
+
     var body: some View {
         NavigationStack {
             List {
-                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
-                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
+                Section("Account") {
+                    HStack {
+                        Text("Name")
+                        Spacer()
+                        Text(owner.name).foregroundStyle(LpspSignalTokens.sigTextSecondary)
+                    }
+                    Label("Privacy", systemImage: "lock")
+                    Label("Notifications", systemImage: "bell")
+                }
+                Section("Chats") {
+                    HStack {
+                        Text("Disappearing messages")
+                        Spacer()
+                        Text("Off").foregroundStyle(LpspSignalTokens.sigTextSecondary)
+                    }
+                }
             }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(LpspSignalTokens.sigCanvasDark)
             .navigationTitle("Settings")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
-    }
-}
-
-private struct LpspSignalCommunitiesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
-        }
-    }
-}
-
-private struct LpspSignalContactsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "person.circle") }
-            .navigationTitle("Contacts")
-        }
-    }
-}
-
-private struct LpspSignalDemoBubble: View {
-    let text: String
-    var outgoing: Bool = true
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 60) }
-            Text(text)
-                .font(.system(size: 17))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspSignalTokens.sigTextPrimary.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 60) }
-        }
-        .padding(.horizontal, 8)
-    }
-}
-
-private struct LpspSignalDemoComposeBar: View {
-    @State private var text = ""
-    var body: some View {
-        HStack {
-            TextField("Message", text: $text)
-                .padding(10)
-                .background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-            Image(systemName: "paperplane.fill")
-                .foregroundStyle(LpspSignalTokens.sigTextPrimary)
-                .font(.title2)
-        }
-        .padding(8)
-        .background(.ultraThinMaterial)
-    }
-}
-
-
-private struct LpspSignalSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 10) {
-                Text("Renata Vogel").font(.system(size: 17.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("1 week").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 12).frame(height: 56)
-        ScrollView {
-            VStack(spacing: 8) {
-            Text("Messages and calls are end-to-end encrypted.").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Are we still on for the design review tomorrow?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                HStack {
-                    Spacer(minLength: 48)
-                    Text("Pushed it to 2pm so the whole team can make it.").font(.system(size: 16)).foregroundStyle(.white)
-                        .padding(.horizontal, 12).padding(.vertical, 8)
-                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                Text("Perfect, 2pm works.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                HStack {
-                    Spacer(minLength: 48)
-                    Text("I'll bring the updated bubble specs and the timer-chip mocks.").font(.system(size: 16)).foregroundStyle(.white)
-                        .padding(.horizontal, 12).padding(.vertical, 8)
-                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                HStack {
-                    Spacer(minLength: 48)
-                    Text("See you then 🙌").font(.system(size: 16)).foregroundStyle(.white)
-                        .padding(.horizontal, 12).padding(.vertical, 8)
-                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-            }
-            .padding(.vertical, 8)
-        }
-                Text("Signal message").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        }
-        .background(Color(red: 0.106, green: 0.106, blue: 0.106).ignoresSafeArea())
     }
 }
 

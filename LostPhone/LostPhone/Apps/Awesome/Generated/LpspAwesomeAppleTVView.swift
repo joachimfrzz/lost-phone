@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAppleTVView: View {
     var body: some View {
-        LpspAppleTVShowroomRoot()
+        LpspAppleTVShowroomRoot(store: LpspAppleTVStore())
     }
 }
 
@@ -226,225 +226,609 @@ fileprivate struct LpspAppleTVAppleTVTheme: ViewModifier {
 }
 fileprivate extension View { func appleTVTheme() -> some View { modifier(LpspAppleTVAppleTVTheme()) } }
 
+// MARK: - Showroom data & store
+
+private enum LpspAppleTVShowroomTab: String, CaseIterable, Identifiable {
+    case watchNow, tvPlus, store, search
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .watchNow: "Watch Now"
+        case .tvPlus: "TV+"
+        case .store: "Store"
+        case .search: "Search"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .watchNow: "play.tv.fill"
+        case .tvPlus: "appletv"
+        case .store: "bag.fill"
+        case .search: "magnifyingglass"
+        }
+    }
+}
+
+private struct LpspAppleTVShow: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let eyebrow: String
+    let meta: String
+    let subhead: String
+    let artworkColors: [Color]
+    var progress: Double = 0
+    var channelTag: String? = "Apple TV+"
+    var isLive: Bool = false
+    var inWatchlist: Bool = false
+}
+
+private enum LpspAppleTVShowroomData {
+    static let severance = LpspAppleTVShow(
+        id: "severance",
+        title: "Severance",
+        eyebrow: "Apple TV+ · New Episode",
+        meta: "Season 2 · Episode 6 · Thriller · TV-MA",
+        subhead: "Continue watching",
+        artworkColors: [
+            Color(red: 0.12, green: 0.42, blue: 0.48),
+            Color(red: 0.04, green: 0.12, blue: 0.18),
+        ]
+    )
+
+    static let upNext: [LpspAppleTVShow] = [
+        LpspAppleTVShow(
+            id: "ted-lasso",
+            title: "Ted Lasso",
+            eyebrow: "Apple TV+",
+            meta: "Comedy · TV-MA",
+            subhead: "S3 E8 · 24 min left",
+            artworkColors: [
+                Color(red: 0.18, green: 0.52, blue: 0.28),
+                Color(red: 0.08, green: 0.28, blue: 0.16),
+            ],
+            progress: 0.62
+        ),
+        LpspAppleTVShow(
+            id: "slow-horses",
+            title: "Slow Horses",
+            eyebrow: "Apple TV+",
+            meta: "Thriller · TV-MA",
+            subhead: "S4 E2 · 41 min left",
+            artworkColors: [
+                Color(red: 0.42, green: 0.32, blue: 0.12),
+                Color(red: 0.18, green: 0.14, blue: 0.08),
+            ],
+            progress: 0.38
+        ),
+        LpspAppleTVShow(
+            id: "morning-show",
+            title: "The Morning Show",
+            eyebrow: "Apple TV+ · New Episode",
+            meta: "Drama · TV-MA",
+            subhead: "New Episode",
+            artworkColors: [
+                Color(red: 0.52, green: 0.22, blue: 0.32),
+                Color(red: 0.22, green: 0.10, blue: 0.18),
+            ]
+        ),
+    ]
+
+    static let mls: [LpspAppleTVShow] = [
+        LpspAppleTVShow(
+            id: "inter-miami",
+            title: "Inter Miami vs LA",
+            eyebrow: "MLS Season Pass",
+            meta: "Matchday 28 · 2nd Half",
+            subhead: "Matchday 28 · 2nd Half",
+            artworkColors: [
+                Color(red: 0.82, green: 0.12, blue: 0.42),
+                Color(red: 0.42, green: 0.08, blue: 0.28),
+            ],
+            isLive: true
+        ),
+        LpspAppleTVShow(
+            id: "lafc-seattle",
+            title: "LAFC vs Seattle",
+            eyebrow: "MLS Season Pass",
+            meta: "Today · 7:30 PM",
+            subhead: "Today · 7:30 PM",
+            artworkColors: [
+                Color(red: 0.12, green: 0.38, blue: 0.72),
+                Color(red: 0.06, green: 0.18, blue: 0.38),
+            ]
+        ),
+    ]
+
+    static let tvPlusOriginals = ["Severance", "Ted Lasso", "Slow Horses", "The Morning Show", "Foundation", "Shrinking"]
+
+    static let storeTitles = ["Dune: Part Two", "Killers of the Flower Moon", "Napoleon", "Argylle"]
+
+    static let searchSuggestions = ["Thriller", "Comedy", "Apple TV+ Originals", "MLS"]
+}
+
+@MainActor
+fileprivate final class LpspAppleTVStore: ObservableObject {
+    @Published var selectedTab: LpspAppleTVShowroomTab = .watchNow
+    @Published var featured: LpspAppleTVShow = LpspAppleTVShowroomData.severance
+    @Published var upNext: [LpspAppleTVShow] = LpspAppleTVShowroomData.upNext
+    @Published var mls: [LpspAppleTVShow] = LpspAppleTVShowroomData.mls
+    @Published var isPlaying = false
+    @Published var playingShowID: String?
+    @Published var searchQuery = ""
+
+    func playFeatured() {
+        isPlaying = true
+        playingShowID = featured.id
+    }
+
+    func playShow(_ show: LpspAppleTVShow) {
+        featured = show
+        isPlaying = true
+        playingShowID = show.id
+        selectedTab = .watchNow
+    }
+
+    func toggleFeaturedWatchlist() {
+        var updated = featured
+        updated.inWatchlist.toggle()
+        featured = updated
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspAppleTVShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspAppleTVSpectrHomeTabScreen()
-                .tabItem { Label("Watch Now", systemImage: "play.tv") }
-                .tag(0)
-            LpspAppleTVVideoHomeTabScreen()
-                .tabItem { Label("TV+", systemImage: "play.rectangle.on.rectangle") }
-                .tag(1)
-            LpspAppleTVVideoHomeTabScreen()
-                .tabItem { Label("Store", systemImage: "bag") }
-                .tag(2)
-            LpspAppleTVVideoHomeTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(3)
-        }
-        .tint(LpspAppleTVTokens.atvTextPrimary)
-        .preferredColorScheme(.dark)
-    }
-}
+    @ObservedObject var store: LpspAppleTVStore
 
-
-private struct LpspAppleTVGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspAppleTVTokens.atvTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAppleTVTokens.atvTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private struct LpspAppleTVDemoPosterURLs {
-    static let items: [URL] = [
-        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
-    ]
-}
-private struct LpspAppleTVDemoProfile: Identifiable {
-    let id = UUID()
-    let name: String
-    let color: Color
-    let isKids: Bool
-}
-
-private enum LpspAppleTVDemoProfiles {
-    static let items: [LpspAppleTVDemoProfile] = [
-        .init(name: "Lost Phone", color: .red, isKids: false),
-        .init(name: "Enfants", color: .orange, isKids: true),
-    ]
-}
-
-private struct LpspAppleTVVideoHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.08, green: 0.08, blue: 0.08), Color.black],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .frame(height: 220)
-                            .overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill").font(.system(size: 56)).foregroundStyle(.white.opacity(0.9))
-                            }
-                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
-                            .frame(height: 80)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .padding(.horizontal, 12)
-                    Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)
-                        .padding(.horizontal, 12)
-                    Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(0..<6, id: \.self) { i in
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.15, green: 0.15, blue: 0.15))
-                                    .frame(width: 110, height: 165)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                    }
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("")
-            .toolbarBackground(.hidden, for: .navigationBar)
-        }
-    }
-}
-
-private struct LpspAppleTVProfilePickerTabScreen: View {
-    var body: some View {
-        LpspAppleTVDemoProfilePicker()
-    }
-}
-
-private struct LpspAppleTVVideoNewTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-
-                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("New & Hot")
-        }
-    }
-}
-
-private struct LpspAppleTVVideoDownloadsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
-                    VStack(alignment: .leading) {
-                        Text(title).font(.headline).foregroundStyle(.white)
-                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("Downloads")
-        }
-    }
-}
-
-private struct LpspAppleTVDemoProfilePicker: View {
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 32) {
-                Text("Qui regarde ?").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
-                ForEach(LpspAppleTVDemoProfiles.items) { p in
-                    VStack(spacing: 8) {
-                        Circle().fill(p.color).frame(width: 72, height: 72)
-                        Text(p.name).foregroundStyle(.gray)
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-private struct LpspAppleTVSpectrHomeTabScreen: View {
     var body: some View {
         VStack(spacing: 0) {
-        ScrollView {
-            VStack(spacing: 16) {
-                Text("Watch Now").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-            ZStack(alignment: .bottomLeading) {
-                LinearGradient(colors: [.clear, Color(red: 0.000, green: 0.000, blue: 0.000)], startPoint: .top, endPoint: .bottom).frame(height: 120)
-                        Text("TV+").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("· New Episode").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Severance").font(.system(size: 28.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    HStack(spacing: 10) {
-                        Text("Play").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    } .padding(.horizontal, 12).padding(.bottom, 16)
-            } .frame(height: 420)
-                    Text("Up Next").font(.system(size: 21.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                            Text("Apple TV+").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Ted Lasso").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("S3 E8 · 24 min left").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Slow Horses").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("S4 E2 · 41 min left").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                            Text("Apple TV+").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("The Morning Show").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("New Episode").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("MLS Season Pass").font(.system(size: 21.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                            Text("● LIVE").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Inter Miami vs LA").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Matchday 28 · 2nd Half").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("LAFC vs Seattle").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Today · 7:30 PM").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Group {
+                switch store.selectedTab {
+                case .watchNow:
+                    LpspAppleTVSpectrHomeTabScreen(store: store)
+                case .tvPlus:
+                    LpspAppleTVPlusTabScreen(store: store)
+                case .store:
+                    LpspAppleTVStoreTabScreen()
+                case .search:
+                    LpspAppleTVSearchTabScreen(store: store)
+                }
             }
-            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspAppleTVLabeledTabBar(store: store)
         }
-        }
-        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .background(LpspAppleTVTokens.atvCanvas.ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspAppleTVLabeledTabBar: View {
+    @ObservedObject var store: LpspAppleTVStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspAppleTVShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 20, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(.system(size: 10, weight: store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspAppleTVTokens.atvTextPrimary
+                            : LpspAppleTVTokens.atvTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspAppleTVTokens.atvCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspAppleTVTokens.atvDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspAppleTVSpectrTitleBar: View {
+    var body: some View {
+        HStack {
+            Text("Watch Now")
+                .font(LpspAppleTVFonts.atvLargeTitle)
+                .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+
+            Spacer()
+
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [.orange, .pink],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 36, height: 36)
+        }
+        .padding(.horizontal, 18)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+    }
+}
+
+private struct LpspAppleTVShowroomHeroCard: View {
+    let show: LpspAppleTVShow
+    let onPlay: () -> Void
+    let onAdd: () -> Void
+    let isInWatchlist: Bool
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            LinearGradient(
+                colors: show.artworkColors,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .frame(height: 380)
+            .clipped()
+
+            LpspAppleTVGradients.atvHeroScrim
+
+            VStack(alignment: .leading, spacing: 7) {
+                Text(show.eyebrow).atvEyebrow()
+                Text(show.title)
+                    .font(LpspAppleTVFonts.atvHeroTitle)
+                    .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                Text(show.meta)
+                    .font(LpspAppleTVFonts.atvCaption)
+                    .foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
+                HStack(spacing: 10) {
+                    Button(action: onPlay) {
+                        Label("Play", systemImage: "play.fill")
+                            .font(LpspAppleTVFonts.atvButton)
+                            .foregroundStyle(LpspAppleTVTokens.atvCTALabel)
+                            .padding(.vertical, 13)
+                            .padding(.horizontal, 30)
+                            .background(LpspAppleTVTokens.atvCTA, in: RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button(action: onAdd) {
+                        Image(systemName: isInWatchlist ? "checkmark" : "plus")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.ultraThinMaterial, in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.top, 7)
+            }
+            .padding(18)
+        }
+        .frame(height: 380)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(.horizontal, 14)
+    }
+}
+
+private struct LpspAppleTVShowroomUpNextThumb: View {
+    let show: LpspAppleTVShow
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 8) {
+                ZStack(alignment: .topLeading) {
+                    LinearGradient(
+                        colors: show.artworkColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .frame(width: 196, height: 110)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                    if show.isLive {
+                        LpspAppleTVLiveBadge()
+                            .padding(8)
+                    } else if let channelTag = show.channelTag {
+                        Text(channelTag)
+                            .font(LpspAppleTVFonts.atvChannelTag)
+                            .tracking(0.4)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 5))
+                            .padding(8)
+                    }
+
+                    if show.progress > 0 {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Rectangle().fill(Color.white.opacity(0.28))
+                                Rectangle()
+                                    .fill(Color.white)
+                                    .frame(width: geo.size.width * show.progress)
+                            }
+                            .frame(height: 4)
+                            .frame(maxHeight: .infinity, alignment: .bottom)
+                        }
+                        .frame(width: 196, height: 110)
+                    }
+                }
+
+                Text(show.title)
+                    .font(LpspAppleTVFonts.atvHeadline)
+                    .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                    .lineLimit(1)
+                Text(show.subhead)
+                    .font(LpspAppleTVFonts.atvSubhead)
+                    .foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
+                    .lineLimit(1)
+            }
+            .frame(width: 196)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspAppleTVSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspAppleTVStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 20) {
+                LpspAppleTVSpectrTitleBar()
+
+                LpspAppleTVShowroomHeroCard(
+                    show: store.featured,
+                    onPlay: { store.playFeatured() },
+                    onAdd: { store.toggleFeaturedWatchlist() },
+                    isInWatchlist: store.featured.inWatchlist
+                )
+
+                VStack(alignment: .leading, spacing: 10) {
+                    LpspAppleTVShelfHeader(title: "Up Next")
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 14) {
+                            ForEach(store.upNext) { show in
+                                LpspAppleTVShowroomUpNextThumb(show: show) {
+                                    store.playShow(show)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 18)
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 10) {
+                    LpspAppleTVShelfHeader(
+                        title: "MLS Season Pass",
+                        accessory: AnyView(LpspAppleTVMLSChip(title: "MLS"))
+                    )
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 14) {
+                            ForEach(store.mls) { show in
+                                LpspAppleTVShowroomUpNextThumb(show: show) {
+                                    store.playShow(show)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 18)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspAppleTVPlusTabScreen: View {
+    @ObservedObject var store: LpspAppleTVStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Apple TV+")
+                    .font(LpspAppleTVFonts.atvLargeTitle)
+                    .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                    .padding(.horizontal, 18)
+                    .padding(.top, 8)
+
+                Text("Original series and films")
+                    .font(LpspAppleTVFonts.atvSubhead)
+                    .foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
+                    .padding(.horizontal, 18)
+
+                LazyVGrid(
+                    columns: [GridItem(.flexible()), GridItem(.flexible())],
+                    spacing: 12
+                ) {
+                    ForEach(Array(LpspAppleTVShowroomData.tvPlusOriginals.enumerated()), id: \.offset) { index, title in
+                        Button {
+                            if title == "Severance" {
+                                store.playShow(store.featured)
+                            } else if let show = store.upNext.first(where: { $0.title == title }) {
+                                store.playShow(show)
+                            }
+                        } label: {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(
+                                    LinearGradient(
+                                        colors: store.upNext[index % store.upNext.count].artworkColors,
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(height: 140)
+                                .overlay(alignment: .bottomLeading) {
+                                    Text(title)
+                                        .font(LpspAppleTVFonts.atvHeadline)
+                                        .foregroundStyle(.white)
+                                        .padding(10)
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 18)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspAppleTVStoreTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Store")
+                    .font(LpspAppleTVFonts.atvLargeTitle)
+                    .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                    .padding(.horizontal, 18)
+                    .padding(.top, 8)
+
+                Text("Movies to rent or buy")
+                    .font(LpspAppleTVFonts.atvSubhead)
+                    .foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
+                    .padding(.horizontal, 18)
+
+                ForEach(LpspAppleTVShowroomData.storeTitles, id: \.self) { title in
+                    HStack(spacing: 12) {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(LpspAppleTVTokens.atvSurface1)
+                            .frame(width: 72, height: 108)
+                            .overlay {
+                                Image(systemName: "film")
+                                    .foregroundStyle(LpspAppleTVTokens.atvTextTertiary)
+                            }
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(title)
+                                .font(LpspAppleTVFonts.atvHeadline)
+                                .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                            Text("Rent $5.99 · Buy $14.99")
+                                .font(LpspAppleTVFonts.atvSubhead)
+                                .foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 6)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspAppleTVSearchTabScreen: View {
+    @ObservedObject var store: LpspAppleTVStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 10) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
+                    TextField("Shows, movies, sports", text: $store.searchQuery)
+                        .font(LpspAppleTVFonts.atvBody)
+                        .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                        .tint(LpspAppleTVTokens.atvBlue)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(LpspAppleTVTokens.atvSurface1)
+                )
+                .padding(.horizontal, 18)
+                .padding(.top, 8)
+
+                ForEach(LpspAppleTVShowroomData.searchSuggestions, id: \.self) { term in
+                    Button {
+                        store.searchQuery = term
+                    } label: {
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundStyle(LpspAppleTVTokens.atvTextTertiary)
+                            Text(term)
+                                .font(LpspAppleTVFonts.atvBody)
+                                .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if !store.searchQuery.isEmpty {
+                    Text("Results")
+                        .font(LpspAppleTVFonts.atvRowHeader)
+                        .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                        .padding(.horizontal, 18)
+                        .padding(.top, 8)
+
+                    ForEach(filteredShows) { show in
+                        Button {
+                            store.playShow(show)
+                        } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: show.artworkColors,
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(width: 64, height: 40)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(show.title)
+                                        .font(LpspAppleTVFonts.atvHeadline)
+                                        .foregroundStyle(LpspAppleTVTokens.atvTextPrimary)
+                                    Text(show.subhead)
+                                        .font(LpspAppleTVFonts.atvSubhead)
+                                        .foregroundStyle(LpspAppleTVTokens.atvTextSecondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 6)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+
+    private var filteredShows: [LpspAppleTVShow] {
+        let all = [store.featured] + store.upNext + store.mls
+        guard !store.searchQuery.isEmpty else { return all }
+        return all.filter {
+            $0.title.localizedCaseInsensitiveContains(store.searchQuery)
+                || $0.meta.localizedCaseInsensitiveContains(store.searchQuery)
+        }
+    }
+}
 

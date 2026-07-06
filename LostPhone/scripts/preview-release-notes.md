@@ -1,7 +1,13 @@
-## Branche artisanale (61 apps Awesome — WIP)
+## Branche artisanale (61 apps Awesome — refonte showroom)
 
 - Tag **`appetize-preview`** : build depuis `cursor/awesome-artisanal-a052` (validation sans merge dans `main`)
 - Tag **`appetize-latest`** : build stable depuis `main`
+
+Le CI se déclenche sur push vers `cursor/awesome-artisanal-a052` (ou `cursor/**`) et publie le zip sur la Release **`appetize-preview`**.
+
+### Déclencher manuellement
+
+GitHub → **Actions** → **iOS Preview (Simulator)** → **Run workflow** → branche `cursor/awesome-artisanal-a052`.
 
 ### Refonte showroom (4 sources)
 
@@ -29,11 +35,12 @@ Clone Meliwat si absent : `git clone https://github.com/Meliwat/awesome-ios-desi
 
 ## Appetize (PC/Mac)
 
-- **Showroom** : menu → « Showroom — 14 apps Reddit » (sans PIN)
-- **J-3** : PIN **1503** — 18 apps (10 clones + WhatsApp/Signal + 8 tierces : Uber, Banque, Plans, Fichiers, Rappels, Instagram, Spotify, Netflix)
+- **Showroom** : menu → « **Showroom — clones Apple + tier Awesome** » (sans PIN)
+- **J-3** : PIN **1503**
 - OS : **iOS 17.2**, Device : iPhone 14 Pro
+- Zip : Release **`appetize-preview`** (branche artisanale) ou **`appetize-latest`** (`main`)
 - Upload **`LostPhone-simulator.app.zip`** sans dézipper
-- NC / CC **désactivés** (pas de confusion avec le vrai iPhone)
+- Ouvre **appetize.io sur PC/Mac** (Chrome), pas sur iPhone — voir `docs/PREVIEW-SANS-MAC.md`
 
 ## Texte App Store (brouillon)
 

@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeExpediaView: View {
     var body: some View {
-        LpspExpediaShowroomRoot()
+        LpspExpediaShowroomRoot(store: LpspExpediaStore())
     }
 }
 
@@ -283,177 +283,708 @@ fileprivate struct LpspExpediaExpediaTheme: ViewModifier {
 }
 fileprivate extension View { func expediaTheme() -> some View { modifier(LpspExpediaExpediaTheme()) } }
 
+// MARK: - Showroom data & store
+
+private enum LpspExpediaShowroomTab: String, CaseIterable, Identifiable {
+    case search, saved, trips, support, account
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .search: "Search"
+        case .saved: "Saved"
+        case .trips: "Trips"
+        case .support: "Support"
+        case .account: "Account"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .search: "magnifyingglass"
+        case .saved: "heart.fill"
+        case .trips: "line.3.horizontal"
+        case .support: "questionmark.circle.fill"
+        case .account: "person.fill"
+        }
+    }
+}
+
+private struct LpspExpediaProperty: Identifiable, Equatable {
+    let id: String
+    let dealFlag: String?
+    let title: String
+    let location: String
+    let score: Double
+    let scoreWord: String
+    let reviewCount: Int
+    let strikePrice: Int?
+    let nightlyPrice: Int
+    let oneKeyEarn: Int
+    let photoColors: [Color]
+    var isSaved: Bool
+}
+
+private enum LpspExpediaShowroomData {
+    static let oneKeyBalance = "12,480 One Key"
+    static let destination = "San Diego, CA"
+    static let searchDetail = "Oct 12 – 17 · 2 travelers · 1 room"
+    static let modes = ["Stays", "Flights", "Cars", "Bundle"]
+    static let sectionTitle = "Bundle + Save deals"
+
+    static let properties: [LpspExpediaProperty] = [
+        LpspExpediaProperty(
+            id: "hotel-republic",
+            dealFlag: "−24% Bundle",
+            title: "Hotel Republic San Diego",
+            location: "Downtown · Gaslamp Quarter",
+            score: 9.2,
+            scoreWord: "Wonderful",
+            reviewCount: 1847,
+            strikePrice: 268,
+            nightlyPrice: 204,
+            oneKeyEarn: 2040,
+            photoColors: [
+                Color(red: 0.18, green: 0.38, blue: 0.62),
+                Color(red: 0.10, green: 0.24, blue: 0.48),
+            ],
+            isSaved: true
+        ),
+        LpspExpediaProperty(
+            id: "guild-hotel",
+            dealFlag: "Member price",
+            title: "The Guild Hotel, Autograph",
+            location: "Marina District · 0.4 mi from center",
+            score: 8.8,
+            scoreWord: "Excellent",
+            reviewCount: 932,
+            strikePrice: nil,
+            nightlyPrice: 251,
+            oneKeyEarn: 2510,
+            photoColors: [
+                Color(red: 0.72, green: 0.52, blue: 0.34),
+                Color(red: 0.42, green: 0.28, blue: 0.18),
+            ],
+            isSaved: false
+        ),
+    ]
+
+    static let supportItems = [
+        "Manage booking",
+        "Cancellation policy",
+        "Contact support",
+    ]
+}
+
+@MainActor
+fileprivate final class LpspExpediaStore: ObservableObject {
+    @Published var selectedTab: LpspExpediaShowroomTab = .search
+    @Published var selectedModeIndex = 0
+    @Published var properties: [LpspExpediaProperty] = LpspExpediaShowroomData.properties
+    @Published var selectedPropertyID: String?
+    @Published var showReserveSheet = false
+    @Published var bookedPropertyIDs: [String] = []
+    @Published var lastActionMessage = ""
+
+    var savedProperties: [LpspExpediaProperty] {
+        properties.filter(\.isSaved)
+    }
+
+    func selectMode(_ index: Int) {
+        selectedModeIndex = index
+        lastActionMessage = "Switched to \(LpspExpediaShowroomData.modes[index])"
+    }
+
+    func openSearch() {
+        lastActionMessage = "Search opened for \(LpspExpediaShowroomData.destination)"
+        selectedTab = .search
+    }
+
+    func seeAllDeals() {
+        lastActionMessage = "Showing all Bundle + Save deals"
+    }
+
+    func toggleSave(_ propertyID: String) {
+        guard let index = properties.firstIndex(where: { $0.id == propertyID }) else { return }
+        var updated = properties[index]
+        updated.isSaved.toggle()
+        properties[index] = updated
+        lastActionMessage = updated.isSaved ? "Saved \(updated.title)" : "Removed save"
+    }
+
+    func selectProperty(_ property: LpspExpediaProperty) {
+        selectedPropertyID = property.id
+        showReserveSheet = true
+    }
+
+    func reserveSelectedProperty() {
+        guard let id = selectedPropertyID,
+              let property = properties.first(where: { $0.id == id }) else { return }
+        if !bookedPropertyIDs.contains(id) {
+            bookedPropertyIDs.append(id)
+        }
+        showReserveSheet = false
+        lastActionMessage = "Reserved \(property.title)"
+        selectedTab = .trips
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspExpediaShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspExpediaSpectrHomeTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(0)
-            LpspExpediaTravelTabScreen(title: "Saved", tabIndex: 1)
-                .tabItem { Label("Saved", systemImage: "heart") }
-                .tag(1)
-            LpspExpediaTravelTabScreen(title: "Trips", tabIndex: 2)
-                .tabItem { Label("Trips", systemImage: "suitcase") }
-                .tag(2)
-            LpspExpediaTravelTabScreen(title: "Support", tabIndex: 3)
-                .tabItem { Label("Support", systemImage: "questionmark.circle") }
-                .tag(3)
-            LpspExpediaTravelTabScreen(title: "Account", tabIndex: 4)
-                .tabItem { Label("Account", systemImage: "person.crop.circle") }
-                .tag(4)
-        }
-        .tint(LpspExpediaTokens.expActionBlue)
-        
-    }
-}
+    @ObservedObject var store: LpspExpediaStore
 
-
-private struct LpspExpediaGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspExpediaTokens.expActionBlue.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspExpediaTokens.expActionBlue))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .search:
+                    LpspExpediaSpectrHomeTabScreen(store: store)
+                case .saved:
+                    LpspExpediaSavedTabScreen(store: store)
+                case .trips:
+                    LpspExpediaTripsTabScreen(store: store)
+                case .support:
+                    LpspExpediaSupportTabScreen()
+                case .account:
+                    LpspExpediaAccountTabScreen()
                 }
             }
-            .navigationTitle(title)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspExpediaLabeledTabBar(store: store)
+        }
+        .background(LpspExpediaTokens.expDarkCanvas.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+        .sheet(isPresented: $store.showReserveSheet) {
+            if let id = store.selectedPropertyID,
+               let property = store.properties.first(where: { $0.id == id }) {
+                LpspExpediaReserveSheet(store: store, property: property)
+            }
         }
     }
 }
 
+private struct LpspExpediaLabeledTabBar: View {
+    @ObservedObject var store: LpspExpediaStore
 
-private struct LpspExpediaTravelExploreTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ForEach(0..<6, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LpspExpediaTokens.expActionBlue.opacity(0.1 + Double(i) * 0.05))
-                            .frame(height: 180)
-                            .overlay(alignment: .bottomLeading) {
-                                Text("Logement \(i + 1)").font(.headline).padding(8)
-                            }
+        HStack {
+            ForEach(LpspExpediaShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspExpediaFonts.expTab.weight(store.selectedTab == tab ? .bold : .semibold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspExpediaTokens.expActionBlue
+                            : LpspExpediaTokens.expDarkTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
                 }
-                .padding()
+                .buttonStyle(.plain)
             }
-            .background(LpspExpediaTokens.expCanvas.ignoresSafeArea())
-            .navigationTitle("Explore")
         }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspExpediaTokens.expDarkCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspExpediaTokens.expDarkDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
     }
 }
 
-private struct LpspExpediaTravelTripsTabScreen: View {
+private struct LpspExpediaShowroomAppBar: View {
     var body: some View {
-        NavigationStack {
-            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
-                Label(trip, systemImage: "airplane")
+        HStack(spacing: 12) {
+            HStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(LpspExpediaTokens.expNavy)
+                        .frame(width: 32, height: 32)
+                    Circle()
+                        .fill(LpspExpediaTokens.expYellow)
+                        .frame(width: 8, height: 8)
+                        .offset(x: 6, y: -4)
+                }
+                Text("Expedia")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
             }
-            .navigationTitle("Trips")
-        }
-    }
-}
 
-private struct LpspExpediaTravelInboxTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
-                Label(msg, systemImage: "message")
+            Spacer()
+
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(LpspExpediaTokens.expOneKeyGold)
+                    .frame(width: 8, height: 8)
+                Text(LpspExpediaShowroomData.oneKeyBalance)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
             }
-            .navigationTitle("Inbox")
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                Capsule()
+                    .fill(LpspExpediaTokens.expDarkSurface2)
+            )
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
     }
 }
 
-private struct LpspExpediaTravelProfileTabScreen: View {
+private struct LpspExpediaShowroomModeSwitch: View {
+    @ObservedObject var store: LpspExpediaStore
+
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspExpediaTokens.expActionBlue.gradient).frame(width: 72, height: 72)
-                Text("lost.phone").font(.title2.bold())
+        HStack(spacing: 8) {
+            ForEach(LpspExpediaShowroomData.modes.indices, id: \.self) { index in
+                let active = store.selectedModeIndex == index
+                Text(LpspExpediaShowroomData.modes[index])
+                    .font(LpspExpediaFonts.expBadge.weight(.semibold))
+                    .foregroundStyle(active ? LpspExpediaTokens.expNavy : LpspExpediaTokens.expDarkTextSecondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 9)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(active ? LpspExpediaTokens.expYellow : LpspExpediaTokens.expDarkSurface2)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(
+                                active ? Color.clear : LpspExpediaTokens.expDarkDivider,
+                                lineWidth: 0.5
+                            )
+                    )
+                    .onTapGesture {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            store.selectMode(index)
+                        }
+                    }
             }
-            .navigationTitle("Profile")
         }
+        .padding(.horizontal, 16)
     }
 }
 
-private struct LpspExpediaTravelWishlistsTabScreen: View {
+private struct LpspExpediaShowroomSearchPill: View {
+    @ObservedObject var store: LpspExpediaStore
+
     var body: some View {
-        NavigationStack {
-            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
-            .navigationTitle("Wishlists")
+        Button {
+            store.openSearch()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(LpspExpediaShowroomData.destination)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                    Text(LpspExpediaShowroomData.searchDetail)
+                        .font(.system(size: 11))
+                        .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 52)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(LpspExpediaTokens.expDarkSurface2)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(LpspExpediaTokens.expDarkDivider, lineWidth: 0.5)
+            )
         }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
     }
 }
 
-private struct LpspExpediaTravelTabScreen: View {
-    let title: String
-    let tabIndex: Int
+private struct LpspExpediaShowroomSectionHeader: View {
+    let onSeeAll: () -> Void
+
     var body: some View {
-        let low = title.lowercased()
-        if low.contains("wishlist") || low.contains("favori") { LpspExpediaTravelWishlistsTabScreen() }
-        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspExpediaTravelExploreTabScreen() }
-        else if low.contains("trip") || low.contains("voyage") { LpspExpediaTravelTripsTabScreen() }
-        else if low.contains("inbox") || low.contains("message") { LpspExpediaTravelInboxTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspExpediaTravelProfileTabScreen() }
-        else if tabIndex == 0 { LpspExpediaTravelExploreTabScreen() }
-        else { LpspExpediaTravelTripsTabScreen() }
+        HStack {
+            Text(LpspExpediaShowroomData.sectionTitle)
+                .font(LpspExpediaFonts.expSection)
+                .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+            Spacer()
+            Button(action: onSeeAll) {
+                Text("See all")
+                    .font(LpspExpediaFonts.expMeta.weight(.semibold))
+                    .foregroundStyle(LpspExpediaTokens.expActionBlue)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
     }
 }
 
+private struct LpspExpediaShowroomPropertyCard: View {
+    let property: LpspExpediaProperty
+    let onTap: () -> Void
+    let onSave: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack(alignment: .topLeading) {
+                    LinearGradient(
+                        colors: property.photoColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .aspectRatio(16.0 / 10.0, contentMode: .fit)
+
+                    if let dealFlag = property.dealFlag {
+                        Text(dealFlag)
+                            .font(LpspExpediaFonts.expBadge)
+                            .foregroundStyle(LpspExpediaTokens.expNavy)
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 9)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(LpspExpediaTokens.expYellow)
+                            )
+                            .padding(12)
+                    }
+
+                    Button(action: onSave) {
+                        Image(systemName: property.isSaved ? "heart.fill" : "heart")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(property.isSaved ? LpspExpediaTokens.expActionBlue : .white)
+                            .padding(7)
+                            .background(Circle().fill(Color.black.opacity(0.4)))
+                    }
+                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding(10)
+                }
+
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(property.title)
+                        .font(LpspExpediaFonts.expCardTitle)
+                        .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                    Text(property.location)
+                        .font(LpspExpediaFonts.expCardSubtitle)
+                        .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                        .padding(.top, 3)
+
+                    HStack(spacing: 6) {
+                        Text(String(format: "%.1f", property.score))
+                            .font(LpspExpediaFonts.expScoreNum)
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 3)
+                            .padding(.horizontal, 7)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(expReviewBadgeColor(property.score))
+                            )
+                        Text(property.scoreWord)
+                            .font(LpspExpediaFonts.expBadge.weight(.bold))
+                            .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                        Text("· \(property.reviewCount.formatted()) reviews")
+                            .font(LpspExpediaFonts.expBadge)
+                            .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                    }
+                    .padding(.top, 8)
+
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        if let strikePrice = property.strikePrice {
+                            Text("$\(strikePrice)")
+                                .font(LpspExpediaFonts.expStrike)
+                                .strikethrough()
+                                .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                        }
+                        Text("$\(property.nightlyPrice)")
+                            .font(LpspExpediaFonts.expPriceNow)
+                            .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                        Text("/ night")
+                            .font(LpspExpediaFonts.expBadge)
+                            .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                    }
+                    .padding(.top, 10)
+
+                    HStack(spacing: 5) {
+                        Circle()
+                            .fill(LpspExpediaTokens.expOneKeyGold)
+                            .frame(width: 8, height: 8)
+                        Text("Earn \(property.oneKeyEarn.formatted()) One Key cash")
+                            .font(LpspExpediaFonts.expOneKeyLine)
+                            .foregroundStyle(LpspExpediaTokens.expOneKeyGold)
+                    }
+                    .padding(.top, 7)
+                }
+                .padding(.horizontal, 14)
+                .padding(.top, 12)
+                .padding(.bottom, 14)
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(LpspExpediaTokens.expDarkSurface1)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(LpspExpediaTokens.expDarkDivider, lineWidth: 0.5)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(.plain)
+    }
+}
 
 private struct LpspExpediaSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspExpediaStore
+
     var body: some View {
-        VStack(spacing: 0) {
-                Text("Expedia").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("12,480 One Key").font(.system(size: 14))
-            Text("Stays").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Flights").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Cars").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Bundle").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                    Text("San Diego, CA").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Oct 12 – 17 · 2 travelers · 1 room").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.122, green: 0.149, blue: 0.188)).clipShape(RoundedRectangle(cornerRadius: 28))
-        } .padding(.horizontal, 16).padding(.top, 8)
-            Text("Bundle + Save deals").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("See all").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("−24% Bundle").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Hotel Republic San Diego").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Downtown · Gaslamp Quarter").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("9.2").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Wonderful").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("· 1,847 reviews").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("$268").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("$204").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("/ night").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Earn 2,040 One Key cash").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Member price").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("The Guild Hotel, Autograph").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Marina District · 0.4 mi from center").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("8.8").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Excellent").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("· 932 reviews").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("$251").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("/ night").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Earn 2,510 One Key cash").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                LpspExpediaShowroomAppBar()
+
+                LpspExpediaShowroomModeSwitch(store: store)
+
+                if store.selectedModeIndex == 0 {
+                    LpspExpediaShowroomSearchPill(store: store)
+
+                    LpspExpediaShowroomSectionHeader {
+                        store.seeAllDeals()
+                    }
+
+                    ForEach(store.properties) { property in
+                        LpspExpediaShowroomPropertyCard(
+                            property: property,
+                            onTap: { store.selectProperty(property) },
+                            onSave: { store.toggleSave(property.id) }
+                        )
+                        .padding(.horizontal, 16)
+                    }
+                } else {
+                    Text("Search \(LpspExpediaShowroomData.modes[store.selectedModeIndex].lowercased()) in \(LpspExpediaShowroomData.destination)")
+                        .font(LpspExpediaFonts.expBody)
+                        .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 24)
+                }
+            }
+            .padding(.bottom, 16)
         }
-        .background(Color(red: 0.055, green: 0.067, blue: 0.086).ignoresSafeArea())
-        .preferredColorScheme(.dark)
+    }
+}
+
+private struct LpspExpediaSavedTabScreen: View {
+    @ObservedObject var store: LpspExpediaStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Saved")
+                    .font(LpspExpediaFonts.expScreenTitle)
+                    .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                if store.savedProperties.isEmpty {
+                    Text("Save places you like by tapping the heart icon.")
+                        .font(LpspExpediaFonts.expBody)
+                        .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                        .padding(.horizontal, 16)
+                } else {
+                    ForEach(store.savedProperties) { property in
+                        LpspExpediaShowroomPropertyCard(
+                            property: property,
+                            onTap: { store.selectProperty(property) },
+                            onSave: { store.toggleSave(property.id) }
+                        )
+                        .padding(.horizontal, 16)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspExpediaTripsTabScreen: View {
+    @ObservedObject var store: LpspExpediaStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Trips")
+                    .font(LpspExpediaFonts.expScreenTitle)
+                    .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                if store.bookedPropertyIDs.isEmpty {
+                    Text("Your upcoming trips will appear here.")
+                        .font(LpspExpediaFonts.expBody)
+                        .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                        .padding(.horizontal, 16)
+                } else {
+                    ForEach(store.bookedPropertyIDs, id: \.self) { id in
+                        if let property = store.properties.first(where: { $0.id == id }) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(property.title)
+                                    .font(LpspExpediaFonts.expCardTitle)
+                                    .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                                Text("\(LpspExpediaShowroomData.destination) · \(LpspExpediaShowroomData.searchDetail)")
+                                    .font(LpspExpediaFonts.expMeta)
+                                    .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                                Text("$\(property.nightlyPrice) / night")
+                                    .font(LpspExpediaFonts.expPriceNow)
+                                    .foregroundStyle(LpspExpediaTokens.expActionBlue)
+                            }
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(LpspExpediaTokens.expDarkSurface1)
+                            )
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspExpediaSupportTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Support")
+                    .font(LpspExpediaFonts.expScreenTitle)
+                    .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+
+                ForEach(LpspExpediaShowroomData.supportItems, id: \.self) { item in
+                    HStack {
+                        Text(item)
+                            .font(LpspExpediaFonts.expBody)
+                            .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(LpspExpediaTokens.expDarkTextSecondary)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspExpediaAccountTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                Circle()
+                    .fill(LpspExpediaTokens.expOneKeyGold.gradient)
+                    .frame(width: 72, height: 72)
+                    .overlay(
+                        Text("1K")
+                            .font(.system(size: 24, weight: .heavy))
+                            .foregroundStyle(Color(red: 0.106, green: 0.106, blue: 0.106))
+                    )
+
+                Text("One Key member")
+                    .font(LpspExpediaFonts.expScreenTitle)
+                    .foregroundStyle(LpspExpediaTokens.expDarkTextPrimary)
+
+                Text(LpspExpediaShowroomData.oneKeyBalance)
+                    .font(LpspExpediaFonts.expBody)
+                    .foregroundStyle(LpspExpediaTokens.expOneKeyGold)
+            }
+            .padding(.vertical, 32)
+        }
+    }
+}
+
+private struct LpspExpediaReserveSheet: View {
+    @ObservedObject var store: LpspExpediaStore
+    let property: LpspExpediaProperty
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(
+                        LinearGradient(
+                            colors: property.photoColors,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .aspectRatio(16.0 / 10.0, contentMode: .fit)
+
+                Text(property.title)
+                    .font(LpspExpediaFonts.expCardTitle)
+                    .foregroundStyle(LpspExpediaTokens.expTextPrimary)
+
+                Text(property.location)
+                    .font(LpspExpediaFonts.expCardSubtitle)
+                    .foregroundStyle(LpspExpediaTokens.expTextSecondary)
+
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    if let strikePrice = property.strikePrice {
+                        Text("$\(strikePrice)")
+                            .font(LpspExpediaFonts.expStrike)
+                            .strikethrough()
+                            .foregroundStyle(LpspExpediaTokens.expTextTertiary)
+                    }
+                    Text("$\(property.nightlyPrice)")
+                        .font(LpspExpediaFonts.expPriceNow)
+                        .foregroundStyle(LpspExpediaTokens.expTextPrimary)
+                    Text("/ night")
+                        .font(LpspExpediaFonts.expBadge)
+                        .foregroundStyle(LpspExpediaTokens.expTextSecondary)
+                }
+
+                Text("Earn \(property.oneKeyEarn.formatted()) One Key cash")
+                    .font(LpspExpediaFonts.expOneKeyLine)
+                    .foregroundStyle(LpspExpediaTokens.expOneKeyGold)
+
+                Spacer()
+
+                LpspExpediaReserveButton(title: "Reserve") {
+                    store.reserveSelectedProperty()
+                    dismiss()
+                }
+            }
+            .padding(16)
+            .background(LpspExpediaTokens.expCanvas)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.large])
     }
 }
 

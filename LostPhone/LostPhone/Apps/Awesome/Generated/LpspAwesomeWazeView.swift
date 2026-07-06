@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeWazeView: View {
     var body: some View {
-        LpspWazeShowroomRoot()
+        LpspWazeShowroomRoot(store: LpspWazeStore())
     }
 }
 
@@ -480,117 +480,362 @@ fileprivate struct LpspWazeWazerAvatar: View {
     }
 }
 
+// MARK: - Données & état (showroom Spectr)
+
+private enum LpspWazeShowroomTab: String, CaseIterable, Identifiable {
+    case map
+    case routes
+    case profile
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .map: return "Map"
+        case .routes: return "Routes"
+        case .profile: return "Profile"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .map: return "map.fill"
+        case .routes: return "arrow.triangle.turn.up.right.diamond.fill"
+        case .profile: return "person.fill"
+        }
+    }
+}
+
+fileprivate struct LpspWazeMapHazard: Identifiable, Equatable {
+    let id: String
+    let type: LpspWazeHazardType
+    let x: CGFloat
+    let y: CGFloat
+}
+
+private enum LpspWazeShowroomData {
+    static let hazards: [LpspWazeMapHazard] = [
+        .init(id: "police", type: .police, x: 0.30, y: 0.30),
+        .init(id: "traffic", type: .traffic, x: 0.60, y: 0.58),
+        .init(id: "cleared", type: .cleared, x: 0.82, y: 0.25),
+    ]
+
+    static let savedRoutes = [
+        ("Home → Ferry Building", "12 min"),
+        ("Work → Oakland Airport", "28 min"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspWazeStore: ObservableObject {
+    @Published var selectedTab: LpspWazeShowroomTab = .map
+    @Published var isNavigating = true
+    @Published var heading: Double = 30
+    @Published var speedLimit = 35
+    @Published var currentSpeed = 42
+    @Published var etaMinutes = 12
+    @Published var distance = "5.2 mi"
+    @Published var arrival = "6:14 PM"
+    @Published var nextTurnDistance = "0.4 mi"
+    @Published var streetName = "Market Street"
+    @Published var subInstruction = "then turn left in 0.6 mi"
+    @Published var alternativeSaves = "Save 3 min"
+    @Published var hazards = LpspWazeShowroomData.hazards
+    @Published var showReportSheet = false
+    @Published var reportsSent = 0
+
+    func endNavigation() {
+        isNavigating = false
+        selectedTab = .routes
+    }
+
+    func resumeNavigation() {
+        isNavigating = true
+        selectedTab = .map
+    }
+
+    func openReport() {
+        showReportSheet = true
+    }
+
+    func reportHazard(_ type: LpspWazeHazardType) {
+        reportsSent += 1
+        let hazard = LpspWazeMapHazard(
+            id: "user-\(reportsSent)",
+            type: type,
+            x: 0.48,
+            y: 0.45
+        )
+        hazards.append(hazard)
+        showReportSheet = false
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspWazeShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspWazeStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspWazeSpectrHomeTabScreen()
-                .tabItem { Label("Carte", systemImage: "map.fill") }
-                .tag(0)
-            LpspWazeMapsTabScreen(title: "Itinéraire", tabIndex: 1)
-                .tabItem { Label("Itinéraire", systemImage: "arrow.triangle.turn.up.right.diamond") }
-                .tag(1)
-            LpspWazeMapsTabScreen(title: "Profil", tabIndex: 2)
-                .tabItem { Label("Profil", systemImage: "person") }
-                .tag(2)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspWazeShowroomTab.allCases) { tab in
+                LpspWazeShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
+                    }
+                    .tag(tab)
+            }
         }
-        .tint(LpspWazeTokens.wazePoliceRed)
-        
+        .tint(LpspWazeTokens.wazePurple)
+        .sheet(isPresented: $store.showReportSheet) {
+            LpspWazeReportSheet(store: store)
+        }
     }
 }
 
+private struct LpspWazeShowroomTabScreen: View {
+    @ObservedObject var store: LpspWazeStore
+    let tab: LpspWazeShowroomTab
 
-private struct LpspWazeGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
+    var body: some View {
+        Group {
+            switch tab {
+            case .map:
+                LpspWazeNavigationScreen(store: store)
+            case .routes:
+                LpspWazeRoutesTabScreen(store: store)
+            case .profile:
+                LpspWazeProfileTabScreen()
+            }
+        }
+    }
+}
+
+private struct LpspWazeNavigationScreen: View {
+    @ObservedObject var store: LpspWazeStore
+
+    var body: some View {
+        ZStack {
+            if store.isNavigating {
+                LpspWazeMapCanvas(hazards: store.hazards)
+
+                GeometryReader { geo in
+                    LpspWazeWazeLocationPuck(heading: store.heading)
+                        .position(x: geo.size.width * 0.48, y: geo.size.height * 0.62)
+                }
+
+                VStack(spacing: 0) {
+                    LpspWazeNextTurnCard(
+                        arrowSymbol: "arrow.turn.up.right",
+                        arrowRotation: 30,
+                        distance: store.nextTurnDistance,
+                        streetName: store.streetName,
+                        subInstruction: store.subInstruction
+                    )
+
+                    Spacer()
+
+                    HStack(alignment: .bottom) {
+                        LpspWazeSpeedTile(limit: store.speedLimit, current: store.currentSpeed)
+                            .padding(.leading, 12)
+
+                        Spacer()
+
+                        LpspWazeWazeFAB {
+                            store.openReport()
+                        }
+                        .padding(.trailing, 12)
+                        .padding(.bottom, 8)
+                    }
+
+                    LpspWazeWazeETABar(
+                        duration: "\(store.etaMinutes) min",
+                        distance: store.distance,
+                        arrival: store.arrival,
+                        alternativeRouteSaves: store.alternativeSaves,
+                        onEnd: { store.endNavigation() }
+                    )
+                }
+            } else {
+                VStack(spacing: 16) {
+                    Spacer()
+                    Text("Navigation ended")
+                        .font(LpspWazeFonts.wazeStepTitle)
+                        .foregroundStyle(LpspWazeTokens.wazeInk)
+                    LpspWazeWazeGoButton {
+                        store.resumeNavigation()
+                    }
+                    .padding(.horizontal, 24)
+                    Spacer()
+                }
+                .background(LpspWazeTokens.wazeMapCream.ignoresSafeArea())
+            }
+        }
+    }
+}
+
+private struct LpspWazeMapCanvas: View {
+    let hazards: [LpspWazeMapHazard]
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                LpspWazeTokens.wazeMapCream
+
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(LpspWazeTokens.wazeMapWater)
+                    .frame(width: geo.size.width * 0.42, height: geo.size.height * 0.28)
+                    .position(x: geo.size.width * 0.22, y: geo.size.height * 0.18)
+
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(LpspWazeTokens.wazeMapPark)
+                    .frame(width: geo.size.width * 0.34, height: geo.size.height * 0.16)
+                    .position(x: geo.size.width * 0.72, y: geo.size.height * 0.14)
+
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(LpspWazeTokens.wazeMapPark.opacity(0.85))
+                    .frame(width: geo.size.width * 0.28, height: geo.size.height * 0.12)
+                    .position(x: geo.size.width * 0.18, y: geo.size.height * 0.72)
+
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(LpspWazeTokens.wazeMapHighway)
+                    .frame(width: geo.size.width * 0.92, height: 10)
+                    .position(x: geo.size.width * 0.5, y: geo.size.height * 0.34)
+
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(LpspWazeTokens.wazeMapRoadMajor)
+                    .frame(width: geo.size.width * 0.78, height: 8)
+                    .position(x: geo.size.width * 0.5, y: geo.size.height * 0.52)
+
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(LpspWazeTokens.wazeMapRoadMinor)
+                    .frame(width: 8, height: geo.size.height * 0.55)
+                    .position(x: geo.size.width * 0.38, y: geo.size.height * 0.48)
+
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(LpspWazeTokens.wazeMapRoadMinor)
+                    .frame(width: 8, height: geo.size.height * 0.42)
+                    .position(x: geo.size.width * 0.68, y: geo.size.height * 0.44)
+
+                ForEach(0..<4, id: \.self) { index in
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(LpspWazeTokens.wazeMapBuilding)
+                        .frame(width: 44, height: 36)
+                        .position(
+                            x: geo.size.width * [0.58, 0.78, 0.28, 0.84][index],
+                            y: geo.size.height * [0.68, 0.58, 0.42, 0.38][index]
+                        )
+                }
+
+                Path { path in
+                    path.move(to: CGPoint(x: geo.size.width * 0.38, y: geo.size.height * 0.62))
+                    path.addLine(to: CGPoint(x: geo.size.width * 0.52, y: geo.size.height * 0.52))
+                    path.addLine(to: CGPoint(x: geo.size.width * 0.68, y: geo.size.height * 0.46))
+                }
+                .stroke(LpspWazeTokens.wazeCyan, style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
+
+                ForEach(hazards) { hazard in
+                    LpspWazeHazardSpeechBubble(type: hazard.type, timeAgo: nil)
+                        .position(x: geo.size.width * hazard.x, y: geo.size.height * hazard.y)
+                }
+            }
+        }
+        .ignoresSafeArea()
+    }
+}
+
+private struct LpspWazeReportSheet: View {
+    @ObservedObject var store: LpspWazeStore
+    @Environment(\.dismiss) private var dismiss
+
+    private let reportTypes: [LpspWazeHazardType] = [.police, .traffic, .closure, .pothole, .camera]
+
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspWazeTokens.wazePoliceRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspWazeTokens.wazePoliceRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+            List {
+                ForEach(reportTypes, id: \.title) { type in
+                    Button {
+                        store.reportHazard(type)
+                        dismiss()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Circle()
+                                .fill(type.color)
+                                .frame(width: 36, height: 36)
+                                .overlay {
+                                    Image(systemName: type.icon)
+                                        .foregroundStyle(.white)
+                                }
+                            Text(type.title)
+                                .font(LpspWazeFonts.wazeListTitle)
+                                .foregroundStyle(LpspWazeTokens.wazeInk)
+                        }
                     }
                 }
             }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private struct LpspWazeMapsHomeTabScreen: View {
-    var body: some View {
-        ZStack {
-            Color.gray.opacity(0.15).ignoresSafeArea()
-            VStack {
-                HStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.ultraThinMaterial)
-                        .frame(height: 48)
-                        .overlay(HStack { Image(systemName: "magnifyingglass"); Text("Rechercher") }.foregroundStyle(.secondary))
-                        .padding()
-                    Spacer()
+            .navigationTitle("Report")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
                 }
-                Spacer()
             }
         }
+        .presentationDetents([.medium])
     }
 }
 
-private struct LpspWazeMapsRoutesTabScreen: View {
+private struct LpspWazeRoutesTabScreen: View {
+    @ObservedObject var store: LpspWazeStore
+
     var body: some View {
         NavigationStack {
-            List(["Maison → Bureau", "Bureau → Gare"], id: \.self) { Label($0, systemImage: "arrow.triangle.turn.up.right.diamond") }
-            .navigationTitle("Itinéraire")
+            List {
+                ForEach(LpspWazeShowroomData.savedRoutes, id: \.0) { route, eta in
+                    Button {
+                        store.resumeNavigation()
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(route)
+                                    .font(LpspWazeFonts.wazeListTitle)
+                                    .foregroundStyle(LpspWazeTokens.wazeInk)
+                                Text(eta)
+                                    .font(LpspWazeFonts.wazeListSubtitle)
+                                    .foregroundStyle(LpspWazeTokens.wazeSecondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(LpspWazeTokens.wazeTertiary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Routes")
         }
     }
 }
 
-private struct LpspWazeMapsProfileTabScreen: View {
+private struct LpspWazeProfileTabScreen: View {
     var body: some View {
         NavigationStack {
-            List { Label("Adresses enregistrées", systemImage: "mappin"); Label("Historique", systemImage: "clock") }
-            .navigationTitle("Profil")
+            VStack(spacing: 20) {
+                LpspWazeWazerAvatar(emoji: "🚗")
+
+                Text("Waze Driver")
+                    .font(LpspWazeFonts.wazePlaceTitle)
+                    .foregroundStyle(LpspWazeTokens.wazeInk)
+
+                Text("1,248 points · Baby Waze")
+                    .font(LpspWazeFonts.wazePlaceSubtitle)
+                    .foregroundStyle(LpspWazeTokens.wazeSecondary)
+
+                LpspWazeWazeGoButton {}
+                    .padding(.horizontal, 24)
+            }
+            .padding(.vertical, 24)
+            .navigationTitle("Profile")
         }
-    }
-}
-
-private struct LpspWazeMapsTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspWazeMapsHomeTabScreen() }
-        else if low.contains("itin") || low.contains("route") { LpspWazeMapsRoutesTabScreen() }
-        else { LpspWazeMapsProfileTabScreen() }
-    }
-}
-
-
-private struct LpspWazeSpectrHomeTabScreen: View {
-    var body: some View {
-        ZStack(alignment: .bottom) {
-        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
-                Text("0.4 mi").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Market Street").font(.system(size: 18.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("then turn left in 0.6 mi").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("SPEED LIMIT").font(.system(size: 8.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("35").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("42").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("mph").font(.system(size: 9.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("12 min").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("5.2 mi · 6:14 PM").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Save 3 min").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("End").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 

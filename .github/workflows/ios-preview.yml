@@ -9,7 +9,6 @@ on:
   push:
     branches:
       - main
-      - cursor/awesome-artisanal-a052
     paths:
       - "LostPhone/**"
       - "public/stories/**"

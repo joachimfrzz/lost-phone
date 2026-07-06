@@ -1098,7 +1098,7 @@ private struct LpspGoogleCalendarEventDetailSheet: View {
 
                     if event.meetLabel != nil {
                         Text("Going?")
-                            .font(LpspGoogleCalendarFonts.gcalSection)
+                            .font(LpspGoogleCalendarFonts.gcalSectionHdr)
                             .foregroundStyle(LpspGoogleCalendarTokens.gcalInk)
                         LpspGoogleCalendarRSVPPillsControlled(selection: $store.rsvpSelection)
                     }

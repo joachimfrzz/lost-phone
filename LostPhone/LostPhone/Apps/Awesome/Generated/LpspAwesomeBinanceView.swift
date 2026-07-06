@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeBinanceView: View {
     var body: some View {
-        LpspBinanceShowroomRoot()
+        LpspBinanceShowroomRoot(store: LpspBinanceStore())
     }
 }
 
@@ -283,172 +283,790 @@ fileprivate struct LpspBinanceBinanceTheme: ViewModifier {
 }
 fileprivate extension View { func binanceTheme() -> some View { modifier(LpspBinanceBinanceTheme()) } }
 
-// MARK: - Écrans showroom
+// MARK: - Showroom data & store
 
-private struct LpspBinanceShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspBinanceSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspBinanceFinanceHomeTabScreen()
-                .tabItem { Label("Markets", systemImage: "chart.bar.fill") }
-                .tag(1)
-            LpspBinanceFinanceHomeTabScreen()
-                .tabItem { Label("Trade", systemImage: "arrow.left.arrow.right") }
-                .tag(2)
-            LpspBinanceFinanceHomeTabScreen()
-                .tabItem { Label("Futures", systemImage: "chart.xyaxis.line") }
-                .tag(3)
-            LpspBinanceFinanceHomeTabScreen()
-                .tabItem { Label("Wallets", systemImage: "creditcard.fill") }
-                .tag(4)
+private enum LpspBinanceShowroomTab: String, CaseIterable, Identifiable {
+    case home, markets, trade, futures, wallets
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .markets: "Markets"
+        case .trade: "Trade"
+        case .futures: "Futures"
+        case .wallets: "Wallets"
         }
-        .tint(LpspBinanceTokens.bnYellow)
-        
     }
-}
 
-
-private struct LpspBinanceGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspBinanceTokens.bnYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspBinanceTokens.bnYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .markets: "chart.bar.fill"
+        case .trade: "chart.line.uptrend.xyaxis"
+        case .futures: "shippingbox.fill"
+        case .wallets: "creditcard.fill"
         }
     }
 }
 
+private enum LpspBinanceMarketFilter: String, CaseIterable, Identifiable {
+    case favorites, spot, futures, hot
 
-private struct LpspBinanceFinanceHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Solde total").font(.subheadline).foregroundStyle(.secondary)
-                        Text("2 847,50 €").font(.system(size: 36, weight: .bold))
-                    }
-                    .padding(.horizontal)
+    var id: String { rawValue }
 
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [LpspBinanceTokens.bnYellow, LpspBinanceTokens.bnYellow.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(height: 180)
-                        .overlay(alignment: .bottomLeading) {
-                            Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
-                        }
-                        .padding(.horizontal)
-
-                    Text("Transactions").font(.headline).padding(.horizontal)
-
-                    ForEach(LpspBinanceDemoTx.items) { tx in
-                        HStack {
-                            Circle().fill(LpspBinanceTokens.bnYellow.opacity(0.15)).frame(width: 40, height: 40)
-                            VStack(alignment: .leading) { Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }
-                            Spacer()
-                            Text(tx.amount).font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
-                        }
-                        .padding(.horizontal)
-                    }
-
-                }
-                .padding(.vertical)
-            }
-            .background(LpspBinanceTokens.bnCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
+    var title: String {
+        switch self {
+        case .favorites: "Favorites"
+        case .spot: "Spot"
+        case .futures: "Futures"
+        case .hot: "Hot"
         }
     }
 }
 
-private struct LpspBinanceFinanceCardsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    RoundedRectangle(cornerRadius: 16).fill(LpspBinanceTokens.bnYellow).frame(height: 180).padding(.horizontal)
-                    Text("Gérez vos cartes").font(.headline)
-                }
-                .padding(.vertical)
-            }
-            .background(LpspBinanceTokens.bnCanvas.ignoresSafeArea())
-            .navigationTitle("Cartes")
-        }
-    }
+private struct LpspBinanceMarket: Identifiable, Equatable {
+    let id: String
+    let symbol: String
+    let quote: String
+    let volume: String
+    let price: String
+    let usd: String
+    let changePct: Double
+    let iconLetter: String
+    let iconColor: Color
+    var isFavorite: Bool
+    var isFutures: Bool
 }
 
-private struct LpspBinanceDemoTx: Identifiable {
-    let id = UUID()
-    let title: String
-    let date: String
-    let amount: String
-    let incoming: Bool
-    let icon: String
-    static let items: [LpspBinanceDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
+private enum LpspBinanceShowroomData {
+    static let markets: [LpspBinanceMarket] = [
+        LpspBinanceMarket(
+            id: "btc",
+            symbol: "BTC",
+            quote: "USDT",
+            volume: "1.42B",
+            price: "67,284.10",
+            usd: "$67,284.10",
+            changePct: 2.34,
+            iconLetter: "B",
+            iconColor: Color(red: 0.969, green: 0.576, blue: 0.102),
+            isFavorite: true,
+            isFutures: true
+        ),
+        LpspBinanceMarket(
+            id: "eth",
+            symbol: "ETH",
+            quote: "USDT",
+            volume: "884M",
+            price: "3,512.66",
+            usd: "$3,512.66",
+            changePct: -0.92,
+            iconLetter: "E",
+            iconColor: Color(red: 0.38, green: 0.44, blue: 0.92),
+            isFavorite: true,
+            isFutures: true
+        ),
+        LpspBinanceMarket(
+            id: "bnb",
+            symbol: "BNB",
+            quote: "USDT",
+            volume: "312M",
+            price: "604.20",
+            usd: "$604.20",
+            changePct: 1.08,
+            iconLetter: "B",
+            iconColor: Color(red: 0.941, green: 0.725, blue: 0.043),
+            isFavorite: true,
+            isFutures: false
+        ),
+        LpspBinanceMarket(
+            id: "sol",
+            symbol: "SOL",
+            quote: "USDT",
+            volume: "198M",
+            price: "172.43",
+            usd: "$172.43",
+            changePct: 4.61,
+            iconLetter: "S",
+            iconColor: Color(red: 0.58, green: 0.32, blue: 0.92),
+            isFavorite: true,
+            isFutures: false
+        ),
+    ]
+
+    static let walletAssets = [
+        ("BTC", "0.482", "$32,430.12"),
+        ("USDT", "12,840.57", "$12,840.57"),
+        ("ETH", "1.24", "$4,355.70"),
     ]
 }
 
+@MainActor
+fileprivate final class LpspBinanceStore: ObservableObject {
+    @Published var selectedTab: LpspBinanceShowroomTab = .home
+    @Published var marketFilter: LpspBinanceMarketFilter = .favorites
+    @Published var markets: [LpspBinanceMarket] = LpspBinanceShowroomData.markets
+    @Published var balanceValue = "12,840.57"
+    @Published var balanceHidden = false
+    @Published var searchQuery = ""
+    @Published var selectedPairID = "btc"
+    @Published var isBuy = true
+    @Published var tradePercent = 0
+    @Published var showConvertSheet = false
+    @Published var lastActionMessage = ""
 
-private struct LpspBinanceSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                Text("Search BTC, ETH, BNB…").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.118, green: 0.125, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 28))
-            Text("Est. Total Value").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("USDT").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("+$214.86 (+1.70%) Today").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Deposit").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Withdraw").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Convert").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Favorites").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Spot").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Futures").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Hot").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("B").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("/USDT").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Vol 1.42B").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("67,284.10").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("$67,284.10").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("+2.34%").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("E").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("/USDT").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Vol 884M").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("3,512.66").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("$3,512.66").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("-0.92%").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("B").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("/USDT").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Vol 312M").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("604.20").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("$604.20").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("+1.08%").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("S").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("/USDT").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Vol 198M").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("172.43").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("$172.43").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("+4.61%").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+    var pnlLabel: String { "+$214.86 (+1.70%)" }
+
+    var selectedPair: LpspBinanceMarket {
+        markets.first { $0.id == selectedPairID } ?? LpspBinanceShowroomData.markets[0]
+    }
+
+    var filteredMarkets: [LpspBinanceMarket] {
+        var list = markets
+        if !searchQuery.isEmpty {
+            list = list.filter {
+                $0.symbol.localizedCaseInsensitiveContains(searchQuery)
+                    || $0.quote.localizedCaseInsensitiveContains(searchQuery)
+            }
         }
-        .background(Color(red: 0.043, green: 0.055, blue: 0.067).ignoresSafeArea())
-        .preferredColorScheme(.dark)
+        switch marketFilter {
+        case .favorites:
+            list = list.filter(\.isFavorite)
+        case .spot:
+            break
+        case .futures:
+            list = list.filter(\.isFutures)
+        case .hot:
+            list = list.sorted { abs($0.changePct) > abs($1.changePct) }
+        }
+        return list
+    }
+
+    func setMarketFilter(_ filter: LpspBinanceMarketFilter) {
+        marketFilter = filter
+    }
+
+    func toggleBalanceVisibility() {
+        balanceHidden.toggle()
+    }
+
+    func selectPair(_ market: LpspBinanceMarket) {
+        selectedPairID = market.id
+        selectedTab = .trade
+    }
+
+    func toggleFavorite(_ marketID: String) {
+        guard let index = markets.firstIndex(where: { $0.id == marketID }) else { return }
+        markets[index].isFavorite.toggle()
+    }
+
+    func setTradeSide(buy: Bool) {
+        isBuy = buy
+    }
+
+    func setTradePercent(_ percent: Int) {
+        tradePercent = percent
+    }
+
+    func executeTrade() {
+        lastActionMessage = "\(isBuy ? "Bought" : "Sold") \(selectedPair.symbol) · \(tradePercent)%"
+    }
+
+    func deposit() {
+        lastActionMessage = "Deposit initiated"
+        selectedTab = .wallets
+    }
+
+    func withdraw() {
+        lastActionMessage = "Withdrawal opened"
+        selectedTab = .wallets
+    }
+
+    func openConvert() {
+        showConvertSheet = true
     }
 }
 
+// MARK: - Écrans showroom
+
+private struct LpspBinanceShowroomRoot: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspBinanceSpectrHomeTabScreen(store: store)
+                case .markets:
+                    LpspBinanceMarketsTabScreen(store: store)
+                case .trade:
+                    LpspBinanceTradeTabScreen(store: store)
+                case .futures:
+                    LpspBinanceFuturesTabScreen(store: store)
+                case .wallets:
+                    LpspBinanceWalletsTabScreen(store: store)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspBinanceLabeledTabBar(store: store)
+        }
+        .background(LpspBinanceTokens.bnCanvas.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+        .sheet(isPresented: $store.showConvertSheet) {
+            LpspBinanceConvertSheet()
+        }
+    }
+}
+
+private struct LpspBinanceLabeledTabBar: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspBinanceShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspBinanceFonts.bnTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspBinanceTokens.bnYellow
+                            : LpspBinanceTokens.bnTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspBinanceTokens.bnCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspBinanceTokens.bnDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspBinanceSpectrSearchRow: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(LpspBinanceTokens.bnTextSecondary)
+                TextField("Search BTC, ETH, BNB…", text: $store.searchQuery)
+                    .font(LpspBinanceFonts.bnBody)
+                    .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    .tint(LpspBinanceTokens.bnYellow)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 28)
+                    .fill(LpspBinanceTokens.bnSurface2)
+            )
+
+            Image(systemName: "bell")
+                .font(.system(size: 20))
+                .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                .frame(width: 40, height: 40)
+                .background(
+                    Circle()
+                        .fill(LpspBinanceTokens.bnSurface2)
+                )
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+    }
+}
+
+private struct LpspBinanceShowroomBalanceHero: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Text("Est. Total Value")
+                    .font(LpspBinanceFonts.bnCaption)
+                    .foregroundStyle(LpspBinanceTokens.bnTextSecondary)
+                Button(action: { store.toggleBalanceVisibility() }) {
+                    Image(systemName: store.balanceHidden ? "eye.slash" : "eye")
+                        .font(.system(size: 12))
+                        .foregroundStyle(LpspBinanceTokens.bnTextSecondary)
+                }
+                .buttonStyle(.plain)
+            }
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text(store.balanceHidden ? "••••••" : store.balanceValue)
+                    .font(LpspBinanceFonts.bnBalance)
+                    .bnTabular()
+                    .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                Text("USDT")
+                    .font(LpspBinanceFonts.bnMeta)
+                    .foregroundStyle(LpspBinanceTokens.bnTextSecondary)
+            }
+            Text("\(store.pnlLabel) Today")
+                .font(LpspBinanceFonts.bnMonoCaption)
+                .bnTabular()
+                .foregroundStyle(LpspBinanceTokens.bnUp)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+    }
+}
+
+private struct LpspBinanceQuickActionsRow: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Button(action: { store.deposit() }) {
+                Text("Deposit")
+                    .font(LpspBinanceFonts.bnButton.weight(.semibold))
+                    .foregroundStyle(LpspBinanceTokens.bnCanvas)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(LpspBinanceTokens.bnYellow)
+                    )
+            }
+            .buttonStyle(.plain)
+
+            Button(action: { store.withdraw() }) {
+                Text("Withdraw")
+                    .font(LpspBinanceFonts.bnButton.weight(.semibold))
+                    .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(LpspBinanceTokens.bnSurface3, lineWidth: 1)
+                    )
+            }
+            .buttonStyle(.plain)
+
+            Button(action: { store.openConvert() }) {
+                Text("Convert")
+                    .font(LpspBinanceFonts.bnButton.weight(.semibold))
+                    .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(LpspBinanceTokens.bnSurface3, lineWidth: 1)
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+    }
+}
+
+private struct LpspBinanceMarketFilterRow: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                ForEach(LpspBinanceMarketFilter.allCases) { filter in
+                    Button {
+                        store.setMarketFilter(filter)
+                    } label: {
+                        Text(filter.title)
+                            .font(LpspBinanceFonts.bnListLabel.weight(store.marketFilter == filter ? .semibold : .regular))
+                            .foregroundStyle(
+                                store.marketFilter == filter
+                                    ? LpspBinanceTokens.bnTextPrimary
+                                    : LpspBinanceTokens.bnTextSecondary
+                            )
+                            .overlay(alignment: .bottom) {
+                                if store.marketFilter == filter {
+                                    Rectangle()
+                                        .fill(LpspBinanceTokens.bnYellow)
+                                        .frame(height: 2)
+                                        .offset(y: 8)
+                                }
+                            }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+    }
+}
+
+private struct LpspBinanceShowroomMarketRow: View {
+    let market: LpspBinanceMarket
+    let onTap: () -> Void
+
+    private var up: Bool { market.changePct >= 0 }
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 10) {
+                Circle()
+                    .fill(market.iconColor)
+                    .frame(width: 30, height: 30)
+                    .overlay(
+                        Text(market.iconLetter)
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(.black)
+                    )
+
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 2) {
+                        Text(market.symbol)
+                            .font(LpspBinanceFonts.bnListLabel)
+                            .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                        Text("/\(market.quote)")
+                            .font(LpspBinanceFonts.bnMonoSmall)
+                            .foregroundStyle(LpspBinanceTokens.bnTextTertiary)
+                    }
+                    Text("Vol \(market.volume)")
+                        .font(LpspBinanceFonts.bnMonoSmall)
+                        .foregroundStyle(LpspBinanceTokens.bnTextSecondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(market.price)
+                        .font(LpspBinanceFonts.bnNumber)
+                        .bnTabular()
+                        .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    Text(market.usd)
+                        .font(LpspBinanceFonts.bnMonoSmall)
+                        .bnTabular()
+                        .foregroundStyle(LpspBinanceTokens.bnTextSecondary)
+                }
+
+                Text("\(up ? "+" : "")\(market.changePct, specifier: "%.2f")%")
+                    .font(LpspBinanceFonts.bnPill)
+                    .bnTabular()
+                    .foregroundStyle(.white)
+                    .frame(minWidth: 64)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(up ? LpspBinanceTokens.bnUp : LpspBinanceTokens.bnDown)
+                    )
+                    .padding(.leading, 8)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(LpspBinanceTokens.bnDivider)
+                    .frame(height: 1)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspBinanceSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                LpspBinanceSpectrSearchRow(store: store)
+                LpspBinanceShowroomBalanceHero(store: store)
+                LpspBinanceQuickActionsRow(store: store)
+                LpspBinanceMarketFilterRow(store: store)
+
+                VStack(spacing: 0) {
+                    ForEach(store.filteredMarkets) { market in
+                        LpspBinanceShowroomMarketRow(market: market) {
+                            store.selectPair(market)
+                        }
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspBinanceMarketsTabScreen: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                Text("Markets")
+                    .font(LpspBinanceFonts.bnScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                LpspBinanceSpectrSearchRow(store: store)
+                LpspBinanceMarketFilterRow(store: store)
+
+                ForEach(store.filteredMarkets) { market in
+                    LpspBinanceShowroomMarketRow(market: market) {
+                        store.selectPair(market)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspBinanceShowroomTradeTicket: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 0) {
+                ForEach([true, false], id: \.self) { buy in
+                    Button {
+                        store.setTradeSide(buy: buy)
+                    } label: {
+                        Text(buy ? "Buy" : "Sell")
+                            .font(LpspBinanceFonts.bnButton)
+                            .foregroundStyle(store.isBuy == buy ? .white : LpspBinanceTokens.bnTextSecondary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 36)
+                            .background(
+                                store.isBuy == buy
+                                    ? (buy ? LpspBinanceTokens.bnUp : LpspBinanceTokens.bnDown)
+                                    : LpspBinanceTokens.bnSurface3
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            HStack(spacing: 8) {
+                ForEach([25, 50, 75, 100], id: \.self) { percent in
+                    Button {
+                        store.setTradePercent(percent)
+                    } label: {
+                        Text("\(percent)%")
+                            .font(LpspBinanceFonts.bnPill.weight(.semibold))
+                            .foregroundStyle(
+                                store.tradePercent == percent
+                                    ? LpspBinanceTokens.bnYellow
+                                    : LpspBinanceTokens.bnTextSecondary
+                            )
+                            .padding(.vertical, 7)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 500)
+                                    .fill(
+                                        store.tradePercent == percent
+                                            ? LpspBinanceTokens.bnYellowTint
+                                            : LpspBinanceTokens.bnSurface3
+                                    )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            Button(action: { store.executeTrade() }) {
+                Text(store.isBuy ? "Buy \(store.selectedPair.symbol)" : "Sell \(store.selectedPair.symbol)")
+                    .font(LpspBinanceFonts.bnButton)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(store.isBuy ? LpspBinanceTokens.bnUp : LpspBinanceTokens.bnDown)
+                    )
+            }
+            .buttonStyle(.plain)
+
+            if !store.lastActionMessage.isEmpty {
+                Text(store.lastActionMessage)
+                    .font(LpspBinanceFonts.bnCaption)
+                    .foregroundStyle(LpspBinanceTokens.bnTextSecondary)
+            }
+        }
+        .padding(16)
+        .background(LpspBinanceTokens.bnSurface1)
+    }
+}
+
+private struct LpspBinanceTradeTabScreen: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Text("\(store.selectedPair.symbol)/\(store.selectedPair.quote)")
+                        .font(LpspBinanceFonts.bnRowTitle.weight(.bold))
+                        .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    Spacer()
+                    Text(store.selectedPair.price)
+                        .font(LpspBinanceFonts.bnPrice.weight(.semibold))
+                        .bnTabular()
+                        .foregroundStyle(LpspBinanceTokens.bnUp)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                VStack(spacing: 0) {
+                    ForEach(["67,285.40", "67,284.80", "67,284.10"], id: \.self) { price in
+                        LpspBinanceOrderBookRow(
+                            price: price,
+                            qty: "0.842",
+                            depthRatio: 0.6,
+                            isAsk: true
+                        )
+                    }
+                    LpspBinanceSpreadRow(last: store.selectedPair.price, up: store.selectedPair.changePct >= 0)
+                    ForEach(["67,283.60", "67,283.10", "67,282.50"], id: \.self) { price in
+                        LpspBinanceOrderBookRow(
+                            price: price,
+                            qty: "1.204",
+                            depthRatio: 0.45,
+                            isAsk: false
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+
+                LpspBinanceShowroomTradeTicket(store: store)
+                    .padding(.horizontal, 16)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspBinanceFuturesTabScreen: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Futures")
+                    .font(LpspBinanceFonts.bnScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                ForEach(store.markets.filter(\.isFutures)) { market in
+                    LpspBinanceShowroomMarketRow(market: market) {
+                        store.selectPair(market)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspBinanceWalletsTabScreen: View {
+    @ObservedObject var store: LpspBinanceStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                LpspBinanceShowroomBalanceHero(store: store)
+                    .padding(.top, 8)
+
+                if !store.lastActionMessage.isEmpty {
+                    Text(store.lastActionMessage)
+                        .font(LpspBinanceFonts.bnCaption)
+                        .foregroundStyle(LpspBinanceTokens.bnYellow)
+                        .padding(.horizontal, 16)
+                }
+
+                Text("Assets")
+                    .font(LpspBinanceFonts.bnSection.weight(.bold))
+                    .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    .padding(.horizontal, 16)
+
+                ForEach(LpspBinanceShowroomData.walletAssets, id: \.0) { asset in
+                    HStack {
+                        Circle()
+                            .fill(LpspBinanceTokens.bnYellow)
+                            .frame(width: 32, height: 32)
+                            .overlay(
+                                Text(String(asset.0.prefix(1)))
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(LpspBinanceTokens.bnCanvas)
+                            )
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(asset.0)
+                                .font(LpspBinanceFonts.bnListLabel)
+                                .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                            Text(asset.1)
+                                .font(LpspBinanceFonts.bnMonoCaption)
+                                .bnTabular()
+                                .foregroundStyle(LpspBinanceTokens.bnTextSecondary)
+                        }
+                        Spacer()
+                        Text(asset.2)
+                            .font(LpspBinanceFonts.bnNumber)
+                            .bnTabular()
+                            .foregroundStyle(LpspBinanceTokens.bnTextPrimary)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+
+                LpspBinanceBinancePrimaryButton(title: "Add Funds") {
+                    store.deposit()
+                }
+                .padding(.horizontal, 16)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspBinanceConvertSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                LpspBinanceConvertCard()
+                LpspBinanceBinancePrimaryButton(title: "Preview Conversion") {
+                    dismiss()
+                }
+                Spacer()
+            }
+            .padding(16)
+            .background(LpspBinanceTokens.bnCanvas)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+            .navigationTitle("Convert")
+        }
+        .presentationDetents([.medium])
+        .preferredColorScheme(.dark)
+    }
+}
 

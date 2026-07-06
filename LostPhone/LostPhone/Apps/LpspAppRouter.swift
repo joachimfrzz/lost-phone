@@ -134,10 +134,7 @@ struct LpspAppRouter: View {
         case "Rappels":
             LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Instagram":
-            LpspAwesomeInstagramView(
-                profile: LpspAdapters.instagram(from: payload),
-                dmThreads: LpspAdapters.instagramDM(from: payload)
-            )
+            LpspAwesomeInstagramView(conversations: LpspAdapters.instagramDM(from: payload))
         case "Spotify":
             LpspAwesomeSpotifyView(data: LpspAdapters.spotify(from: payload))
         case "Netflix":

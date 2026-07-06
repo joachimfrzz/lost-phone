@@ -158,8 +158,8 @@ fileprivate struct LpspNetflixShowroomTitle: Identifiable, Hashable {
     let rating: String
     let accent: Color
     let synopsis: String
-    let episodes: [LpspNetflixShowroomEpisode]
     let isSeries: Bool
+    let episodes: [LpspNetflixShowroomEpisode]
 }
 
 fileprivate struct LpspNetflixContinueItem: Identifiable {

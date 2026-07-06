@@ -689,7 +689,7 @@ fileprivate final class LpspDiscordStore: ObservableObject {
                 body: message.body,
                 presence: message.presence,
                 isGroupedWithPrevious: message.isGroupedWithPrevious,
-                reactions: reactions + [LpspDiscordShowroomReaction(emoji: emoji, count: 1)]
+                reactions: message.reactions + [LpspDiscordShowroomReaction(emoji: emoji, count: 1)]
             )
         }
         messages[index] = message
@@ -1069,10 +1069,7 @@ private struct LpspDiscordChannelChatScreen: View {
     }
 
     private func avatar(for username: String) -> Image {
-        let colors: [Color] = [.orange, .pink, .purple, .teal, LpspDiscordTokens.dcBlurple]
-        let index = abs(username.hashValue) % colors.count
-        return Image(systemName: "person.circle.fill")
-            .foregroundStyle(colors[index].gradient)
+        Image(systemName: "person.circle.fill")
     }
 }
 

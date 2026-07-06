@@ -444,7 +444,7 @@ fileprivate final class LpspFichiersStore: ObservableObject {
                 name: item.name,
                 kind: LpspFichiersFileKind.from(type: item.type, isFolder: false),
                 size: item.size,
-                deletedLabel: LpspAdapters.formatShortDate(item.modifiedRaw, fallback: "Récemment"),
+                deletedLabel: item.modifiedRaw.isEmpty ? "Récemment" : item.modifiedRaw,
                 daysRemaining: 18,
                 detail: item.description
             )
@@ -582,7 +582,7 @@ fileprivate final class LpspFichiersStore: ObservableObject {
             name: item.name,
             kind: LpspFichiersFileKind.from(type: item.type, isFolder: false),
             size: item.size,
-            dateLabel: LpspAdapters.formatShortDate(item.modifiedRaw, fallback: "—"),
+            dateLabel: item.modifiedRaw.isEmpty ? "—" : item.modifiedRaw,
             detail: item.description,
             children: nil
         )

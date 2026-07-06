@@ -433,7 +433,7 @@ fileprivate final class LpspDeliverooStore: ObservableObject {
     }
 
     var basketTotalLabel: String {
-        formatEuro(basketTotalCents)
+        Self.formatEuro(basketTotalCents)
     }
 
     var selectedRestaurant: LpspDeliverooShowroomRestaurant? {
@@ -465,10 +465,14 @@ fileprivate final class LpspDeliverooStore: ObservableObject {
         selectedRestaurantID = id
     }
 
+    func restaurant(containingItemID itemID: String) -> LpspDeliverooShowroomRestaurant? {
+        restaurants.first { $0.menu.contains { $0.id == itemID } }
+    }
+
     func placeOrder() {
         guard basketItemCount > 0 else { return }
         let restaurant = selectedRestaurant
-            ?? basket.keys.compactMap { restaurant(containingItemID: $0) }.first
+            ?? basket.keys.compactMap { self.restaurant(containingItemID: $0) }.first
             ?? restaurants.first
         guard let restaurant else { return }
         let summary = basket.compactMap { id, qty -> String? in

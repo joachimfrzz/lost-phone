@@ -1080,7 +1080,7 @@ private struct LpspGoogleCalendarEventDetailSheet: View {
                             Image(systemName: "video.fill")
                                 .foregroundStyle(LpspGoogleCalendarTokens.gcalBlue)
                             Text(meetLabel)
-                                .font(LpspGoogleCalendarFonts.gcalBody)
+                                .font(LpspGoogleCalendarFonts.gcalEventTime)
                                 .foregroundStyle(LpspGoogleCalendarTokens.gcalBlue)
                         }
                         LpspGoogleCalendarMaterialFilledButton(title: "Join Meet", systemImage: "video.fill") {}
@@ -1091,7 +1091,7 @@ private struct LpspGoogleCalendarEventDetailSheet: View {
                             Image(systemName: "mappin.and.ellipse")
                                 .foregroundStyle(LpspGoogleCalendarTokens.gcalSecondary)
                             Text(location)
-                                .font(LpspGoogleCalendarFonts.gcalBody)
+                                .font(LpspGoogleCalendarFonts.gcalEventTime)
                                 .foregroundStyle(LpspGoogleCalendarTokens.gcalSecondary)
                         }
                     }

@@ -419,7 +419,7 @@ private struct LpspKindleShowroomRoot: View {
                         case .discover:
                             LpspKindleDiscoverScreen(store: store)
                         case .more:
-                            LpspKindleMoreScreen(store: store)
+                            LpspKindleMoreScreen()
                         case .home:
                             EmptyView()
                         }

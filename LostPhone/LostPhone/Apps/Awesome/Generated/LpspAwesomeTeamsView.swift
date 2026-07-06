@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTeamsView: View {
     var body: some View {
-        LpspTeamsShowroomRoot()
+        LpspTeamsShowroomRoot(store: LpspTeamsStore())
     }
 }
 
@@ -13,9 +13,9 @@ struct LpspAwesomeTeamsView: View {
 private enum LpspTeamsFonts {
     static let teamsTitleLarge = Font.system(size: 28, weight: .regular)
     static let teamsSection    = Font.system(size: 20, weight: .regular)
-    static let teamsTeamName   = Font.system(size: 16, weight: .regular)
-    static let teamsListTitle  = Font.system(size: 16, weight: .regular)
-    static let teamsAuthor     = Font.system(size: 15, weight: .regular)
+    static let teamsTeamName   = Font.system(size: 16, weight: .bold)
+    static let teamsListTitle  = Font.system(size: 16, weight: .semibold)
+    static let teamsAuthor     = Font.system(size: 15, weight: .semibold)
     static let teamsBody       = Font.system(size: 15, weight: .regular)
     static let teamsButton     = Font.system(size: 16, weight: .regular)
     static let teamsMetadata   = Font.system(size: 13, weight: .regular)
@@ -104,39 +104,58 @@ fileprivate struct LpspTeamsAvatarWithPresence: View {
     }
 }
 
-fileprivate struct LpspTeamsTeam: Identifiable { let id = UUID(); let name: String; let channels: [LpspTeamsChannel] }
-fileprivate struct LpspTeamsChannel: Identifiable { let id = UUID(); let name: String; var unread: Bool }
+fileprivate struct LpspTeamsTeam: Identifiable {
+    let id: String
+    let name: String
+    let initials: String
+    let channels: [LpspTeamsChannel]
+}
+
+fileprivate struct LpspTeamsChannel: Identifiable {
+    let id: String
+    let name: String
+    var unread: Bool
+}
 
 fileprivate struct LpspTeamsTeamTreeRow: View {
     let team: LpspTeamsTeam
-    @State private var expanded = true
-    @Binding var activeChannel: UUID?
+    let isExpanded: Bool
+    let activeChannelID: String?
+    let onToggle: () -> Void
+    let onSelectChannel: (String) -> Void
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         VStack(spacing: 0) {
-            Button { withAnimation(.easeInOut(duration: 0.2)) { expanded.toggle() } } label: {
+            Button(action: onToggle) {
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(LpspTeamsTokens.teamsPurpleLight.opacity(0.3))
                         .frame(width: 32, height: 32)
-                        .overlay(Text(String(team.name.prefix(1))).font(LpspTeamsFonts.teamsSys(14, weight: .bold)))
-                    Text(team.name).font(LpspTeamsFonts.teamsTeamName)
+                        .overlay(
+                            Text(team.initials)
+                                .font(LpspTeamsFonts.teamsSys(13, weight: .bold))
+                                .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
+                        )
+                    Text(team.name)
+                        .font(LpspTeamsFonts.teamsTeamName)
                         .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme))
-                        .rotationEffect(.degrees(expanded ? 90 : 0))
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
                 }
                 .padding(.horizontal, 16)
                 .frame(height: 56)
             }
+            .buttonStyle(.plain)
 
-            if expanded {
-                ForEach(team.channels) { ch in
-                    LpspTeamsChannelRow(channel: ch, isActive: activeChannel == ch.id)
-                        .onTapGesture { activeChannel = ch.id }
+            if isExpanded {
+                ForEach(team.channels) { channel in
+                    LpspTeamsChannelRow(channel: channel, isActive: activeChannelID == channel.id)
+                        .contentShape(Rectangle())
+                        .onTapGesture { onSelectChannel(channel.id) }
                 }
             }
         }
@@ -159,17 +178,33 @@ fileprivate struct LpspTeamsChannelRow: View {
                 .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
             Spacer()
             if channel.unread {
-                Circle().fill(LpspTeamsTokens.teamsPurpleLight).frame(width: 8, height: 8)
+                Circle()
+                    .fill(LpspTeamsTokens.teams(LpspTeamsTokens.teamsPurpleLight, LpspTeamsTokens.teamsPurpleDark, scheme))
+                    .frame(width: 8, height: 8)
             }
         }
         .padding(.leading, 44)
         .padding(.trailing, 16)
         .frame(height: 44)
-        .background(isActive ? LpspTeamsTokens.teamsPurpleLight.opacity(0.12) : .clear)
+        .background(
+            isActive
+                ? LpspTeamsTokens.teams(LpspTeamsTokens.teamsPurpleLight, LpspTeamsTokens.teamsPurpleDark, scheme).opacity(0.12)
+                : .clear
+        )
         .overlay(alignment: .leading) {
-            if isActive { Rectangle().fill(LpspTeamsTokens.teamsPurpleLight).frame(width: 3) }
+            if isActive {
+                Rectangle()
+                    .fill(LpspTeamsTokens.teams(LpspTeamsTokens.teamsPurpleLight, LpspTeamsTokens.teamsPurpleDark, scheme))
+                    .frame(width: 3)
+            }
         }
     }
+}
+
+fileprivate struct LpspTeamsShowroomReaction: Hashable {
+    let emoji: String
+    var count: Int
+    var mine: Bool
 }
 
 fileprivate struct LpspTeamsMessageCard: View {
@@ -178,6 +213,7 @@ fileprivate struct LpspTeamsMessageCard: View {
     let presence: LpspTeamsPresence
     let timestamp: String
     let postText: String
+    let reactions: [LpspTeamsShowroomReaction]
     let replyCount: Int
     @Environment(\.colorScheme) private var scheme
 
@@ -194,9 +230,12 @@ fileprivate struct LpspTeamsMessageCard: View {
                 Text(postText).font(LpspTeamsFonts.teamsBody)
                     .foregroundStyle(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText1, LpspTeamsTokens.teamsDarkText1, scheme))
 
-                HStack(spacing: 6) {
-                    LpspTeamsReactionChip(emoji: "👍", count: 3, mine: true)
-                    LpspTeamsReactionChip(emoji: "❤️", count: 1, mine: false)
+                if !reactions.isEmpty {
+                    HStack(spacing: 6) {
+                        ForEach(reactions, id: \.self) { reaction in
+                            LpspTeamsReactionChip(emoji: reaction.emoji, count: reaction.count, mine: reaction.mine)
+                        }
+                    }
                 }
                 if replyCount > 0 {
                     Text("💬 \(replyCount) replies · Last reply 2h ago")
@@ -291,157 +330,773 @@ fileprivate struct LpspTeamsTeamsPressable: ButtonStyle {
 
 
 
-// MARK: - Écrans showroom
+// MARK: - Données & état (showroom Lost Phone)
 
-private struct LpspTeamsShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspTeamsSpectrHomeTabScreen()
-                .tabItem { Label("Activity", systemImage: "bell.fill") }
-                .tag(0)
-            LpspTeamsMeetingsTabScreen(title: "Chat", tabIndex: 1)
-                .tabItem { Label("Chat", systemImage: "bubble.left.and.bubble.right.fill") }
-                .tag(1)
-            LpspTeamsMeetingsTabScreen(title: "Teams", tabIndex: 2)
-                .tabItem { Label("Teams", systemImage: "person.3.fill") }
-                .tag(2)
-            LpspTeamsMeetingsTabScreen(title: "Calendar", tabIndex: 3)
-                .tabItem { Label("Calendar", systemImage: "calendar") }
-                .tag(3)
-            LpspTeamsMeetingsTabScreen(title: "Calls", tabIndex: 4)
-                .tabItem { Label("Calls", systemImage: "phone.fill") }
-                .tag(4)
-        }
-        .tint(LpspTeamsTokens.teamsPurpleLight)
-        
-    }
+fileprivate struct LpspTeamsShowroomPost: Identifiable {
+    let id: String
+    let author: String
+    let initials: String
+    let presence: LpspTeamsPresence
+    let timestamp: String
+    let text: String
+    var reactions: [LpspTeamsShowroomReaction]
+    let replyCount: Int
 }
 
+fileprivate struct LpspTeamsShowroomChat: Identifiable {
+    let id: String
+    let name: String
+    let preview: String
+    let time: String
+    let presence: LpspTeamsPresence
+    var unread: Bool
+}
 
-private struct LpspTeamsGenericTabScreen: View {
+fileprivate struct LpspTeamsShowroomMeeting: Identifiable {
+    let id: String
     let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTeamsTokens.teamsPurpleLight.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTeamsTokens.teamsPurpleLight))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
+    let time: String
+    let dateLabel: String
+    var isLive: Bool
+}
+
+fileprivate struct LpspTeamsShowroomCall: Identifiable {
+    let id: String
+    let name: String
+    let detail: String
+    let time: String
+    let missed: Bool
+}
+
+fileprivate struct LpspTeamsShowroomActivity: Identifiable {
+    let id: String
+    let title: String
+    let subtitle: String
+    let time: String
+    var isUnread: Bool
+}
+
+private enum LpspTeamsMobileTab: CaseIterable {
+    case activity, chat, teams, calendar, calls
+
+    var label: String {
+        switch self {
+        case .activity: "Activity"
+        case .chat: "Chat"
+        case .teams: "Teams"
+        case .calendar: "Calendar"
+        case .calls: "Calls"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .activity: "bell.fill"
+        case .chat: "bubble.left.and.bubble.right.fill"
+        case .teams: "person.3.fill"
+        case .calendar: "calendar"
+        case .calls: "phone.fill"
         }
     }
 }
 
+@MainActor
+fileprivate final class LpspTeamsStore: ObservableObject {
+    @Published var selectedTab: LpspTeamsMobileTab = .activity
+    @Published var teams: [LpspTeamsTeam]
+    @Published var expandedTeamIDs: Set<String>
+    @Published var activeChannelID: String
+    @Published var postsByChannel: [String: [LpspTeamsShowroomPost]]
+    @Published var composeText = ""
+    @Published var joinedMeeting = false
+    @Published var chats: [LpspTeamsShowroomChat]
+    @Published var meetings: [LpspTeamsShowroomMeeting]
+    @Published var calls: [LpspTeamsShowroomCall]
+    @Published var activities: [LpspTeamsShowroomActivity]
 
+    let liveMeetingTitle = "Weekly Sync · in progress"
+    let userInitials = "MG"
+    let userPresence: LpspTeamsPresence = .available
 
-private enum LpspTeamsDemoChannel {
-    static let general = LpspTeamsChannel(name: "general", unread: false)
+    init() {
+        self.teams = LpspTeamsShowroomData.teams
+        self.expandedTeamIDs = ["design-guild", "engineering"]
+        self.activeChannelID = LpspTeamsShowroomData.defaultChannelID
+        self.postsByChannel = LpspTeamsShowroomData.postsByChannel
+        self.chats = LpspTeamsShowroomData.chats
+        self.meetings = LpspTeamsShowroomData.meetings
+        self.calls = LpspTeamsShowroomData.calls
+        self.activities = LpspTeamsShowroomData.activities
+    }
+
+    var activityBadge: Int {
+        activities.filter(\.isUnread).count
+    }
+
+    var activePosts: [LpspTeamsShowroomPost] {
+        postsByChannel[activeChannelID] ?? []
+    }
+
+    var activeChannelName: String {
+        teams.flatMap(\.channels).first { $0.id == activeChannelID }?.name ?? "general"
+    }
+
+    func toggleTeam(_ teamID: String) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if expandedTeamIDs.contains(teamID) {
+                expandedTeamIDs.remove(teamID)
+            } else {
+                expandedTeamIDs.insert(teamID)
+            }
+        }
+    }
+
+    func selectChannel(_ channelID: String) {
+        activeChannelID = channelID
+        markChannelRead(channelID)
+        if selectedTab != .activity && selectedTab != .teams {
+            selectedTab = .teams
+        }
+    }
+
+    func markChannelRead(_ channelID: String) {
+        guard let teamIndex = teams.firstIndex(where: { $0.channels.contains { $0.id == channelID } }) else { return }
+        var team = teams[teamIndex]
+        if let channelIndex = team.channels.firstIndex(where: { $0.id == channelID }) {
+            team.channels[channelIndex].unread = false
+            teams[teamIndex] = team
+        }
+    }
+
+    func joinMeeting() {
+        joinedMeeting = true
+    }
+
+    func leaveMeeting() {
+        joinedMeeting = false
+    }
+
+    func sendPost() {
+        let trimmed = composeText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        var posts = postsByChannel[activeChannelID, default: []]
+        posts.append(
+            LpspTeamsShowroomPost(
+                id: UUID().uuidString,
+                author: "Mathieu G.",
+                initials: "MG",
+                presence: .available,
+                timestamp: "Now",
+                text: trimmed,
+                reactions: [],
+                replyCount: 0
+            )
+        )
+        postsByChannel[activeChannelID] = posts
+        composeText = ""
+    }
+
+    func toggleReaction(postID: String, emoji: String) {
+        guard var posts = postsByChannel[activeChannelID],
+              let index = posts.firstIndex(where: { $0.id == postID }) else { return }
+        var post = posts[index]
+        if let reactionIndex = post.reactions.firstIndex(where: { $0.emoji == emoji }) {
+            var reaction = post.reactions[reactionIndex]
+            if reaction.mine {
+                reaction.count = max(0, reaction.count - 1)
+                reaction.mine = false
+                if reaction.count == 0 {
+                    post.reactions.remove(at: reactionIndex)
+                } else {
+                    post.reactions[reactionIndex] = reaction
+                }
+            } else {
+                reaction.count += 1
+                reaction.mine = true
+                post.reactions[reactionIndex] = reaction
+            }
+        } else {
+            post.reactions.append(.init(emoji: emoji, count: 1, mine: true))
+        }
+        posts[index] = post
+        postsByChannel[activeChannelID] = posts
+    }
 }
 
-private struct LpspTeamsDemoParticipant { let name: String; let isMuted: Bool; let isSpeaking: Bool }
-private enum LpspTeamsDemoParticipants {
-    static let items: [LpspTeamsDemoParticipant] = [
-        .init(name: "Alex", isMuted: false, isSpeaking: true),
-        .init(name: "Léa", isMuted: true, isSpeaking: false),
+private enum LpspTeamsShowroomData {
+    static let defaultChannelID = "design-guild/general"
+
+    static let teams: [LpspTeamsTeam] = [
+        .init(
+            id: "design-guild",
+            name: "Design Guild",
+            initials: "DG",
+            channels: [
+                .init(id: "design-guild/general", name: "general", unread: false),
+                .init(id: "design-guild/design-crit", name: "design-crit", unread: true),
+                .init(id: "design-guild/handoff", name: "handoff", unread: false),
+            ]
+        ),
+        .init(
+            id: "engineering",
+            name: "Engineering",
+            initials: "EN",
+            channels: [
+                .init(id: "engineering/releases", name: "releases", unread: true),
+                .init(id: "engineering/incidents", name: "incidents", unread: false),
+            ]
+        ),
+        .init(
+            id: "eventscult",
+            name: "EventsCult — Projet Dame",
+            initials: "EC",
+            channels: [
+                .init(id: "eventscult/annonces", name: "annonces", unread: false),
+                .init(id: "eventscult/general", name: "général", unread: true),
+                .init(id: "eventscult/planning-s7", name: "planning-s7", unread: true),
+                .init(id: "eventscult/logistique", name: "logistique", unread: false),
+            ]
+        ),
+    ]
+
+    static let postsByChannel: [String: [LpspTeamsShowroomPost]] = [
+        defaultChannelID: [
+            .init(
+                id: "p1",
+                author: "Priya Anand",
+                initials: "PA",
+                presence: .busy,
+                timestamp: "10:42 AM",
+                text: "Pushed the build — can someone review the redirect fix?",
+                reactions: [
+                    .init(emoji: "👍", count: 3, mine: true),
+                    .init(emoji: "❤️", count: 1, mine: false),
+                ],
+                replyCount: 3
+            ),
+        ],
+        "eventscult/general": [
+            .init(
+                id: "eg1",
+                author: "Nadia K.",
+                initials: "NK",
+                presence: .dnd,
+                timestamp: "12 juin · 09:15",
+                text: "@Mathieu G. plus de photos avec ton tel dans les salles chaudes. On arrête les repérages.",
+                reactions: [.init(emoji: "⚠️", count: 2, mine: false)],
+                replyCount: 1
+            ),
+            .init(
+                id: "eg2",
+                author: "Vincent Morel",
+                initials: "VM",
+                presence: .away,
+                timestamp: "12 juin · 09:22",
+                text: "Badge périmé mais je connais les couloirs Denon — vitrine faisable en 4 min.",
+                reactions: [.init(emoji: "👍", count: 1, mine: false)],
+                replyCount: 0
+            ),
+        ],
+        "eventscult/planning-s7": [
+            .init(
+                id: "ep1",
+                author: "Nadia K.",
+                initials: "NK",
+                presence: .dnd,
+                timestamp: "7 juin · 21:40",
+                text: "Maintenance 18/06 — ronde PM 19h15, effectif réduit. Fenêtre 12 min confirmée.",
+                reactions: [.init(emoji: "🕐", count: 4, mine: true)],
+                replyCount: 2
+            ),
+            .init(
+                id: "ep2",
+                author: "Sam R.",
+                initials: "SR",
+                presence: .available,
+                timestamp: "8 juin · 08:30",
+                text: "Gennevilliers validé côté accès camionnette. Transfert avant 23h max.",
+                reactions: [.init(emoji: "🚐", count: 2, mine: false)],
+                replyCount: 0
+            ),
+        ],
+        "eventscult/logistique": [
+            .init(
+                id: "el1",
+                author: "Sam R.",
+                initials: "SR",
+                presence: .available,
+                timestamp: "2 juin · 14:18",
+                text: "Zone indus rue des Caboeufs. Propre, discret.",
+                reactions: [],
+                replyCount: 0
+            ),
+        ],
+        "engineering/releases": [
+            .init(
+                id: "er1",
+                author: "Alex Martin",
+                initials: "AM",
+                presence: .available,
+                timestamp: "Hier · 16:10",
+                text: "Build 412 en prod — rollback plan prêt si besoin.",
+                reactions: [.init(emoji: "✅", count: 2, mine: false)],
+                replyCount: 0
+            ),
+        ],
+    ]
+
+    static let chats: [LpspTeamsShowroomChat] = [
+        .init(id: "dm-nadia", name: "Nadia K.", preview: "Plus de photos dans les salles", time: "09:15", presence: .dnd, unread: true),
+        .init(id: "dm-vincent", name: "Vincent Morel", preview: "Badge périmé mais couloirs connus", time: "Hier", presence: .away, unread: true),
+        .init(id: "dm-sam", name: "Sam R.", preview: "Gennevilliers OK pour camionnette", time: "2 juin", presence: .available, unread: false),
+        .init(id: "dm-priya", name: "Priya Anand", preview: "Redirect fix merged", time: "10:42", presence: .busy, unread: false),
+    ]
+
+    static let meetings: [LpspTeamsShowroomMeeting] = [
+        .init(id: "m-live", title: "Weekly Sync", time: "En cours", dateLabel: "Aujourd'hui", isLive: true),
+        .init(id: "m1", title: "Brief vitrine S7", time: "18:00", dateLabel: "Mer 18 juin", isLive: false),
+        .init(id: "m2", title: "Point logistique Gennevilliers", time: "21:30", dateLabel: "Jeu 19 juin", isLive: false),
+        .init(id: "m3", title: "Revue accès maintenance", time: "19:15", dateLabel: "Mer 18 juin", isLive: false),
+    ]
+
+    static let calls: [LpspTeamsShowroomCall] = [
+        .init(id: "c1", name: "Nadia K.", detail: "Audio · 4 min", time: "09:02", missed: false),
+        .init(id: "c2", name: "Vincent Morel", detail: "Appel manqué", time: "Hier", missed: true),
+        .init(id: "c3", name: "Sam R.", detail: "Vidéo · 12 min", time: "6 juin", missed: false),
+    ]
+
+    static let activities: [LpspTeamsShowroomActivity] = [
+        .init(id: "a1", title: "Nadia K. vous a mentionné", subtitle: "#général · plus de photos…", time: "09:15", isUnread: true),
+        .init(id: "a2", title: "Weekly Sync en cours", subtitle: "Rejoindre la réunion maintenant", time: "Maintenant", isUnread: true),
+        .init(id: "a3", title: "3 réponses dans #planning-s7", subtitle: "Sam R. · Gennevilliers validé", time: "8 juin", isUnread: true),
+        .init(id: "a4", title: "Priya Anand a réagi 👍", subtitle: "Votre message dans #general", time: "10:45", isUnread: false),
     ]
 }
 
-private struct LpspTeamsMeetingsListTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView { VStack(spacing: 8) { 
-                    ForEach(0..<3, id: \.self) { i in HStack { Text("10:00"); Text("Réunion \(i+1)") }.padding(.horizontal) }
- } }
-            .background(LpspTeamsTokens.teamsLightCanvas.ignoresSafeArea())
-            .navigationTitle("Meetings")
-        }
-    }
-}
+// MARK: - Écrans showroom
 
-private struct LpspTeamsMeetingsChatTabScreen: View {
+private struct LpspTeamsShowroomRoot: View {
+    @ObservedObject var store: LpspTeamsStore
+
     var body: some View {
-        NavigationStack {
-            
-                ScrollView {
-                    LazyVStack(alignment: .leading) {
-                        LpspTeamsChannelRow(channel: LpspTeamsDemoChannel.general, isActive: true)
-                        LpspTeamsMessageCard(author: "Alex", initials: "AM", presence: .available, timestamp: "10:24", postText: "Showroom prêt !", replyCount: 3)
+        ZStack {
+            VStack(spacing: 0) {
+                Group {
+                    switch store.selectedTab {
+                    case .activity:
+                        LpspTeamsActivityScreen(store: store)
+                    case .chat:
+                        LpspTeamsChatHubScreen(store: store)
+                    case .teams:
+                        LpspTeamsChannelHubScreen(store: store)
+                    case .calendar:
+                        LpspTeamsCalendarScreen(store: store)
+                    case .calls:
+                        LpspTeamsCallsScreen(store: store)
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            .navigationTitle("Chat")
+                LpspTeamsMobileTabBar(store: store)
+            }
+
+            if store.joinedMeeting {
+                LpspTeamsMeetingOverlay(store: store)
+                    .zIndex(2)
+            }
+        }
+        .preferredColorScheme(store.selectedTab == .activity || store.selectedTab == .teams ? .dark : nil)
+    }
+}
+
+private struct LpspTeamsMobileTabBar: View {
+    @ObservedObject var store: LpspTeamsStore
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspTeamsMobileTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { store.selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                            if tab == .activity, store.activityBadge > 0 {
+                                Text("\(store.activityBadge)")
+                                    .font(.system(size: 9, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 1)
+                                    .background(Capsule().fill(LpspTeamsTokens.teamsPurpleDark))
+                                    .offset(x: 8, y: -4)
+                            }
+                        }
+                        Text(tab.label)
+                            .font(LpspTeamsFonts.teamsTab)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspTeamsTokens.teams(LpspTeamsTokens.teamsPurpleLight, LpspTeamsTokens.teamsPurpleDark, scheme)
+                            : LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightText2, LpspTeamsTokens.teamsDarkText2, scheme)
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightSurface1, LpspTeamsTokens.teamsDarkSurface1, scheme))
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspTeamsTokens.teams(LpspTeamsTokens.teamsLightDivider, LpspTeamsTokens.teamsDarkDivider, scheme))
+                .frame(height: 0.5)
         }
     }
 }
 
-private struct LpspTeamsMeetingsMailTabScreen: View {
-    var body: some View { NavigationStack { List(["Inbox", "Sent"], id: \.self) { Label($0, systemImage: "envelope") } .navigationTitle("Mail") } }
-}
-
-private struct LpspTeamsMeetingsPhoneTabScreen: View {
-    var body: some View { NavigationStack { List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "phone") } .navigationTitle("Phone") } }
-}
-
-private struct LpspTeamsMeetingsMoreTabScreen: View {
-    var body: some View { NavigationStack { List(["Settings", "Help"], id: \.self) { Label($0, systemImage: "gearshape") } .navigationTitle("More") } }
-}
-
-private struct LpspTeamsMeetingsTabScreen: View {
+private struct LpspTeamsTopBar: View {
+    @ObservedObject var store: LpspTeamsStore
     let title: String
-    let tabIndex: Int
+
     var body: some View {
-        let low = title.lowercased()
-        if low.contains("meeting") || low.contains("video") || tabIndex == 0 { LpspTeamsMeetingsListTabScreen() }
-        else if low.contains("chat") || low.contains("team") { LpspTeamsMeetingsChatTabScreen() }
-        else if low.contains("mail") { LpspTeamsMeetingsMailTabScreen() }
-        else if low.contains("phone") { LpspTeamsMeetingsPhoneTabScreen() }
-        else { LpspTeamsMeetingsMoreTabScreen() }
+        HStack(spacing: 12) {
+            LpspTeamsAvatarWithPresence(initials: store.userInitials, presence: store.userPresence, size: 32)
+            Text(title)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(LpspTeamsTokens.teamsDarkText1)
+            Spacer()
+            Button {} label: {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(LpspTeamsTokens.teamsDarkText1)
+                    .frame(width: 40, height: 40)
+            }
+            Button { store.selectedTab = .teams } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(LpspTeamsTokens.teamsDarkText1)
+                    .frame(width: 40, height: 40)
+            }
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 48)
+        .background(LpspTeamsTokens.teamsDarkCanvas)
     }
 }
 
+private struct LpspTeamsActivityScreen: View {
+    @ObservedObject var store: LpspTeamsStore
 
-private struct LpspTeamsSpectrHomeTabScreen: View {
     var body: some View {
         VStack(spacing: 0) {
-        HStack {
-                Text("YA").font(.system(size: 14))
-                Text("Teams").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 16).frame(height: 48)
-            Text("Weekly Sync · in progress").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Join").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("DG").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Design Guild").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("general").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("design-crit").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("handoff").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("EN").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Engineering").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("releases").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("#").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("incidents").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("PA").font(.system(size: 14))
-                        Text("Priya Anand").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("10:42 AM").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Pushed the build — can someone review the redirect fix?").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("👍 3").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("❤️ 1").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("💬 3 replies · Last reply 2h ago").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            LpspTeamsTopBar(store: store, title: "Teams")
+
+            ScrollView {
+                VStack(spacing: 0) {
+                    LpspTeamsMeetingJoinBar(title: store.liveMeetingTitle, onJoin: { store.joinMeeting() })
+                        .padding(.top, 8)
+
+                    LpspTeamsTeamTreeSection(store: store)
+
+                    LazyVStack(spacing: 8) {
+                        ForEach(store.activePosts) { post in
+                            LpspTeamsPostCard(post: post, store: store)
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.top, 8)
+                }
+            }
         }
-        .background(Color(red: 0.122, green: 0.122, blue: 0.122).ignoresSafeArea())
+        .background(LpspTeamsTokens.teamsDarkCanvas.ignoresSafeArea())
     }
 }
 
+private struct LpspTeamsChannelHubScreen: View {
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspTeamsChannelHeader(store: store)
+
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(store.activePosts) { post in
+                        LpspTeamsPostCard(post: post, store: store)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+            }
+
+            LpspTeamsComposeBar(store: store)
+        }
+        .background(LpspTeamsTokens.teamsDarkCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspTeamsChannelHeader: View {
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("# \(store.activeChannelName)")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(LpspTeamsTokens.teamsDarkText1)
+                Spacer()
+                Button {} label: {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(LpspTeamsTokens.teamsDarkText2)
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 44)
+            .background(LpspTeamsTokens.teamsDarkSurface1)
+
+            LpspTeamsMeetingJoinBar(title: store.liveMeetingTitle, onJoin: { store.joinMeeting() })
+                .padding(.vertical, 8)
+
+            LpspTeamsTeamTreeSection(store: store)
+        }
+    }
+}
+
+private struct LpspTeamsTeamTreeSection: View {
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(store.teams) { team in
+                LpspTeamsTeamTreeRow(
+                    team: team,
+                    isExpanded: store.expandedTeamIDs.contains(team.id),
+                    activeChannelID: store.activeChannelID,
+                    onToggle: { store.toggleTeam(team.id) },
+                    onSelectChannel: { store.selectChannel($0) }
+                )
+            }
+        }
+    }
+}
+
+private struct LpspTeamsPostCard: View {
+    let post: LpspTeamsShowroomPost
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        LpspTeamsMessageCard(
+            author: post.author,
+            initials: post.initials,
+            presence: post.presence,
+            timestamp: post.timestamp,
+            postText: post.text,
+            reactions: post.reactions,
+            replyCount: post.replyCount
+        )
+        .onTapGesture {
+            store.toggleReaction(postID: post.id, emoji: "👍")
+        }
+    }
+}
+
+private struct LpspTeamsComposeBar: View {
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        HStack(spacing: 8) {
+            TextField("Message in #\(store.activeChannelName)", text: $store.composeText, axis: .vertical)
+                .font(LpspTeamsFonts.teamsBody)
+                .foregroundStyle(LpspTeamsTokens.teamsDarkText1)
+                .lineLimit(1...4)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(LpspTeamsTokens.teamsDarkSurface2)
+                )
+
+            Button { store.sendPost() } label: {
+                Image(systemName: "paperplane.fill")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(LpspTeamsTokens.teamsPurpleDark)
+                    .frame(width: 40, height: 40)
+            }
+            .disabled(store.composeText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(LpspTeamsTokens.teamsDarkSurface1)
+    }
+}
+
+private struct LpspTeamsChatHubScreen: View {
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        NavigationStack {
+            List(store.chats) { chat in
+                Button {
+                    if let channel = store.teams.flatMap(\.channels).first(where: { $0.name == "général" && $0.id.hasPrefix("eventscult") }) {
+                        store.selectChannel(channel.id)
+                    }
+                } label: {
+                    HStack(spacing: 12) {
+                        LpspTeamsAvatarWithPresence(initials: String(chat.name.prefix(2).uppercased()), presence: chat.presence)
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(chat.name)
+                                    .font(LpspTeamsFonts.teamsAuthor)
+                                    .foregroundStyle(LpspTeamsTokens.teamsLightText1)
+                                Spacer()
+                                Text(chat.time)
+                                    .font(LpspTeamsFonts.teamsMetadata)
+                                    .foregroundStyle(LpspTeamsTokens.teamsLightText2)
+                            }
+                            Text(chat.preview)
+                                .font(LpspTeamsFonts.teamsBody)
+                                .foregroundStyle(LpspTeamsTokens.teamsLightText2)
+                                .lineLimit(1)
+                        }
+                        if chat.unread {
+                            Circle()
+                                .fill(LpspTeamsTokens.teamsPurpleLight)
+                                .frame(width: 8, height: 8)
+                        }
+                    }
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Chat")
+            .background(LpspTeamsTokens.teamsLightCanvas)
+        }
+    }
+}
+
+private struct LpspTeamsCalendarScreen: View {
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        NavigationStack {
+            List(store.meetings) { meeting in
+                HStack(spacing: 12) {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(meeting.isLive ? LpspTeamsTokens.teamsPurpleLight : LpspTeamsTokens.teamsLightSurface2)
+                        .frame(width: 4)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(meeting.title)
+                            .font(LpspTeamsFonts.teamsAuthor)
+                            .foregroundStyle(LpspTeamsTokens.teamsLightText1)
+                        Text("\(meeting.dateLabel) · \(meeting.time)")
+                            .font(LpspTeamsFonts.teamsMetadata)
+                            .foregroundStyle(LpspTeamsTokens.teamsLightText2)
+                    }
+                    Spacer()
+                    if meeting.isLive {
+                        Button("Join") { store.joinMeeting() }
+                            .font(LpspTeamsFonts.teamsSys(14, weight: .semibold))
+                            .foregroundStyle(LpspTeamsTokens.teamsPurpleLight)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+            .listStyle(.plain)
+            .navigationTitle("Calendar")
+            .background(LpspTeamsTokens.teamsLightCanvas)
+        }
+    }
+}
+
+private struct LpspTeamsCallsScreen: View {
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        NavigationStack {
+            List(store.calls) { call in
+                HStack(spacing: 12) {
+                    LpspTeamsAvatarWithPresence(initials: String(call.name.prefix(2).uppercased()), presence: call.missed ? .offline : .available)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(call.name)
+                            .font(LpspTeamsFonts.teamsAuthor)
+                            .foregroundStyle(call.missed ? LpspTeamsTokens.teamsBusy : LpspTeamsTokens.teamsLightText1)
+                        Text(call.detail)
+                            .font(LpspTeamsFonts.teamsMetadata)
+                            .foregroundStyle(LpspTeamsTokens.teamsLightText2)
+                    }
+                    Spacer()
+                    Text(call.time)
+                        .font(LpspTeamsFonts.teamsMetadata)
+                        .foregroundStyle(LpspTeamsTokens.teamsLightText2)
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Calls")
+            .background(LpspTeamsTokens.teamsLightCanvas)
+        }
+    }
+}
+
+private struct LpspTeamsMeetingOverlay: View {
+    @ObservedObject var store: LpspTeamsStore
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.92).ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                Text(store.liveMeetingTitle)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.white)
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    meetingTile("Nadia K.", "NK", .dnd)
+                    meetingTile("Vincent M.", "VM", .away)
+                    meetingTile("Sam R.", "SR", .available)
+                    meetingTile("Vous", store.userInitials, .available)
+                }
+                .padding(.horizontal, 24)
+
+                HStack(spacing: 32) {
+                    Button {} label: {
+                        Image(systemName: "mic.slash.fill")
+                            .font(.system(size: 22))
+                            .foregroundStyle(.white)
+                            .frame(width: 52, height: 52)
+                            .background(Circle().fill(.white.opacity(0.15)))
+                    }
+                    Button { store.leaveMeeting() } label: {
+                        Image(systemName: "phone.down.fill")
+                            .font(.system(size: 22))
+                            .foregroundStyle(.white)
+                            .frame(width: 56, height: 56)
+                            .background(Circle().fill(LpspTeamsTokens.teamsBusy))
+                    }
+                    Button {} label: {
+                        Image(systemName: "video.fill")
+                            .font(.system(size: 22))
+                            .foregroundStyle(.white)
+                            .frame(width: 52, height: 52)
+                            .background(Circle().fill(.white.opacity(0.15)))
+                    }
+                }
+                .padding(.top, 16)
+            }
+        }
+    }
+
+    private func meetingTile(_ name: String, _ initials: String, _ presence: LpspTeamsPresence) -> some View {
+        VStack(spacing: 8) {
+            LpspTeamsAvatarWithPresence(initials: initials, presence: presence, size: 64)
+            Text(name)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.white)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(RoundedRectangle(cornerRadius: 12).fill(LpspTeamsTokens.teamsDarkSurface1))
+    }
+}
 

@@ -370,4 +370,28 @@ enum LpspAdapters {
         }
         return nil
     }
+
+    /// Heure affichée dans les bulles WhatsApp (format Spectr : `HH:mm`).
+    static func formatWhatsAppBubbleTime(_ message: LpspMessage) -> String {
+        formatWhatsAppBubbleTime(raw: message.dateRaw, date: message.date)
+    }
+
+    static func formatWhatsAppBubbleTime(raw: String?, date: Date?) -> String {
+        if let date {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm"
+            return formatter.string(from: date)
+        }
+        guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {
+            return ""
+        }
+        if raw.range(of: #"^\d{1,2}:\d{2}$"#, options: .regularExpression) != nil {
+            return raw
+        }
+        let parts = raw.split(separator: " ")
+        if let last = parts.last, last.contains(":") {
+            return String(last)
+        }
+        return raw
+    }
 }

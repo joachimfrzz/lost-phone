@@ -117,7 +117,7 @@ fileprivate final class LpspWhatsAppStore: ObservableObject {
             return LpspWhatsAppSpectrMayaThread.seed
         }
         return conversation.messages.map { message in
-            let time = LpspAdapters.formatMessageTime(message) ?? ""
+            let time = LpspAdapters.formatWhatsAppBubbleTime(message)
             if message.isUser {
                 return LpspWhatsAppSpectrMessage(
                     kind: .outgoing(text: message.text, time: time, readState: .read)
@@ -262,56 +262,12 @@ fileprivate struct LpspWhatsAppWAOutgoingBubble: View {
     enum ReadState { case sent, delivered, read }
 
     var body: some View {
-        HStack {
-            Spacer(minLength: UIScreen.main.bounds.width * 0.2)
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(text)
-                    .font(LpspWhatsAppFonts.waBubbleBody)
-                    .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
-                HStack(spacing: 3) {
-                    Text(timestamp)
-                        .font(LpspWhatsAppFonts.waTimestampBubble)
-                        .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
-                    tickView
-                }
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
-            .background(
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 12,
-                    bottomLeadingRadius: 12,
-                    bottomTrailingRadius: 0,
-                    topTrailingRadius: 12
-                )
-                .fill(LpspWhatsAppTokens.waOutgoingLight)
-            )
-        }
-        .padding(.trailing, 8)
-    }
-
-    @ViewBuilder
-    private var tickView: some View {
-        switch readState {
-        case .sent:
-            Image(systemName: "checkmark")
-                .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
-        case .delivered:
-            HStack(spacing: -4) {
-                Image(systemName: "checkmark")
-                Image(systemName: "checkmark")
-            }
-            .font(.system(size: 12, weight: .bold))
-            .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
-        case .read:
-            HStack(spacing: -4) {
-                Image(systemName: "checkmark")
-                Image(systemName: "checkmark")
-            }
-            .font(.system(size: 12, weight: .bold))
-            .foregroundStyle(LpspWhatsAppTokens.waReadBlue)
-        }
+        LpspWhatsAppSpectrTextBubble(
+            text: text,
+            time: timestamp,
+            outgoing: true,
+            readState: readState
+        )
     }
 }
 
@@ -504,26 +460,10 @@ fileprivate struct LpspWhatsAppWAEncryptionBanner: View {
 
 fileprivate struct LpspWhatsAppWAIncomingBubble: View {
     let text: String
+    var timestamp: String = ""
+
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(text).font(LpspWhatsAppFonts.waBubbleBody).foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
-            .background(
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 12,
-                    bottomLeadingRadius: 0,
-                    bottomTrailingRadius: 12,
-                    topTrailingRadius: 12
-                )
-                .fill(Color.white)
-                .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
-            )
-            Spacer(minLength: UIScreen.main.bounds.width * 0.2)
-        }
-        .padding(.leading, 8)
+        LpspWhatsAppSpectrTextBubble(text: text, time: timestamp, outgoing: false)
     }
 }
 
@@ -1197,7 +1137,7 @@ private struct LpspWhatsAppSpectrChatBody: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 6) {
+                VStack(spacing: 3) {
                     LpspWhatsAppSpectrE2EBanner()
                     ForEach(messages) { message in
                         switch message.kind {
@@ -1256,41 +1196,67 @@ private struct LpspWhatsAppSpectrTextBubble: View {
     let outgoing: Bool
     var readState: LpspWhatsAppWAOutgoingBubble.ReadState?
 
-    var body: some View {
-        HStack(alignment: .bottom) {
-            if outgoing { Spacer(minLength: 56) }
-            VStack(alignment: outgoing ? .trailing : .leading, spacing: 4) {
-                Text(text)
-                    .font(.system(size: 13))
-                    .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
-                    .lineSpacing(2)
-                    .frame(maxWidth: .infinity, alignment: outgoing ? .trailing : .leading)
-                HStack(spacing: 3) {
-                    if !outgoing { Spacer(minLength: 0) }
-                    Text(time.isEmpty ? " " : time)
-                        .font(.system(size: 10.5, weight: .regular))
-                        .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
-                    if outgoing, let readState {
-                        LpspWhatsAppSpectrReadTicks(state: readState)
-                    }
-                    if !outgoing { Spacer(minLength: 0) }
-                }
-            }
-            .padding(.top, 6)
-            .padding(.bottom, 8)
-            .padding(.horizontal, 10)
-            .background(
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 8,
-                    bottomLeadingRadius: outgoing ? 8 : 2,
-                    bottomTrailingRadius: outgoing ? 2 : 8,
-                    topTrailingRadius: 8
-                )
-                .fill(outgoing ? LpspWhatsAppTokens.waOutgoingLight : LpspWhatsAppTokens.waIncomingLight)
-                .shadow(color: .black.opacity(0.08), radius: 0.5, y: 1)
+    private var bubbleShape: UnevenRoundedRectangle {
+        if outgoing {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 8,
+                bottomLeadingRadius: 8,
+                bottomTrailingRadius: 2,
+                topTrailingRadius: 8
             )
-            .frame(maxWidth: UIScreen.main.bounds.width * 0.78, alignment: outgoing ? .trailing : .leading)
-            if !outgoing { Spacer(minLength: 56) }
+        } else {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 8,
+                bottomLeadingRadius: 2,
+                bottomTrailingRadius: 8,
+                topTrailingRadius: 8
+            )
+        }
+    }
+
+    private var metaTrailingPadding: CGFloat {
+        guard !time.isEmpty || (outgoing && readState != nil) else { return 10 }
+        let timeWidth = CGFloat(max(time.count, 4)) * 5.5
+        let ticks: CGFloat = (outgoing && readState != nil) ? 16 : 0
+        return timeWidth + ticks + 14
+    }
+
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            if outgoing { Spacer(minLength: UIScreen.main.bounds.width * 0.22) }
+
+            Text(verbatim: text)
+                .font(.system(size: 13))
+                .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
+                .lineSpacing(2)
+                .multilineTextAlignment(outgoing ? .trailing : .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 6)
+                .padding(.leading, 10)
+                .padding(.trailing, metaTrailingPadding)
+                .padding(.bottom, 18)
+                .background(
+                    bubbleShape
+                        .fill(outgoing ? LpspWhatsAppTokens.waOutgoingLight : LpspWhatsAppTokens.waIncomingLight)
+                        .shadow(color: .black.opacity(0.08), radius: 0.5, y: 1)
+                )
+                .overlay(alignment: .bottomTrailing) {
+                    HStack(spacing: 3) {
+                        if !time.isEmpty {
+                            Text(time)
+                                .font(.system(size: 10.5, weight: .regular))
+                                .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                        }
+                        if outgoing, let readState {
+                            LpspWhatsAppSpectrReadTicks(state: readState)
+                        }
+                    }
+                    .padding(.trailing, 10)
+                    .padding(.bottom, 4)
+                }
+                .frame(maxWidth: UIScreen.main.bounds.width * 0.78, alignment: outgoing ? .trailing : .leading)
+
+            if !outgoing { Spacer(minLength: UIScreen.main.bounds.width * 0.22) }
         }
     }
 }
@@ -1319,47 +1285,37 @@ private struct LpspWhatsAppSpectrVoiceBubble: View {
     private let unplayedHeights: [CGFloat] = [0.40, 0.60, 0.30, 0.75, 0.45, 0.65, 0.35, 0.55, 0.70, 0.40, 0.60, 0.30, 0.50, 0.65, 0.45]
 
     var body: some View {
-        HStack {
-            Spacer(minLength: 56)
-            VStack(alignment: .trailing, spacing: 0) {
-                HStack(spacing: 8) {
-                    Button { isPlaying.toggle() } label: {
-                        Circle()
+        HStack(alignment: .bottom, spacing: 0) {
+            Spacer(minLength: UIScreen.main.bounds.width * 0.22)
+            HStack(spacing: 8) {
+                Button { isPlaying.toggle() } label: {
+                    Circle()
+                        .fill(LpspWhatsAppTokens.waGreen)
+                        .frame(width: 28, height: 28)
+                        .overlay(
+                            Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(.white)
+                                .offset(x: isPlaying ? 0 : 1)
+                        )
+                }
+                .buttonStyle(LpspWhatsAppWAPressableStyle(pressedScale: 0.92))
+                HStack(spacing: 1.5) {
+                    ForEach(Array(playedHeights.enumerated()), id: \.offset) { _, h in
+                        Capsule()
                             .fill(LpspWhatsAppTokens.waGreen)
-                            .frame(width: 28, height: 28)
-                            .overlay(
-                                Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                                    .font(.system(size: 11, weight: .bold))
-                                    .foregroundStyle(.white)
-                                    .offset(x: isPlaying ? 0 : 1)
-                            )
+                            .frame(width: 2, height: max(4, h * 22))
                     }
-                    .buttonStyle(LpspWhatsAppWAPressableStyle(pressedScale: 0.92))
-                    HStack(spacing: 1.5) {
-                        ForEach(Array(playedHeights.enumerated()), id: \.offset) { _, h in
-                            Capsule()
-                                .fill(LpspWhatsAppTokens.waGreen)
-                                .frame(width: 2, height: max(4, h * 22))
-                        }
-                        ForEach(Array(unplayedHeights.enumerated()), id: \.offset) { _, h in
-                            Capsule()
-                                .fill(LpspWhatsAppTokens.waTextTertiary.opacity(isPlaying ? 0.75 : 0.55))
-                                .frame(width: 2, height: max(4, h * 22))
-                        }
+                    ForEach(Array(unplayedHeights.enumerated()), id: \.offset) { _, h in
+                        Capsule()
+                            .fill(LpspWhatsAppTokens.waTextTertiary.opacity(isPlaying ? 0.75 : 0.55))
+                            .frame(width: 2, height: max(4, h * 22))
                     }
-                    .frame(height: 22)
-                    Text(duration)
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
                 }
-                HStack(spacing: 3) {
-                    Spacer(minLength: 0)
-                    Text(time)
-                        .font(.system(size: 10.5, weight: .regular))
-                        .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
-                    LpspWhatsAppSpectrReadTicks(state: readState)
-                }
-                .padding(.top, 4)
+                .frame(height: 22)
+                Text(duration)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
             }
             .padding(.top, 8)
             .padding(.bottom, 18)
@@ -1374,6 +1330,16 @@ private struct LpspWhatsAppSpectrVoiceBubble: View {
                 .fill(LpspWhatsAppTokens.waOutgoingLight)
                 .shadow(color: .black.opacity(0.08), radius: 0.5, y: 1)
             )
+            .overlay(alignment: .bottomTrailing) {
+                HStack(spacing: 3) {
+                    Text(time)
+                        .font(.system(size: 10.5, weight: .regular))
+                        .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                    LpspWhatsAppSpectrReadTicks(state: readState)
+                }
+                .padding(.trailing, 10)
+                .padding(.bottom, 4)
+            }
             .frame(maxWidth: UIScreen.main.bounds.width * 0.78, alignment: .trailing)
         }
     }

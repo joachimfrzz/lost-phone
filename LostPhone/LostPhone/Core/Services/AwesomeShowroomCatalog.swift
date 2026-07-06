@@ -62,5 +62,6 @@ enum AwesomeShowroomCatalog {
         "Banque",
         "Plans",
         "Fichiers",
+        "Rappels",
     ]
 }

@@ -70,6 +70,7 @@ enum AwesomeSpectrPixelCapture {
         case "Strava": return "strava"
         case "Google Calendar": return "google-calendar"
         case "Dropbox", "Fichiers": return "dropbox"
+        case "Rappels": return "apple-reminders"
         case "Zoom": return "zoom"
         case "Kindle": return "kindle"
         default:

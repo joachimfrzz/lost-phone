@@ -12,6 +12,6 @@ struct LpspRappelsView: View {
     let lists: [LpspReminderList]
 
     var body: some View {
-        RappelsSwiftyAppView()
+        LpspAwesomeRappelsView(lists: lists)
     }
 }

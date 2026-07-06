@@ -97,7 +97,7 @@ struct LpspAppRouter: View {
         case "Contacts":
             ContactsView()
         case "Rappels":
-            LpspRappelsView(lists: [])
+            LpspAwesomeRappelsView()
         case "Dictaphone":
             LpspDictaphoneView()
         case "Wallet":
@@ -132,7 +132,7 @@ struct LpspAppRouter: View {
         case "Fichiers":
             LpspAwesomeFichiersView(files: LpspAdapters.fichiers(from: payload))
         case "Rappels":
-            LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
+            LpspAwesomeRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Instagram":
             LpspAwesomeInstagramView(conversations: LpspAdapters.instagramDM(from: payload))
         case "Spotify":
@@ -188,7 +188,7 @@ struct LpspAppRouter: View {
         case "Contacts":
             ContactsView()
         case "Rappels":
-            LpspRappelsView(lists: [])
+            LpspAwesomeRappelsView()
         case "Dictaphone":
             LpspDictaphoneView()
         case "Wallet":
@@ -241,7 +241,7 @@ struct LpspAppRouter: View {
         case "Contacts":
             ContactsView(contacts: contacts)
         case "Rappels":
-            LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
+            LpspAwesomeRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Dictaphone":
             LpspDictaphoneView()
         case "Wallet":

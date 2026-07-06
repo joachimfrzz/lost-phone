@@ -66,6 +66,7 @@ enum AwesomeShowroomRouter {
         case "Banque": LpspAwesomeBanqueView()
         case "Plans": LpspAwesomePlansView()
         case "Fichiers": LpspAwesomeFichiersView()
+        case "Rappels": LpspAwesomeRappelsView()
         default:
             AwesomeShowroomFallbackView(appName: appName)
         }

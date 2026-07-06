@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTripAdvisorView: View {
     var body: some View {
-        LpspTripAdvisorShowroomRoot()
+        LpspTripAdvisorShowroomRoot(store: LpspTripAdvisorStore())
     }
 }
 
@@ -233,223 +233,659 @@ fileprivate struct LpspTripAdvisorPlaceHero: View {
 
 
 
+// MARK: - Showroom data & store
+
+private enum LpspTripAdvisorShowroomTab: String, CaseIterable, Identifiable {
+    case explore, search, trips, review, more
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .explore: "Explore"
+        case .search: "Search"
+        case .trips: "Trips"
+        case .review: "Review"
+        case .more: "More"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .explore: "safari.fill"
+        case .search: "magnifyingglass"
+        case .trips: "suitcase.fill"
+        case .review: "square.and.pencil"
+        case .more: "ellipsis"
+        }
+    }
+}
+
+private struct LpspTripAdvisorPlace: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let category: String
+    let filterCategory: String
+    let rating: Double
+    let reviews: Int
+    let meta: String
+    let travelersChoice: Bool
+    let photoCount: Int
+    let photoColors: [Color]
+    var isSaved: Bool
+}
+
+private enum LpspTripAdvisorShowroomData {
+    static let location = "New York City ▾"
+    static let searchPlaceholder = "Hotels, things to do, restaurants…"
+
+    static let categories: [(icon: String, label: String)] = [
+        ("house.fill", "Hotels"),
+        ("figure.walk", "Things to do"),
+        ("fork.knife", "Restaurants"),
+        ("airplane", "Flights"),
+    ]
+
+    static let places: [LpspTripAdvisorPlace] = [
+        LpspTripAdvisorPlace(
+            id: "harborview",
+            name: "The Harborview Grand Hotel",
+            category: "Hotel",
+            filterCategory: "Hotels",
+            rating: 4.5,
+            reviews: 1284,
+            meta: "Hotel · $$ - $$$ · 0.4 mi · #2 of 240 hotels",
+            travelersChoice: true,
+            photoCount: 5,
+            photoColors: [
+                Color(red: 0.22, green: 0.42, blue: 0.72),
+                Color(red: 0.12, green: 0.28, blue: 0.52),
+            ],
+            isSaved: true
+        ),
+        LpspTripAdvisorPlace(
+            id: "olive-thyme",
+            name: "Olive & Thyme Bistro",
+            category: "Mediterranean",
+            filterCategory: "Restaurants",
+            rating: 4.0,
+            reviews: 642,
+            meta: "Mediterranean · $$ - $$$ · 0.7 mi",
+            travelersChoice: false,
+            photoCount: 3,
+            photoColors: [
+                Color(red: 0.82, green: 0.58, blue: 0.32),
+                Color(red: 0.52, green: 0.32, blue: 0.18),
+            ],
+            isSaved: false
+        ),
+    ]
+
+    static let moreItems = [
+        "Account settings",
+        "Help Center",
+        "About Tripadvisor",
+    ]
+}
+
+@MainActor
+fileprivate final class LpspTripAdvisorStore: ObservableObject {
+    @Published var selectedTab: LpspTripAdvisorShowroomTab = .explore
+    @Published var selectedCategoryIndex: Int?
+    @Published var places: [LpspTripAdvisorPlace] = LpspTripAdvisorShowroomData.places
+    @Published var searchQuery = ""
+    @Published var selectedPlaceID: String?
+    @Published var showPlaceSheet = false
+    @Published var tripPlaceIDs: [String] = []
+    @Published var reviewRating = 4
+    @Published var lastActionMessage = ""
+
+    var savedPlaces: [LpspTripAdvisorPlace] {
+        places.filter(\.isSaved)
+    }
+
+    func openSearch() {
+        selectedTab = .search
+        lastActionMessage = "Search opened"
+    }
+
+    func selectCategory(_ index: Int) {
+        selectedCategoryIndex = selectedCategoryIndex == index ? nil : index
+        lastActionMessage = "Filtered by \(LpspTripAdvisorShowroomData.categories[index].label)"
+    }
+
+    func performSearch() {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        if query.isEmpty {
+            lastActionMessage = "Enter a search term"
+        } else {
+            lastActionMessage = "Results for \"\(query)\" in New York City"
+        }
+    }
+
+    func toggleSave(_ placeID: String) {
+        guard let index = places.firstIndex(where: { $0.id == placeID }) else { return }
+        var updated = places[index]
+        updated.isSaved.toggle()
+        places[index] = updated
+        lastActionMessage = updated.isSaved ? "Saved \(updated.name)" : "Removed save"
+    }
+
+    func selectPlace(_ place: LpspTripAdvisorPlace) {
+        selectedPlaceID = place.id
+        showPlaceSheet = true
+    }
+
+    func savePlaceToTrip() {
+        guard let id = selectedPlaceID,
+              let place = places.first(where: { $0.id == id }) else { return }
+        if !tripPlaceIDs.contains(id) {
+            tripPlaceIDs.append(id)
+        }
+        showPlaceSheet = false
+        lastActionMessage = "Added \(place.name) to trip"
+        selectedTab = .trips
+    }
+
+    func submitReview() {
+        lastActionMessage = "Review submitted · \(reviewRating) bubbles"
+    }
+
+    func filteredPlaces() -> [LpspTripAdvisorPlace] {
+        guard let index = selectedCategoryIndex else { return places }
+        let label = LpspTripAdvisorShowroomData.categories[index].label
+        if label == "Flights" || label == "Things to do" { return [] }
+        return places.filter { $0.filterCategory == label }
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspTripAdvisorShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspTripAdvisorStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspTripAdvisorSpectrHomeTabScreen()
-                .tabItem { Label("Explore", systemImage: "safari.fill") }
-                .tag(0)
-            LpspTripAdvisorTravelTabScreen(title: "Search", tabIndex: 1)
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspTripAdvisorTravelTabScreen(title: "Trips", tabIndex: 2)
-                .tabItem { Label("Trips", systemImage: "suitcase.fill") }
-                .tag(2)
-            LpspTripAdvisorTravelTabScreen(title: "Review", tabIndex: 3)
-                .tabItem { Label("Review", systemImage: "square.and.pencil") }
-                .tag(3)
-            LpspTripAdvisorTravelTabScreen(title: "More", tabIndex: 4)
-                .tabItem { Label("More", systemImage: "ellipsis") }
-                .tag(4)
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .explore:
+                    LpspTripAdvisorSpectrHomeTabScreen(store: store)
+                case .search:
+                    LpspTripAdvisorSearchTabScreen(store: store)
+                case .trips:
+                    LpspTripAdvisorTripsTabScreen(store: store)
+                case .review:
+                    LpspTripAdvisorReviewTabScreen(store: store)
+                case .more:
+                    LpspTripAdvisorMoreTabScreen()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspTripAdvisorLabeledTabBar(store: store)
         }
-        .tint(LpspTripAdvisorTokens.taErrorRed)
-        
+        .background(LpspTripAdvisorTokens.taCanvas.ignoresSafeArea())
+        .sheet(isPresented: $store.showPlaceSheet) {
+            if let id = store.selectedPlaceID,
+               let place = store.places.first(where: { $0.id == id }) {
+                LpspTripAdvisorPlaceSheet(store: store, place: place)
+            }
+        }
     }
 }
 
+private struct LpspTripAdvisorLabeledTabBar: View {
+    @ObservedObject var store: LpspTripAdvisorStore
 
-private struct LpspTripAdvisorGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTripAdvisorTokens.taErrorRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTripAdvisorTokens.taErrorRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        HStack {
+            ForEach(LpspTripAdvisorShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspTripAdvisorFonts.taTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspTripAdvisorTokens.taGreen
+                            : LpspTripAdvisorTokens.taTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspTripAdvisorTokens.taCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspTripAdvisorTokens.taDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspTripAdvisorShowroomTopNav: View {
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(LpspTripAdvisorTokens.taOwlBlack)
+                    .frame(width: 32, height: 32)
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(LpspTripAdvisorTokens.taGreen)
+                        .frame(width: 8, height: 8)
+                    Circle()
+                        .fill(LpspTripAdvisorTokens.taGreen)
+                        .frame(width: 8, height: 8)
+                }
+            }
+
+            Text(LpspTripAdvisorShowroomData.location)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+
+            Spacer()
+
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [.orange, .pink],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 32, height: 32)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 44)
+    }
+}
+
+private struct LpspTripAdvisorShowroomSearchPill: View {
+    @ObservedObject var store: LpspTripAdvisorStore
+
+    var body: some View {
+        Button {
+            store.openSearch()
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                Text(LpspTripAdvisorShowroomData.searchPlaceholder)
+                    .font(.system(size: 15))
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                    .lineLimit(1)
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                Capsule()
+                    .fill(LpspTripAdvisorTokens.taSurface)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+    }
+}
+
+private struct LpspTripAdvisorShowroomCategoryGrid: View {
+    @ObservedObject var store: LpspTripAdvisorStore
+
+    private let columns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12),
+    ]
+
+    var body: some View {
+        LazyVGrid(columns: columns, spacing: 12) {
+            ForEach(Array(LpspTripAdvisorShowroomData.categories.enumerated()), id: \.offset) { index, cat in
+                let selected = store.selectedCategoryIndex == index
+                Button {
+                    store.selectCategory(index)
+                } label: {
+                    VStack(spacing: 8) {
+                        Image(systemName: cat.icon)
+                            .font(.system(size: 22))
+                            .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                        Text(cat.label)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(selected ? LpspTripAdvisorTokens.taGreen.opacity(0.2) : LpspTripAdvisorTokens.taSurface)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(
+                                selected ? LpspTripAdvisorTokens.taGreen : Color.clear,
+                                lineWidth: 2
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
+private struct LpspTripAdvisorShowroomPlaceCard: View {
+    let place: LpspTripAdvisorPlace
+    let onTap: () -> Void
+    let onSave: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 8) {
+                ZStack(alignment: .topLeading) {
+                    LinearGradient(
+                        colors: place.photoColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .aspectRatio(3/2, contentMode: .fit)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(alignment: .bottom) {
+                        HStack(spacing: 5) {
+                            ForEach(0..<place.photoCount, id: \.self) { idx in
+                                Circle()
+                                    .fill(idx == 0 ? LpspTripAdvisorTokens.taGreen : LpspTripAdvisorTokens.taEmptyBubble)
+                                    .frame(width: 6, height: 6)
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    }
+
+                    if place.travelersChoice {
+                        Text("Travelers' Choice")
+                            .font(LpspTripAdvisorFonts.taBadge.weight(.bold))
+                            .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 10)
+                            .background(
+                                Capsule()
+                                    .fill(LpspTripAdvisorTokens.taGreen)
+                            )
+                            .padding(12)
+                    }
+
+                    Button(action: onSave) {
+                        Image(systemName: place.isSaved ? "heart.fill" : "heart")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(place.isSaved ? LpspTripAdvisorTokens.taGreen : .white)
+                            .padding(8)
+                            .background(Circle().fill(.black.opacity(0.30)))
+                    }
+                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding(12)
+                }
+
+                LpspTripAdvisorBubbleRating(value: place.rating, size: 16, reviewCount: place.reviews)
+
+                Text(place.name)
+                    .font(LpspTripAdvisorFonts.taPlaceName.weight(.bold))
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+
+                Text(place.meta)
+                    .font(LpspTripAdvisorFonts.taMeta)
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspTripAdvisorSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspTripAdvisorStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                LpspTripAdvisorShowroomTopNav()
+
+                LpspTripAdvisorShowroomSearchPill(store: store)
+
+                LpspTripAdvisorShowroomCategoryGrid(store: store)
+
+                if store.filteredPlaces().isEmpty {
+                    Text("No results in this category yet.")
+                        .font(LpspTripAdvisorFonts.taBody)
+                        .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                        .padding(.horizontal, 16)
+                } else {
+                    ForEach(store.filteredPlaces()) { place in
+                        LpspTripAdvisorShowroomPlaceCard(
+                            place: place,
+                            onTap: { store.selectPlace(place) },
+                            onSave: { store.toggleSave(place.id) }
+                        )
+                        .padding(.horizontal, 16)
                     }
                 }
             }
-            .navigationTitle(title)
+            .padding(.bottom, 16)
         }
     }
 }
 
+private struct LpspTripAdvisorSearchTabScreen: View {
+    @ObservedObject var store: LpspTripAdvisorStore
 
-private struct LpspTripAdvisorTravelExploreTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Search")
+                    .font(LpspTripAdvisorFonts.taSection.weight(.bold))
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                    .padding(.top, 8)
+
+                HStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                    TextField(LpspTripAdvisorShowroomData.searchPlaceholder, text: $store.searchQuery)
+                        .font(LpspTripAdvisorFonts.taBody)
+                }
+                .padding(.horizontal, 14)
+                .frame(height: 48)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(LpspTripAdvisorTokens.taSurface)
+                )
+
+                LpspTripAdvisorTAPillButton(title: "Search") {
+                    store.performSearch()
+                }
+
+                if !store.lastActionMessage.isEmpty && store.selectedTab == .search {
+                    Text(store.lastActionMessage)
+                        .font(LpspTripAdvisorFonts.taMeta)
+                        .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                }
+
+                ForEach(store.places) { place in
+                    LpspTripAdvisorShowroomPlaceCard(
+                        place: place,
+                        onTap: { store.selectPlace(place) },
+                        onSave: { store.toggleSave(place.id) }
+                    )
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspTripAdvisorTripsTabScreen: View {
+    @ObservedObject var store: LpspTripAdvisorStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Trips")
+                    .font(LpspTripAdvisorFonts.taSection.weight(.bold))
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                if store.tripPlaceIDs.isEmpty {
+                    Text("Save places to your trip from a listing.")
+                        .font(LpspTripAdvisorFonts.taBody)
+                        .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                        .padding(.horizontal, 16)
+                } else {
+                    ForEach(store.tripPlaceIDs, id: \.self) { id in
+                        if let place = store.places.first(where: { $0.id == id }) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(place.name)
+                                    .font(LpspTripAdvisorFonts.taPlaceName.weight(.bold))
+                                    .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                                Text(place.meta)
+                                    .font(LpspTripAdvisorFonts.taMeta)
+                                    .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                                LpspTripAdvisorBubbleRating(value: place.rating, size: 14, reviewCount: place.reviews)
+                            }
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(LpspTripAdvisorTokens.taSurface)
+                            )
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspTripAdvisorReviewTabScreen: View {
+    @ObservedObject var store: LpspTripAdvisorStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Review")
+                    .font(LpspTripAdvisorFonts.taSection.weight(.bold))
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                    .padding(.top, 8)
+
+                Text("How was your visit?")
+                    .font(LpspTripAdvisorFonts.taCardTitle)
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+
+                LpspTripAdvisorBubbleRatingPicker(rating: $store.reviewRating, size: 36)
+
+                LpspTripAdvisorTAPillButton(title: "Submit review") {
+                    store.submitReview()
+                }
+
+                if !store.lastActionMessage.isEmpty && store.selectedTab == .review {
+                    Text(store.lastActionMessage)
+                        .font(LpspTripAdvisorFonts.taMeta)
+                        .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspTripAdvisorMoreTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("More")
+                    .font(LpspTripAdvisorFonts.taSection.weight(.bold))
+                    .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+
+                ForEach(LpspTripAdvisorShowroomData.moreItems, id: \.self) { item in
+                    HStack {
+                        Text(item)
+                            .font(LpspTripAdvisorFonts.taBody)
+                            .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(LpspTripAdvisorTokens.taTextTertiary)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspTripAdvisorPlaceSheet: View {
+    @ObservedObject var store: LpspTripAdvisorStore
+    let place: LpspTripAdvisorPlace
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ForEach(0..<6, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LpspTripAdvisorTokens.taErrorRed.opacity(0.1 + Double(i) * 0.05))
-                            .frame(height: 180)
-                            .overlay(alignment: .bottomLeading) {
-                                Text("Logement \(i + 1)").font(.headline).padding(8)
-                            }
+                VStack(alignment: .leading, spacing: 16) {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(
+                            LinearGradient(
+                                colors: place.photoColors,
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .aspectRatio(3/2, contentMode: .fit)
+
+                    Text(place.name)
+                        .font(LpspTripAdvisorFonts.taPlaceHero.weight(.bold))
+                        .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
+
+                    LpspTripAdvisorBubbleRating(value: place.rating, size: 18, reviewCount: place.reviews)
+
+                    Text(place.meta)
+                        .font(LpspTripAdvisorFonts.taMeta)
+                        .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
+
+                    LpspTripAdvisorTAPillButton(title: "Save to trip") {
+                        store.savePlaceToTrip()
+                        dismiss()
                     }
                 }
-                .padding()
+                .padding(16)
             }
-            .background(LpspTripAdvisorTokens.taCanvas.ignoresSafeArea())
-            .navigationTitle("Explore")
-        }
-    }
-}
-
-private struct LpspTripAdvisorTravelTripsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
-                Label(trip, systemImage: "airplane")
+            .background(LpspTripAdvisorTokens.taCanvas)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
             }
-            .navigationTitle("Trips")
         }
-    }
-}
-
-private struct LpspTripAdvisorTravelInboxTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
-                Label(msg, systemImage: "message")
-            }
-            .navigationTitle("Inbox")
-        }
-    }
-}
-
-private struct LpspTripAdvisorTravelProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspTripAdvisorTokens.taErrorRed.gradient).frame(width: 72, height: 72)
-                Text("lost.phone").font(.title2.bold())
-            }
-            .navigationTitle("Profile")
-        }
-    }
-}
-
-private struct LpspTripAdvisorTravelWishlistsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
-            .navigationTitle("Wishlists")
-        }
-    }
-}
-
-private struct LpspTripAdvisorTravelTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("wishlist") || low.contains("favori") { LpspTripAdvisorTravelWishlistsTabScreen() }
-        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspTripAdvisorTravelExploreTabScreen() }
-        else if low.contains("trip") || low.contains("voyage") { LpspTripAdvisorTravelTripsTabScreen() }
-        else if low.contains("inbox") || low.contains("message") { LpspTripAdvisorTravelInboxTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspTripAdvisorTravelProfileTabScreen() }
-        else if tabIndex == 0 { LpspTripAdvisorTravelExploreTabScreen() }
-        else { LpspTripAdvisorTravelTripsTabScreen() }
-    }
-}
-
-
-private struct LpspTripAdvisorSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Text("New York City ▾").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-        } .padding(.horizontal, 16).frame(height: 44)
-        VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                Text("Hotels, things to do, restaurants…").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.941, green: 0.941, blue: 0.941)).clipShape(RoundedRectangle(cornerRadius: 28))
-        } .padding(.horizontal, 16).padding(.top, 8)
-                Text("Hotels").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Things to do").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Restaurants").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Flights").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                    Text("Travelers' Choice").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                    Text("4.5 (1,284)").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("The Harborview Grand Hotel").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Hotel · $$ - $$$ · 0.4 mi · #2 of 240 hotels").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                        HStack {
-                            Spacer(minLength: 48)
-                            Text("").font(.system(size: 16)).foregroundStyle(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 8)
-                                .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                        }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                    Text("4.0 (642)").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Olive & Thyme Bistro").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Mediterranean · $$ - $$$ · 0.7 mi").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        .presentationDetents([.large])
     }
 }
 

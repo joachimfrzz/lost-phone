@@ -804,7 +804,7 @@ private struct LpspWhatsAppMessagingTabScreen: View {
     let title: String
     var body: some View {
         let low = title.lowercased()
-        if low.contains("update") { LpspWhatsAppUpdatesTabScreen() }
+        if low.contains("update") { LpspWhatsAppUpdatesTabScreen(contacts: []) }
         else if low.contains("setting") || low.contains("réglage") { LpspWhatsAppSettingsTabScreen() }
         else if low.contains("communit") { LpspWhatsAppCommunitiesTabScreen() }
         else if low.contains("contact") { LpspWhatsAppContactsTabScreen() }

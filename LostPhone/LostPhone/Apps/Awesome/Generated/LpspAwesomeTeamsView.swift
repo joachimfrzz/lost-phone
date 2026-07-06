@@ -108,7 +108,7 @@ fileprivate struct LpspTeamsTeam: Identifiable {
     let id: String
     let name: String
     let initials: String
-    let channels: [LpspTeamsChannel]
+    var channels: [LpspTeamsChannel]
 }
 
 fileprivate struct LpspTeamsChannel: Identifiable {

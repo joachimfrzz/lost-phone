@@ -300,7 +300,7 @@ fileprivate final class LpspRappelsStore: ObservableObject {
     }
 
     private static func showroomItem(from item: LpspReminderItem, list: LpspReminderList) -> LpspRappelsShowroomItem {
-        let due = LpspAdapters.formatShortDate(item.dueRaw, fallback: "")
+        let due = item.dueRaw
         let hasDue = !item.dueRaw.isEmpty
         return LpspRappelsShowroomItem(
             id: item.id,
@@ -311,7 +311,7 @@ fileprivate final class LpspRappelsStore: ObservableObject {
             notes: item.notes,
             dueLabel: due,
             isOverdue: !item.completed && due.contains("juin") && due.contains("4"),
-            isHighPriority: item.priority?.lowercased().contains("haute") == true,
+            isHighPriority: item.priority.lowercased().contains("haute"),
             isCompleted: item.completed,
             isToday: !item.completed && (due.contains("15") || due.contains("Aujourd")),
             isScheduled: !item.completed && hasDue
@@ -665,7 +665,7 @@ private struct LpspRappelsItemDetailSheet: View {
                 if !item.notes.isEmpty {
                     Section("Notes") {
                         Text(item.notes)
-                            .font(LpspRappelsFonts.body)
+                            .font(LpspRappelsFonts.rowTitle)
                     }
                 }
 

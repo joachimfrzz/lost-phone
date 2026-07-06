@@ -668,7 +668,7 @@ private struct LpspTripAdvisorSpectrHomeTabScreen: View {
 
                 if store.filteredPlaces().isEmpty {
                     Text("No results in this category yet.")
-                        .font(LpspTripAdvisorFonts.taBody)
+                        .font(LpspTripAdvisorFonts.taReviewBody)
                         .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
                         .padding(.horizontal, 16)
                 } else {
@@ -702,7 +702,7 @@ private struct LpspTripAdvisorSearchTabScreen: View {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
                     TextField(LpspTripAdvisorShowroomData.searchPlaceholder, text: $store.searchQuery)
-                        .font(LpspTripAdvisorFonts.taBody)
+                        .font(LpspTripAdvisorFonts.taReviewBody)
                 }
                 .padding(.horizontal, 14)
                 .frame(height: 48)
@@ -749,7 +749,7 @@ private struct LpspTripAdvisorTripsTabScreen: View {
 
                 if store.tripPlaceIDs.isEmpty {
                     Text("Save places to your trip from a listing.")
-                        .font(LpspTripAdvisorFonts.taBody)
+                        .font(LpspTripAdvisorFonts.taReviewBody)
                         .foregroundStyle(LpspTripAdvisorTokens.taTextSecondary)
                         .padding(.horizontal, 16)
                 } else {
@@ -827,7 +827,7 @@ private struct LpspTripAdvisorMoreTabScreen: View {
                 ForEach(LpspTripAdvisorShowroomData.moreItems, id: \.self) { item in
                     HStack {
                         Text(item)
-                            .font(LpspTripAdvisorFonts.taBody)
+                            .font(LpspTripAdvisorFonts.taReviewBody)
                             .foregroundStyle(LpspTripAdvisorTokens.taTextPrimary)
                         Spacer()
                         Image(systemName: "chevron.right")

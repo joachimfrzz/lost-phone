@@ -473,12 +473,12 @@ fileprivate enum LpspPerplexityAnswerState {
 fileprivate struct LpspPerplexityThread: Identifiable {
     let id: String
     var title: String
-    let question: String
-    let sources: [LpspPerplexitySource]
+    var question: String
+    var sources: [LpspPerplexitySource]
     var answer: String
     var answerState: LpspPerplexityAnswerState
-    let relatedQuestions: [String]
-    let proSteps: [String]?
+    var relatedQuestions: [String]
+    var proSteps: [String]?
 }
 
 private enum LpspPerplexityTab: CaseIterable {

@@ -592,9 +592,9 @@ private struct LpspThreadsHomeTabScreen: View {
                     ForEach(store.threads) { thread in
                         LpspThreadsShowroomThreadBlock(
                             thread: thread,
-                            onLike: { store.toggleLike($0) },
-                            onRepost: { store.toggleRepost($0) },
-                            onComment: { store.incrementComment($0) }
+                            onLike: { store.toggleLike(postID: $0) },
+                            onRepost: { store.toggleRepost(postID: $0) },
+                            onComment: { store.incrementComment(postID: $0) }
                         )
                     }
                 }

@@ -390,6 +390,14 @@ fileprivate struct LpspLinkedInActionBarControlled: View {
     private func actionButton(icon: String, label: String, tint: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 6) {
+                Image(systemName: icon).font(.system(size: 20))
+                Text(label).font(LpspLinkedInFonts.liActionBar)
+            }
+            .foregroundStyle(tint)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+}
 
 // MARK: - Showroom data & store
 

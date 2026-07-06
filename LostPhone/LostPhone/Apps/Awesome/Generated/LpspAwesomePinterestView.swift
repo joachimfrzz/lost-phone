@@ -863,39 +863,38 @@ private struct LpspPinterestCreateTabScreen: View {
 
     var body: some View {
         VStack(spacing: 20) {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(LpspPinterestTokens.pinterestInputLight)
-                    .frame(height: 200)
-                    .overlay {
-                        VStack(spacing: 8) {
-                            Image(systemName: "photo.on.rectangle.angled")
-                                .font(.system(size: 40))
-                                .foregroundStyle(LpspPinterestTokens.pinterestTextSecondaryLight)
-                            Text("Add a photo or video")
-                                .font(LpspPinterestFonts.pinterestBody)
-                                .foregroundStyle(LpspPinterestTokens.pinterestTextSecondaryLight)
-                        }
+            RoundedRectangle(cornerRadius: 16)
+                .fill(LpspPinterestTokens.pinterestInputLight)
+                .frame(height: 200)
+                .overlay {
+                    VStack(spacing: 8) {
+                        Image(systemName: "photo.on.rectangle.angled")
+                            .font(.system(size: 40))
+                            .foregroundStyle(LpspPinterestTokens.pinterestTextSecondaryLight)
+                        Text("Add a photo or video")
+                            .font(LpspPinterestFonts.pinterestBody)
+                            .foregroundStyle(LpspPinterestTokens.pinterestTextSecondaryLight)
                     }
-                    .padding(.horizontal, 16)
+                }
+                .padding(.horizontal, 16)
 
-                TextField("Add a title", text: .constant(""))
-                    .font(LpspPinterestFonts.pinterestBody)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LpspPinterestTokens.pinterestInputLight)
-                    )
-                    .padding(.horizontal, 16)
+            TextField("Add a title", text: .constant(""))
+                .font(LpspPinterestFonts.pinterestBody)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(LpspPinterestTokens.pinterestInputLight)
+                )
+                .padding(.horizontal, 16)
 
-                LpspPinterestPinterestPillButton(title: "Create Pin", action: { store.selectedTab = .home })
-                    .padding(.horizontal, 16)
+            LpspPinterestPinterestPillButton(title: "Create Pin", action: { store.selectedTab = .home })
+                .padding(.horizontal, 16)
 
-                Spacer()
-            }
-            .padding(.top, 16)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(LpspPinterestTokens.pinterestCanvasLight)
+            Spacer()
         }
+        .padding(.top, 16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspPinterestTokens.pinterestCanvasLight)
     }
 }
 

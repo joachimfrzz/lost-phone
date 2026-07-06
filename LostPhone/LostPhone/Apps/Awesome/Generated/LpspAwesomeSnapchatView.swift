@@ -136,10 +136,11 @@ fileprivate struct LpspSnapchatSnapCaptureButton: View {
     }
 }
 
-fileprivate struct LpspSnapchatSnapChatRow<Bitmoji: View>: View {
-    enum LpspSnapchatSnapType { case photo, video, chat, audio, none }
-    enum LpspSnapchatDirection { case incoming, outgoing }
+fileprivate enum LpspSnapchatSnapType { case photo, video, chat, audio, none }
+fileprivate enum LpspSnapchatDirection { case incoming, outgoing }
+fileprivate enum LpspSnapchatStoryReadState { case unread, read, live }
 
+fileprivate struct LpspSnapchatSnapChatRow<Bitmoji: View>: View {
     let name: String
     let bitmoji: Bitmoji
     let status: String           // "Received · 2m ago"
@@ -195,8 +196,8 @@ fileprivate struct LpspSnapchatSnapChatRow<Bitmoji: View>: View {
 }
 
 fileprivate struct LpspSnapchatSnapTypeIndicator: View {
-    let type: LpspSnapchatSnapChatRow.LpspSnapchatSnapType
-    let direction: LpspSnapchatSnapChatRow.LpspSnapchatDirection
+    let type: LpspSnapchatSnapType
+    let direction: LpspSnapchatDirection
     let isUnread: Bool
 
     var color: Color {
@@ -226,12 +227,10 @@ fileprivate struct LpspSnapchatSnapTypeIndicator: View {
 }
 
 fileprivate struct LpspSnapchatSnapStoryThumb<Bitmoji: View, Preview: View>: View {
-    enum ReadState { case unread, read, live }
-
     let creatorName: String
     let bitmoji: Bitmoji
     let preview: Preview
-    let state: ReadState
+    let state: LpspSnapchatStoryReadState
     @State private var ringOpacity: Double = 1.0
 
     var body: some View {
@@ -466,8 +465,8 @@ private struct LpspSnapchatConversation: Identifiable, Equatable {
     let emoji: String
     let status: String
     let timestamp: String
-    let snapType: LpspSnapchatSnapChatRow<LpspSnapchatBitmoji>.LpspSnapchatSnapType
-    let direction: LpspSnapchatSnapChatRow<LpspSnapchatBitmoji>.LpspSnapchatDirection
+    let snapType: LpspSnapchatSnapType
+    let direction: LpspSnapchatDirection
     let isUnread: Bool
     let streakDays: Int?
 }
@@ -476,7 +475,7 @@ private struct LpspSnapchatStoryItem: Identifiable, Equatable {
     let id: String
     let creatorName: String
     let emoji: String
-    let state: LpspSnapchatSnapStoryThumb<LpspSnapchatBitmoji, LpspSnapchatStoryPreview>.ReadState
+    let state: LpspSnapchatStoryReadState
 }
 
 private enum LpspSnapchatShowroomData {

@@ -421,7 +421,7 @@ private enum LpspRedditShowroomTab: String, CaseIterable, Identifiable {
     }
 }
 
-private struct LpspRedditFeedPost: Identifiable, Equatable {
+private struct LpspRedditFeedPost: Identifiable {
     let id: String
     let subreddit: String
     let subredditInitial: String

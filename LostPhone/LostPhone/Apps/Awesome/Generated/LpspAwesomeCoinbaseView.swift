@@ -379,7 +379,7 @@ private enum LpspCoinbaseShowroomTab: String, CaseIterable, Identifiable {
     }
 }
 
-private struct LpspCoinbaseAsset: Identifiable, Equatable {
+private struct LpspCoinbaseAsset: Identifiable {
     let id: String
     let name: String
     let ticker: String

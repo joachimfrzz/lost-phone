@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeChatGPTView: View {
     var body: some View {
-        LpspChatGPTShowroomRoot()
+        LpspChatGPTShowroomRoot(store: LpspChatGPTStore())
     }
 }
 
@@ -59,10 +59,10 @@ private enum LpspChatGPTTokens {
 private enum LpspChatGPTFonts {
     static let gptBody         = Font.system(size: 16, weight: .regular)
     static let gptBodyCompact  = Font.system(size: 15, weight: .regular)
-    static let gptH1           = Font.system(size: 24, weight: .regular)
-    static let gptH2           = Font.system(size: 20, weight: .regular)
-    static let gptH3           = Font.system(size: 17, weight: .regular)
-    static let gptModelChip    = Font.system(size: 14, weight: .regular)
+    static let gptH1           = Font.system(size: 24, weight: .semibold)
+    static let gptH2           = Font.system(size: 20, weight: .semibold)
+    static let gptH3           = Font.system(size: 17, weight: .semibold)
+    static let gptModelChip    = Font.system(size: 14, weight: .medium)
     static let gptSidebarTitle = Font.system(size: 15, weight: .regular)
     static let gptSidebarSection = Font.system(size: 12, weight: .regular)
     static let gptButton       = Font.system(size: 14, weight: .regular)
@@ -171,46 +171,63 @@ fileprivate struct LpspChatGPTAttachmentTile: View {
 }
 
 fileprivate struct LpspChatGPTAssistantMessage: View {
-    let content: String  // markdown-rendered
+    var intro: String? = nil
+    let content: String
+    var showActions: Bool = true
+    var showAvatar: Bool = false
     let onRegenerate: () -> Void
     let onCopy: () -> Void
     let onThumbUp: () -> Void
     let onThumbDown: () -> Void
 
+    @Environment(\.colorScheme) private var scheme
     @State private var thumbState: LpspChatGPTThumbState = .neutral
     enum LpspChatGPTThumbState { case neutral, up, down }
 
+    private var primaryText: Color {
+        scheme == .dark ? LpspChatGPTTokens.gptDarkTextPrimary : LpspChatGPTTokens.gptTextPrimary
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Optional sparkle avatar
             HStack(alignment: .top, spacing: 8) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 18))
-                    .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
-                    .frame(width: 24, height: 24)
+                if showAvatar {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 18))
+                        .foregroundStyle(primaryText)
+                        .frame(width: 24, height: 24)
+                }
 
-                // Replace this Text with a MarkdownRenderer in production
-                Text(LocalizedStringKey(content))
-                    .font(LpspChatGPTFonts.gptBody)
-                    .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
-                    .lineSpacing(8)
+                VStack(alignment: .leading, spacing: 8) {
+                    if let intro {
+                        Text(intro)
+                            .font(LpspChatGPTFonts.gptBody)
+                            .foregroundStyle(primaryText)
+                    }
+                    Text(LocalizedStringKey(content))
+                        .font(LpspChatGPTFonts.gptBody)
+                        .foregroundStyle(primaryText)
+                        .lineSpacing(6)
+                }
             }
 
-            // Feedback row
-            HStack(spacing: 8) {
-                LpspChatGPTFeedbackIconButton(icon: "arrow.triangle.2.circlepath", action: onRegenerate)
-                LpspChatGPTFeedbackIconButton(icon: "doc.on.doc", action: onCopy)
-                LpspChatGPTFeedbackIconButton(
-                    icon: thumbState == .up ? "hand.thumbsup.fill" : "hand.thumbsup",
-                    action: { thumbState = .up; onThumbUp() }
-                )
-                LpspChatGPTFeedbackIconButton(
-                    icon: thumbState == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown",
-                    action: { thumbState = .down; onThumbDown() }
-                )
+            if showActions {
+                HStack(spacing: 8) {
+                    LpspChatGPTFeedbackIconButton(icon: "arrow.triangle.2.circlepath", action: onRegenerate)
+                    LpspChatGPTFeedbackIconButton(icon: "doc.on.doc", action: onCopy)
+                    LpspChatGPTFeedbackIconButton(
+                        icon: thumbState == .up ? "hand.thumbsup.fill" : "hand.thumbsup",
+                        action: { thumbState = .up; onThumbUp() }
+                    )
+                    LpspChatGPTFeedbackIconButton(
+                        icon: thumbState == .down ? "hand.thumbsdown.fill" : "hand.thumbsdown",
+                        action: { thumbState = .down; onThumbDown() }
+                    )
+                }
+                .padding(.leading, showAvatar ? 32 : 0)
             }
-            .padding(.leading, 32)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
     }
@@ -307,56 +324,74 @@ fileprivate struct LpspChatGPTModelSelectorChip: View {
 
 fileprivate struct LpspChatGPTComposer: View {
     @Binding var text: String
+    var isGenerating: Bool = false
+    var spectrLayout: Bool = false
     let onSend: () -> Void
     let onVoice: () -> Void
     let onAttach: () -> Void
     let onWebSearch: () -> Void
 
-    var isEmpty: Bool { text.trimmingCharacters(in: .whitespaces).isEmpty }
+    @Environment(\.colorScheme) private var scheme
+
+    var isEmpty: Bool { text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 8) {
-            Button(action: onAttach) {
-                Image(systemName: "plus")
-                    .font(.system(size: 20))
-                    .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
-                    .frame(width: 40, height: 40)
-            }
+        VStack(spacing: 8) {
+            HStack(alignment: .bottom, spacing: 8) {
+                Button(action: onAttach) {
+                    Image(systemName: spectrLayout ? "photo.on.rectangle.angled" : "plus")
+                        .font(.system(size: spectrLayout ? 18 : 20))
+                        .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
+                        .frame(width: 40, height: 40)
+                }
 
-            TextField("Message ChatGPT…", text: $text, axis: .vertical)
-                .font(LpspChatGPTFonts.gptBody)
-                .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
-                .lineLimit(1...6)
-                .padding(.vertical, 10)
+                TextField("Message ChatGPT…", text: $text, axis: .vertical)
+                    .font(LpspChatGPTFonts.gptBody)
+                    .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
+                    .lineLimit(1...6)
+                    .padding(.vertical, 10)
+                    .disabled(isGenerating)
 
-            if isEmpty {
                 HStack(spacing: 4) {
-                    Button(action: onWebSearch) {
-                        Image(systemName: "globe")
-                            .font(.system(size: 18))
-                            .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
-                            .frame(width: 40, height: 40)
+                    if isEmpty, !spectrLayout {
+                        Button(action: onWebSearch) {
+                            Image(systemName: "globe")
+                                .font(.system(size: 18))
+                                .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
+                                .frame(width: 40, height: 40)
+                        }
                     }
-                    Button(action: onVoice) {
-                        Image(systemName: "mic.fill")
-                            .font(.system(size: 18))
-                            .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
-                            .frame(width: 32, height: 32)
-                            .background(Circle().strokeBorder(LpspChatGPTTokens.gptDivider, lineWidth: 1))
+                    if isEmpty || spectrLayout {
+                        Button(action: onVoice) {
+                            Image(systemName: "mic.fill")
+                                .font(.system(size: 18))
+                                .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
+                                .frame(width: 32, height: 32)
+                        }
+                    }
+                    if !isEmpty || spectrLayout {
+                        LpspChatGPTSendButton(
+                            isEnabled: !isEmpty || isGenerating,
+                            isGenerating: isGenerating,
+                            action: onSend
+                        )
                     }
                 }
-            } else {
-                LpspChatGPTSendButton(isEnabled: true, isGenerating: false, action: onSend)
             }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(scheme == .dark ? LpspChatGPTTokens.gptCodeBlockDark : LpspChatGPTTokens.gptCodeBlockLight)
+                    .overlay(RoundedRectangle(cornerRadius: 24).strokeBorder(LpspChatGPTTokens.gptDivider, lineWidth: 1))
+            )
+
+            Text("ChatGPT can make mistakes. Check important info.")
+                .font(.system(size: 11))
+                .foregroundStyle(LpspChatGPTTokens.gptTextTertiary)
+                .multilineTextAlignment(.center)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 24)
-                .fill(LpspChatGPTTokens.gptCanvas)
-                .overlay(RoundedRectangle(cornerRadius: 24).strokeBorder(LpspChatGPTTokens.gptDivider, lineWidth: 1))
-        )
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 12)
         .padding(.bottom, 8)
     }
 }
@@ -419,43 +454,22 @@ fileprivate struct LpspChatGPTVoiceModeView: View {
 
 fileprivate struct LpspChatGPTGPTSidebar: View {
     let sections: [LpspChatGPTConversationSection]
+    var activeID: String = ""
+    var onSelect: (String) -> Void = { _ in }
 
     struct LpspChatGPTConversationSection: Identifiable {
         let id = UUID()
-        let title: String  // "Today", "Yesterday", etc.
+        let title: String
         let chats: [LpspChatGPTConversationItem]
     }
+
     struct LpspChatGPTConversationItem: Identifiable {
-        let id = UUID()
+        let id: String
         let title: String
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // New chat button
-            Button { } label: {
-                HStack(spacing: 10) {
-                    Image(systemName: "square.and.pencil").font(.system(size: 18))
-                    Text("New chat").font(LpspChatGPTFonts.gptButton)
-                    Spacer()
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: 8).fill(LpspChatGPTTokens.gptSidebarActive))
-            }
-            .padding(12)
-
-            // Search
-            HStack {
-                Image(systemName: "magnifyingglass").foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
-                TextField("Search chats", text: .constant(""))
-                    .font(LpspChatGPTFonts.gptMeta)
-            }
-            .padding(10)
-            .background(RoundedRectangle(cornerRadius: 8).fill(LpspChatGPTTokens.gptSidebarActive))
-            .padding(.horizontal, 12)
-
-            // Conversation list
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(sections) { section in
@@ -467,13 +481,21 @@ fileprivate struct LpspChatGPTGPTSidebar: View {
                             .padding(.bottom, 4)
 
                         ForEach(section.chats) { chat in
-                            LpspChatGPTChatSidebarRow(title: chat.title, isActive: false)
+                            Button {
+                                onSelect(chat.id)
+                            } label: {
+                                LpspChatGPTChatSidebarRow(
+                                    title: chat.title,
+                                    isActive: chat.id == activeID
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
             }
         }
-        .frame(width: 260)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background(LpspChatGPTTokens.gptSidebarLight)
     }
 }
@@ -531,149 +553,635 @@ fileprivate extension View {
     func gptTheme() -> some View { modifier(LpspChatGPTGPTTheme()) }
 }
 
+// MARK: - Données & état (showroom Lost Phone)
+
+fileprivate enum LpspChatGPTShowroomRole: Hashable {
+    case user, assistant
+}
+
+fileprivate struct LpspChatGPTShowroomMessage: Identifiable, Hashable {
+    let id: String
+    let role: LpspChatGPTShowroomRole
+    let text: String
+    var intro: String?
+    var attachmentName: String?
+    var showActions: Bool = false
+}
+
+fileprivate struct LpspChatGPTShowroomConversation: Identifiable {
+    let id: String
+    var title: String
+    let section: String
+    var messages: [LpspChatGPTShowroomMessage]
+}
+
+fileprivate struct LpspChatGPTModelOption: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let subtitle: String
+}
+
+private enum LpspChatGPTMobileTab: CaseIterable {
+    case chat, history
+
+    var label: String {
+        switch self {
+        case .chat: "Chat"
+        case .history: "Historique"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .chat: "bubble.left.fill"
+        case .history: "clock"
+        }
+    }
+}
+
+@MainActor
+fileprivate final class LpspChatGPTStore: ObservableObject {
+    @Published var selectedTab: LpspChatGPTMobileTab = .chat
+    @Published var conversations: [LpspChatGPTShowroomConversation]
+    @Published var activeConversationID: String
+    @Published var composeText = ""
+    @Published var isGenerating = false
+    @Published var showSidebar = false
+    @Published var showVoiceMode = false
+    @Published var showModelPicker = false
+    @Published var selectedModelID = "gpt-4o"
+    @Published var sidebarSearch = ""
+
+    let models: [LpspChatGPTModelOption] = [
+        .init(id: "gpt-4o", name: "GPT-4o", subtitle: "Rapide, multimodal, le meilleur pour la plupart des tâches"),
+        .init(id: "gpt-4", name: "GPT-4", subtitle: "Raisonnement avancé, plus lent"),
+        .init(id: "gpt-3.5", name: "GPT-3.5", subtitle: "Classique, économique"),
+    ]
+
+    init() {
+        self.conversations = LpspChatGPTShowroomData.conversations
+        self.activeConversationID = LpspChatGPTShowroomData.defaultConversationID
+    }
+
+    var selectedModelName: String {
+        models.first { $0.id == selectedModelID }?.name ?? "GPT-4o"
+    }
+
+    var activeConversation: LpspChatGPTShowroomConversation {
+        conversations.first { $0.id == activeConversationID }
+            ?? conversations[0]
+    }
+
+    var sidebarSections: [(title: String, chats: [LpspChatGPTShowroomConversation])] {
+        let ordered = ["Today", "Yesterday", "Previous 7 Days", "Previous 30 Days", "June 2026"]
+        return ordered.compactMap { section in
+            let chats = filteredConversations.filter { $0.section == section }
+            return chats.isEmpty ? nil : (section, chats)
+        }
+    }
+
+    private var filteredConversations: [LpspChatGPTShowroomConversation] {
+        let query = sidebarSearch.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !query.isEmpty else { return conversations }
+        return conversations.filter { $0.title.lowercased().contains(query) }
+    }
+
+    func selectConversation(_ id: String) {
+        activeConversationID = id
+        selectedTab = .chat
+        showSidebar = false
+    }
+
+    func newChat() {
+        let id = "new-\(UUID().uuidString.prefix(6))"
+        let conversation = LpspChatGPTShowroomConversation(
+            id: id,
+            title: "New chat",
+            section: "Today",
+            messages: []
+        )
+        conversations.insert(conversation, at: 0)
+        activeConversationID = id
+        composeText = ""
+        selectedTab = .chat
+        showSidebar = false
+    }
+
+    func sendMessage() {
+        let trimmed = composeText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !isGenerating else {
+            if isGenerating { stopGenerating() }
+            return
+        }
+
+        appendMessage(.init(id: UUID().uuidString, role: .user, text: trimmed))
+        composeText = ""
+        updateTitleIfNeeded(from: trimmed)
+        isGenerating = true
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 900_000_000)
+            guard isGenerating else { return }
+            let reply = LpspChatGPTShowroomData.reply(for: trimmed, conversationID: activeConversationID)
+            appendMessage(reply)
+            isGenerating = false
+        }
+    }
+
+    func stopGenerating() {
+        isGenerating = false
+    }
+
+    func regenerateLastResponse() {
+        guard let lastAssistantIndex = activeConversation.messages.lastIndex(where: { $0.role == .assistant }) else { return }
+        mutateActiveConversation { conversation in
+            conversation.messages.remove(at: lastAssistantIndex)
+        }
+        isGenerating = true
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            let fallback = LpspChatGPTShowroomMessage(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Voici une autre formulation, plus concise.",
+                showActions: true
+            )
+            appendMessage(fallback)
+            isGenerating = false
+        }
+    }
+
+    func copyMessage(_ text: String) {
+        UIPasteboard.general.string = text
+    }
+
+    private func appendMessage(_ message: LpspChatGPTShowroomMessage) {
+        mutateActiveConversation { conversation in
+            conversation.messages.append(message)
+        }
+    }
+
+    private func updateTitleIfNeeded(from prompt: String) {
+        mutateActiveConversation { conversation in
+            if conversation.title == "New chat" || conversation.title.hasPrefix("Write a haiku") {
+                conversation.title = String(prompt.prefix(42))
+            }
+        }
+    }
+
+    private func mutateActiveConversation(_ update: (inout LpspChatGPTShowroomConversation) -> Void) {
+        guard let index = conversations.firstIndex(where: { $0.id == activeConversationID }) else { return }
+        var conversation = conversations[index]
+        update(&conversation)
+        conversations[index] = conversation
+    }
+}
+
+private enum LpspChatGPTShowroomData {
+    static let defaultConversationID = "spectr-haiku"
+
+    static let conversations: [LpspChatGPTShowroomConversation] = [
+        .init(
+            id: "spectr-haiku",
+            title: "Write a haiku about sunrises",
+            section: "Today",
+            messages: [
+                .init(id: "s1", role: .user, text: "Write a haiku about sunrises"),
+                .init(
+                    id: "s2",
+                    role: .assistant,
+                    text: "Quiet golden line\nBirds rehearse the morning song\nDew remembers night",
+                    intro: "A haiku about sunrises:",
+                    showActions: true
+                ),
+                .init(id: "s3", role: .user, text: "Try one with more imagery"),
+                .init(
+                    id: "s4",
+                    role: .assistant,
+                    text: "Amber spills slow-honey\nAcross the chimney rooftops\nSteam curls like a cat",
+                    showActions: false
+                ),
+            ]
+        ),
+        .init(
+            id: "louvre-windows",
+            title: "Fenêtres maintenance Louvre",
+            section: "Today",
+            messages: [
+                .init(id: "l1", role: .user, text: "Résume les fenêtres d'accès maintenance Salle 710 cette semaine."),
+                .init(
+                    id: "l2",
+                    role: .assistant,
+                    text: "**Mercredi 18/06** — intervention clim 19h15–19h27 (effectif réduit).\n**Jeudi 19/06** — contrôle portes Denon 06h40–07h05.\n\nAngle mort caméra confirmé entre pilier et porte latérale (~3 s).",
+                    intro: "Fenêtres repérées dans le brief v3 :",
+                    showActions: true
+                ),
+                .init(id: "l3", role: .user, text: "Et si l'équipe est à 3 personnes ?"),
+                .init(
+                    id: "l4",
+                    role: .assistant,
+                    text: "La vitrine reste faisable en **4 min** si le rôle « diversion » tient le hall. Évite la ronde PM du jeudi — préfère le créneau du 18 après 19h10.",
+                    showActions: true
+                ),
+            ]
+        ),
+        .init(
+            id: "denon-alias",
+            title: "Alias couloir Denon",
+            section: "Yesterday",
+            messages: [
+                .init(id: "d1", role: .user, text: "Liste 3 alias crédibles pour un freelance événementiel à Paris."),
+                .init(
+                    id: "d2",
+                    role: .assistant,
+                    text: "1. **Maison Lumière** — agence pop-up Marais\n2. **Atelier Sōma** — identité visuelle (déjà dans tes mails)\n3. **EventsCult** — serveur Discord actif sur le projet Dame",
+                    showActions: true
+                ),
+            ]
+        ),
+        .init(
+            id: "brief-dame",
+            title: "Brief Dame de Fer v3",
+            section: "Previous 7 Days",
+            messages: [
+                .init(id: "b1", role: .user, text: "Quels indices croiser entre Gennevilliers et la vitrine ?"),
+                .init(
+                    id: "b2",
+                    role: .assistant,
+                    text: "Local **Gennevilliers** = stockage discret + accès camionnette.\nVitrine = fenêtre **18/06** + badge périmé mais couloirs connus.\n\nRecoupe avec les photos **sans EXIF** dans Fichiers et le fil **#planning-s7** sur Discord.",
+                    showActions: true
+                ),
+            ]
+        ),
+        .init(
+            id: "codes-juin",
+            title: "Codes maintenance juin",
+            section: "Previous 30 Days",
+            messages: [
+                .init(id: "c1", role: .user, text: "Traduis « maintenance window » en contexte musée."),
+                .init(
+                    id: "c2",
+                    role: .assistant,
+                    text: "Créneau technique où les équipes HVAC/sécurité circulent sans alerte visiteur. Souvent **19h–21h**, effectif réduit, portes de service ouvertes.",
+                    showActions: true
+                ),
+            ]
+        ),
+        .init(
+            id: "swiftui-tips",
+            title: "SwiftUI tips",
+            section: "June 2026",
+            messages: [
+                .init(id: "t1", role: .user, text: "Explique-moi SwiftUI en une phrase."),
+                .init(
+                    id: "t2",
+                    role: .assistant,
+                    text: "SwiftUI est le framework déclaratif d'Apple pour décrire une interface en état, pas en impératif.",
+                    showActions: true
+                ),
+            ]
+        ),
+    ]
+
+    static func reply(for prompt: String, conversationID: String) -> LpspChatGPTShowroomMessage {
+        let lower = prompt.lowercased()
+        if lower.contains("louvre") || lower.contains("vitrine") || lower.contains("denon") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Les créneaux du **18/06** restent les plus propres : ronde réduite, angle mort caméra, accès camionnette côté Gennevilliers déjà validé.",
+                showActions: true
+            )
+        }
+        if lower.contains("haiku") || lower.contains("sunrise") || lower.contains("lever") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Pink rim on glass\nMuseum keys still cold in hand\nCity wakes in grey",
+                intro: "Another sunrise haiku:",
+                showActions: true
+            )
+        }
+        if lower.contains("code") || lower.contains("swift") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "```swift\n@State private var isShown = false\n\nButton(\"Toggle\") { isShown.toggle() }\n```",
+                intro: "Exemple minimal :",
+                showActions: true
+            )
+        }
+        return .init(
+            id: UUID().uuidString,
+            role: .assistant,
+            text: "Je peux approfondir si tu précises le contexte (lieu, date, personnes impliquées).",
+            showActions: true
+        )
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspChatGPTShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspChatGPTSpectrHomeTabScreen()
-                .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
-                .tag(0)
-            LpspChatGPTAiTabScreen(title: "Historique", tabIndex: 1)
-                .tabItem { Label("Historique", systemImage: "clock") }
-                .tag(1)
-        }
-        .tint(LpspChatGPTTokens.gptErrorRed)
-        
-    }
-}
+    @ObservedObject var store: LpspChatGPTStore
 
-
-private struct LpspChatGPTGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspChatGPTTokens.gptErrorRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspChatGPTTokens.gptErrorRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        ZStack {
+            VStack(spacing: 0) {
+                Group {
+                    switch store.selectedTab {
+                    case .chat:
+                        LpspChatGPTChatScreen(store: store)
+                    case .history:
+                        LpspChatGPTHistoryScreen(store: store)
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                LpspChatGPTMobileTabBar(store: store)
             }
-            .navigationTitle(title)
+
+            if store.showVoiceMode {
+                LpspChatGPTVoiceModeView(isShown: $store.showVoiceMode)
+                    .zIndex(2)
+            }
+        }
+        .background(LpspChatGPTTokens.gptCanvas.ignoresSafeArea())
+        .sheet(isPresented: $store.showSidebar) {
+            LpspChatGPTSidebarSheet(store: store)
+        }
+        .sheet(isPresented: $store.showModelPicker) {
+            LpspChatGPTModelPickerSheet(store: store)
         }
     }
 }
 
+private struct LpspChatGPTMobileTabBar: View {
+    @ObservedObject var store: LpspChatGPTStore
 
-private struct LpspChatGPTDemoBubble: View {
-    let text: String
-    var outgoing: Bool
     var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 40) }
-            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspChatGPTTokens.gptErrorRed.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 40) }
+        HStack(spacing: 0) {
+            ForEach(LpspChatGPTMobileTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { store.selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.label)
+                            .font(.system(size: 10))
+                    }
+                    .foregroundStyle(store.selectedTab == tab ? LpspChatGPTTokens.gptTextPrimary : LpspChatGPTTokens.gptTextSecondary)
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(LpspChatGPTTokens.gptCanvas)
+        .overlay(alignment: .top) {
+            Rectangle().fill(LpspChatGPTTokens.gptDivider).frame(height: 0.5)
         }
     }
 }
 
-private struct LpspChatGPTDemoComposeBar: View {
-    @State private var text = ""
-    var body: some View {
-        HStack {
-            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-            Image(systemName: "paperplane.fill").foregroundStyle(LpspChatGPTTokens.gptErrorRed)
-        }
-        .padding(8)
-    }
-}
+private struct LpspChatGPTChatScreen: View {
+    @ObservedObject var store: LpspChatGPTStore
 
-private struct LpspChatGPTAiChatTabScreen: View {
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 12) {
+            LpspChatGPTTopNav(store: store)
 
-                    LpspChatGPTUserMessageBubble(text: "Explique-moi SwiftUI", attachmentUrl: nil)
-                    LpspChatGPTAssistantMessage(content: "SwiftUI est le framework déclaratif d'Apple pour construire des interfaces iOS.", onRegenerate: {}, onCopy: {}, onThumbUp: {}, onThumbDown: {})
-
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 4) {
+                        ForEach(store.activeConversation.messages) { message in
+                            LpspChatGPTMessageRow(message: message, store: store)
+                                .id(message.id)
+                        }
+                        if store.isGenerating {
+                            HStack {
+                                LpspChatGPTTypingIndicator()
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .id("typing")
+                        }
+                    }
+                    .padding(.vertical, 8)
                 }
-                .padding()
+                .onChange(of: store.activeConversation.messages.count) { _, _ in
+                    scrollToBottom(proxy: proxy)
+                }
+                .onChange(of: store.isGenerating) { _, _ in
+                    scrollToBottom(proxy: proxy)
+                }
             }
-            .background(LpspChatGPTTokens.gptCanvas.ignoresSafeArea())
-            
+
             LpspChatGPTComposer(
-                text: .constant(""),
-                onSend: {},
-                onVoice: {},
+                text: $store.composeText,
+                isGenerating: store.isGenerating,
+                spectrLayout: store.activeConversationID == LpspChatGPTShowroomData.defaultConversationID,
+                onSend: { store.sendMessage() },
+                onVoice: { store.showVoiceMode = true },
                 onAttach: {},
                 onWebSearch: {}
             )
+        }
+        .background(LpspChatGPTTokens.gptCanvas.ignoresSafeArea())
+    }
 
+    private func scrollToBottom(proxy: ScrollViewProxy) {
+        withAnimation(.easeOut(duration: 0.2)) {
+            if store.isGenerating {
+                proxy.scrollTo("typing", anchor: .bottom)
+            } else if let last = store.activeConversation.messages.last {
+                proxy.scrollTo(last.id, anchor: .bottom)
+            }
         }
     }
 }
 
+private struct LpspChatGPTTopNav: View {
+    @ObservedObject var store: LpspChatGPTStore
 
-private struct LpspChatGPTAiHistoryTabScreen: View {
+    var body: some View {
+        HStack(spacing: 12) {
+            Button { store.showSidebar = true } label: {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
+                    .frame(width: 44, height: 44)
+            }
+
+            Button { store.showModelPicker = true } label: {
+                HStack(spacing: 4) {
+                    Text(store.selectedModelName)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+            }
+
+            Spacer()
+
+            Button { store.newChat() } label: {
+                Image(systemName: "square.and.pencil")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
+                    .frame(width: 44, height: 44)
+            }
+        }
+        .padding(.horizontal, 8)
+        .frame(height: 44)
+        .background(LpspChatGPTTokens.gptCanvas)
+    }
+}
+
+private struct LpspChatGPTMessageRow: View {
+    let message: LpspChatGPTShowroomMessage
+    @ObservedObject var store: LpspChatGPTStore
+
+    var body: some View {
+        switch message.role {
+        case .user:
+            LpspChatGPTUserMessageBubble(
+                text: message.text,
+                attachmentUrl: message.attachmentName
+            )
+        case .assistant:
+            LpspChatGPTAssistantMessage(
+                intro: message.intro,
+                content: message.text,
+                showActions: message.showActions,
+                showAvatar: false,
+                onRegenerate: { store.regenerateLastResponse() },
+                onCopy: { store.copyMessage(message.text) },
+                onThumbUp: {},
+                onThumbDown: {}
+            )
+        }
+    }
+}
+
+private struct LpspChatGPTHistoryScreen: View {
+    @ObservedObject var store: LpspChatGPTStore
+
     var body: some View {
         NavigationStack {
-            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
-            .navigationTitle("Historique")
-        }
-    }
-}
-
-
-private struct LpspChatGPTAiTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        if tabIndex == 0 || title.lowercased().contains("chat") { LpspChatGPTAiChatTabScreen() }
-        else { LpspChatGPTAiHistoryTabScreen() }
-    }
-}
-
-
-private struct LpspChatGPTSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Image(systemName: "line.3.horizontal").font(.title3)
-            Text("GPT-4o").font(.system(size: 15, weight: .semibold)).padding(.horizontal, 12).padding(.vertical, 6).background(Color(.systemGray6)).clipShape(Capsule())
-            Image(systemName: "square.and.pencil").font(.title3)
-        } .padding(.horizontal, 16).frame(height: 44)
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-            Text("Write a haiku about sunrises").font(.system(size: 14.5, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
-            VStack(alignment: .leading, spacing: 8) {
-                Text("A haiku about sunrises:").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
-                Text("Quiet golden line\nBirds rehearse the morning song\nDew remembers night").font(.system(size: 13)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
-            } .padding(12).background(Color(red: 0.118, green: 0.118, blue: 0.165)).clipShape(RoundedRectangle(cornerRadius: 16)).frame(maxWidth: .infinity, alignment: .leading)
-            Text("Try one with more imagery").font(.system(size: 14.5, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Amber spills slow-honey\nAcross the chimney rooftops\nSteam curls like a cat").font(.system(size: 13)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
-            } .padding(12).background(Color(red: 0.118, green: 0.118, blue: 0.165)).clipShape(RoundedRectangle(cornerRadius: 16)).frame(maxWidth: .infinity, alignment: .leading)
+            List {
+                ForEach(store.sidebarSections, id: \.title) { section in
+                    Section(section.title) {
+                        ForEach(section.chats) { chat in
+                            Button {
+                                store.selectConversation(chat.id)
+                            } label: {
+                                HStack {
+                                    Text(chat.title)
+                                        .font(LpspChatGPTFonts.gptSidebarTitle)
+                                        .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
+                                        .lineLimit(1)
+                                    Spacer()
+                                    if chat.id == store.activeConversationID {
+                                        Image(systemName: "checkmark")
+                                            .font(.system(size: 12, weight: .semibold))
+                                            .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            .padding(16)
+            .listStyle(.plain)
+            .navigationTitle("Historique")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { store.newChat() } label: {
+                        Image(systemName: "square.and.pencil")
+                    }
+                }
+            }
         }
-        VStack(spacing: 6) {
-            HStack {
-                Text("Message ChatGPT…").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
-            } .padding(.horizontal, 12).padding(.vertical, 10).background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 24))
-            Text("ChatGPT can make mistakes. Check important info.").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.051, green: 0.051, blue: 0.051))
-        } .padding(.horizontal, 12).padding(.bottom, 8)
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 
+private struct LpspChatGPTSidebarSheet: View {
+    @ObservedObject var store: LpspChatGPTStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                LpspChatGPTGPTSidebar(sections: store.sidebarSections.map { section in
+                    .init(
+                        title: section.title,
+                        chats: section.chats.map { .init(title: $0.title, id: $0.id) }
+                    )
+                }, activeID: store.activeConversationID) { id in
+                    store.selectConversation(id)
+                    dismiss()
+                }
+            }
+            .navigationTitle("Chats")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Fermer") { dismiss() }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { store.newChat(); dismiss() } label: {
+                        Image(systemName: "square.and.pencil")
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+}
+
+private struct LpspChatGPTModelPickerSheet: View {
+    @ObservedObject var store: LpspChatGPTStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List(store.models) { model in
+                Button {
+                    store.selectedModelID = model.id
+                    dismiss()
+                } label: {
+                    HStack(alignment: .top, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(model.name)
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
+                            Text(model.subtitle)
+                                .font(LpspChatGPTFonts.gptMeta)
+                                .foregroundStyle(LpspChatGPTTokens.gptTextSecondary)
+                        }
+                        Spacer()
+                        if store.selectedModelID == model.id {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(LpspChatGPTTokens.gptTextPrimary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Modèle")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("OK") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
 

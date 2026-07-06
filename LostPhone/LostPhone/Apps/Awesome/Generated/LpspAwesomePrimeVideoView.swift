@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePrimeVideoView: View {
     var body: some View {
-        LpspPrimeVideoShowroomRoot()
+        LpspPrimeVideoShowroomRoot(store: LpspPrimeVideoStore())
     }
 }
 
@@ -239,220 +239,480 @@ fileprivate struct LpspPrimeVideoCastMember: Identifiable {
 }
 
 
+// MARK: - Données & état (showroom Spectr)
+
+private enum LpspPrimeVideoShowroomTab: String, CaseIterable, Identifiable {
+    case home
+    case store
+    case live
+    case find
+    case downloads
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: return "Home"
+        case .store: return "Store"
+        case .live: return "Live"
+        case .find: return "Find"
+        case .downloads: return "Downloads"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: return "house.fill"
+        case .store: return "bag.fill"
+        case .live: return "dot.radiowaves.left.and.right"
+        case .find: return "magnifyingglass"
+        case .downloads: return "arrow.down.circle.fill"
+        }
+    }
+}
+
+fileprivate struct LpspPrimeVideoTitle: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let gradient: [Color]
+    var includedWithPrime: Bool
+    var inWatchlist: Bool
+    var progress: Double?
+}
+
+private enum LpspPrimeVideoShowroomData {
+    static let featuredID = "citadel-files"
+
+    static let featuredGradient: [Color] = [
+        Color(red: 0.05, green: 0.08, blue: 0.20),
+        Color(red: 0.02, green: 0.02, blue: 0.06),
+        LpspPrimeVideoTokens.primeCanvas,
+    ]
+
+    static let cast: [LpspPrimeVideoCastMember] = [
+        .init(name: "N. Palmer", role: "Agent Cole"),
+        .init(name: "K. Voss", role: "Director"),
+        .init(name: "H. Ruiz", role: "Mara"),
+    ]
+
+    static let catalog: [LpspPrimeVideoTitle] = [
+        .init(
+            id: featuredID,
+            name: "The Citadel Files",
+            gradient: featuredGradient,
+            includedWithPrime: true,
+            inWatchlist: false,
+            progress: nil
+        ),
+        .init(
+            id: "night-harbor",
+            name: "Night Harbor",
+            gradient: [Color(red: 0.10, green: 0.18, blue: 0.32), Color(red: 0.04, green: 0.08, blue: 0.16)],
+            includedWithPrime: true,
+            inWatchlist: false,
+            progress: 0.35
+        ),
+        .init(
+            id: "glass-transit",
+            name: "Glass Transit",
+            gradient: [Color(red: 0.18, green: 0.28, blue: 0.42), Color(red: 0.08, green: 0.12, blue: 0.22)],
+            includedWithPrime: true,
+            inWatchlist: true,
+            progress: nil
+        ),
+        .init(
+            id: "amber-signal",
+            name: "Amber Signal",
+            gradient: [Color(red: 0.32, green: 0.20, blue: 0.10), Color(red: 0.12, green: 0.08, blue: 0.06)],
+            includedWithPrime: true,
+            inWatchlist: false,
+            progress: nil
+        ),
+        .init(
+            id: "north-arcade",
+            name: "North Arcade",
+            gradient: [Color(red: 0.14, green: 0.22, blue: 0.18), Color(red: 0.06, green: 0.10, blue: 0.08)],
+            includedWithPrime: true,
+            inWatchlist: false,
+            progress: 0.62
+        ),
+    ]
+
+    static let liveEvents = [
+        ("Premier League", "LIVE · Matchday 28", true),
+        ("Thursday Night Football", "Starts 8:00 PM", false),
+    ]
+
+    static let searchSuggestions = ["Thriller", "Sci-Fi", "Documentary", "Included with Prime"]
+
+    static let downloads = [
+        ("The Citadel Files S1E2", "1.8 GB"),
+        ("Night Harbor S1E1", "1.1 GB"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspPrimeVideoStore: ObservableObject {
+    @Published var selectedTab: LpspPrimeVideoShowroomTab = .home
+    @Published var titles: [LpspPrimeVideoTitle]
+    @Published var isPlaying = false
+    @Published var xRayShown = true
+    @Published var searchQuery = ""
+
+    init() {
+        titles = LpspPrimeVideoShowroomData.catalog
+    }
+
+    var featured: LpspPrimeVideoTitle {
+        titles.first { $0.id == LpspPrimeVideoShowroomData.featuredID } ?? LpspPrimeVideoShowroomData.catalog[0]
+    }
+
+    var includedRow: [LpspPrimeVideoTitle] {
+        titles.filter(\.includedWithPrime)
+    }
+
+    func toggleFeaturedWatchlist() {
+        toggleWatchlist(titleID: LpspPrimeVideoShowroomData.featuredID)
+    }
+
+    func toggleWatchlist(titleID: String) {
+        guard let index = titles.firstIndex(where: { $0.id == titleID }) else { return }
+        titles[index].inWatchlist.toggle()
+    }
+
+    func playFeatured() {
+        isPlaying = true
+    }
+
+    func toggleXRay() {
+        xRayShown.toggle()
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspPrimeVideoShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspPrimeVideoStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspPrimeVideoSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspPrimeVideoVideoHomeTabScreen()
-                .tabItem { Label("Store", systemImage: "bag.fill") }
-                .tag(1)
-            LpspPrimeVideoVideoHomeTabScreen()
-                .tabItem { Label("Live", systemImage: "dot.radiowaves.left.and.right") }
-                .tag(2)
-            LpspPrimeVideoVideoHomeTabScreen()
-                .tabItem { Label("Find", systemImage: "magnifyingglass") }
-                .tag(3)
-            LpspPrimeVideoVideoDownloadsTabScreen()
-                .tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
-                .tag(4)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspPrimeVideoShowroomTab.allCases) { tab in
+                LpspPrimeVideoShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
+                    }
+                    .tag(tab)
+            }
         }
-        .tint(LpspPrimeVideoTokens.primeImdbYellow)
+        .tint(LpspPrimeVideoTokens.primeBlue)
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspPrimeVideoShowroomTabScreen: View {
+    @ObservedObject var store: LpspPrimeVideoStore
+    let tab: LpspPrimeVideoShowroomTab
 
-private struct LpspPrimeVideoGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspPrimeVideoTokens.primeImdbYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspPrimeVideoTokens.primeImdbYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+            Group {
+                switch tab {
+                case .home:
+                    LpspPrimeVideoHomeTabScreen(store: store)
+                case .store:
+                    LpspPrimeVideoStoreTabScreen(store: store)
+                case .live:
+                    LpspPrimeVideoLiveTabScreen()
+                case .find:
+                    LpspPrimeVideoFindTabScreen(store: store)
+                case .downloads:
+                    LpspPrimeVideoDownloadsTabScreen()
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle(tab == .home ? "" : tab.title)
+            .navigationBarTitleDisplayMode(tab == .home ? .inline : .large)
+            .background(LpspPrimeVideoTokens.primeCanvas.ignoresSafeArea())
         }
     }
 }
 
+private struct LpspPrimeVideoHomeTabScreen: View {
+    @ObservedObject var store: LpspPrimeVideoStore
 
-private struct LpspPrimeVideoDemoPosterURLs {
-    static let items: [URL] = [
-        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
-    ]
-}
-private struct LpspPrimeVideoDemoProfile: Identifiable {
-    let id = UUID()
-    let name: String
-    let color: Color
-    let isKids: Bool
-}
-
-private enum LpspPrimeVideoDemoProfiles {
-    static let items: [LpspPrimeVideoDemoProfile] = [
-        .init(name: "Lost Phone", color: .red, isKids: false),
-        .init(name: "Enfants", color: .orange, isKids: true),
-    ]
-}
-
-private struct LpspPrimeVideoVideoHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.08, green: 0.08, blue: 0.08), Color.black],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .frame(height: 220)
-                            .overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill").font(.system(size: 56)).foregroundStyle(.white.opacity(0.9))
-                            }
-                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
-                            .frame(height: 80)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .padding(.horizontal, 12)
-                    LpspPrimeVideoPrimePlayButton(title: "Lecture", action: {})
-                        .padding(.horizontal, 12)
-                    Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(0..<6, id: \.self) { i in
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.15, green: 0.15, blue: 0.15))
-                                    .frame(width: 110, height: 165)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                    }
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("")
-            .toolbarBackground(.hidden, for: .navigationBar)
-        }
-    }
-}
-
-private struct LpspPrimeVideoProfilePickerTabScreen: View {
-    var body: some View {
-        LpspPrimeVideoDemoProfilePicker()
-    }
-}
-
-private struct LpspPrimeVideoVideoNewTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-
-                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("New & Hot")
-        }
-    }
-}
-
-private struct LpspPrimeVideoVideoDownloadsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
-                    VStack(alignment: .leading) {
-                        Text(title).font(.headline).foregroundStyle(.white)
-                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("Downloads")
-        }
-    }
-}
-
-private struct LpspPrimeVideoDemoProfilePicker: View {
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 32) {
-                Text("Qui regarde ?").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
-                ForEach(LpspPrimeVideoDemoProfiles.items) { p in
-                    VStack(spacing: 8) {
-                        Circle().fill(p.color).frame(width: 72, height: 72)
-                        Text(p.name).foregroundStyle(.gray)
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-private struct LpspPrimeVideoSpectrHomeTabScreen: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
-        ZStack(alignment: .bottomLeading) {
-            LinearGradient(colors: [Color(red:0.05,green:0.08,blue:0.2), Color(red:0.02,green:0.02,blue:0.06)], startPoint: .top, endPoint: .bottom).frame(maxWidth: .infinity, maxHeight: .infinity)
-                Text("The Citadel Files").font(.system(size: 28.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("★ 8.4 IMDb").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Play").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Watchlist").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("In this scene").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("N. Palmer").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Agent Cole").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("K. Voss").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Director").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("H. Ruiz").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Mara").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .frame(height: 380)
-                Text("Included with Prime").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("See more").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    Text("Included with Prime").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Included with Prime").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Included with Prime").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Included with Prime").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+                LpspPrimeVideoSpectrBillboard(store: store)
+
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Text("Included with Prime")
+                            .font(LpspPrimeVideoFonts.primeSectionHeader.weight(.semibold))
+                            .foregroundStyle(LpspPrimeVideoTokens.primeTextPrimary)
+                        Spacer()
+                        Text("See more")
+                            .font(LpspPrimeVideoFonts.primeMeta.weight(.semibold))
+                            .foregroundStyle(LpspPrimeVideoTokens.primeBlue)
+                    }
+                    .padding(.horizontal, 16)
+
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(store.includedRow.filter { $0.id != LpspPrimeVideoShowroomData.featuredID }) { title in
+                                LpspPrimeVideoPosterTile(
+                                    title: title,
+                                    onSelect: { store.toggleWatchlist(titleID: title.id) }
+                                )
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                    }
                 }
-                .padding(.horizontal, 12)
-            }
+                .padding(.top, 22)
+                .padding(.bottom, 24)
             }
         }
-        .background(Color(red: 0.059, green: 0.090, blue: 0.118).ignoresSafeArea())
-        .preferredColorScheme(.dark)
+        .toolbarBackground(.hidden, for: .navigationBar)
+    }
+}
+
+private struct LpspPrimeVideoSpectrBillboard: View {
+    @ObservedObject var store: LpspPrimeVideoStore
+
+    private var featured: LpspPrimeVideoTitle { store.featured }
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            LinearGradient(
+                colors: featured.gradient,
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 440)
+
+            LinearGradient(
+                colors: [.clear, LpspPrimeVideoTokens.primeCanvas],
+                startPoint: .center,
+                endPoint: .bottom
+            )
+            .frame(height: 440)
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text("The Citadel Files")
+                    .font(LpspPrimeVideoFonts.primeDetailsTitle.weight(.bold))
+                    .foregroundStyle(LpspPrimeVideoTokens.primeTextPrimary)
+
+                (Text("2024 · 16+ · 1 Season · ")
+                    .foregroundColor(LpspPrimeVideoTokens.primeTextSecondary)
+                 + Text("★ 8.4 IMDb")
+                    .foregroundColor(LpspPrimeVideoTokens.primeImdbYellow))
+                .font(LpspPrimeVideoFonts.primeMeta)
+
+                HStack(spacing: 12) {
+                    LpspPrimeVideoPrimePlayButton(
+                        title: store.isPlaying ? "Playing" : "Play"
+                    ) {
+                        store.playFeatured()
+                    }
+                    .frame(width: 130)
+
+                    LpspPrimeVideoPrimeWatchlistButton(
+                        added: Binding(
+                            get: { store.featured.inWatchlist },
+                            set: { newValue in
+                                guard let index = store.titles.firstIndex(where: { $0.id == LpspPrimeVideoShowroomData.featuredID }) else { return }
+                                store.titles[index].inWatchlist = newValue
+                            }
+                        )
+                    )
+                    .frame(width: 150)
+                }
+            }
+            .padding(16)
+            .padding(.bottom, store.xRayShown ? 120 : 0)
+
+            LpspPrimeVideoPrimeXRayOverlay(
+                cast: LpspPrimeVideoShowroomData.cast,
+                nowPlaying: store.isPlaying ? "The Citadel Files — Main Theme" : nil,
+                shown: $store.xRayShown
+            )
+        }
+        .frame(height: 440)
+        .background(LpspPrimeVideoTokens.primeCanvas)
+    }
+}
+
+private struct LpspPrimeVideoPosterTile: View {
+    let title: LpspPrimeVideoTitle
+    let onSelect: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            VStack(alignment: .leading, spacing: 6) {
+                ZStack(alignment: .bottom) {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: title.gradient,
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 120, height: 180)
+
+                    if let progress = title.progress {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Rectangle().fill(Color.white.opacity(0.25))
+                                Rectangle()
+                                    .fill(LpspPrimeVideoTokens.primeBlue)
+                                    .frame(width: geo.size.width * progress)
+                            }
+                        }
+                        .frame(height: 3)
+                    }
+                }
+
+                Text(title.name)
+                    .font(LpspPrimeVideoFonts.primeTileTitle)
+                    .foregroundStyle(LpspPrimeVideoTokens.primeTextPrimary)
+                    .lineLimit(1)
+
+                if title.includedWithPrime {
+                    Text("Included with Prime")
+                        .font(LpspPrimeVideoFonts.primeTileSubtitle)
+                        .foregroundStyle(LpspPrimeVideoTokens.primeBlue)
+                }
+            }
+            .frame(width: 120)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspPrimeVideoStoreTabScreen: View {
+    @ObservedObject var store: LpspPrimeVideoStore
+
+    private let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: cols, spacing: 12) {
+                ForEach(store.titles) { title in
+                    LpspPrimeVideoPosterTile(title: title) {
+                        store.toggleWatchlist(titleID: title.id)
+                    }
+                }
+            }
+            .padding(16)
+        }
+    }
+}
+
+private struct LpspPrimeVideoLiveTabScreen: View {
+    var body: some View {
+        List {
+            ForEach(LpspPrimeVideoShowroomData.liveEvents, id: \.0) { name, detail, isLive in
+                HStack(spacing: 12) {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(LpspPrimeVideoTokens.primeSurface2)
+                        .frame(width: 88, height: 50)
+                        .overlay(alignment: .topLeading) {
+                            if isLive {
+                                Text("LIVE")
+                                    .font(LpspPrimeVideoFonts.primeBadge.weight(.bold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 3)
+                                    .background(LpspPrimeVideoTokens.primeLiveRed)
+                                    .clipShape(RoundedRectangle(cornerRadius: 3))
+                                    .padding(6)
+                            }
+                        }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(name)
+                            .font(LpspPrimeVideoFonts.primeTileTitle.weight(.semibold))
+                            .foregroundStyle(LpspPrimeVideoTokens.primeTextPrimary)
+                        Text(detail)
+                            .font(LpspPrimeVideoFonts.primeTileSubtitle)
+                            .foregroundStyle(LpspPrimeVideoTokens.primeTextSecondary)
+                    }
+                }
+                .listRowBackground(LpspPrimeVideoTokens.primeSurface1)
+            }
+        }
+        .scrollContentBackground(.hidden)
+    }
+}
+
+private struct LpspPrimeVideoFindTabScreen: View {
+    @ObservedObject var store: LpspPrimeVideoStore
+
+    var body: some View {
+        List {
+            Section {
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspPrimeVideoTokens.primeTextSecondary)
+                    TextField("Movies, TV, genres", text: $store.searchQuery)
+                        .foregroundStyle(LpspPrimeVideoTokens.primeTextPrimary)
+                }
+            }
+
+            Section("Popular") {
+                ForEach(LpspPrimeVideoShowroomData.searchSuggestions, id: \.self) { item in
+                    Button {
+                        store.searchQuery = item
+                    } label: {
+                        Text(item)
+                            .foregroundStyle(LpspPrimeVideoTokens.primeTextPrimary)
+                    }
+                }
+            }
+
+            if !store.searchQuery.isEmpty {
+                Section("Results") {
+                    ForEach(store.titles.filter {
+                        $0.name.localizedCaseInsensitiveContains(store.searchQuery)
+                            || store.searchQuery.localizedCaseInsensitiveContains("prime") && $0.includedWithPrime
+                    }) { title in
+                        Text(title.name)
+                            .foregroundStyle(LpspPrimeVideoTokens.primeBlue)
+                    }
+                }
+            }
+        }
+        .scrollContentBackground(.hidden)
+    }
+}
+
+private struct LpspPrimeVideoDownloadsTabScreen: View {
+    var body: some View {
+        List {
+            ForEach(LpspPrimeVideoShowroomData.downloads, id: \.0) { title, size in
+                HStack(spacing: 12) {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(LpspPrimeVideoTokens.primeSurface2)
+                        .frame(width: 72, height: 108)
+                        .overlay {
+                            Image(systemName: "arrow.down.circle.fill")
+                                .foregroundStyle(LpspPrimeVideoTokens.primeBlue)
+                        }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(title)
+                            .font(LpspPrimeVideoFonts.primeTileTitle.weight(.semibold))
+                            .foregroundStyle(LpspPrimeVideoTokens.primeTextPrimary)
+                        Text(size)
+                            .font(LpspPrimeVideoFonts.primeTileSubtitle)
+                            .foregroundStyle(LpspPrimeVideoTokens.primeTextSecondary)
+                    }
+                }
+                .listRowBackground(LpspPrimeVideoTokens.primeSurface1)
+            }
+        }
+        .scrollContentBackground(.hidden)
     }
 }
 

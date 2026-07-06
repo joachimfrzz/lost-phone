@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeKindleView: View {
     var body: some View {
-        LpspKindleShowroomRoot()
+        LpspKindleShowroomRoot(store: LpspKindleStore())
     }
 }
 
@@ -196,21 +196,32 @@ fileprivate struct LpspKindleAaPanel: View {
 }
 
 fileprivate struct LpspKindleLibraryCover: View {
-    let imageUrl: String?
-    let progress: Double      // 0...1
+    let title: String
+    let progress: Double
     let author: String
+    let accent: Color
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             ZStack(alignment: .bottom) {
-                AsyncImage(url: URL(string: imageUrl ?? "")) { img in
-                    img.resizable().aspectRatio(contentMode: .fill)
-                } placeholder: {
-                    Rectangle().fill(LpspKindleTokens.kdlDarkSurface2)
-                }
-                .aspectRatio(2.0/3.0, contentMode: .fit)
-                .clipShape(RoundedRectangle(cornerRadius: 4))
-                .shadow(color: .black.opacity(0.4), radius: 10, y: 4)
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(
+                        LinearGradient(
+                            colors: [accent.opacity(0.85), accent.opacity(0.45)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .aspectRatio(2.0/3.0, contentMode: .fit)
+                    .overlay(
+                        Text(title)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.9))
+                            .multilineTextAlignment(.center)
+                            .padding(8),
+                        alignment: .bottom
+                    )
+                    .shadow(color: .black.opacity(0.35), radius: 8, y: 4)
 
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
@@ -221,8 +232,10 @@ fileprivate struct LpspKindleLibraryCover: View {
                 }
                 .frame(height: 3)
             }
-            Text(progress >= 1 ? "Finished · \(author)" : "\(Int(progress*100))% · \(author)")
-                .font(LpspKindleFonts.kdlCaption).foregroundStyle(LpspKindleTokens.kdlTextSecondary)
+            Text(progress >= 1 ? "Finished · \(author)" : "\(Int(progress * 100))% · \(author)")
+                .font(LpspKindleFonts.kdlCaption)
+                .foregroundStyle(LpspKindleTokens.kdlTextSecondary)
+                .lineLimit(1)
         }
     }
 }
@@ -261,124 +274,377 @@ fileprivate struct LpspKindleKindleChromeTheme: ViewModifier {
 }
 fileprivate extension View { func kindleChrome() -> some View { modifier(LpspKindleKindleChromeTheme()) } }
 
-// MARK: - Écrans showroom
+// MARK: - Données & état (showroom Spectr)
 
-private struct LpspKindleShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspKindleSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspKindleReaderTabScreen(title: "Library", tabIndex: 1)
-                .tabItem { Label("Library", systemImage: "books.vertical.fill") }
-                .tag(1)
-            LpspKindleReaderTabScreen(title: "Discover", tabIndex: 2)
-                .tabItem { Label("Discover", systemImage: "magnifyingglass") }
-                .tag(2)
-            LpspKindleReaderTabScreen(title: "More", tabIndex: 3)
-                .tabItem { Label("More", systemImage: "ellipsis") }
-                .tag(3)
-        }
-        .tint(LpspKindleTokens.kdlGreenPage)
-        
-    }
-}
-
-
-private struct LpspKindleGenericTabScreen: View {
+fileprivate struct LpspKindleBook: Identifiable, Hashable {
+    let id: String
     let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspKindleTokens.kdlGreenPage.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspKindleTokens.kdlGreenPage))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
+    let author: String
+    let chapter: String
+    let chapterTitle: String
+    let paragraphs: [String]
+    let progress: Double
+    let percentInChapter: Int
+    let minsLeftInChapter: Int
+    let coverAccent: Color
+}
+
+private enum LpspKindleTab: CaseIterable {
+    case home, library, discover, more
+
+    var label: String {
+        switch self {
+        case .home: "Home"
+        case .library: "Library"
+        case .discover: "Discover"
+        case .more: "More"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .library: "books.vertical.fill"
+        case .discover: "magnifyingglass"
+        case .more: "ellipsis"
         }
     }
 }
 
+@MainActor
+fileprivate final class LpspKindleStore: ObservableObject {
+    @Published var selectedTab: LpspKindleTab = .home
+    @Published var activeBookID: String
+    @Published var readingSettings = LpspKindleKindleReadingSettings(theme: .sepia)
+    @Published var chromeShown = false
+    @Published var showAaPanel = false
 
-private struct LpspKindleDemoBook { let title: String; let author: String; let progress: Double }
-private enum LpspKindleDemoBooks {
-    static let items: [LpspKindleDemoBook] = [
-        .init(title: "SwiftUI Patterns", author: "Meliwat", progress: 0.42),
-        .init(title: "Design Systems", author: "Spectr", progress: 0.08),
+    let books: [LpspKindleBook] = LpspKindleShowroomData.books
+
+    init() {
+        self.activeBookID = LpspKindleShowroomData.defaultBookID
+    }
+
+    var activeBook: LpspKindleBook {
+        books.first { $0.id == activeBookID } ?? books[0]
+    }
+
+    func openBook(_ id: String) {
+        activeBookID = id
+        selectedTab = .home
+        chromeShown = false
+        showAaPanel = false
+    }
+}
+
+private enum LpspKindleShowroomData {
+    static let defaultBookID = "lighthouse-dawn"
+
+    static let books: [LpspKindleBook] = [
+        .init(
+            id: "lighthouse-dawn",
+            title: "The Lighthouse at Dawn",
+            author: "Elena Marsh",
+            chapter: "CHAPTER SEVEN",
+            chapterTitle: "The Lighthouse at Dawn",
+            paragraphs: [
+                "At the top the lamp still turned, patient and enormous, throwing its long arm of light across water the color of slate. She rested her palm on the brass and felt the faint warmth that never quite left it.",
+                "Below, the village was a scatter of dark roofs. Somewhere down there a boat was already missing, though no one knew it yet but her.",
+            ],
+            progress: 0.38,
+            percentInChapter: 38,
+            minsLeftInChapter: 14,
+            coverAccent: Color(red: 0.45, green: 0.32, blue: 0.22)
+        ),
+        .init(
+            id: "project-hail-mary",
+            title: "Project Hail Mary",
+            author: "Andy Weir",
+            chapter: "CHAPTER 12",
+            chapterTitle: "Rocky",
+            paragraphs: [
+                "I am, objectively, the luckiest human being in history. Also possibly the unluckiest. The distinction feels academic.",
+            ],
+            progress: 0.62,
+            percentInChapter: 54,
+            minsLeftInChapter: 22,
+            coverAccent: Color(red: 0.15, green: 0.35, blue: 0.55)
+        ),
+        .init(
+            id: "atomic-habits",
+            title: "Atomic Habits",
+            author: "James Clear",
+            chapter: "CHAPTER 3",
+            chapterTitle: "How to Build Better Habits",
+            paragraphs: [
+                "Habits are the compound interest of self-improvement. The same way that money multiplies through compound interest, the effects of your habits multiply as you repeat them.",
+            ],
+            progress: 0.12,
+            percentInChapter: 12,
+            minsLeftInChapter: 31,
+            coverAccent: Color(red: 0.55, green: 0.42, blue: 0.18)
+        ),
+        .init(
+            id: "creative-act",
+            title: "The Creative Act",
+            author: "Rick Rubin",
+            chapter: "INTRODUCTION",
+            chapterTitle: "The Source of Creativity",
+            paragraphs: [
+                "Creativity is not a rare ability. It is not a gift bestowed upon a select few. It is a fundamental aspect of being human.",
+            ],
+            progress: 1.0,
+            percentInChapter: 100,
+            minsLeftInChapter: 0,
+            coverAccent: Color(red: 0.35, green: 0.35, blue: 0.38)
+        ),
     ]
 }
 
-private struct LpspKindleReaderLibraryTabScreen: View {
-    var body: some View { NavigationStack { ScrollView { 
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        ForEach(LpspKindleDemoBooks.items, id: \.title) { b in
-                        LpspKindleLibraryCover(imageUrl: nil, progress: b.progress, author: b.author)
-                        }
-                    }
-                    .padding()
- } .navigationTitle("Bibliothèque") } }
-}
+// MARK: - Écrans showroom
 
-private struct LpspKindleReaderReadingTabScreen: View {
+private struct LpspKindleShowroomRoot: View {
+    @ObservedObject var store: LpspKindleStore
+
     var body: some View {
         ZStack {
-            LpspKindleTokens.kdlChromeCanvas.ignoresSafeArea()
-            LpspKindleReadingPage(
-                chapter: "CHAPITRE I",
-                title: "Le phare au matin",
-                paragraphs: [
-                    "La brume s'accrochait aux falaises comme une écharpe de laine mouillée.",
-                    "Personne ne savait encore que cette matinée allait tout changer.",
-                ],
-                percent: 42,
-                minsLeft: 18,
-                settings: LpspKindleKindleReadingSettings(),
-                chromeShown: .constant(false)
-            )
+            if store.selectedTab == .home {
+                LpspKindleReadingScreen(store: store)
+            } else {
+                VStack(spacing: 0) {
+                    Group {
+                        switch store.selectedTab {
+                        case .library:
+                            LpspKindleLibraryScreen(store: store)
+                        case .discover:
+                            LpspKindleDiscoverScreen(store: store)
+                        case .more:
+                            LpspKindleMoreScreen(store: store)
+                        case .home:
+                            EmptyView()
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                    LpspKindleTabBar(store: store)
+                }
+                .kindleChrome()
+            }
         }
     }
 }
 
-private struct LpspKindleReaderTabScreen: View {
-    let title: String
-    let tabIndex: Int
+private struct LpspKindleTabBar: View {
+    @ObservedObject var store: LpspKindleStore
+
     var body: some View {
-        let low = title.lowercased()
-        if low.contains("read") || low.contains("lecture") { LpspKindleReaderReadingTabScreen() }
-        else { LpspKindleReaderLibraryTabScreen() }
+        HStack(spacing: 0) {
+            ForEach(LpspKindleTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        store.selectedTab = tab
+                        if tab != .home {
+                            store.chromeShown = false
+                            store.showAaPanel = false
+                        }
+                    }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.label)
+                            .font(LpspKindleFonts.kdlTab)
+                    }
+                    .foregroundStyle(store.selectedTab == tab ? LpspKindleTokens.kdlOrange : LpspKindleTokens.kdlTextSecondary)
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+                .sensoryFeedback(.selection, trigger: store.selectedTab)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(LpspKindleTokens.kdlChromeCanvas)
+        .overlay(alignment: .top) {
+            Rectangle().fill(LpspKindleTokens.kdlDivider).frame(height: 0.5)
+        }
     }
 }
 
+private struct LpspKindleReadingScreen: View {
+    @ObservedObject var store: LpspKindleStore
 
-private struct LpspKindleSpectrHomeTabScreen: View {
+    var body: some View {
+        ZStack {
+            LpspKindleReadingPage(
+                chapter: store.activeBook.chapter,
+                title: store.activeBook.chapterTitle,
+                paragraphs: store.activeBook.paragraphs,
+                percent: store.activeBook.percentInChapter,
+                minsLeft: store.activeBook.minsLeftInChapter,
+                settings: store.readingSettings,
+                chromeShown: $store.chromeShown
+            )
+
+            if store.chromeShown {
+                VStack {
+                    LpspKindleReadingChromeBar(store: store)
+                    Spacer()
+                    if store.showAaPanel {
+                        LpspKindleAaPanel(settings: $store.readingSettings)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 8)
+                    }
+                    LpspKindleReadingBottomChrome(store: store)
+                }
+                .transition(.opacity)
+            }
+        }
+    }
+}
+
+private struct LpspKindleReadingChromeBar: View {
+    @ObservedObject var store: LpspKindleStore
+
+    var body: some View {
+        HStack {
+            Button {
+                store.selectedTab = .library
+                store.chromeShown = false
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 17, weight: .semibold))
+            }
+            Spacer()
+            Text(store.activeBook.title)
+                .font(LpspKindleFonts.kdlListTitle)
+                .lineLimit(1)
+            Spacer()
+            Button {
+                withAnimation { store.showAaPanel.toggle() }
+            } label: {
+                Text("Aa")
+                    .font(.system(size: 17, weight: .semibold))
+            }
+        }
+        .foregroundStyle(LpspKindleTokens.kdlBlack)
+        .padding(.horizontal, 16)
+        .frame(height: 44)
+        .background(LpspKindleTokens.kdlBlack.opacity(0.92))
+    }
+}
+
+private struct LpspKindleReadingBottomChrome: View {
+    @ObservedObject var store: LpspKindleStore
+
     var body: some View {
         VStack(spacing: 0) {
-        ScrollView {
-                Text("Chapter Seven").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("The Lighthouse at Dawn").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("T").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("At the top the lamp still turned, patient and enormous, throwing its long arm of light across water the color of slate. She rested her palm on the brass and felt the faint warmth that never quite left it.").font(.system(size: 15.5, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Below, the village was a scatter of dark roofs. Somewhere down there a boat was already missing, though no one knew it yet but her.").font(.system(size: 15.5, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("38%").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("14 min left in chapter").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(20)
-                Text("Aa").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Brightness").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Layout").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Go To").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            HStack(spacing: 0) {
+                chromeItem("Aa") { store.showAaPanel.toggle() }
+                chromeItem("Brightness", systemImage: "sun.max") {}
+                chromeItem("Layout", systemImage: "text.alignleft") {}
+                chromeItem("Go To", systemImage: "list.bullet") {}
+            }
+            .frame(height: 48)
+            .background(LpspKindleTokens.kdlBlack.opacity(0.92))
+
+            LpspKindleTabBar(store: store)
         }
-        .background(Color(red: 0.055, green: 0.055, blue: 0.055).ignoresSafeArea())
-        .preferredColorScheme(.dark)
+    }
+
+    private func chromeItem(_ label: String, systemImage: String? = nil, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                if let systemImage {
+                    Image(systemName: systemImage).font(.system(size: 16))
+                } else {
+                    Text(label).font(.system(size: 15, weight: .semibold))
+                }
+                Text(label).font(LpspKindleFonts.kdlTab)
+            }
+            .foregroundStyle(.white.opacity(0.85))
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.plain)
     }
 }
 
+private struct LpspKindleLibraryScreen: View {
+    @ObservedObject var store: LpspKindleStore
 
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    ForEach(store.books) { book in
+                        Button { store.openBook(book.id) } label: {
+                            LpspKindleLibraryCover(
+                                title: book.title,
+                                progress: book.progress,
+                                author: book.author,
+                                accent: book.coverAccent
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(16)
+            }
+            .navigationTitle("Library")
+        }
+    }
+}
+
+private struct LpspKindleDiscoverScreen: View {
+    @ObservedObject var store: LpspKindleStore
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Recommended for you") {
+                    ForEach(store.books.prefix(2)) { book in
+                        Button { store.openBook(book.id) } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(book.coverAccent.opacity(0.7))
+                                    .frame(width: 48, height: 72)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(book.title)
+                                        .font(LpspKindleFonts.kdlListTitle.weight(.semibold))
+                                        .foregroundStyle(LpspKindleTokens.kdlTextPrimary)
+                                    Text(book.author)
+                                        .font(LpspKindleFonts.kdlMeta)
+                                        .foregroundStyle(LpspKindleTokens.kdlTextSecondary)
+                                }
+                            }
+                        }
+                    }
+                }
+                Section("Browse") {
+                    Label("Kindle Unlimited", systemImage: "infinity")
+                    Label("Best Sellers", systemImage: "chart.line.uptrend.xyaxis")
+                    Label("New Releases", systemImage: "sparkles")
+                }
+            }
+            .navigationTitle("Discover")
+        }
+    }
+}
+
+private struct LpspKindleMoreScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Label("Settings", systemImage: "gearshape")
+                    Label("Your Account", systemImage: "person.crop.circle")
+                }
+                Section {
+                    Label("Help & Feedback", systemImage: "questionmark.circle")
+                    Label("About Kindle", systemImage: "info.circle")
+                }
+            }
+            .navigationTitle("More")
+        }
+    }
+}

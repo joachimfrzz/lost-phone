@@ -4,8 +4,15 @@ import SwiftUI
 // Meliwat/awesome-ios-design-md/messaging/messenger/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeMessengerView: View {
+    var conversations: [LpspConversation]?
+
     var body: some View {
-        LpspMessengerShowroomRoot()
+        let storyThreads = conversations?.isEmpty == false ? conversations : nil
+        let threads = storyThreads ?? LpspMessengerShowroomData.conversations
+        LpspMessengerShowroomRoot(
+            store: LpspMessengerStore(conversations: threads),
+            isStoryMode: storyThreads != nil
+        )
     }
 }
 
@@ -70,36 +77,273 @@ private enum LpspMessengerGradients {
     )
 }
 
+// MARK: - Données & état
 
+@MainActor
+fileprivate final class LpspMessengerStore: ObservableObject {
+    @Published private(set) var threads: [LpspConversation]
+    @Published var messagesByThread: [String: [LpspMessengerDisplayMessage]]
 
+    init(conversations: [LpspConversation]) {
+        self.threads = conversations
+        self.messagesByThread = Dictionary(
+            uniqueKeysWithValues: conversations.map { ($0.id, LpspMessengerStore.makeDisplayMessages(for: $0)) }
+        )
+    }
 
+    func thread(id: String) -> LpspConversation? {
+        threads.first { $0.id == id }
+    }
 
-fileprivate struct LpspMessengerOutgoingBubble: View {
+    func markAsRead(threadId: String) {
+        guard let index = threads.firstIndex(where: { $0.id == threadId }),
+              threads[index].isUnread else { return }
+        let old = threads[index]
+        threads[index] = LpspConversation(
+            id: old.id,
+            contactName: old.contactName,
+            messages: old.messages,
+            isUnread: false
+        )
+    }
+
+    func send(text: String, threadId: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let now = Date()
+        let time = LpspAdapters.formatSignalBubbleTime(raw: nil, date: now)
+        var bucket = messagesByThread[threadId, default: []]
+        if let last = bucket.last, last.isOutgoing {
+            bucket[bucket.count - 1] = LpspMessengerDisplayMessage(
+                id: last.id,
+                text: last.text,
+                isOutgoing: true,
+                time: last.time,
+                showsMeta: false,
+                reaction: last.reaction,
+                readState: last.readState
+            )
+        }
+        bucket.append(
+            LpspMessengerDisplayMessage(
+                id: UUID().uuidString,
+                text: trimmed,
+                isOutgoing: true,
+                time: time,
+                showsMeta: true,
+                reaction: nil,
+                readState: .delivered
+            )
+        )
+        messagesByThread[threadId] = bucket
+
+        if let index = threads.firstIndex(where: { $0.id == threadId }) {
+            let old = threads[index]
+            let newMessage = LpspMessage(
+                id: "sent-\(UUID().uuidString)",
+                text: trimmed,
+                isUser: true,
+                date: now,
+                dateRaw: time
+            )
+            threads[index] = LpspConversation(
+                id: old.id,
+                contactName: old.contactName,
+                messages: old.messages + [newMessage],
+                isUnread: false
+            )
+        }
+    }
+
+    private static func makeDisplayMessages(for conversation: LpspConversation) -> [LpspMessengerDisplayMessage] {
+        if conversation.id == LpspMessengerShowroomData.theoThreadId {
+            return LpspMessengerShowroomData.theoDisplayMessages
+        }
+        return buildDisplayMessages(from: conversation.messages)
+    }
+
+    static func buildDisplayMessages(from messages: [LpspMessage]) -> [LpspMessengerDisplayMessage] {
+        messages.enumerated().map { index, message in
+            let isOutgoing = message.isUser
+            let nextSame = index < messages.count - 1 && messages[index + 1].isUser == isOutgoing
+            let showsMeta = !nextSame
+            let time = showsMeta ? LpspAdapters.formatSignalBubbleTime(message) : ""
+            let readState: LpspMessengerReadState? = isOutgoing
+                ? (showsMeta ? .delivered : nil)
+                : nil
+            return LpspMessengerDisplayMessage(
+                id: message.id,
+                text: message.text,
+                isOutgoing: isOutgoing,
+                time: time,
+                showsMeta: showsMeta,
+                reaction: nil,
+                readState: readState
+            )
+        }
+    }
+}
+
+fileprivate struct LpspMessengerDisplayMessage: Identifiable {
+    let id: String
     let text: String
-    let isLastInRun: Bool
-    let threadHeight: CGFloat   // total visible thread height
-    let bubbleOriginY: CGFloat  // this bubble's y within the thread
+    let isOutgoing: Bool
+    let time: String
+    let showsMeta: Bool
+    let reaction: (emoji: String, count: Int)?
+    let readState: LpspMessengerReadState?
+}
+
+fileprivate enum LpspMessengerReadState {
+    case sent, delivered, read
+}
+
+private enum LpspMessengerShowroomData {
+    static let theoThreadId = "msg-theo-marchetti"
+
+    static var conversations: [LpspConversation] {
+        [
+            LpspConversation(
+                id: theoThreadId,
+                contactName: "Theo Marchetti",
+                messages: theoPlainMessages,
+                isUnread: false
+            ),
+            LpspConversation(
+                id: "msg-lea",
+                contactName: "Léa Dupont",
+                messages: [
+                    LpspMessage(id: "l1", text: "Merci pour hier !", isUser: false, date: nil, dateRaw: "Hier"),
+                    LpspMessage(id: "l2", text: "Avec plaisir 😊", isUser: true, date: nil, dateRaw: "Hier"),
+                ],
+                isUnread: true
+            ),
+            LpspConversation(
+                id: "msg-famille",
+                contactName: "Famille",
+                messages: [
+                    LpspMessage(id: "f1", text: "Photo: vacances", isUser: false, date: nil, dateRaw: "Lun."),
+                ],
+                isUnread: false
+            ),
+        ]
+    }
+
+    static let theoDisplayMessages: [LpspMessengerDisplayMessage] = [
+        .init(id: "t1", text: "Did you see the new gradient bubbles?", isOutgoing: false, time: "", showsMeta: false, reaction: nil, readState: nil),
+        .init(id: "t2", text: "They flow down the whole conversation now 🌈", isOutgoing: false, time: "9:36 AM", showsMeta: true, reaction: nil, readState: nil),
+        .init(id: "t3", text: "Yes! It looks like one continuous ribbon.", isOutgoing: true, time: "", showsMeta: false, reaction: nil, readState: .read),
+        .init(id: "t4", text: "Way more fun than a flat color.", isOutgoing: true, time: "9:38 AM", showsMeta: true, reaction: ("❤️", 2), readState: .read),
+        .init(id: "t5", text: "Long-press one to react 👇", isOutgoing: false, time: "", showsMeta: true, reaction: nil, readState: nil),
+    ]
+
+    private static var theoPlainMessages: [LpspMessage] {
+        theoDisplayMessages.map { msg in
+            LpspMessage(
+                id: msg.id,
+                text: msg.text,
+                isUser: msg.isOutgoing,
+                date: nil,
+                dateRaw: msg.time.isEmpty ? nil : msg.time
+            )
+        }
+    }
+}
+
+private struct LpspMessengerThreadHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
+private struct LpspMessengerBubbleYKey: PreferenceKey {
+    static var defaultValue: [String: CGFloat] = [:]
+    static func reduce(value: inout [String: CGFloat], nextValue: () -> [String: CGFloat]) {
+        value.merge(nextValue()) { $1 }
+    }
+}
+
+
+
+
+
+fileprivate struct LpspMessengerSpectrBubble: View {
+    let message: LpspMessengerDisplayMessage
+    let threadHeight: CGFloat
+    let bubbleOriginY: CGFloat
+    let isDark: Bool
+
+    private var isLastInRun: Bool { message.showsMeta }
+    private var incomingFill: Color { isDark ? LpspMessengerTokens.msgIncomingDark : LpspMessengerTokens.msgIncoming }
+    private var incomingText: Color { isDark ? LpspMessengerTokens.msgTextPrimaryD : LpspMessengerTokens.msgTextPrimary }
 
     var body: some View {
-        HStack {
-            Spacer(minLength: 0)
-            Text(text)
-                .font(LpspMessengerFonts.msgMessageBody)
-                .foregroundStyle(.white)
+        HStack(alignment: .bottom, spacing: 0) {
+            if message.isOutgoing { Spacer(minLength: 48) }
+
+            ZStack(alignment: message.isOutgoing ? .bottomTrailing : .bottomLeading) {
+                VStack(alignment: message.isOutgoing ? .trailing : .leading, spacing: 4) {
+                    Text(message.text)
+                        .font(LpspMessengerFonts.msgMessageBody)
+                        .foregroundStyle(message.isOutgoing ? .white : incomingText)
+                        .multilineTextAlignment(message.isOutgoing ? .trailing : .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if message.showsMeta {
+                        HStack(spacing: 4) {
+                            if !message.time.isEmpty {
+                                Text(message.time)
+                                    .font(LpspMessengerFonts.msgBubbleMeta)
+                            }
+                            if message.isOutgoing, message.readState != nil {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 10, weight: .bold))
+                            }
+                        }
+                        .foregroundStyle(
+                            message.isOutgoing
+                                ? Color.white.opacity(0.75)
+                                : LpspMessengerTokens.msgTextSecondary
+                        )
+                    }
+                }
                 .padding(.vertical, 9)
                 .padding(.horizontal, 14)
-                .background(
-                    // Gradient anchored to the conversation, not the bubble:
-                    LinearGradient(colors: [LpspMessengerTokens.msgGradBlue, LpspMessengerTokens.msgGradViolet, LpspMessengerTokens.msgGradPink],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing)
-                        .frame(height: threadHeight)
+                .background {
+                    if message.isOutgoing {
+                        LinearGradient(
+                            colors: [
+                                LpspMessengerTokens.msgGradBlue,
+                                LpspMessengerTokens.msgGradViolet,
+                                LpspMessengerTokens.msgGradPink,
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        .frame(height: max(threadHeight, 1))
                         .offset(y: -bubbleOriginY)
-                        .frame(height: 0, alignment: .top) // clip to bubble via mask below
+                        .frame(height: 0, alignment: .top)
+                    } else {
+                        incomingFill
+                    }
+                }
+                .clipShape(
+                    LpspMessengerBubbleShape(
+                        radius: 18,
+                        tightCorner: message.isOutgoing ? .bottomRight : .bottomLeft,
+                        tight: isLastInRun ? 6 : 18
+                    )
                 )
-                .clipShape(LpspMessengerBubbleShape(radius: 18,
-                                       tightCorner: .bottomRight,
-                                       tight: isLastInRun ? 6 : 18))
-                .frame(maxWidth: 270, alignment: .trailing)
+                .frame(maxWidth: 270, alignment: message.isOutgoing ? .trailing : .leading)
+
+                if let reaction = message.reaction {
+                    LpspMessengerReactionBadge(emoji: reaction.emoji, count: reaction.count)
+                        .offset(x: message.isOutgoing ? 8 : -8, y: 10)
+                }
+            }
+
+            if !message.isOutgoing { Spacer(minLength: 48) }
         }
         .padding(.horizontal, 10)
     }
@@ -171,14 +415,17 @@ fileprivate struct LpspMessengerReactionBadge: View {
 }
 
 fileprivate struct LpspMessengerComposerBar: View {
-    @State private var text = ""
-    private var hasText: Bool { !text.trimmingCharacters(in: .whitespaces).isEmpty }
+    @Binding var text: String
+    let isDark: Bool
+    let onSend: () -> Void
+
+    private var hasText: Bool { !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
     var body: some View {
         HStack(spacing: 10) {
             if !hasText {
                 HStack(spacing: 16) {
-                    ForEach(["camera", "photo", "mic", "face.smiling"], id: \.self) {
+                    ForEach(["camera", "photo", "mic"], id: \.self) {
                         Image(systemName: $0).font(.system(size: 22))
                             .foregroundStyle(LpspMessengerTokens.msgBlue)
                     }
@@ -188,14 +435,16 @@ fileprivate struct LpspMessengerComposerBar: View {
             HStack {
                 TextField("Aa", text: $text, axis: .vertical)
                     .font(LpspMessengerFonts.msgMessageBody).lineLimit(1...5)
+                    .foregroundStyle(isDark ? LpspMessengerTokens.msgTextPrimaryD : LpspMessengerTokens.msgTextPrimary)
                 Image(systemName: "face.smiling").font(.system(size: 20))
                     .foregroundStyle(LpspMessengerTokens.msgTextSecondary)
             }
             .padding(.horizontal, 12).frame(minHeight: 36)
-            .background(Capsule().fill(LpspMessengerTokens.msgSurface))
+            .background(Capsule().fill(isDark ? LpspMessengerTokens.msgSurfaceDark : LpspMessengerTokens.msgSurface))
 
-            // Big-thumb: 👍 when empty (one-tap like), filled send when text exists
-            Button { text = "" } label: {
+            Button {
+                if hasText { onSend() }
+            } label: {
                 if hasText {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 16, weight: .bold)).foregroundStyle(.white)
@@ -210,6 +459,7 @@ fileprivate struct LpspMessengerComposerBar: View {
             .sensoryFeedback(.impact(weight: .light), trigger: hasText)
         }
         .padding(.horizontal, 10).padding(.vertical, 8)
+        .background(isDark ? LpspMessengerTokens.msgCanvasDark : LpspMessengerTokens.msgCanvas)
         .animation(.spring(response: 0.18, dampingFraction: 0.7), value: hasText)
     }
 }
@@ -270,291 +520,357 @@ fileprivate struct LpspMessengerTypingBubble: View {
 
 
 
-// MARK: - Écrans showroom
+// MARK: - Écrans interactifs (Spectr + LPSP)
 
-private struct LpspMessengerShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspMessengerSpectrHomeTabScreen()
-                .tabItem { Label("Chats", systemImage: "message.fill") }
-                .tag(0)
-            LpspMessengerMessagingTabScreen(title: "Marketplace")
-                .tabItem { Label("Marketplace", systemImage: "storefront.fill") }
-                .tag(1)
-            LpspMessengerMessagingTabScreen(title: "Stories")
-                .tabItem { Label("Stories", systemImage: "play.circle.fill") }
-                .tag(2)
+private enum LpspMessengerTab: Int, CaseIterable {
+    case chats, marketplace, stories
+
+    var label: String {
+        switch self {
+        case .chats: "Chats"
+        case .marketplace: "Marketplace"
+        case .stories: "Stories"
         }
-        .tint(LpspMessengerTokens.msgActiveGreen)
-        
+    }
+
+    var icon: String {
+        switch self {
+        case .chats: "message.fill"
+        case .marketplace: "storefront.fill"
+        case .stories: "play.circle.fill"
+        }
     }
 }
 
+private enum LpspMessengerChatRoute: Hashable {
+    case thread(String)
+}
 
-private struct LpspMessengerGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
+private enum LpspMessengerContactStyle {
+    static func isActiveNow(_ name: String) -> Bool {
+        name.contains("Theo")
+    }
+}
+
+private struct LpspMessengerShowroomRoot: View {
+    @ObservedObject var store: LpspMessengerStore
+    var isStoryMode = false
+    @State private var selectedTab: LpspMessengerTab = .chats
+    @State private var chatsPath = NavigationPath()
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                switch selectedTab {
+                case .chats:
+                    LpspMessengerChatsTabScreen(store: store, path: $chatsPath, isStoryMode: isStoryMode)
+                case .marketplace:
+                    LpspMessengerMarketplaceTabScreen()
+                case .stories:
+                    LpspMessengerStoriesTabScreen(isStoryMode: isStoryMode)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspMessengerSpectrTabBar(selectedTab: $selectedTab)
+        }
+        .background(LpspMessengerTokens.msgCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspMessengerSpectrTabBar: View {
+    @Binding var selectedTab: LpspMessengerTab
+
+    var body: some View {
+        HStack {
+            ForEach(LpspMessengerTab.allCases, id: \.rawValue) { tab in
+                Button {
+                    selectedTab = tab
+                } label: {
+                    VStack(spacing: 3) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 22))
+                        Text(tab.label)
+                            .font(LpspMessengerFonts.msgTab)
+                    }
+                    .foregroundStyle(
+                        selectedTab == tab
+                            ? LpspMessengerTokens.msgBlue
+                            : LpspMessengerTokens.msgTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 4)
+        .background(LpspMessengerTokens.msgCanvas)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspMessengerTokens.msgDivider)
+                .frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspMessengerChatsTabScreen: View {
+    @ObservedObject var store: LpspMessengerStore
+    @Binding var path: NavigationPath
+    var isStoryMode = false
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            List {
+                ForEach(store.threads) { thread in
+                    Button {
+                        path.append(LpspMessengerChatRoute.thread(thread.id))
+                    } label: {
+                        LpspMessengerConversationRow(
+                            name: thread.contactName,
+                            preview: thread.preview,
+                            time: LpspAdapters.formatShortDate(thread.lastDate, fallback: thread.lastDateRaw),
+                            unread: thread.isUnread,
+                            activeNow: LpspMessengerContactStyle.isActiveNow(thread.contactName)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .listRowSeparatorTint(LpspMessengerTokens.msgDivider)
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Chats")
+            .navigationBarTitleDisplayMode(.large)
+            .navigationDestination(for: LpspMessengerChatRoute.self) { route in
+                if case .thread(let id) = route {
+                    LpspMessengerChatScreen(
+                        store: store,
+                        threadId: id,
+                        isStoryMode: isStoryMode,
+                        onBack: { path.removeLast() }
+                    )
+                }
+            }
+        }
+    }
+}
+
+private struct LpspMessengerChatScreen: View {
+    @ObservedObject var store: LpspMessengerStore
+    let threadId: String
+    var isStoryMode = false
+    let onBack: () -> Void
+
+    @State private var draft = ""
+    @State private var threadHeight: CGFloat = 600
+    @State private var bubbleYs: [String: CGFloat] = [:]
+    @FocusState private var inputFocused: Bool
+
+    private var thread: LpspConversation? { store.thread(id: threadId) }
+    private var contactName: String { thread?.contactName ?? "" }
+    private var messages: [LpspMessengerDisplayMessage] { store.messagesByThread[threadId] ?? [] }
+    private var isTheoThread: Bool { threadId == LpspMessengerShowroomData.theoThreadId }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspMessengerThreadHeader(
+                contactName: contactName,
+                subtitle: isTheoThread ? "Active now" : nil,
+                isActiveNow: LpspMessengerContactStyle.isActiveNow(contactName),
+                onBack: onBack
+            )
+            LpspMessengerThreadBody(
+                messages: messages,
+                threadHeight: $threadHeight,
+                bubbleYs: $bubbleYs
+            )
+            LpspMessengerComposerBar(text: $draft, isDark: true, onSend: sendMessage)
+        }
+        .background(LpspMessengerTokens.msgCanvasDark.ignoresSafeArea())
+        .navigationBarHidden(true)
+        .preferredColorScheme(.dark)
+        .onAppear { store.markAsRead(threadId: threadId) }
+    }
+
+    private func sendMessage() {
+        store.send(text: draft, threadId: threadId)
+        draft = ""
+        inputFocused = false
+    }
+}
+
+private struct LpspMessengerThreadHeader: View {
+    let contactName: String
+    let subtitle: String?
+    let isActiveNow: Bool
+    let onBack: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Button(action: onBack) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(LpspMessengerTokens.msgBlue)
+            }
+            .buttonStyle(.plain)
+
+            ZStack(alignment: .bottomTrailing) {
+                Circle()
+                    .fill(LpspMessengerTokens.msgSurfaceDark)
+                    .frame(width: 32, height: 32)
+                if isActiveNow {
+                    Circle()
+                        .fill(LpspMessengerTokens.msgActiveGreen)
+                        .frame(width: 10, height: 10)
+                        .overlay(Circle().stroke(LpspMessengerTokens.msgCanvasDark, lineWidth: 2))
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(contactName)
+                    .font(LpspMessengerFonts.msgThreadTitle)
+                    .foregroundStyle(LpspMessengerTokens.msgTextPrimaryD)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(LpspMessengerFonts.msgActiveNow)
+                        .foregroundStyle(LpspMessengerTokens.msgTextSecondary)
+                }
+            }
+
+            Spacer()
+
+            HStack(spacing: 18) {
+                Image(systemName: "phone.fill")
+                Image(systemName: "video.fill")
+            }
+            .font(.system(size: 18))
+            .foregroundStyle(LpspMessengerTokens.msgBlue)
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 56)
+        .background(LpspMessengerTokens.msgCanvasDark)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(LpspMessengerTokens.msgDividerDark)
+                .frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspMessengerThreadBody: View {
+    let messages: [LpspMessengerDisplayMessage]
+    @Binding var threadHeight: CGFloat
+    @Binding var bubbleYs: [String: CGFloat]
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 2) {
+                    ForEach(Array(messages.enumerated()), id: \.element.id) { index, message in
+                        if index > 0 && messages[index - 1].isOutgoing != message.isOutgoing {
+                            Color.clear.frame(height: 8)
+                        }
+                        LpspMessengerSpectrBubble(
+                            message: message,
+                            threadHeight: threadHeight,
+                            bubbleOriginY: bubbleYs[message.id] ?? 0,
+                            isDark: true
+                        )
+                        .id(message.id)
+                        .background(
+                            GeometryReader { geo in
+                                Color.clear.preference(
+                                    key: LpspMessengerBubbleYKey.self,
+                                    value: [message.id: geo.frame(in: .named("msgThread")).minY]
+                                )
+                            }
+                        )
+                    }
+                }
+                .padding(.vertical, 8)
+                .background(
+                    GeometryReader { geo in
+                        Color.clear.preference(key: LpspMessengerThreadHeightKey.self, value: geo.size.height)
+                    }
+                )
+            }
+            .coordinateSpace(name: "msgThread")
+            .background(LpspMessengerTokens.msgCanvasDark)
+            .onPreferenceChange(LpspMessengerThreadHeightKey.self) { threadHeight = $0 }
+            .onPreferenceChange(LpspMessengerBubbleYKey.self) { bubbleYs = $0 }
+            .onAppear {
+                if let last = messages.last {
+                    proxy.scrollTo(last.id, anchor: .bottom)
+                }
+            }
+            .onChange(of: messages.count) { _, _ in
+                if let last = messages.last {
+                    withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
+                }
+            }
+        }
+    }
+}
+
+private struct LpspMessengerMarketplaceTabScreen: View {
     var body: some View {
         NavigationStack {
             List(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspMessengerTokens.msgActiveGreen.opacity(0.15))
+                        .fill(LpspMessengerTokens.msgBlue.opacity(0.12))
                         .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspMessengerTokens.msgActiveGreen))
+                        .overlay(Image(systemName: "bag.fill").foregroundStyle(LpspMessengerTokens.msgBlue))
                     VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+                        Text("Listing \(i + 1)")
+                            .font(.system(size: 17, weight: .semibold))
+                        Text("Marketplace item")
+                            .font(.system(size: 14))
+                            .foregroundStyle(LpspMessengerTokens.msgTextSecondary)
                     }
                 }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private struct LpspMessengerPlaceholderChatRow: View {
-    let name: String
-    let preview: String
-    let time: String
-    var body: some View {
-        HStack(spacing: 12) {
-            Circle().fill(LpspMessengerTokens.msgActiveGreen.opacity(0.2)).frame(width: 48, height: 48)
-                .overlay(Text(String(name.prefix(1))).font(.headline).foregroundStyle(LpspMessengerTokens.msgActiveGreen))
-            VStack(alignment: .leading) {
-                Text(name).font(.system(size: 17, weight: .semibold))
-                Text(preview).font(.system(size: 15)).foregroundStyle(.secondary).lineLimit(1)
-            }
-            Spacer()
-            Text(time).font(.system(size: 12)).foregroundStyle(.secondary)
-        }
-        .padding(.horizontal, 16)
-        .frame(height: 72)
-    }
-}
-
-private struct LpspMessengerDemoChat: Identifiable {
-    let id = UUID()
-    let name: String
-    let preview: String
-    let time: String
-    let unread: Int
-    let hasRing: Bool
-}
-
-private enum LpspMessengerDemoChats {
-    static let chats: [LpspMessengerDemoChat] = [
-        .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24", unread: 2, hasRing: true),
-        .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier", unread: 0, hasRing: false),
-        .init(name: "Famille", preview: "Photo: vacances", time: "Lun.", unread: 5, hasRing: true),
-    ]
-}
-
-private struct LpspMessengerChatsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List {
-
-                ForEach(LpspMessengerDemoChats.chats) { chat in
-                    NavigationLink {
-                        LpspMessengerChatDetailScreen(chat: chat)
-                    } label: {
-                        LpspMessengerPlaceholderChatRow(name: chat.name, preview: chat.preview, time: chat.time)
-                    }
-                }
-
             }
             .listStyle(.plain)
-            .navigationTitle("Chats")
+            .navigationTitle("Marketplace")
         }
     }
 }
 
+private struct LpspMessengerStoriesTabScreen: View {
+    var isStoryMode = false
 
-private struct LpspMessengerChatDetailScreen: View {
-    let chat: LpspMessengerDemoChat
-    var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 8) {
-
-                    LpspMessengerDemoBubble(text: "Salut, tu es dispo ?", outgoing: true)
-                    LpspMessengerDemoBubble(text: "Oui, j'arrive !", outgoing: false)
-
-                }
-                .padding(.vertical, 8)
-            }
-            .background(LpspMessengerTokens.msgCanvas.ignoresSafeArea())
-            LpspMessengerDemoComposeBar()
-        }
-        .navigationTitle(chat.name)
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-
-private struct LpspMessengerCallsTabScreen: View {
     var body: some View {
         NavigationStack {
-            List(LpspMessengerDemoChats.chats) { chat in
-                HStack {
-                    Circle().fill(LpspMessengerTokens.msgActiveGreen.opacity(0.15)).frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspMessengerTokens.msgActiveGreen))
-                    VStack(alignment: .leading) {
-                        Text(chat.name).font(.system(size: 17, weight: .semibold))
-                        Text("Appel vocal · Hier").font(.subheadline).foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Image(systemName: "info.circle").foregroundStyle(.secondary)
-                }
-            }
-            .navigationTitle("Appels")
-        }
-    }
-}
-
-private struct LpspMessengerMessagingTabScreen: View {
-    let title: String
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("update") { LpspMessengerUpdatesTabScreen() }
-        else if low.contains("setting") || low.contains("réglage") { LpspMessengerSettingsTabScreen() }
-        else if low.contains("communit") { LpspMessengerCommunitiesTabScreen() }
-        else if low.contains("contact") { LpspMessengerContactsTabScreen() }
-        else { LpspMessengerChatsTabScreen() }
-    }
-}
-
-private struct LpspMessengerUpdatesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 14) {
-                    ForEach(LpspMessengerDemoStories.items) { s in
-                        VStack(spacing: 4) {
-                            Circle().strokeBorder(LpspMessengerTokens.msgActiveGreen, lineWidth: 2).frame(width: 66, height: 66)
-                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+            Group {
+                if isStoryMode {
+                    ContentUnavailableView(
+                        "No stories",
+                        systemImage: "play.circle",
+                        description: Text("Stories from your contacts will appear here.")
+                    )
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 14) {
+                            ForEach(["Your story", "Theo", "Léa"], id: \.self) { name in
+                                VStack(spacing: 4) {
+                                    Circle()
+                                        .strokeBorder(LpspMessengerTokens.msgBlue, lineWidth: 2)
+                                        .frame(width: 66, height: 66)
+                                    Text(name)
+                                        .font(.caption)
+                                        .lineLimit(1)
+                                        .frame(width: 72)
+                                }
+                            }
                         }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
                     }
                 }
-                .padding(.horizontal, 12).padding(.vertical, 10)
             }
-            .navigationTitle("Updates")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .navigationTitle("Stories")
         }
     }
 }
-
-private struct LpspMessengerDemoStoryItem: Identifiable { let id = UUID(); let name: String }
-private enum LpspMessengerDemoStories {
-    static let items: [LpspMessengerDemoStoryItem] = [
-        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
-    ]
-}
-
-private struct LpspMessengerSettingsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List {
-                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
-                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
-            }
-            .navigationTitle("Settings")
-        }
-    }
-}
-
-private struct LpspMessengerCommunitiesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
-        }
-    }
-}
-
-private struct LpspMessengerContactsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "person.circle") }
-            .navigationTitle("Contacts")
-        }
-    }
-}
-
-private struct LpspMessengerDemoBubble: View {
-    let text: String
-    var outgoing: Bool = true
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 60) }
-            Text(text)
-                .font(.system(size: 17))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspMessengerTokens.msgActiveGreen.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 60) }
-        }
-        .padding(.horizontal, 8)
-    }
-}
-
-private struct LpspMessengerDemoComposeBar: View {
-    @State private var text = ""
-    var body: some View {
-        HStack {
-            TextField("Message", text: $text)
-                .padding(10)
-                .background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-            Image(systemName: "paperplane.fill")
-                .foregroundStyle(LpspMessengerTokens.msgActiveGreen)
-                .font(.title2)
-        }
-        .padding(8)
-        .background(.ultraThinMaterial)
-    }
-}
-
-
-private struct LpspMessengerSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 10) {
-                Text("Theo Marchetti").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                Text("Active now").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-        } .padding(.horizontal, 12).frame(height: 56)
-        ScrollView {
-            VStack(spacing: 8) {
-                Text("Did you see the new gradient bubbles?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                HStack {
-                    Spacer(minLength: 48)
-                    Text("They flow down the whole conversation now 🌈").font(.system(size: 16)).foregroundStyle(.white)
-                        .padding(.horizontal, 12).padding(.vertical, 8)
-                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                Text("Yes! It looks like one continuous ribbon.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                HStack {
-                    Spacer(minLength: 48)
-                    Text("Way more fun than a flat color.").font(.system(size: 16)).foregroundStyle(.white)
-                        .padding(.horizontal, 12).padding(.vertical, 8)
-                        .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-                }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                Text("Long-press one to react 👇").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                Text("👍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                Text("❤️").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                Text("😆").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                Text("😮").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                Text("😢").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-                Text("😡").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-            }
-            .padding(.vertical, 8)
-        }
-                Text("Aa").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.894, green: 0.902, blue: 0.922))
-        }
-        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
-        .preferredColorScheme(.dark)
-    }
-}
-
 

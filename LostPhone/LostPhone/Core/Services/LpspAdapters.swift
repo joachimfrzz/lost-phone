@@ -130,6 +130,14 @@ enum LpspAdapters {
         threads(from: payload, key: "conversations")
     }
 
+    static func telegram(from payload: AnyCodable?) -> [LpspConversation] {
+        threads(from: payload, key: "conversations")
+    }
+
+    static func messenger(from payload: AnyCodable?) -> [LpspConversation] {
+        threads(from: payload, key: "conversations")
+    }
+
     static func notes(from payload: AnyCodable?) -> [LpspNote] {
         let items = payload?.arrayValue ?? payload?["contenu"]?.arrayValue ?? []
         return items.enumerated().compactMap { index, raw in

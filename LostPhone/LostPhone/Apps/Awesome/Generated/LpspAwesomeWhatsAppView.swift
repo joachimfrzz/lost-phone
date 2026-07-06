@@ -57,7 +57,7 @@ private enum LpspWhatsAppTokens {
 // MARK: - Données & état (showroom + histoire LPSP)
 
 @MainActor
-final class LpspWhatsAppStore: ObservableObject {
+fileprivate final class LpspWhatsAppStore: ObservableObject {
     @Published private(set) var threads: [LpspConversation]
     @Published var messagesByThread: [String: [LpspWhatsAppSpectrMessage]]
 

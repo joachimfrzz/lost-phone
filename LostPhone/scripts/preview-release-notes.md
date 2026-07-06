@@ -3,6 +3,25 @@
 - Tag **`appetize-preview`** : build depuis `cursor/awesome-artisanal-a052` (validation sans merge dans `main`)
 - Tag **`appetize-latest`** : build stable depuis `main`
 
+### Refonte showroom (4 sources)
+
+1. `DESIGN-swiftui.md` — composants / tokens (déjà dans `LpspAwesome*View.swift`)
+2. **`DESIGN.md` §9** — Agent Prompt Guide (checklist + prompts composants)
+3. Spectr — layout home + pixel ref (`scripts/spectr_previews/`)
+4. Lost Phone — `LpspXxxStore` + données scénario
+
+Avant chaque app refaite à la main :
+
+```bash
+cd LostPhone/scripts
+python3 awesome_design_agent_guide.py Deliveroo          # §9 complète
+python3 awesome_design_agent_guide.py deliveroo --checklist   # quality gate
+python3 awesome_design_agent_guide.py whatsapp --prompts      # composants critiques
+python3 awesome_design_agent_guide.py --list
+```
+
+Clone Meliwat si absent : `git clone https://github.com/Meliwat/awesome-ios-design-md.git` à la racine du repo.
+
 ## Voir l'app sans Appetize (recommandé)
 
 1. Télécharge **`preview-demo.mov`** — vidéo du simulateur iOS

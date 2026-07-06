@@ -226,7 +226,8 @@ fileprivate final class LpspSpotifyStore: ObservableObject {
     @Published var currentTrack: LpspSpotifyShowroomTrack?
     @Published var queue: [LpspSpotifyShowroomTrack] = []
     @Published var isPlaying = false
-    @Published var playbackProgress: Double = 0.18
+    @Published var playbackProgress: Double = 0
+    @Published var playbackElapsedSeconds: Double = 0
     @Published var shuffleEnabled = false
     @Published var repeatEnabled = false
     @Published var showNowPlaying = false
@@ -244,6 +245,8 @@ fileprivate final class LpspSpotifyStore: ObservableObject {
     let madeForYou: [LpspSpotifyShowroomPlaylist]
     let categories: [LpspSpotifyShowroomCategory]
     let podcasts: [LpspSpotifyShowroomPlaylist]
+
+    private var playbackTask: Task<Void, Never>?
 
     init(
         username: String,
@@ -266,6 +269,71 @@ fileprivate final class LpspSpotifyStore: ObservableObject {
         self.currentTrack = recentTracks.first
         self.queue = recentTracks
         self.isPlaying = true
+        self.playbackProgress = 0
+        self.playbackElapsedSeconds = 0
+        startPlaybackClock()
+    }
+
+    deinit {
+        playbackTask?.cancel()
+    }
+
+    var currentTrackDurationSeconds: Double {
+        guard let track = currentTrack else { return 0 }
+        return Self.durationSeconds(for: track.duration)
+    }
+
+    static func durationSeconds(for duration: String) -> Double {
+        let parts = duration.split(separator: ":")
+        guard parts.count == 2,
+              let minutes = Int(parts[0]),
+              let seconds = Int(parts[1]) else { return 180 }
+        return Double(minutes * 60 + seconds)
+    }
+
+    func formattedTime(_ seconds: Double) -> String {
+        let total = max(0, Int(seconds))
+        return "\(total / 60):\(String(format: "%02d", total % 60))"
+    }
+
+    private func syncProgress() {
+        let duration = currentTrackDurationSeconds
+        guard duration > 0 else {
+            playbackProgress = 0
+            return
+        }
+        playbackProgress = min(1, playbackElapsedSeconds / duration)
+    }
+
+    private func resetPlaybackPosition() {
+        playbackElapsedSeconds = 0
+        playbackProgress = 0
+    }
+
+    func startPlaybackClock() {
+        playbackTask?.cancel()
+        guard isPlaying else { return }
+        playbackTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(500))
+                await MainActor.run {
+                    guard let self, self.isPlaying else { return }
+                    let duration = self.currentTrackDurationSeconds
+                    guard duration > 0 else { return }
+                    self.playbackElapsedSeconds += 0.5
+                    if self.playbackElapsedSeconds >= duration {
+                        self.playNext()
+                    } else {
+                        self.syncProgress()
+                    }
+                }
+            }
+        }
+    }
+
+    func stopPlaybackClock() {
+        playbackTask?.cancel()
+        playbackTask = nil
     }
 
     var greeting: String {
@@ -289,7 +357,7 @@ fileprivate final class LpspSpotifyStore: ObservableObject {
     func play(_ track: LpspSpotifyShowroomTrack, from playlist: LpspSpotifyShowroomPlaylist? = nil) {
         currentTrack = track
         isPlaying = true
-        playbackProgress = 0.12
+        resetPlaybackPosition()
         activePlaylist = playlist
         if let playlist, let index = playlist.tracks.firstIndex(of: track) {
             queue = Array(playlist.tracks[index...]) + playlist.tracks.prefix(index)
@@ -298,6 +366,7 @@ fileprivate final class LpspSpotifyStore: ObservableObject {
         } else if let index = recentTracks.firstIndex(of: track) {
             queue = Array(recentTracks[index...]) + recentTracks.prefix(index)
         }
+        startPlaybackClock()
     }
 
     func playPlaylist(_ playlist: LpspSpotifyShowroomPlaylist) {
@@ -313,6 +382,11 @@ fileprivate final class LpspSpotifyStore: ObservableObject {
             return
         }
         isPlaying.toggle()
+        if isPlaying {
+            startPlaybackClock()
+        } else {
+            stopPlaybackClock()
+        }
     }
 
     func playNext() {
@@ -321,16 +395,23 @@ fileprivate final class LpspSpotifyStore: ObservableObject {
         let nextIndex = (index + 1) % queue.count
         currentTrack = queue[nextIndex]
         isPlaying = true
-        playbackProgress = 0.08
+        resetPlaybackPosition()
+        startPlaybackClock()
     }
 
     func playPrevious() {
         guard !queue.isEmpty, let current = currentTrack,
               let index = queue.firstIndex(of: current) else { return }
+        if playbackElapsedSeconds > 3 {
+            resetPlaybackPosition()
+            startPlaybackClock()
+            return
+        }
         let prevIndex = index == 0 ? queue.count - 1 : index - 1
         currentTrack = queue[prevIndex]
         isPlaying = true
-        playbackProgress = 0.08
+        resetPlaybackPosition()
+        startPlaybackClock()
     }
 
     static func playlists(from data: LpspSpotifyData) -> [LpspSpotifyShowroomPlaylist] {
@@ -1204,7 +1285,7 @@ private struct LpspSpotifyNowPlayingScreen: View {
                 VStack(spacing: 8) {
                     LpspSpotifyScrubber(progress: $store.playbackProgress)
                     HStack {
-                        Text("0:\(String(format: "%02d", Int(store.playbackProgress * 200) % 60))")
+                        Text(store.formattedTime(store.playbackElapsedSeconds))
                         Spacer()
                         Text(track.duration)
                     }

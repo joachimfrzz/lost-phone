@@ -2,201 +2,625 @@ import SwiftUI
 
 // Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/netflix
 // Meliwat/awesome-ios-design-md/video/netflix/DESIGN-swiftui.md
-// Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeNetflixView: View {
     var body: some View {
-        LpspNetflixShowroomRoot()
+        LpspNetflixShowroomRoot(
+            store: LpspNetflixStore(
+                profiles: LpspNetflixShowroomData.profiles,
+                titles: LpspNetflixShowroomData.titles
+            )
+        )
     }
 }
 
-// MARK: - Composants spec (préfixés)
+// MARK: - Tokens & composants
+
 private enum LpspNetflixTokens {
-    // MARK: - Brand
-    static let netflixRed        = Color(red: 0.898, green: 0.035, blue: 0.078)  // #E50914
-    static let netflixRedPressed = Color(red: 0.718, green: 0.027, blue: 0.059)  // #B7070F
-    static let netflixRedDimmed  = Color(red: 0.514, green: 0.063, blue: 0.063)  // #831010
-
-    // MARK: - Canvas & Surfaces
-    static let netflixCanvas    = Color(red: 0.078, green: 0.078, blue: 0.078) // #141414
-    static let netflixDeepBlack = Color.black                                   // #000000
-    static let netflixSurface1  = Color(red: 0.122, green: 0.122, blue: 0.122) // #1F1F1F
-    static let netflixSurface2  = Color(red: 0.165, green: 0.165, blue: 0.165) // #2A2A2A
-    static let netflixSurface3  = Color(red: 0.227, green: 0.227, blue: 0.227) // #3A3A3A
-    static let netflixDivider   = Color(red: 0.169, green: 0.169, blue: 0.169) // #2B2B2B
-    static let netflixInput     = Color(red: 0.2,   green: 0.2,   blue: 0.2)   // #333333
-
-    // MARK: - Text
-    static let netflixTextPrimary   = Color.white                                // #FFFFFF
-    static let netflixTextSecondary = Color(red: 0.667, green: 0.667, blue: 0.667) // #AAAAAA
-    static let netflixTextTertiary  = Color(red: 0.467, green: 0.467, blue: 0.467) // #777777
-
-    // MARK: - Profile Accent Rotation
-    static let netflixProfileRed    = Color(red: 0.898, green: 0.035, blue: 0.078) // #E50914
-    static let netflixProfileBlue   = Color(red: 0.243, green: 0.243, blue: 0.569) // #3E3E91
-    static let netflixProfileYellow = Color(red: 0.961, green: 0.847, blue: 0.361) // #F5D85C
-    static let netflixProfileGreen  = Color(red: 0.294, green: 0.541, blue: 0.243) // #4B8A3E
-    static let netflixKidsOrange    = Color(red: 0.973, green: 0.596, blue: 0.114) // #F8981D
-
-    // MARK: - Semantic
-    static let netflixInfo = Color(red: 0.329, green: 0.725, blue: 0.773) // #54B9C5
+    static let netflixRed        = Color(red: 0.898, green: 0.035, blue: 0.078)
+    static let netflixCanvas     = Color(red: 0.078, green: 0.078, blue: 0.078)
+    static let netflixSurface1   = Color(red: 0.122, green: 0.122, blue: 0.122)
+    static let netflixSurface2   = Color(red: 0.165, green: 0.165, blue: 0.165)
+    static let netflixTextSecondary = Color(red: 0.667, green: 0.667, blue: 0.667)
+    static let netflixProfileYellow = Color(red: 0.961, green: 0.847, blue: 0.361)
 }
 
 private enum LpspNetflixFonts {
-    // Headlines
-    static let netflixTitleHero    = Font.system(size: 32, weight: .regular)
-    static let netflixScreenTitle  = Font.system(size: 20, weight: .regular)
-    static let netflixRowHeader    = Font.system(size: 17, weight: .regular)
+    static let heroTitle    = Font.system(size: 36, weight: .black)
+    static let rowHeader    = Font.system(size: 17, weight: .bold)
+    static let body         = Font.system(size: 14, weight: .regular)
+    static let meta         = Font.system(size: 12, weight: .regular)
+    static let tab          = Font.system(size: 10, weight: .regular)
+    static let buttonPlay   = Font.system(size: 17, weight: .bold)
+}
 
-    // Content
-    static let netflixEpisodeTitle = Font.system(size: 17, weight: .regular)
-    static let netflixBody         = Font.system(size: 14, weight: .regular)
-    static let netflixMetadata     = Font.system(size: 13, weight: .regular)
-    static let netflixMetadataSm   = Font.system(size: 12, weight: .regular)
-
-    // Buttons & labels
-    static let netflixButtonPlay   = Font.system(size: 17, weight: .regular)
-    static let netflixButtonSecondary = Font.system(size: 15, weight: .regular)
-    static let netflixBadge        = Font.system(size: 11, weight: .regular)
-    static let netflixTabLabel     = Font.system(size: 10, weight: .regular)
-    static let netflixCert         = Font.system(size: 12, weight: .regular)
-
-    static func netflix(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
+fileprivate struct LpspNetflixPressableStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .brightness(configuration.isPressed ? -0.08 : 0)
+            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 
-fileprivate struct LpspNetflixNetflixPlayButton: View {
-    let title: String   // "Play" or "Resume"
+fileprivate struct LpspNetflixPoster: View {
+    let title: LpspNetflixShowroomTitle
+    var width: CGFloat = 120
+    var progress: Double?
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(
+                    LinearGradient(
+                        colors: [title.accent, title.accent.opacity(0.45)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: width, height: width * 1.5)
+                .overlay(
+                    VStack {
+                        Spacer()
+                        Text(title.shortTitle)
+                            .font(.system(size: width * 0.11, weight: .black))
+                            .foregroundStyle(.white.opacity(0.9))
+                            .multilineTextAlignment(.center)
+                            .padding(8)
+                    }
+                )
+
+            if let progress {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Rectangle().fill(Color.white.opacity(0.25)).frame(height: 3)
+                        Rectangle()
+                            .fill(LpspNetflixTokens.netflixRed)
+                            .frame(width: geo.size.width * progress, height: 3)
+                    }
+                }
+                .frame(height: 3)
+                .padding(.horizontal, 4)
+                .padding(.bottom, 4)
+            }
+        }
+    }
+}
+
+fileprivate struct LpspNetflixPlayButton: View {
+    let title: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Image(systemName: "play.fill")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 18, weight: .bold))
                 Text(title)
-                    .font(LpspNetflixFonts.netflixButtonPlay)
-                    .foregroundStyle(.white)
+                    .font(LpspNetflixFonts.buttonPlay)
             }
+            .foregroundStyle(.black)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(RoundedRectangle(cornerRadius: 4).fill(LpspNetflixTokens.netflixRed))
+            .padding(.vertical, 12)
+            .background(RoundedRectangle(cornerRadius: 4).fill(.white))
         }
-        .sensoryFeedback(.impact(flexibility: .rigid), trigger: title)
-        .buttonStyle(LpspNetflixNetflixPressableStyle())
+        .buttonStyle(LpspNetflixPressableStyle())
     }
 }
 
-fileprivate struct LpspNetflixNetflixPressableStyle: ButtonStyle {
-    var pressedScale: CGFloat = 0.98
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? pressedScale : 1)
-            .brightness(configuration.isPressed ? -0.1 : 0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
-    }
-}
-
-fileprivate struct LpspNetflixNetflixSecondaryButton: View {
-    let systemIcon: String
+fileprivate struct LpspNetflixSecondaryButton: View {
+    let icon: String
     let title: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
-                Image(systemName: systemIcon)
-                    .font(.system(size: 16))
-                    .foregroundStyle(.white)
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
                 Text(title)
-                    .font(LpspNetflixFonts.netflixButtonSecondary)
-                    .foregroundStyle(.white)
+                    .font(LpspNetflixFonts.buttonPlay)
             }
+            .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.white.opacity(0.15))
+            .background(RoundedRectangle(cornerRadius: 4).fill(Color.white.opacity(0.18)))
+        }
+        .buttonStyle(LpspNetflixPressableStyle())
+    }
+}
+
+// MARK: - Données & état
+
+fileprivate struct LpspNetflixShowroomProfile: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let accent: Color
+    let isKids: Bool
+}
+
+fileprivate struct LpspNetflixShowroomEpisode: Identifiable, Hashable {
+    let id: String
+    let season: Int
+    let episode: Int
+    let title: String
+    let duration: String
+    let synopsis: String
+}
+
+fileprivate struct LpspNetflixShowroomTitle: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let shortTitle: String
+    let tagline: String
+    let genres: String
+    let match: Int
+    let year: String
+    let rating: String
+    let accent: Color
+    let synopsis: String
+    let episodes: [LpspNetflixShowroomEpisode]
+    let isSeries: Bool
+}
+
+fileprivate struct LpspNetflixContinueItem: Identifiable {
+    let id: String
+    let title: LpspNetflixShowroomTitle
+    var progress: Double
+    let episodeLabel: String
+}
+
+@MainActor
+fileprivate final class LpspNetflixStore: ObservableObject {
+    @Published var selectedTab: LpspNetflixTab = .home
+    @Published var selectedProfile: LpspNetflixShowroomProfile?
+    @Published var presentedTitle: LpspNetflixShowroomTitle?
+    @Published var showPlayer = false
+    @Published var playingTitle: LpspNetflixShowroomTitle?
+    @Published var playingEpisode: LpspNetflixShowroomEpisode?
+    @Published var myListIDs: Set<String>
+    @Published var continueWatching: [LpspNetflixContinueItem]
+    @Published var downloads: [LpspNetflixContinueItem]
+    @Published var homeChip: String?
+
+    let profiles: [LpspNetflixShowroomProfile]
+    let titles: [LpspNetflixShowroomTitle]
+
+    init(profiles: [LpspNetflixShowroomProfile], titles: [LpspNetflixShowroomTitle]) {
+        self.profiles = profiles
+        self.titles = titles
+        self.selectedProfile = profiles.first
+        self.myListIDs = ["t2", "t4"]
+        self.continueWatching = LpspNetflixShowroomData.initialContinueWatching(titles: titles)
+        self.downloads = LpspNetflixShowroomData.initialDownloads(titles: titles)
+    }
+
+    var heroTitle: LpspNetflixShowroomTitle {
+        titles.first { $0.id == "t1" } ?? titles[0]
+    }
+
+    var filteredHomeRows: [(String, [LpspNetflixShowroomTitle])] {
+        let chip = homeChip
+        let filtered = titles.filter { title in
+            guard let chip else { return true }
+            return title.genres.localizedCaseInsensitiveContains(chip)
+        }
+        return [
+            ("Trending Now", Array(filtered.prefix(6))),
+            ("Because you watched The Louvre Files", Array(filtered.dropFirst().prefix(5))),
+            ("Paris Thrillers", filtered.filter { $0.genres.contains("Thriller") }),
+        ].filter { !$0.1.isEmpty }
+    }
+
+    func selectProfile(_ profile: LpspNetflixShowroomProfile) {
+        selectedProfile = profile
+        selectedTab = .home
+    }
+
+    func toggleMyList(_ title: LpspNetflixShowroomTitle) {
+        if myListIDs.contains(title.id) {
+            myListIDs.remove(title.id)
+        } else {
+            myListIDs.insert(title.id)
+        }
+    }
+
+    func isInMyList(_ title: LpspNetflixShowroomTitle) -> Bool {
+        myListIDs.contains(title.id)
+    }
+
+    func play(_ title: LpspNetflixShowroomTitle, episode: LpspNetflixShowroomEpisode? = nil) {
+        playingTitle = title
+        playingEpisode = episode ?? title.episodes.first
+        showPlayer = true
+        upsertContinueWatching(title: title, episode: playingEpisode, progress: 0.04)
+    }
+
+    func resume(_ item: LpspNetflixContinueItem) {
+        playingTitle = item.title
+        playingEpisode = item.title.episodes.first
+        showPlayer = true
+    }
+
+    private func upsertContinueWatching(
+        title: LpspNetflixShowroomTitle,
+        episode: LpspNetflixShowroomEpisode?,
+        progress: Double
+    ) {
+        let label = episode.map { "S\( $0.season ):E\( $0.episode ) · \($0.title)" } ?? title.name
+        if let index = continueWatching.firstIndex(where: { $0.title.id == title.id }) {
+            continueWatching[index].progress = progress
+        } else {
+            continueWatching.insert(
+                LpspNetflixContinueItem(id: "cw-\(title.id)", title: title, progress: progress, episodeLabel: label),
+                at: 0
             )
         }
-        .buttonStyle(LpspNetflixNetflixPressableStyle())
+    }
+
+    func advancePlayback() {
+        guard let title = playingTitle else { return }
+        if let index = continueWatching.firstIndex(where: { $0.title.id == title.id }) {
+            continueWatching[index].progress = min(0.98, continueWatching[index].progress + 0.18)
+        }
     }
 }
 
-fileprivate struct LpspNetflixPosterTile: View {
-    let imageURL: URL
-    let width: CGFloat
-    var progress: Double? = nil   // 0.0–1.0 — pass for Continue Watching
-    let onTap: () -> Void
+private enum LpspNetflixShowroomData {
+    static let profiles: [LpspNetflixShowroomProfile] = [
+        .init(id: "p1", name: "Maya", accent: LpspNetflixTokens.netflixRed, isKids: false),
+        .init(id: "p2", name: "Jordan", accent: Color(red: 0.243, green: 0.243, blue: 0.569), isKids: false),
+        .init(id: "p3", name: "Kids", accent: Color(red: 0.973, green: 0.596, blue: 0.114), isKids: true),
+    ]
+
+    static let titles: [LpspNetflixShowroomTitle] = [
+        .init(
+            id: "t1", name: "Night Wave", shortTitle: "NIGHT\nWAVE", tagline: "This week's #1 series",
+            genres: "Gripping · Drama · Thriller", match: 97, year: "2026", rating: "TV-MA",
+            accent: Color(red: 0.15, green: 0.05, blue: 0.22),
+            synopsis: "A radio host receives encrypted messages from a phone found in the Paris metro.",
+            isSeries: true,
+            episodes: [
+                .init(id: "t1e1", season: 1, episode: 1, title: "Static", duration: "52m", synopsis: "The first ping arrives at 3:14 a.m."),
+                .init(id: "t1e2", season: 1, episode: 2, title: "Dead Line", duration: "49m", synopsis: "A second SIM card surfaces near Bastille."),
+            ]
+        ),
+        .init(
+            id: "t2", name: "The Louvre Files", shortTitle: "LOUVRE\nFILES", tagline: "Limited series",
+            genres: "Mystery · Crime · Paris", match: 95, year: "2025", rating: "TV-14",
+            accent: Color(red: 0.45, green: 0.28, blue: 0.12),
+            synopsis: "Curators, guards, and hackers chase clues hidden in plain sight at the museum.",
+            isSeries: true,
+            episodes: [
+                .init(id: "t2e1", season: 1, episode: 1, title: "Pyramid", duration: "47m", synopsis: "Security footage shows an impossible exit."),
+                .init(id: "t2e2", season: 1, episode: 2, title: "Wing B", duration: "51m", synopsis: "A gallery closes early without explanation."),
+            ]
+        ),
+        .init(
+            id: "t3", name: "Metro Line 1", shortTitle: "METRO\nLINE 1", tagline: "New episodes",
+            genres: "Thriller · Transit · Noir", match: 92, year: "2026", rating: "TV-MA",
+            accent: Color(red: 0.08, green: 0.18, blue: 0.35),
+            synopsis: "Each stop on Line 1 reveals another fragment of the missing phone trail.",
+            isSeries: true,
+            episodes: [
+                .init(id: "t3e1", season: 1, episode: 1, title: "Châtelet", duration: "44m", synopsis: "A dropped pin leads underground."),
+            ]
+        ),
+        .init(
+            id: "t4", name: "Lost Signal", shortTitle: "LOST\nSIGNAL", tagline: "Documentary",
+            genres: "True Crime · Tech", match: 89, year: "2024", rating: "TV-14",
+            accent: Color(red: 0.12, green: 0.35, blue: 0.28),
+            synopsis: "How a single device can reconstruct a life in 48 hours of data.",
+            isSeries: false,
+            episodes: [
+                .init(id: "t4e1", season: 1, episode: 1, title: "Lost Signal", duration: "94m", synopsis: "Feature documentary."),
+            ]
+        ),
+        .init(
+            id: "t5", name: "Station F", shortTitle: "STATION\nF", tagline: "Drama",
+            genres: "Startup · Drama", match: 88, year: "2025", rating: "TV-MA",
+            accent: Color(red: 0.55, green: 0.20, blue: 0.18),
+            synopsis: "Founders compete while a prototype phone vanishes from the incubator.",
+            isSeries: true,
+            episodes: [
+                .init(id: "t5e1", season: 1, episode: 1, title: "Demo Day", duration: "46m", synopsis: "The pitch deck hides a second narrative."),
+            ]
+        ),
+        .init(
+            id: "t6", name: "Bastille Nights", shortTitle: "BASTILLE", tagline: "Film",
+            genres: "Thriller · Paris", match: 91, year: "2023", rating: "TV-MA",
+            accent: Color(red: 0.22, green: 0.08, blue: 0.10),
+            synopsis: "One night, three witnesses, zero matching statements.",
+            isSeries: false,
+            episodes: [
+                .init(id: "t6e1", season: 1, episode: 1, title: "Bastille Nights", duration: "112m", synopsis: "Feature film."),
+            ]
+        ),
+    ]
+
+    static func initialContinueWatching(titles: [LpspNetflixShowroomTitle]) -> [LpspNetflixContinueItem] {
+        guard titles.count >= 3 else { return [] }
+        return [
+            .init(id: "cw1", title: titles[1], progress: 0.42, episodeLabel: "S1:E1 · Pyramid"),
+            .init(id: "cw2", title: titles[2], progress: 0.18, episodeLabel: "S1:E1 · Châtelet"),
+            .init(id: "cw3", title: titles[0], progress: 0.67, episodeLabel: "S1:E2 · Dead Line"),
+        ]
+    }
+
+    static func initialDownloads(titles: [LpspNetflixShowroomTitle]) -> [LpspNetflixContinueItem] {
+        guard titles.count >= 2 else { return [] }
+        return [
+            .init(id: "dl1", title: titles[1], progress: 1, episodeLabel: "S1:E1 · Pyramid"),
+            .init(id: "dl2", title: titles[3], progress: 1, episodeLabel: "Lost Signal"),
+        ]
+    }
+}
+
+// MARK: - Écrans showroom
+
+private enum LpspNetflixTab: CaseIterable {
+    case home, newHot, myNetflix, downloads
+
+    var label: String {
+        switch self {
+        case .home: "Home"
+        case .newHot: "New & Hot"
+        case .myNetflix: "My Netflix"
+        case .downloads: "Downloads"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .newHot: "play.rectangle.on.rectangle.fill"
+        case .myNetflix: "person.crop.circle.fill"
+        case .downloads: "arrow.down.circle.fill"
+        }
+    }
+}
+
+private struct LpspNetflixShowroomRoot: View {
+    @ObservedObject var store: LpspNetflixStore
 
     var body: some View {
-        Button(action: onTap) {
-            ZStack(alignment: .bottom) {
-                AsyncImage(url: imageURL) { img in
-                    img.resizable().scaledToFill()
-                } placeholder: {
-                    Rectangle().fill(LpspNetflixTokens.netflixSurface1)
-                }
-                .frame(width: width, height: width * 1.5)
-                .clipShape(RoundedRectangle(cornerRadius: 4))
-
-                if let progress {
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            Rectangle().fill(Color.white.opacity(0.3)).frame(height: 2)
-                            Rectangle().fill(LpspNetflixTokens.netflixRed)
-                                .frame(width: geo.size.width * progress, height: 2)
-                        }
-                    }
-                    .frame(height: 2)
-                    .padding(.bottom, 4)
-                    .padding(.horizontal, 4)
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspNetflixHomeTabScreen(store: store)
+                case .newHot:
+                    LpspNetflixNewHotTabScreen(store: store)
+                case .myNetflix:
+                    LpspNetflixMyNetflixTabScreen(store: store)
+                case .downloads:
+                    LpspNetflixDownloadsTabScreen(store: store)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspNetflixSpectrTabBar(selectedTab: $store.selectedTab)
         }
-        .buttonStyle(.plain)
+        .background(LpspNetflixTokens.netflixCanvas.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+        .sheet(item: $store.presentedTitle) { title in
+            LpspNetflixTitleDetailScreen(store: store, title: title)
+        }
+        .fullScreenCover(isPresented: $store.showPlayer) {
+            if let title = store.playingTitle {
+                LpspNetflixPlayerScreen(store: store, title: title)
+            }
+        }
     }
 }
 
-fileprivate struct LpspNetflixPosterRow: View {
-    let title: String
-    let posters: [URL]
-    let tileWidth: CGFloat = 130
+private struct LpspNetflixSpectrTabBar: View {
+    @Binding var selectedTab: LpspNetflixTab
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(LpspNetflixFonts.netflixRowHeader)
+        HStack(spacing: 0) {
+            ForEach(LpspNetflixTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon).font(.system(size: 20))
+                        Text(tab.label).font(LpspNetflixFonts.tab)
+                    }
+                    .foregroundStyle(selectedTab == tab ? .white : LpspNetflixTokens.netflixTextSecondary)
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(LpspNetflixPressableStyle())
+            }
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 2)
+        .background(LpspNetflixTokens.netflixSurface1)
+    }
+}
+
+private struct LpspNetflixHomeTabScreen: View {
+    @ObservedObject var store: LpspNetflixStore
+
+    private let chips = ["TV Shows", "Movies", "My List", "Thriller"]
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                heroBanner
+                VStack(alignment: .leading, spacing: 22) {
+                    if !store.continueWatching.isEmpty {
+                        continueWatchingRow
+                    }
+                    ForEach(store.filteredHomeRows, id: \.0) { row in
+                        posterRow(title: row.0, titles: row.1)
+                    }
+                    top10Row
+                }
+                .padding(.top, 16)
+                .padding(.bottom, 24)
+            }
+        }
+        .background(LpspNetflixTokens.netflixCanvas.ignoresSafeArea())
+    }
+
+    private var heroBanner: some View {
+        let hero = store.heroTitle
+        return ZStack(alignment: .bottom) {
+            LinearGradient(
+                colors: [hero.accent, LpspNetflixTokens.netflixCanvas],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 420)
+
+            LinearGradient(colors: [.clear, LpspNetflixTokens.netflixCanvas], startPoint: .top, endPoint: .bottom)
+                .frame(height: 140)
+
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("NETFLIX")
+                        .font(.system(size: 22, weight: .black))
+                        .foregroundStyle(LpspNetflixTokens.netflixRed)
+                    Spacer()
+                    Image(systemName: "bell")
+                    Image(systemName: "magnifyingglass")
+                }
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(chips, id: \.self) { chip in
+                            Button {
+                                store.homeChip = store.homeChip == chip ? nil : chip
+                            } label: {
+                                Text(chip)
+                                    .font(LpspNetflixFonts.meta)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 6)
+                                    .overlay(Capsule().stroke(Color.white.opacity(0.45), lineWidth: 1))
+                            }
+                            .buttonStyle(LpspNetflixPressableStyle())
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+
+                Spacer()
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(hero.name.uppercased())
+                        .font(LpspNetflixFonts.heroTitle)
+                        .foregroundStyle(.white)
+                    Text(hero.genres)
+                        .font(LpspNetflixFonts.meta)
+                        .foregroundStyle(.white)
+                    Text(hero.tagline)
+                        .font(LpspNetflixFonts.body)
+                        .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                    HStack(spacing: 10) {
+                        LpspNetflixPlayButton(title: "Play") {
+                            store.play(hero)
+                        }
+                        .frame(maxWidth: 140)
+                        LpspNetflixSecondaryButton(
+                            icon: store.isInMyList(hero) ? "checkmark" : "plus",
+                            title: "My List"
+                        ) {
+                            store.toggleMyList(hero)
+                        }
+                        .frame(maxWidth: 140)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 20)
+            }
+        }
+    }
+
+    private var continueWatchingRow: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Continue Watching")
+                .font(LpspNetflixFonts.rowHeader)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(posters, id: \.self) { url in
-                        LpspNetflixPosterTile(imageURL: url, width: tileWidth) {}
+                    ForEach(store.continueWatching) { item in
+                        Button {
+                            store.resume(item)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                LpspNetflixPoster(title: item.title, width: 160, progress: item.progress)
+                                Text(item.episodeLabel)
+                                    .font(LpspNetflixFonts.meta)
+                                    .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                                    .lineLimit(1)
+                                    .frame(width: 160, alignment: .leading)
+                            }
+                        }
+                        .buttonStyle(LpspNetflixPressableStyle())
                     }
                 }
                 .padding(.horizontal, 16)
             }
         }
     }
-}
 
-fileprivate struct LpspNetflixTop10Row: View {
-    let posters: [URL]   // exactly 10
+    private func posterRow(title: String, titles: [LpspNetflixShowroomTitle]) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(LpspNetflixFonts.rowHeader)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Top 10 TV Shows in the U.S. Today")
-                .font(LpspNetflixFonts.netflixRowHeader)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(titles) { item in
+                        Button {
+                            store.presentedTitle = item
+                        } label: {
+                            LpspNetflixPoster(title: item, width: 120)
+                        }
+                        .buttonStyle(LpspNetflixPressableStyle())
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+        }
+    }
+
+    private var top10Row: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Top 10 in France Today")
+                .font(LpspNetflixFonts.rowHeader)
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 0) {
-                    ForEach(Array(posters.prefix(10).enumerated()), id: \.offset) { idx, url in
-                        LpspNetflixTop10Item(index: idx + 1, posterURL: url)
+                    ForEach(Array(store.titles.prefix(5).enumerated()), id: \.element.id) { index, title in
+                        Button {
+                            store.presentedTitle = title
+                        } label: {
+                            HStack(alignment: .bottom, spacing: -18) {
+                                Text("\(index + 1)")
+                                    .font(.system(size: 110, weight: .black))
+                                    .foregroundStyle(LpspNetflixTokens.netflixSurface1)
+                                    .overlay(
+                                        Text("\(index + 1)")
+                                            .font(.system(size: 110, weight: .black))
+                                            .foregroundStyle(Color.white.opacity(0.12))
+                                    )
+                                LpspNetflixPoster(title: title, width: 100)
+                            }
+                        }
+                        .buttonStyle(LpspNetflixPressableStyle())
+                        .padding(.trailing, 8)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -205,378 +629,312 @@ fileprivate struct LpspNetflixTop10Row: View {
     }
 }
 
-fileprivate struct LpspNetflixTop10Item: View {
-    let index: Int
-    let posterURL: URL
-    let tileWidth: CGFloat = 120
+private struct LpspNetflixNewHotTabScreen: View {
+    @ObservedObject var store: LpspNetflixStore
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: -24) {
-            // Giant outlined numeral on the left, partially covered by poster
-            Text("\(index)")
-                .font(.custom("NetflixSans-Black", size: 160).weight(.black))
-                .foregroundStyle(LpspNetflixTokens.netflixCanvas)
-                .overlay(
-                    Text("\(index)")
-                        .font(.custom("NetflixSans-Black", size: 160).weight(.black))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.1), Color.clear],
-                                startPoint: .top, endPoint: .bottom
-                            )
-                        )
-                )
-                .shadow(color: .white.opacity(0.2), radius: 0, x: 0, y: 0) // subtle inset-like stroke
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("Coming Soon")
+                        .font(LpspNetflixFonts.rowHeader)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
 
-            LpspNetflixPosterTile(imageURL: posterURL, width: tileWidth) {}
+                    ForEach(store.titles.prefix(3)) { title in
+                        Button {
+                            store.presentedTitle = title
+                        } label: {
+                            HStack(spacing: 12) {
+                                LpspNetflixPoster(title: title, width: 80)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(title.name)
+                                        .font(LpspNetflixFonts.rowHeader)
+                                        .foregroundStyle(.white)
+                                    Text(title.tagline)
+                                        .font(LpspNetflixFonts.meta)
+                                        .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                                    Text("Remind Me")
+                                        .font(LpspNetflixFonts.meta)
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 4)
+                                        .background(Capsule().stroke(Color.white.opacity(0.5), lineWidth: 1))
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                        .buttonStyle(LpspNetflixPressableStyle())
+                    }
+                }
+                .padding(.vertical, 16)
+            }
+            .background(LpspNetflixTokens.netflixCanvas.ignoresSafeArea())
+            .navigationTitle("New & Hot")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
-        .padding(.trailing, 8)
     }
 }
 
-fileprivate struct LpspNetflixProfilePicker: View {
-    let profiles: [Profile]
-    let onSelect: (Profile) -> Void
-
-    struct Profile: Identifiable {
-        let id = UUID()
-        let name: String
-        let avatarColor: Color
-        let isKids: Bool
-    }
-
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 24), count: 2)
+private struct LpspNetflixMyNetflixTabScreen: View {
+    @ObservedObject var store: LpspNetflixStore
 
     var body: some View {
-        ZStack {
-            LpspNetflixTokens.netflixCanvas.ignoresSafeArea()
-            VStack(spacing: 48) {
+        ScrollView {
+            VStack(spacing: 28) {
                 Text("Who's watching?")
-                    .font(LpspNetflixFonts.netflixTitleHero)
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(.white)
+                    .padding(.top, 24)
 
-                LazyVGrid(columns: columns, spacing: 24) {
-                    ForEach(profiles) { profile in
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                    ForEach(store.profiles) { profile in
                         Button {
-                            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
-                                onSelect(profile)
-                            }
+                            store.selectProfile(profile)
                         } label: {
-                            VStack(spacing: 12) {
+                            VStack(spacing: 10) {
                                 Circle()
-                                    .fill(profile.avatarColor)
-                                    .frame(width: 80, height: 80)
+                                    .fill(profile.accent)
+                                    .frame(width: 84, height: 84)
                                     .overlay(
-                                        Image(systemName: "person.fill")
-                                            .font(.system(size: 40))
+                                        Image(systemName: profile.isKids ? "face.smiling" : "person.fill")
+                                            .font(.system(size: 36))
                                             .foregroundStyle(.white)
                                     )
+                                    .overlay(
+                                        Circle()
+                                            .stroke(
+                                                store.selectedProfile == profile ? .white : .clear,
+                                                lineWidth: 3
+                                            )
+                                    )
                                 Text(profile.name)
-                                    .font(.system(size: 14, weight: .medium))
-                                    .foregroundStyle(.white)
+                                    .font(LpspNetflixFonts.body)
+                                    .foregroundStyle(
+                                        store.selectedProfile == profile ? .white : LpspNetflixTokens.netflixTextSecondary
+                                    )
                             }
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(LpspNetflixPressableStyle())
                     }
                 }
+                .padding(.horizontal, 24)
 
-                Button("Manage Profiles") {}
-                    .font(.system(size: 15, weight: .medium))
+                if let profile = store.selectedProfile {
+                    Text("Watching as \(profile.name)")
+                        .font(LpspNetflixFonts.body)
+                        .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                }
+
+                Button("Manage Profiles") { }
+                    .font(LpspNetflixFonts.body)
                     .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
             }
         }
+        .background(LpspNetflixTokens.netflixCanvas.ignoresSafeArea())
     }
 }
 
-fileprivate struct LpspNetflixNetflixHeader: View {
-    let categoryChips: [String]   // e.g. ["TV Shows", "Movies", "My List"]
-    @State private var selectedChip: String? = nil
+private struct LpspNetflixDownloadsTabScreen: View {
+    @ObservedObject var store: LpspNetflixStore
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // The red NETFLIX wordmark image (your vector asset)
-            Image("NetflixWordmark")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 22)
-                .padding(.horizontal, 16)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(categoryChips, id: \.self) { chip in
-                        Button {
-                            selectedChip = selectedChip == chip ? nil : chip
-                        } label: {
-                            Text(chip)
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 6)
-                                .overlay(
-                                    Capsule().stroke(Color.white.opacity(0.4), lineWidth: 1)
-                                )
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-            }
-        }
-        .padding(.vertical, 12)
-    }
-}
-
-
-
-// MARK: - Écrans showroom
-
-private struct LpspNetflixShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspNetflixSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspNetflixVideoNewTabScreen()
-                .tabItem { Label("New & Hot", systemImage: "play.rectangle.on.rectangle.fill") }
-                .tag(1)
-            LpspNetflixProfilePickerTabScreen()
-                .tabItem { Label("My Netflix", systemImage: "person.crop.circle.fill") }
-                .tag(2)
-            LpspNetflixVideoDownloadsTabScreen()
-                .tabItem { Label("Downloads", systemImage: "arrow.down.circle.fill") }
-                .tag(3)
-        }
-        .tint(LpspNetflixTokens.netflixProfileYellow)
-        .preferredColorScheme(.dark)
-    }
-}
-
-
-private struct LpspNetflixGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspNetflixTokens.netflixProfileYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspNetflixTokens.netflixProfileYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private struct LpspNetflixDemoPosterURLs {
-    static let items: [URL] = [
-        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
-    ]
-}
-private struct LpspNetflixDemoProfile: Identifiable {
-    let id = UUID()
-    let name: String
-    let color: Color
-    let isKids: Bool
-}
-
-private enum LpspNetflixDemoProfiles {
-    static let items: [LpspNetflixDemoProfile] = [
-        .init(name: "Lost Phone", color: .red, isKids: false),
-        .init(name: "Enfants", color: .orange, isKids: true),
-    ]
-}
-
-private struct LpspNetflixVideoHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.08, green: 0.08, blue: 0.08), Color.black],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .frame(height: 220)
-                            .overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill").font(.system(size: 56)).foregroundStyle(.white.opacity(0.9))
-                            }
-                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
-                            .frame(height: 80)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .padding(.horizontal, 12)
-                    LpspNetflixNetflixPlayButton(title: "Lecture", action: {})
-                        .padding(.horizontal, 12)
-                    Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
-
-                    LpspNetflixPosterRow(title: "Trending Now", posters: LpspNetflixDemoPosterURLs.items)
-                    LpspNetflixPosterRow(title: "Continue Watching", posters: LpspNetflixDemoPosterURLs.items)
-
-                    LpspNetflixTop10Row(posters: LpspNetflixDemoPosterURLs.items)
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(0..<6, id: \.self) { i in
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.15, green: 0.15, blue: 0.15))
-                                    .frame(width: 110, height: 165)
+            List {
+                ForEach(store.downloads) { item in
+                    Button {
+                        store.resume(item)
+                    } label: {
+                        HStack(spacing: 12) {
+                            LpspNetflixPoster(title: item.title, width: 72)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(item.title.name)
+                                    .font(LpspNetflixFonts.rowHeader)
+                                    .foregroundStyle(.white)
+                                Text(item.episodeLabel)
+                                    .font(LpspNetflixFonts.meta)
+                                    .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                                Text("Downloaded")
+                                    .font(LpspNetflixFonts.meta)
+                                    .foregroundStyle(LpspNetflixTokens.netflixProfileYellow)
                             }
                         }
-                        .padding(.horizontal, 12)
                     }
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("")
-            .toolbarBackground(.hidden, for: .navigationBar)
-        }
-    }
-}
-
-private struct LpspNetflixProfilePickerTabScreen: View {
-    var body: some View {
-        LpspNetflixProfilePicker(
-            profiles: LpspNetflixDemoProfiles.items.map {
-                LpspNetflixProfilePicker.Profile(name: $0.name, avatarColor: $0.color, isKids: $0.isKids)
-            },
-            onSelect: { _ in }
-        )
-    }
-}
-
-private struct LpspNetflixVideoNewTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-
-                    LpspNetflixPosterRow(title: "Trending Now", posters: LpspNetflixDemoPosterURLs.items)
-                    LpspNetflixPosterRow(title: "Continue Watching", posters: LpspNetflixDemoPosterURLs.items)
-
-                    LpspNetflixTop10Row(posters: LpspNetflixDemoPosterURLs.items)
-
-                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("New & Hot")
-        }
-    }
-}
-
-private struct LpspNetflixVideoDownloadsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
-                    VStack(alignment: .leading) {
-                        Text(title).font(.headline).foregroundStyle(.white)
-                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
-                    }
+                    .listRowBackground(LpspNetflixTokens.netflixSurface1)
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
             .navigationTitle("Downloads")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
+        .background(LpspNetflixTokens.netflixCanvas.ignoresSafeArea())
     }
 }
 
-private struct LpspNetflixDemoProfilePicker: View {
+private struct LpspNetflixTitleDetailScreen: View {
+    @ObservedObject var store: LpspNetflixStore
+    let title: LpspNetflixShowroomTitle
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 32) {
-                Text("Qui regarde ?").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
-                ForEach(LpspNetflixDemoProfiles.items) { p in
-                    VStack(spacing: 8) {
-                        Circle().fill(p.color).frame(width: 72, height: 72)
-                        Text(p.name).foregroundStyle(.gray)
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    ZStack(alignment: .bottomLeading) {
+                        LinearGradient(
+                            colors: [title.accent, LpspNetflixTokens.netflixCanvas],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        .frame(height: 220)
+                        Text(title.name)
+                            .font(LpspNetflixFonts.heroTitle)
+                            .foregroundStyle(.white)
+                            .padding()
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 8) {
+                            Text("\(title.match)% Match")
+                                .foregroundStyle(LpspNetflixTokens.netflixProfileYellow)
+                            Text(title.year)
+                            Text(title.rating)
+                                .padding(.horizontal, 4)
+                                .overlay(RoundedRectangle(cornerRadius: 2).stroke(Color.white.opacity(0.6), lineWidth: 1))
+                        }
+                        .font(LpspNetflixFonts.meta)
+                        .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+
+                        Text(title.synopsis)
+                            .font(LpspNetflixFonts.body)
+                            .foregroundStyle(.white)
+
+                        HStack(spacing: 10) {
+                            LpspNetflixPlayButton(title: "Play") {
+                                dismiss()
+                                store.play(title)
+                            }
+                            LpspNetflixSecondaryButton(
+                                icon: store.isInMyList(title) ? "checkmark" : "plus",
+                                title: "My List"
+                            ) {
+                                store.toggleMyList(title)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+
+                    if title.isSeries {
+                        Text("Episodes")
+                            .font(LpspNetflixFonts.rowHeader)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 16)
+
+                        ForEach(title.episodes) { episode in
+                            Button {
+                                dismiss()
+                                store.play(title, episode: episode)
+                            } label: {
+                                HStack(alignment: .top, spacing: 12) {
+                                    Text("\(episode.episode)")
+                                        .font(.title2.bold())
+                                        .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                                        .frame(width: 28)
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(episode.title)
+                                            .font(LpspNetflixFonts.rowHeader)
+                                            .foregroundStyle(.white)
+                                        Text(episode.duration)
+                                            .font(LpspNetflixFonts.meta)
+                                            .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                                        Text(episode.synopsis)
+                                            .font(LpspNetflixFonts.body)
+                                            .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                                            .lineLimit(2)
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                            }
+                            .buttonStyle(LpspNetflixPressableStyle())
+                        }
                     }
                 }
             }
-        }
-    }
-}
-
-
-private struct LpspNetflixSpectrHomeTabScreen: View {
-    var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-        ZStack(alignment: .bottomLeading) {
-            LinearGradient(colors: [Color(red:0.05,green:0.05,blue:0.08), Color(red:0.15,green:0.05,blue:0.08)], startPoint: .top, endPoint: .bottom).frame(maxWidth: .infinity, maxHeight: .infinity)
-            LinearGradient(colors: [.clear, Color(red: 0.078, green: 0.078, blue: 0.078)], startPoint: .top, endPoint: .bottom).frame(height: 120)
-            HStack {
-                Text("NETFLIX").font(.system(size: 22.0, weight: .black)).foregroundStyle(Color(red: 0.898, green: 0.035, blue: 0.078))
-            } .padding(.horizontal, 12).padding(.top, 48)
-            HStack(spacing: 6) {
-                Text("TOP 10").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("in the U.S. Today").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(.horizontal, 12)
-            VStack(alignment: .leading, spacing: 4) {
-                Text("NIGHT WAVE").font(.system(size: 42, weight: .black)).foregroundStyle(.white)
-                    Text("Gripping · Dramas · Thrillers").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("This week's trending").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.667, green: 0.667, blue: 0.667))
-                HStack(spacing: 10) {
-                    Text("Play").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("My List").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                } .padding(.horizontal, 12).padding(.bottom, 16)
-            } .padding(.horizontal, 12)
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Continue Watching").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                    RoundedRectangle(cornerRadius: 4).fill(Color(red:0.15,green:0.15,blue:0.15)).frame(width: 120, height: 68)
-                    RoundedRectangle(cornerRadius: 4).fill(Color(red:0.15,green:0.15,blue:0.15)).frame(width: 120, height: 68)
-                    RoundedRectangle(cornerRadius: 4).fill(Color(red:0.15,green:0.15,blue:0.15)).frame(width: 120, height: 68)
-                    }
-                    .padding(.horizontal, 12)
+            .background(LpspNetflixTokens.netflixCanvas.ignoresSafeArea())
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                        .foregroundStyle(.white)
                 }
-            } .padding(.top, 12)
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Top 10 in the U.S. Today").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                HStack(spacing: 8) {
-                    HStack(alignment: .bottom, spacing: 4) {
-                        Text("1").font(.system(size: 110.0, weight: .black)).foregroundStyle(Color(red: 0.12, green: 0.12, blue: 0.12))
-                        RoundedRectangle(cornerRadius: 4).fill(Color(red:0.2,green:0.2,blue:0.22)).frame(width: 90, height: 130)
-                    }
-                    HStack(alignment: .bottom, spacing: 4) {
-                        Text("2").font(.system(size: 110.0, weight: .black)).foregroundStyle(Color(red: 0.12, green: 0.12, blue: 0.12))
-                        RoundedRectangle(cornerRadius: 4).fill(Color(red:0.2,green:0.2,blue:0.22)).frame(width: 90, height: 130)
-                    }
-                    HStack(alignment: .bottom, spacing: 4) {
-                        Text("3").font(.system(size: 110.0, weight: .black)).foregroundStyle(Color(red: 0.12, green: 0.12, blue: 0.12))
-                        RoundedRectangle(cornerRadius: 4).fill(Color(red:0.2,green:0.2,blue:0.22)).frame(width: 90, height: 130)
-                    }
-                } .padding(.horizontal, 12)
-            } .padding(.top, 8)
-        } .frame(height: 420)
             }
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
-        .background(Color(red: 0.078, green: 0.078, blue: 0.078).ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspNetflixPlayerScreen: View {
+    @ObservedObject var store: LpspNetflixStore
+    let title: LpspNetflixShowroomTitle
+    @Environment(\.dismiss) private var dismiss
+    @State private var showControls = true
 
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            LinearGradient(
+                colors: [title.accent.opacity(0.35), .black],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                Spacer()
+                Image(systemName: "play.circle.fill")
+                    .font(.system(size: 64))
+                    .foregroundStyle(.white.opacity(0.85))
+                Text(store.playingEpisode?.title ?? title.name)
+                    .font(LpspNetflixFonts.heroTitle)
+                    .foregroundStyle(.white)
+                Text(store.playingEpisode.map { "S\($0.season):E\($0.episode)" } ?? title.genres)
+                    .font(LpspNetflixFonts.body)
+                    .foregroundStyle(LpspNetflixTokens.netflixTextSecondary)
+                Spacer()
+            }
+
+            if showControls {
+                VStack {
+                    HStack {
+                        Button {
+                            store.advancePlayback()
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundStyle(.white)
+                                .padding(10)
+                                .background(Circle().fill(Color.black.opacity(0.45)))
+                        }
+                        Spacer()
+                    }
+                    .padding()
+                    Spacer()
+                    HStack(spacing: 36) {
+                        Image(systemName: "backward.fill").font(.title2)
+                        Image(systemName: "pause.fill").font(.largeTitle)
+                        Image(systemName: "forward.fill").font(.title2)
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.bottom, 40)
+                }
+            }
+        }
+        .onTapGesture {
+            withAnimation { showControls.toggle() }
+        }
+        .preferredColorScheme(.dark)
+    }
+}

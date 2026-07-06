@@ -130,7 +130,7 @@ struct LpspAppRouter: View {
         case "Plans":
             AwesomeShowroomRouter.view(for: "Plans")
         case "Fichiers":
-            AwesomeShowroomRouter.view(for: "Fichiers")
+            LpspAwesomeFichiersView(files: LpspAdapters.fichiers(from: payload))
         case "Rappels":
             LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Instagram":

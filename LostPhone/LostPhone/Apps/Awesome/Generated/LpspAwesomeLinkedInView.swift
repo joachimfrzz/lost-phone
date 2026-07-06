@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeLinkedInView: View {
     var body: some View {
-        LpspLinkedInShowroomRoot()
+        LpspLinkedInShowroomRoot(store: LpspLinkedInStore())
     }
 }
 
@@ -332,20 +332,24 @@ fileprivate struct LpspLinkedInActionBar: View {
 
 
 fileprivate struct LpspLinkedInLinkedInTopNav: View {
-    @State private var searchText = ""
+    @Binding var searchQuery: String
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "person.crop.circle.fill")
-                .resizable()
+            Circle()
+                .fill(LpspLinkedInTokens.liBlue)
                 .frame(width: 28, height: 28)
-                .clipShape(Circle())
+                .overlay {
+                    Text("MR")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(.white)
+                }
 
             HStack {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 16))
                     .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
-                TextField("Search", text: $searchText)
+                TextField("Search", text: $searchQuery)
                     .font(.system(size: 14))
             }
             .padding(.horizontal, 12)
@@ -362,268 +366,451 @@ fileprivate struct LpspLinkedInLinkedInTopNav: View {
     }
 }
 
+fileprivate struct LpspLinkedInActionBarControlled: View {
+    let isLiked: Bool
+    let onLike: () -> Void
+    var onComment: () -> Void = {}
+    var onRepost: () -> Void = {}
+
+    var body: some View {
+        HStack(spacing: 0) {
+            actionButton(
+                icon: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup",
+                label: "Like",
+                tint: isLiked ? LpspLinkedInTokens.liBlue : LpspLinkedInTokens.liTextSecondary,
+                action: onLike
+            )
+            actionButton(icon: "bubble.left", label: "Comment", tint: LpspLinkedInTokens.liTextSecondary, action: onComment)
+            actionButton(icon: "arrow.2.squarepath", label: "Repost", tint: LpspLinkedInTokens.liTextSecondary, action: onRepost)
+            actionButton(icon: "paperplane", label: "Send", tint: LpspLinkedInTokens.liTextSecondary) {}
+        }
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: isLiked)
+    }
+
+    private func actionButton(icon: String, label: String, tint: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+
+// MARK: - Showroom data & store
+
+private enum LpspLinkedInShowroomTab: String, CaseIterable, Identifiable {
+    case home, network, post, notifications, jobs
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .network: "Network"
+        case .post: "Post"
+        case .notifications: "Notifs"
+        case .jobs: "Jobs"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: "house.fill"
+        case .network: "person.2.fill"
+        case .post: "plus.square.fill"
+        case .notifications: "bell.fill"
+        case .jobs: "briefcase.fill"
+        }
+    }
+}
+
+private struct LpspLinkedInFeedPost: Identifiable, Equatable {
+    let id: String
+    let authorName: String
+    let connectionDegree: String
+    let headline: String
+    let timeAgo: String
+    let postText: String
+    let hasMedia: Bool
+    let reactionCount: Int
+    var commentCount: Int
+    let isPremium: Bool
+    let isOpenToWork: Bool
+    var isLiked: Bool = false
+    var reposted: Bool = false
+}
+
+private enum LpspLinkedInShowroomData {
+    static let featuredPost = LpspLinkedInFeedPost(
+        id: "lena",
+        authorName: "Lena Parker",
+        connectionDegree: "1st",
+        headline: "Senior Product Designer at Stripe\nDesign Systems · Fintech",
+        timeAgo: "2h •",
+        postText: "Big milestone: shipped our design system v2.0 today. 18 months, 140+ components, one team.",
+        hasMedia: true,
+        reactionCount: 127,
+        commentCount: 23,
+        isPremium: true,
+        isOpenToWork: false
+    )
+
+    static let networkSuggestions = [
+        ("Jamie Cole", "Product Designer · Linear"),
+        ("Kira Tan", "Engineering Manager · Notion"),
+    ]
+
+    static let notifications = [
+        ("Lena Parker liked your comment", "2m"),
+        ("New job match: Senior iOS Engineer", "1h"),
+    ]
+
+    static let jobs = [
+        ("Senior iOS Engineer", "Stripe · San Francisco", "Promoted"),
+        ("Design Systems Lead", "Figma · Remote", "Easy Apply"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspLinkedInStore: ObservableObject {
+    @Published var selectedTab: LpspLinkedInShowroomTab = .home
+    @Published var searchQuery = ""
+    @Published var posts: [LpspLinkedInFeedPost] = [LpspLinkedInShowroomData.featuredPost]
+    @Published var showCreateSheet = false
+    @Published var newPostText = ""
+    @Published var connectedIds: Set<String> = []
+
+    func toggleLike(_ postId: String) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.isLiked.toggle()
+            return copy
+        }
+    }
+
+    func toggleRepost(_ postId: String) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.reposted.toggle()
+            return copy
+        }
+    }
+
+    func incrementComments(_ postId: String) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.commentCount += 1
+            return copy
+        }
+    }
+
+    func connect(_ id: String) {
+        connectedIds.insert(id)
+    }
+
+    func publishPost() {
+        let text = newPostText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        let post = LpspLinkedInFeedPost(
+            id: "new-\(posts.count + 1)",
+            authorName: "Alex Mercer",
+            connectionDegree: "You",
+            headline: "Product Designer · Showroom",
+            timeAgo: "now •",
+            postText: text,
+            hasMedia: false,
+            reactionCount: 0,
+            commentCount: 0,
+            isPremium: false,
+            isOpenToWork: false
+        )
+        posts.insert(post, at: 0)
+        newPostText = ""
+        showCreateSheet = false
+        selectedTab = .home
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspLinkedInShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspLinkedInSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspLinkedInSocialTabScreen(title: "My Network")
-                .tabItem { Label("My Network", systemImage: "person.2.fill") }
-                .tag(1)
-            LpspLinkedInSocialTabScreen(title: "Post")
-                .tabItem { Label("Post", systemImage: "plus.app.fill") }
-                .tag(2)
-            LpspLinkedInSocialTabScreen(title: "Notifications")
-                .tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .tag(3)
-            LpspLinkedInSocialTabScreen(title: "Jobs")
-                .tabItem { Label("Jobs", systemImage: "briefcase.fill") }
-                .tag(4)
-        }
-        .tint(LpspLinkedInTokens.liTextPrimary)
-        
-    }
-}
+    @ObservedObject var store: LpspLinkedInStore
 
-
-private struct LpspLinkedInGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspLinkedInTokens.liTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspLinkedInTokens.liTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspLinkedInShowroomTab.allCases) { tab in
+                LpspLinkedInShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
                     }
-                }
+                    .tag(tab)
             }
-            .navigationTitle(title)
+        }
+        .tint(LpspLinkedInTokens.liBlue)
+        .preferredColorScheme(.light)
+        .sheet(isPresented: $store.showCreateSheet) {
+            LpspLinkedInCreateSheet(store: store)
+        }
+        .onChange(of: store.selectedTab) { _, tab in
+            if tab == .post {
+                store.showCreateSheet = true
+                store.selectedTab = .home
+            }
         }
     }
 }
 
+private struct LpspLinkedInShowroomTabScreen: View {
+    @ObservedObject var store: LpspLinkedInStore
+    let tab: LpspLinkedInShowroomTab
 
-private struct LpspLinkedInDemoPostItem: Identifiable {
-    let id = UUID()
-    let author: String
-    let degree: String
-    let headline: String
-    let time: String
-    let text: String
-    let premium: Bool
-    let openToWork: Bool
-}
-
-private enum LpspLinkedInDemoPosts {
-    static let items: [LpspLinkedInDemoPostItem] = [
-        .init(author: "Alex Martin", degree: "1er", headline: "Designer · Lost Phone", time: "3 j •", text: "Showroom Lost Phone — clone Spectr en SwiftUI.", premium: true, openToWork: false),
-        .init(author: "Léa Dupont", degree: "2e", headline: "iOS Engineer", time: "1 sem •", text: "Retour d'expérience sur la génération v3.", premium: false, openToWork: true),
-    ]
-}
-
-private struct LpspLinkedInDemoStory: Identifiable {
-    let id = UUID()
-    let name: String
-    let unread: Bool
-}
-
-private enum LpspLinkedInDemoStories {
-    static let items: [LpspLinkedInDemoStory] = [
-        .init(name: "Votre story", unread: false),
-        .init(name: "Alex", unread: true),
-        .init(name: "Léa", unread: true),
-    ]
-}
-
-private struct LpspLinkedInFeedTabScreen: View {
     var body: some View {
-        NavigationStack {
+        Group {
+            switch tab {
+            case .home, .post:
+                LpspLinkedInHomeTabScreen(store: store)
+            case .network:
+                LpspLinkedInNetworkTabScreen(store: store)
+            case .notifications:
+                LpspLinkedInNotificationsTabScreen()
+            case .jobs:
+                LpspLinkedInJobsTabScreen()
+            }
+        }
+    }
+}
+
+private struct LpspLinkedInHomeTabScreen: View {
+    @ObservedObject var store: LpspLinkedInStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspLinkedInLinkedInTopNav(searchQuery: $store.searchQuery)
+
             ScrollView {
-                VStack(spacing: 0) {
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 14) {
-                            ForEach(LpspLinkedInDemoStories.items) { s in
-                                VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspLinkedInTokens.liTextPrimary, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspLinkedInTokens.liTextPrimary.opacity(0.2)).frame(width: 58, height: 58))
-                                    Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 10)
-                    }
-
-
-                    ForEach(LpspLinkedInDemoPosts.items) { post in
-                        LpspLinkedInFeedPostCard(
-                            authorName: post.author,
-                            connectionDegree: post.degree,
-                            headline: post.headline,
-                            timeAgo: post.time,
-                            postText: post.text,
-                            mediaImage: Image(systemName: "photo"),
-                            isPremium: post.premium,
-                            isOpenToWork: post.openToWork
+                LazyVStack(spacing: 8) {
+                    ForEach(store.posts) { post in
+                        LpspLinkedInShowroomPostCard(
+                            post: post,
+                            isLiked: store.posts.first(where: { $0.id == post.id })?.isLiked ?? false,
+                            onLike: { store.toggleLike(post.id) },
+                            onComment: { store.incrementComments(post.id) },
+                            onRepost: { store.toggleRepost(post.id) }
                         )
                     }
-
                 }
-            }
-            .background(LpspLinkedInTokens.liCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-
-private struct LpspLinkedInExploreTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 2) {
-                    ForEach(0..<15, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspLinkedInTokens.liTextPrimary.opacity(0.08 + Double(i) * 0.04))
-                            .aspectRatio(1, contentMode: .fit)
-                    }
-                }
-            }
-            .navigationTitle("Explorer")
-        }
-    }
-}
-
-private struct LpspLinkedInReelsTabScreen: View {
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Spacer()
-                Image(systemName: "play.rectangle.fill").font(.system(size: 64)).foregroundStyle(.white.opacity(0.85))
-                Text("Reels").font(.title2.bold()).foregroundStyle(.white)
-                Spacer()
+                .padding(.vertical, 8)
             }
         }
-    }
-}
-
-private struct LpspLinkedInProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    Circle().fill(LpspLinkedInTokens.liTextPrimary.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("lost.phone").font(.system(size: 20, weight: .bold))
-                    Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)
-                    HStack(spacing: 32) {
-                        VStack { Text("128").font(.headline); Text("Publications").font(.caption) }
-                        VStack { Text("1,2 k").font(.headline); Text("Abonnés").font(.caption) }
-                        VStack { Text("340").font(.headline); Text("Abonnements").font(.caption) }
-                    }
-                }
-                .padding()
-            }
-            .navigationTitle("Profil")
-        }
-    }
-}
-
-private struct LpspLinkedInCommunitiesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
-        }
-    }
-}
-
-private struct LpspLinkedInCreateTabScreen: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspLinkedInTokens.liTextPrimary)
-            Text("Nouvelle publication").font(.title2.bold())
-            Text("Photo, reel ou story").foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(LpspLinkedInTokens.liCanvas.ignoresSafeArea())
     }
 }
 
-private struct LpspLinkedInSocialTabScreen: View {
-    let title: String
+private struct LpspLinkedInShowroomPostCard: View {
+    let post: LpspLinkedInFeedPost
+    let isLiked: Bool
+    let onLike: () -> Void
+    let onComment: () -> Void
+    let onRepost: () -> Void
+
+    private var reactionCount: Int {
+        post.reactionCount + (isLiked ? 1 : 0)
+    }
+
     var body: some View {
-        let low = title.lowercased()
-        if low.contains("créer") || low.contains("create") { LpspLinkedInCreateTabScreen() }
-        else if low.contains("explor") || low.contains("search") { LpspLinkedInExploreTabScreen() }
-        else if low.contains("reel") { LpspLinkedInReelsTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspLinkedInProfileTabScreen() }
-        else { LpspLinkedInFeedTabScreen() }
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: 12) {
+                LpspLinkedInAvatarView(size: 56, isPremium: post.isPremium, isOpenToWork: post.isOpenToWork)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Text(post.authorName)
+                            .font(LpspLinkedInFonts.liPostAuthor)
+                            .foregroundStyle(LpspLinkedInTokens.liTextPrimary)
+                        Text("· \(post.connectionDegree)")
+                            .font(LpspLinkedInFonts.liMeta)
+                            .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+                    }
+                    Text(post.headline)
+                        .font(LpspLinkedInFonts.liHeadline)
+                        .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+                        .lineLimit(2)
+                    HStack(spacing: 4) {
+                        Text(post.timeAgo)
+                            .font(LpspLinkedInFonts.liMeta)
+                            .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+                        Image(systemName: "globe.americas.fill")
+                            .font(.system(size: 11))
+                            .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 20))
+                    .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+
+            Text(post.postText)
+                .font(LpspLinkedInFonts.liPostBody)
+                .foregroundStyle(LpspLinkedInTokens.liTextPrimary)
+                .lineSpacing(4)
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+
+            if post.hasMedia {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.20, green: 0.12, blue: 0.30),
+                        Color(red: 0.82, green: 0.29, blue: 0.45),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .frame(maxWidth: .infinity)
+                .frame(height: 220)
+                .padding(.top, 12)
+            }
+
+            LpspLinkedInReactionFooterRow(
+                reactionCount: reactionCount,
+                commentCount: post.commentCount
+            )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+
+            Divider().background(LpspLinkedInTokens.liDividerSubtle)
+
+            LpspLinkedInActionBarControlled(
+                isLiked: isLiked,
+                onLike: onLike,
+                onComment: onComment,
+                onRepost: onRepost
+            )
+            .frame(height: 44)
+        }
+        .background(LpspLinkedInTokens.liCardSurface)
     }
 }
 
-private struct LpspLinkedInGenericFeedCard: View {
-    let index: Int
-    let accent: Color
+private struct LpspLinkedInNetworkTabScreen: View {
+    @ObservedObject var store: LpspLinkedInStore
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Circle().fill(accent.opacity(0.2)).frame(width: 32, height: 32)
-                Text("utilisateur_\(index)").font(.system(size: 14, weight: .semibold))
+        NavigationStack {
+            List {
+                Section("People you may know") {
+                    ForEach(LpspLinkedInShowroomData.networkSuggestions, id: \.0) { name, headline in
+                        HStack(spacing: 12) {
+                            LpspLinkedInAvatarView(size: 48, isPremium: false, isOpenToWork: false)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(name)
+                                    .font(LpspLinkedInFonts.liPostAuthor)
+                                Text(headline)
+                                    .font(LpspLinkedInFonts.liHeadline)
+                                    .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+                            }
+                            Spacer()
+                            if store.connectedIds.contains(name) {
+                                Text("Pending")
+                                    .font(LpspLinkedInFonts.liButtonSecondary)
+                                    .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+                            } else {
+                                LpspLinkedInLinkedInPillButton(title: "Connect", systemImage: "plus", variant: .outline) {
+                                    store.connect(name)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("My Network")
+        }
+    }
+}
+
+private struct LpspLinkedInNotificationsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(LpspLinkedInShowroomData.notifications, id: \.0) { title, time in
+                    HStack(alignment: .top, spacing: 12) {
+                        Circle()
+                            .fill(LpspLinkedInTokens.liBlue)
+                            .frame(width: 10, height: 10)
+                            .padding(.top, 6)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(title)
+                                .font(LpspLinkedInFonts.liPostAuthor)
+                            Text(time)
+                                .font(LpspLinkedInFonts.liMeta)
+                                .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Notifications")
+        }
+    }
+}
+
+private struct LpspLinkedInJobsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(LpspLinkedInShowroomData.jobs, id: \.0) { title, company, badge in
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(title)
+                            .font(LpspLinkedInFonts.liPostAuthor)
+                        Text(company)
+                            .font(LpspLinkedInFonts.liHeadline)
+                            .foregroundStyle(LpspLinkedInTokens.liTextSecondary)
+                        Text(badge)
+                            .font(LpspLinkedInFonts.liBadge)
+                            .foregroundStyle(LpspLinkedInTokens.liBlue)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+            .navigationTitle("Jobs")
+        }
+    }
+}
+
+private struct LpspLinkedInCreateSheet: View {
+    @ObservedObject var store: LpspLinkedInStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                TextField("What do you want to talk about?", text: $store.newPostText, axis: .vertical)
+                    .font(LpspLinkedInFonts.liPostBody)
+                    .lineLimit(4...8)
+
+                LpspLinkedInLinkedInPillButton(title: "Post", systemImage: nil, variant: .filled) {
+                    store.publishPost()
+                    dismiss()
+                }
+                .disabled(store.newPostText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
                 Spacer()
             }
-            .padding(.horizontal, 12)
-            RoundedRectangle(cornerRadius: 0).fill(accent.opacity(0.12)).frame(height: 280)
-            HStack(spacing: 16) {
-                Image(systemName: "heart"); Image(systemName: "bubble.right"); Spacer(); Image(systemName: "bookmark")
+            .padding(20)
+            .background(LpspLinkedInTokens.liCanvas.ignoresSafeArea())
+            .navigationTitle("Create a post")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        store.showCreateSheet = false
+                        dismiss()
+                    }
+                }
             }
-            .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
         }
+        .presentationDetents([.medium, .large])
     }
 }
-
-
-private struct LpspLinkedInSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Circle().fill(Color(red: 0.000, green: 0.584, blue: 0.965)).frame(width: 36, height: 36).overlay(Text("MR").font(.caption.bold()).foregroundStyle(.white))
-                Text("Search").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 16).frame(height: 44)
-        ScrollView {
-            VStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 0) {
-                            Text("· 1st").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                            Text("Design Systems · Fintech").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                            Text("2h ·").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Big milestone: shipped our design system v2.0 today. 18 months, 140+ components, one team.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Rectangle().fill(LinearGradient(colors: [Color(red:0.20,green:0.12,blue:0.30), Color(red:0.82,green:0.29,blue:0.45)], startPoint: .topLeading, endPoint: .bottomTrailing)).aspectRatio(1, contentMode: .fill)
-                            Text("👍").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                            Text("👏").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                            Text("💡").font(.system(size: 8.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("127 reactions · 23 comments").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Like").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Comment").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Repost").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Send").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            }
-            }
-        }
-        }
-        .background(Color(red: 0.953, green: 0.949, blue: 0.937).ignoresSafeArea())
-    }
-}
-
 

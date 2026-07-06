@@ -4,8 +4,14 @@ import SwiftUI
 // Meliwat/awesome-ios-design-md/music/spotify/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSpotifyView: View {
+    var data: LpspSpotifyData?
+
     var body: some View {
-        LpspSpotifyShowroomRoot()
+        let storyData = data
+        LpspSpotifyShowroomRoot(
+            data: storyData ?? LpspSpotifyShowroomData.demo,
+            isStoryMode: storyData != nil
+        )
     }
 }
 
@@ -215,27 +221,187 @@ fileprivate enum LpspSpotifyAlbumColorExtractor {
 
 
 
+// MARK: - Données showroom
+
+private enum LpspSpotifyShowroomData {
+    static let demo = LpspSpotifyData(
+        username: "Lost Phone",
+        plan: "Premium",
+        playlists: [
+            LpspSpotifyPlaylist(
+                id: "demo-pl",
+                title: "Mellow Mornings",
+                trackCount: 24,
+                tracks: [
+                    LpspSpotifyTrack(id: "demo-t", title: "Blinding Lights", artist: "The Weeknd", playedAtRaw: nil, playedAt: nil)
+                ]
+            )
+        ],
+        recentTracks: [
+            LpspSpotifyTrack(id: "demo-r", title: "Blinding Lights", artist: "The Weeknd", playedAtRaw: nil, playedAt: nil)
+        ]
+    )
+}
+
 // MARK: - Écrans showroom
 
-private struct LpspSpotifyShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspSpotifySpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspSpotifyMusicSearchTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspSpotifyMusicLibraryTabScreen()
-                .tabItem { Label("Your Library", systemImage: "books.vertical.fill") }
-                .tag(2)
-            LpspSpotifyMusicNowPlayingTabScreen()
-                .tabItem { Label("Premium", systemImage: "sparkles") }
-                .tag(3)
+private enum LpspSpotifyTab: CaseIterable {
+    case home, search, library, premium
+
+    var label: String {
+        switch self {
+        case .home: "Home"
+        case .search: "Search"
+        case .library: "Your Library"
+        case .premium: "Premium"
         }
-        .tint(LpspSpotifyTokens.spotifyErrorRed)
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .search: "magnifyingglass"
+        case .library: "books.vertical.fill"
+        case .premium: "sparkles"
+        }
+    }
+}
+
+private struct LpspSpotifyShowroomRoot: View {
+    let data: LpspSpotifyData
+    var isStoryMode = false
+    @State private var selectedTab: LpspSpotifyTab = .home
+    @State private var selectedPlaylist: LpspSpotifyPlaylist?
+
+    private var nowPlaying: LpspSpotifyTrack? {
+        data.recentTracks.first
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                switch selectedTab {
+                case .home:
+                    LpspSpotifyMusicHomeTabScreen(data: data, isStoryMode: isStoryMode)
+                case .search:
+                    LpspSpotifyMusicSearchTabScreen(isStoryMode: isStoryMode)
+                case .library:
+                    LpspSpotifyMusicLibraryTabScreen(
+                        data: data,
+                        selectedPlaylist: $selectedPlaylist,
+                        isStoryMode: isStoryMode
+                    )
+                case .premium:
+                    LpspSpotifyMusicNowPlayingTabScreen(track: nowPlaying)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            if let track = nowPlaying {
+                LpspSpotifyMiniPlayerBar(track: track)
+            }
+
+            LpspSpotifySpectrTabBar(selectedTab: $selectedTab)
+        }
+        .background(LpspSpotifyTokens.spotifyCanvas.ignoresSafeArea())
         .preferredColorScheme(.dark)
+        .sheet(item: $selectedPlaylist) { playlist in
+            LpspSpotifyPlaylistDetailScreen(playlist: playlist)
+        }
+    }
+}
+
+private struct LpspSpotifySpectrTabBar: View {
+    @Binding var selectedTab: LpspSpotifyTab
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspSpotifyTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 20))
+                        Text(tab.label)
+                            .font(LpspSpotifyFonts.spotifyTab)
+                    }
+                    .foregroundStyle(selectedTab == tab ? .white : LpspSpotifyTokens.spotifyTextSecondary)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(LpspSpotifySpotifyPressableStyle())
+            }
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 2)
+        .background(LpspSpotifyTokens.spotifySurface1)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspSpotifyTokens.spotifyDivider)
+                .frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspSpotifyMiniPlayerBar: View {
+    let track: LpspSpotifyTrack
+
+    var body: some View {
+        HStack(spacing: 12) {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(LpspSpotifyTokens.spotifySurface3)
+                .frame(width: 40, height: 40)
+                .overlay(Image(systemName: "music.note").foregroundStyle(.white))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(track.title)
+                    .font(LpspSpotifyFonts.spotifyTrackTitle)
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                Text(track.artist)
+                    .font(LpspSpotifyFonts.spotifyMeta)
+                    .foregroundStyle(LpspSpotifyTokens.spotifyTextSecondary)
+                    .lineLimit(1)
+            }
+            Spacer()
+            Image(systemName: "pause.fill")
+                .font(.system(size: 18))
+                .foregroundStyle(.white)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(LpspSpotifyTokens.spotifySurface2)
+    }
+}
+
+private struct LpspSpotifyPlaylistDetailScreen: View {
+    let playlist: LpspSpotifyPlaylist
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(playlist.tracks) { track in
+                    LpspSpotifyTrackRow(
+                        title: track.title,
+                        artist: track.artist,
+                        artwork: Image(systemName: "music.note"),
+                        isPlaying: false
+                    )
+                    .listRowBackground(LpspSpotifyTokens.spotifySurface1)
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(LpspSpotifyTokens.spotifyCanvas.ignoresSafeArea())
+            .navigationTitle(playlist.title)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                        .foregroundStyle(.white)
+                }
+            }
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
     }
 }
 
@@ -277,33 +443,73 @@ private enum LpspSpotifyDemoTracks {
     ]
 }
 private struct LpspSpotifyMusicHomeTabScreen: View {
+    let data: LpspSpotifyData
+    var isStoryMode = false
+
+    private var greeting: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour < 12 { return "Good morning" }
+        if hour < 18 { return "Good afternoon" }
+        return "Good evening"
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Bonsoir").font(.system(size: 28, weight: .bold)).padding(.horizontal)
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        ForEach(0..<4, id: \.self) { i in
-                            RoundedRectangle(cornerRadius: 8).fill(LpspSpotifyTokens.spotifyErrorRed.opacity(0.15 + Double(i) * 0.05))
-                                .frame(height: 100)
-                                .overlay(alignment: .bottomLeading) {
-                                    Text("Playlist \(i + 1)").font(.subheadline.bold()).padding(8)
-                                }
-                        }
-                    }
-                    .padding(.horizontal)
-                    Text("Récemment joué").font(.headline).padding(.horizontal)
+                    Text(greeting)
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal)
 
-                    ForEach(LpspSpotifyDemoTracks.items) { track in
+                    if !data.playlists.isEmpty {
+                        Text("Your playlists")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal)
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                            ForEach(data.playlists.prefix(4)) { playlist in
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(LpspSpotifyTokens.spotifySurface2)
+                                    .frame(height: 100)
+                                    .overlay(alignment: .bottomLeading) {
+                                        Text(playlist.title)
+                                            .font(.subheadline.bold())
+                                            .foregroundStyle(.white)
+                                            .padding(8)
+                                            .lineLimit(2)
+                                    }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+
+                    Text("Recently played")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal)
+
+                    let tracks = data.recentTracks.isEmpty
+                        ? data.playlists.first?.tracks ?? []
+                        : data.recentTracks
+
+                    ForEach(Array(tracks.enumerated()), id: \.element.id) { index, track in
                         LpspSpotifyTrackRow(
                             title: track.title,
                             artist: track.artist,
                             artwork: Image(systemName: "music.note"),
-                            isPlaying: track.isPlaying
+                            isPlaying: index == 0
                         )
                     }
 
+                    if isStoryMode, !data.plan.isEmpty {
+                        Text(data.plan)
+                            .font(LpspSpotifyFonts.spotifyMeta)
+                            .foregroundStyle(LpspSpotifyTokens.spotifyTextTertiary)
+                            .padding(.horizontal)
+                    }
                 }
+                .padding(.vertical, 8)
             }
             .background(LpspSpotifyTokens.spotifyCanvas.ignoresSafeArea())
             .navigationTitle("")
@@ -312,46 +518,94 @@ private struct LpspSpotifyMusicHomeTabScreen: View {
 }
 
 private struct LpspSpotifyMusicSearchTabScreen: View {
+    var isStoryMode = false
     var body: some View {
         NavigationStack {
             VStack {
                 HStack {
-                    Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                    Text("Artistes, titres ou podcasts").foregroundStyle(.secondary)
+                    Image(systemName: "magnifyingglass").foregroundStyle(LpspSpotifyTokens.spotifyTextSecondary)
+                    Text(isStoryMode ? "What do you want to listen to?" : "Artists, songs, or podcasts")
+                        .foregroundStyle(LpspSpotifyTokens.spotifyTextSecondary)
                     Spacer()
                 }
                 .padding()
-                .background(RoundedRectangle(cornerRadius: 8).fill(Color(.systemGray6)))
+                .background(RoundedRectangle(cornerRadius: 8).fill(LpspSpotifyTokens.spotifySurface2))
                 .padding()
                 Spacer()
             }
-            .navigationTitle("Rechercher")
+            .navigationTitle("Search")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
+        .background(LpspSpotifyTokens.spotifyCanvas.ignoresSafeArea())
     }
 }
 
 private struct LpspSpotifyMusicLibraryTabScreen: View {
+    let data: LpspSpotifyData
+    @Binding var selectedPlaylist: LpspSpotifyPlaylist?
+    var isStoryMode = false
+
     var body: some View {
         NavigationStack {
-            List(["Titres likés", "Playlists", "Albums", "Artistes"], id: \.self) { item in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(LpspSpotifyTokens.spotifyErrorRed.opacity(0.2)).frame(width: 48, height: 48)
-                    Text(item).font(.body)
+            List {
+                if data.playlists.isEmpty {
+                    ContentUnavailableView(
+                        "Your Library",
+                        systemImage: "books.vertical",
+                        description: Text("Playlists you create will appear here.")
+                    )
+                    .listRowBackground(Color.clear)
+                } else {
+                    ForEach(data.playlists) { playlist in
+                        Button {
+                            selectedPlaylist = playlist
+                        } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(LpspSpotifyTokens.spotifySurface3)
+                                    .frame(width: 48, height: 48)
+                                    .overlay(Image(systemName: "music.note.list").foregroundStyle(.white))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(playlist.title)
+                                        .font(LpspSpotifyFonts.spotifyCardTitle)
+                                        .foregroundStyle(.white)
+                                    Text("\(playlist.trackCount) songs")
+                                        .font(LpspSpotifyFonts.spotifyMeta)
+                                        .foregroundStyle(LpspSpotifyTokens.spotifyTextSecondary)
+                                }
+                            }
+                        }
+                        .listRowBackground(LpspSpotifyTokens.spotifySurface1)
+                    }
                 }
             }
-            .navigationTitle("Bibliothèque")
+            .scrollContentBackground(.hidden)
+            .navigationTitle("Your Library")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
+        .background(LpspSpotifyTokens.spotifyCanvas.ignoresSafeArea())
     }
 }
 
 private struct LpspSpotifyMusicNowPlayingTabScreen: View {
+    let track: LpspSpotifyTrack?
+
     var body: some View {
-        LpspSpotifyNowPlayingScreen(
-            trackTitle: "Blinding Lights",
-            artist: "The Weeknd",
-            artwork: Image(systemName: "music.note"),
-            dominantColor: LpspSpotifyTokens.spotifyErrorRed
-        )
+        if let track {
+            LpspSpotifyNowPlayingScreen(
+                trackTitle: track.title,
+                artist: track.artist,
+                artwork: Image(systemName: "music.note"),
+                dominantColor: LpspSpotifyTokens.spotifyGreen
+            )
+        } else {
+            ContentUnavailableView(
+                "Nothing playing",
+                systemImage: "music.note",
+                description: Text("Pick something to play.")
+            )
+            .background(LpspSpotifyTokens.spotifyCanvas.ignoresSafeArea())
+        }
     }
 }
 

@@ -434,4 +434,42 @@ enum LpspAdapters {
         }
         return raw
     }
+
+    /// Horodatage des posts Instagram (format Spectr : `JUNE 12`).
+    static func formatInstagramPostTime(_ post: LpspInstagramPost) -> String {
+        formatInstagramPostTime(raw: post.date, date: post.dateParsed)
+    }
+
+    static func formatInstagramPostTime(raw: String?, date: Date?) -> String {
+        if let date {
+            if Calendar.current.isDateInToday(date) { return "TODAY" }
+            if Calendar.current.isDateInYesterday(date) { return "YESTERDAY" }
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMMM d"
+            formatter.locale = Locale(identifier: "en_US")
+            return formatter.string(from: date).uppercased()
+        }
+        guard let raw, !raw.isEmpty else { return "" }
+        if let parsed = parseDayOnly(raw) {
+            return formatInstagramPostTime(raw: nil, date: parsed)
+        }
+        return raw.uppercased()
+    }
+
+    /// Date courte pour l'historique Uber (`15 Jun · 12:54`).
+    static func formatUberRideDate(_ ride: LpspRide) -> String {
+        if let date = ride.date {
+            let day = date.formatted(.dateTime.day().month(.abbreviated))
+            let time = date.formatted(date: .omitted, time: .shortened)
+            return "\(day) · \(time)"
+        }
+        return ride.dateRaw
+    }
+
+    private static func parseDayOnly(_ raw: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter.date(from: raw)
+    }
 }

@@ -121,7 +121,10 @@ struct LpspAppRouter: View {
         case "Contacts":
             ContactsView(contacts: contacts)
         case "Uber":
-            AwesomeShowroomRouter.view(for: "Uber")
+            LpspAwesomeUberView(
+                rides: LpspAdapters.uber(from: payload),
+                account: LpspAdapters.uberAccount(from: payload)
+            )
         case "Banque":
             AwesomeShowroomRouter.view(for: "Banque")
         case "Plans":
@@ -131,9 +134,12 @@ struct LpspAppRouter: View {
         case "Rappels":
             LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Instagram":
-            AwesomeShowroomRouter.view(for: "Instagram")
+            LpspAwesomeInstagramView(
+                profile: LpspAdapters.instagram(from: payload),
+                dmThreads: LpspAdapters.instagramDM(from: payload)
+            )
         case "Spotify":
-            AwesomeShowroomRouter.view(for: "Spotify")
+            LpspAwesomeSpotifyView(data: LpspAdapters.spotify(from: payload))
         case "Netflix":
             AwesomeShowroomRouter.view(for: "Netflix")
         case "Apple Music":

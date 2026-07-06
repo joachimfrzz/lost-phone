@@ -4,8 +4,16 @@ import SwiftUI
 // Meliwat/awesome-ios-design-md/travel/uber/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeUberView: View {
+    var rides: [LpspRide]?
+    var account: LpspUberAccount?
+
     var body: some View {
-        LpspUberShowroomRoot()
+        let storyRides = rides?.isEmpty == false ? rides : nil
+        LpspUberShowroomRoot(
+            rides: storyRides ?? LpspUberShowroomData.rides,
+            account: account ?? LpspUberShowroomData.account,
+            isStoryMode: storyRides != nil
+        )
     }
 }
 
@@ -344,27 +352,117 @@ fileprivate struct LpspUberDriverBeacon: View {
 
 
 
+// MARK: - Données showroom
+
+private enum LpspUberShowroomData {
+    static let rides: [LpspRide] = [
+        LpspRide(
+            id: "demo-1",
+            date: nil,
+            dateRaw: "",
+            pickup: "Home",
+            dropoff: "Gare du Nord",
+            duration: "18 min",
+            price: "€12.40",
+            driver: "Amadou K.",
+            vehicle: "Peugeot 308",
+            status: "completed"
+        )
+    ]
+
+    static let account = LpspUberAccount(
+        name: "Lost Phone",
+        email: "demo@lost.phone",
+        phone: "",
+        passengerRating: 4.9,
+        paymentMethod: "Visa •••• 4242",
+        savedPlaces: []
+    )
+}
+
 // MARK: - Écrans showroom
 
-private struct LpspUberShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspUberSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspUberRideTabScreen(title: "Services", tabIndex: 1)
-                .tabItem { Label("Services", systemImage: "square.grid.2x2.fill") }
-                .tag(1)
-            LpspUberRideTabScreen(title: "Activity", tabIndex: 2)
-                .tabItem { Label("Activity", systemImage: "clock.fill") }
-                .tag(2)
-            LpspUberRideTabScreen(title: "Account", tabIndex: 3)
-                .tabItem { Label("Account", systemImage: "person.fill") }
-                .tag(3)
+private enum LpspUberTab: CaseIterable {
+    case home, services, activity, account
+
+    var label: String {
+        switch self {
+        case .home: "Home"
+        case .services: "Services"
+        case .activity: "Activity"
+        case .account: "Account"
         }
-        .tint(LpspUberTokens.uberRed)
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .services: "square.grid.2x2.fill"
+        case .activity: "clock.fill"
+        case .account: "person.fill"
+        }
+    }
+}
+
+private struct LpspUberShowroomRoot: View {
+    let rides: [LpspRide]
+    let account: LpspUberAccount
+    var isStoryMode = false
+    @State private var selectedTab: LpspUberTab = .home
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                switch selectedTab {
+                case .home:
+                    LpspUberRideHomeTabScreen(isStoryMode: isStoryMode)
+                case .services:
+                    LpspUberRideServicesTabScreen(isStoryMode: isStoryMode)
+                case .activity:
+                    LpspUberRideActivityTabScreen(rides: rides, isStoryMode: isStoryMode)
+                case .account:
+                    LpspUberRideAccountTabScreen(account: account, isStoryMode: isStoryMode)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspUberSpectrTabBar(selectedTab: $selectedTab)
+        }
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
         .preferredColorScheme(.dark)
+    }
+}
+
+private struct LpspUberSpectrTabBar: View {
+    @Binding var selectedTab: LpspUberTab
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspUberTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 20))
+                        Text(tab.label)
+                            .font(LpspUberFonts.uberTab)
+                    }
+                    .foregroundStyle(selectedTab == tab ? .white : LpspUberTokens.uberGray600)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(LpspUberUberPressableStyle())
+            }
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 2)
+        .background(LpspUberTokens.uberGray950)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspUberTokens.uberGray900)
+                .frame(height: 0.5)
+        }
     }
 }
 
@@ -393,6 +491,7 @@ private struct LpspUberGenericTabScreen: View {
 
 
 private struct LpspUberRideHomeTabScreen: View {
+    var isStoryMode = false
     @State private var selectedRide = 0
     var body: some View {
         ZStack(alignment: .top) {
@@ -415,7 +514,7 @@ private struct LpspUberRideHomeTabScreen: View {
                             price: option.price,
                             isSelected: selectedRide == idx,
                             carImage: Image(systemName: "car.fill"),
-                            action: { selectedRide = idx }
+                            action: { if !isStoryMode { selectedRide = idx } }
                         )
                         .padding(.horizontal, 12)
                     }
@@ -443,29 +542,160 @@ private enum LpspUberDemoRides {
 }
 
 private struct LpspUberRideServicesTabScreen: View {
+    var isStoryMode = false
     var body: some View {
         NavigationStack {
-            List(["UberX", "Uber Black", "Uber Green", "Uber Eats"], id: \.self) { Label($0, systemImage: "square.grid.2x2") }
+            Group {
+                if isStoryMode {
+                    ContentUnavailableView(
+                        "Services",
+                        systemImage: "square.grid.2x2",
+                        description: Text("Ride and delivery services appear here.")
+                    )
+                } else {
+                    List(["UberX", "Uber Black", "Uber Green", "Uber Eats"], id: \.self) { Label($0, systemImage: "square.grid.2x2") }
+                }
+            }
             .navigationTitle("Services")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
     }
 }
 
 private struct LpspUberRideActivityTabScreen: View {
+    let rides: [LpspRide]
+    var isStoryMode = false
+
     var body: some View {
         NavigationStack {
-            List(["Course vers Gare du Nord", "Uber Eats · Sushi Shop"], id: \.self) { Label($0, systemImage: "clock") }
+            List {
+                if rides.isEmpty {
+                    ContentUnavailableView(
+                        "No trips yet",
+                        systemImage: "clock",
+                        description: Text("Your ride history will appear here.")
+                    )
+                    .listRowBackground(Color.clear)
+                } else {
+                    ForEach(rides) { ride in
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Text(ride.dropoff)
+                                    .font(LpspUberFonts.uberRowTitle)
+                                    .foregroundStyle(.white)
+                                    .lineLimit(2)
+                                Spacer()
+                                Text(ride.price)
+                                    .font(LpspUberFonts.uberPrice)
+                                    .foregroundStyle(.white)
+                            }
+                            Text(ride.pickup)
+                                .font(LpspUberFonts.uberAddress)
+                                .foregroundStyle(LpspUberTokens.uberGray600)
+                                .lineLimit(1)
+                            HStack(spacing: 8) {
+                                Text(LpspAdapters.formatUberRideDate(ride))
+                                if !ride.duration.isEmpty {
+                                    Text("·")
+                                    Text(ride.duration)
+                                }
+                                if !ride.driver.isEmpty {
+                                    Text("·")
+                                    Text(ride.driver)
+                                }
+                            }
+                            .font(LpspUberFonts.uberCaption)
+                            .foregroundStyle(LpspUberTokens.uberGray600)
+                        }
+                        .padding(.vertical, 4)
+                        .listRowBackground(LpspUberTokens.uberGray950)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
             .navigationTitle("Activity")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
     }
 }
 
 private struct LpspUberRideAccountTabScreen: View {
+    let account: LpspUberAccount
+    var isStoryMode = false
+
     var body: some View {
         NavigationStack {
-            List { Label("Paiements", systemImage: "creditcard"); Label("Sécurité", systemImage: "lock") }
+            List {
+                Section {
+                    HStack {
+                        Circle()
+                            .fill(LpspUberTokens.uberGray700)
+                            .frame(width: 56, height: 56)
+                            .overlay(
+                                Text(String(account.name.prefix(1)).uppercased())
+                                    .font(.title2.bold())
+                                    .foregroundStyle(.white)
+                            )
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(account.name)
+                                .font(LpspUberFonts.uberRowTitle)
+                                .foregroundStyle(.white)
+                            if account.passengerRating > 0 {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "star.fill").font(.system(size: 11))
+                                    Text(String(format: "%.2f", account.passengerRating))
+                                }
+                                .font(LpspUberFonts.uberCaption)
+                                .foregroundStyle(LpspUberTokens.uberGray600)
+                            }
+                        }
+                    }
+                    .listRowBackground(LpspUberTokens.uberGray950)
+                }
+
+                if !account.paymentMethod.isEmpty {
+                    Section("Wallet") {
+                        Label(account.paymentMethod, systemImage: "creditcard")
+                            .foregroundStyle(.white)
+                            .listRowBackground(LpspUberTokens.uberGray950)
+                    }
+                }
+
+                if !account.savedPlaces.isEmpty {
+                    Section("Saved places") {
+                        ForEach(account.savedPlaces) { place in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(place.label)
+                                    .font(LpspUberFonts.uberRowTitle)
+                                    .foregroundStyle(.white)
+                                Text(place.address)
+                                    .font(LpspUberFonts.uberAddress)
+                                    .foregroundStyle(LpspUberTokens.uberGray600)
+                                    .lineLimit(2)
+                            }
+                            .listRowBackground(LpspUberTokens.uberGray950)
+                        }
+                    }
+                }
+
+                if isStoryMode, !account.email.isEmpty {
+                    Section("Contact") {
+                        Label(account.email, systemImage: "envelope")
+                        if !account.phone.isEmpty {
+                            Label(account.phone, systemImage: "phone")
+                        }
+                    }
+                    .foregroundStyle(.white)
+                    .listRowBackground(LpspUberTokens.uberGray950)
+                }
+            }
+            .scrollContentBackground(.hidden)
             .navigationTitle("Account")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
+        .background(LpspUberTokens.uberCanvasDark.ignoresSafeArea())
     }
 }
 
@@ -476,8 +706,12 @@ private struct LpspUberRideTabScreen: View {
         let low = title.lowercased()
         if tabIndex == 0 || low.contains("home") { LpspUberRideHomeTabScreen() }
         else if low.contains("service") { LpspUberRideServicesTabScreen() }
-        else if low.contains("activ") { LpspUberRideActivityTabScreen() }
-        else { LpspUberRideAccountTabScreen() }
+        else if low.contains("activ") {
+            LpspUberRideActivityTabScreen(rides: LpspUberShowroomData.rides, isStoryMode: false)
+        }
+        else {
+            LpspUberRideAccountTabScreen(account: LpspUberShowroomData.account, isStoryMode: false)
+        }
     }
 }
 

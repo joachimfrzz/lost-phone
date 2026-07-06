@@ -4,8 +4,17 @@ import SwiftUI
 // Meliwat/awesome-ios-design-md/social/instagram/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeInstagramView: View {
+    var profile: LpspInstagramProfile?
+    var dmThreads: [LpspConversation]?
+
     var body: some View {
-        LpspInstagramShowroomRoot()
+        let storyProfile = profile
+        let storyDMs = dmThreads?.isEmpty == false ? dmThreads : nil
+        LpspInstagramShowroomRoot(
+            profile: storyProfile ?? LpspInstagramShowroomData.profile,
+            dmThreads: storyDMs ?? LpspInstagramShowroomData.dmThreads,
+            isStoryMode: storyProfile != nil
+        )
     }
 }
 
@@ -172,17 +181,29 @@ fileprivate struct LpspInstagramFeedPost: View {
     let likes: Int
     let caption: String
     let timestamp: String
+    var darkMode = false
     @State private var isLiked = false
     @State private var showHeart = false
+
+    private var primaryText: Color { darkMode ? .white : .primary }
+    private var secondaryText: Color {
+        darkMode ? LpspInstagramTokens.igTextSecondaryD : LpspInstagramTokens.igTextSecondaryL
+    }
+    private var storyRingStroke: Color {
+        darkMode ? LpspInstagramTokens.igDividerDark : LpspInstagramTokens.igDividerLight
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Header
             HStack(spacing: 10) {
                 LpspInstagramStoryRing(avatar: avatar, isUnread: false, size: 32)
-                Text(username).font(LpspInstagramFonts.igUsername)
+                Text(username)
+                    .font(LpspInstagramFonts.igUsername)
+                    .foregroundStyle(primaryText)
                 Spacer()
                 Image(systemName: "ellipsis")
+                    .foregroundStyle(primaryText)
             }
             .frame(height: 48)
             .padding(.horizontal, 14)
@@ -192,6 +213,7 @@ fileprivate struct LpspInstagramFeedPost: View {
                 photo
                     .resizable()
                     .aspectRatio(1, contentMode: .fill)
+                    .foregroundStyle(darkMode ? LpspInstagramTokens.igSurfaceInputD : LpspInstagramTokens.igSurfaceInputL)
                     .onTapGesture(count: 2) {
                         if !isLiked { isLiked = true }
                         showHeart = true
@@ -213,12 +235,15 @@ fileprivate struct LpspInstagramFeedPost: View {
                 Button { isLiked.toggle() } label: {
                     Image(systemName: isLiked ? "heart.fill" : "heart")
                         .font(.system(size: 24))
-                        .foregroundStyle(isLiked ? LpspInstagramTokens.igDestructive : .primary)
+                        .foregroundStyle(isLiked ? LpspInstagramTokens.igDestructive : primaryText)
                 }
                 Image(systemName: "message")
+                    .foregroundStyle(primaryText)
                 Image(systemName: "paperplane")
+                    .foregroundStyle(primaryText)
                 Spacer()
                 Image(systemName: "bookmark")
+                    .foregroundStyle(primaryText)
             }
             .font(.system(size: 24))
             .padding(.horizontal, 14)
@@ -227,50 +252,387 @@ fileprivate struct LpspInstagramFeedPost: View {
             // Likes + caption
             Text("\(likes) likes")
                 .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(primaryText)
                 .padding(.horizontal, 14)
 
             (Text(username).fontWeight(.semibold) + Text(" ") + Text(caption))
                 .font(LpspInstagramFonts.igCaption)
-                .lineLimit(2)
+                .foregroundStyle(primaryText)
+                .lineLimit(3)
                 .padding(.horizontal, 14)
                 .padding(.top, 4)
 
             Text(timestamp.uppercased())
                 .font(LpspInstagramFonts.igTimestamp)
-                .foregroundStyle(LpspInstagramTokens.igTextSecondaryL)
+                .foregroundStyle(secondaryText)
                 .tracking(0.5)
                 .padding(.horizontal, 14)
-                .padding(.vertical, 4)
+                .padding(.vertical, 8)
         }
     }
 }
 
 
 
+// MARK: - Données showroom
+
+private enum LpspInstagramShowroomData {
+    static let profile = LpspInstagramProfile(
+        username: "maya_c",
+        bio: "Paris · golden hour walks",
+        posts: [
+            LpspInstagramPost(
+                id: "showroom-0",
+                author: "maya_c",
+                caption: "golden hour on the walk home",
+                date: "",
+                dateParsed: nil,
+                likes: 1247
+            )
+        ]
+    )
+
+    static let dmThreads: [LpspConversation] = []
+}
+
 // MARK: - Écrans showroom
 
-private struct LpspInstagramShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspInstagramSpectrHomeTabScreen()
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
-                .tag(0)
-            LpspInstagramExploreTabScreen()
-                .tabItem { Label("Explore", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspInstagramReelsTabScreen()
-                .tabItem { Label("Reels", systemImage: "play.rectangle") }
-                .tag(2)
-            LpspInstagramCreateTabScreen()
-                .tabItem { Label("Créer", systemImage: "plus.app") }
-                .tag(3)
-            LpspInstagramProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle") }
-                .tag(4)
+private enum LpspInstagramTab: CaseIterable {
+    case home, explore, reels, create, profile
+
+    var label: String {
+        switch self {
+        case .home: "Home"
+        case .explore: "Search"
+        case .reels: "Reels"
+        case .create: "Create"
+        case .profile: "Profile"
         }
-        .tint(LpspInstagramTokens.igActionBlue)
-        
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .explore: "magnifyingglass"
+        case .reels: "play.rectangle"
+        case .create: "plus.app"
+        case .profile: "person.circle"
+        }
+    }
+}
+
+private enum LpspInstagramRoute: Hashable {
+    case dmInbox
+    case dmThread(String)
+}
+
+private struct LpspInstagramShowroomRoot: View {
+    let profile: LpspInstagramProfile
+    let dmThreads: [LpspConversation]
+    var isStoryMode = false
+    @State private var selectedTab: LpspInstagramTab = .home
+    @State private var homePath = NavigationPath()
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                switch selectedTab {
+                case .home:
+                    LpspInstagramHomeTabScreen(
+                        profile: profile,
+                        dmThreads: dmThreads,
+                        path: $homePath,
+                        isStoryMode: isStoryMode
+                    )
+                case .explore:
+                    LpspInstagramExploreTabScreen(isStoryMode: isStoryMode)
+                case .reels:
+                    LpspInstagramReelsTabScreen()
+                case .create:
+                    LpspInstagramCreateTabScreen(isStoryMode: isStoryMode)
+                case .profile:
+                    LpspInstagramProfileTabScreen(profile: profile, isStoryMode: isStoryMode)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspInstagramSpectrTabBar(selectedTab: $selectedTab)
+        }
+        .background(LpspInstagramTokens.igCanvasDark.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+    }
+}
+
+private struct LpspInstagramSpectrTabBar: View {
+    @Binding var selectedTab: LpspInstagramTab
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspInstagramTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 22))
+                        Text(tab.label)
+                            .font(.system(size: 10, weight: .regular))
+                    }
+                    .foregroundStyle(selectedTab == tab ? .white : LpspInstagramTokens.igTextSecondaryD)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(LpspInstagramIGPressableStyle())
+            }
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 2)
+        .background(LpspInstagramTokens.igElevatedDark)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspInstagramTokens.igDividerDark)
+                .frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspInstagramHomeTabScreen: View {
+    let profile: LpspInstagramProfile
+    let dmThreads: [LpspConversation]
+    @Binding var path: NavigationPath
+    var isStoryMode = false
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Instagram")
+                        .font(.custom("Snell Roundhand", size: 28))
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                    Spacer()
+                    Image(systemName: "heart")
+                        .font(.system(size: 22))
+                        .foregroundStyle(.white)
+                    Button {
+                        path.append(LpspInstagramRoute.dmInbox)
+                    } label: {
+                        Image(systemName: "paperplane")
+                            .font(.system(size: 22))
+                            .foregroundStyle(.white)
+                    }
+                    .buttonStyle(LpspInstagramIGPressableStyle())
+                }
+                .padding(.horizontal, 14)
+                .padding(.top, 8)
+                .padding(.bottom, 6)
+
+                ScrollView {
+                    VStack(spacing: 0) {
+                        if !isStoryMode {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 12) {
+                                    ForEach(LpspInstagramSpectrStoryData.items) { s in
+                                        VStack(spacing: 4) {
+                                            LpspInstagramStoryRing(
+                                                avatar: Image(systemName: "person.circle.fill"),
+                                                isUnread: s.unread,
+                                                size: 56
+                                            )
+                                            Text(s.name)
+                                                .font(.system(size: 11))
+                                                .foregroundStyle(.white)
+                                                .lineLimit(1)
+                                                .frame(width: 56)
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 10)
+                            }
+                            .overlay(alignment: .bottom) {
+                                Divider().background(LpspInstagramTokens.igDividerDark)
+                            }
+                        }
+
+                        ForEach(profile.posts) { post in
+                            LpspInstagramFeedPost(
+                                username: post.author,
+                                avatar: Image(systemName: "person.circle.fill"),
+                                photo: Image(systemName: "photo"),
+                                likes: post.likes,
+                                caption: post.caption,
+                                timestamp: LpspAdapters.formatInstagramPostTime(post),
+                                darkMode: true
+                            )
+                        }
+                    }
+                }
+            }
+            .background(LpspInstagramTokens.igCanvasDark.ignoresSafeArea())
+            .navigationDestination(for: LpspInstagramRoute.self) { route in
+                switch route {
+                case .dmInbox:
+                    LpspInstagramDMInboxScreen(
+                        threads: dmThreads,
+                        path: $path,
+                        isStoryMode: isStoryMode
+                    )
+                case .dmThread(let id):
+                    LpspInstagramDMThreadScreen(
+                        threads: dmThreads,
+                        threadId: id,
+                        onBack: { path.removeLast() },
+                        isStoryMode: isStoryMode
+                    )
+                }
+            }
+        }
+    }
+}
+
+private struct LpspInstagramDMInboxScreen: View {
+    let threads: [LpspConversation]
+    @Binding var path: NavigationPath
+    var isStoryMode = false
+
+    var body: some View {
+        List {
+            if threads.isEmpty {
+                ContentUnavailableView(
+                    "No messages",
+                    systemImage: "paperplane",
+                    description: Text("Messages you send or receive will appear here.")
+                )
+                .listRowBackground(Color.clear)
+            } else {
+                ForEach(threads) { thread in
+                    Button {
+                        path.append(LpspInstagramRoute.dmThread(thread.id))
+                    } label: {
+                        HStack(spacing: 12) {
+                            Circle()
+                                .fill(LpspInstagramTokens.igActionBlue.opacity(0.25))
+                                .frame(width: 48, height: 48)
+                                .overlay(
+                                    Text(String(thread.contactName.prefix(1)).uppercased())
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundStyle(.white)
+                                )
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(thread.contactName)
+                                    .font(LpspInstagramFonts.igUsername)
+                                    .foregroundStyle(.white)
+                                Text(thread.preview)
+                                    .font(LpspInstagramFonts.igSecondaryMeta)
+                                    .foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                                    .lineLimit(1)
+                            }
+                            Spacer()
+                            if thread.isUnread {
+                                Circle()
+                                    .fill(LpspInstagramTokens.igActionBlue)
+                                    .frame(width: 8, height: 8)
+                            }
+                        }
+                    }
+                    .listRowBackground(LpspInstagramTokens.igElevatedDark)
+                }
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .background(LpspInstagramTokens.igCanvasDark.ignoresSafeArea())
+        .navigationTitle("Messages")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+    }
+}
+
+private struct LpspInstagramDMThreadScreen: View {
+    let threads: [LpspConversation]
+    let threadId: String
+    let onBack: () -> Void
+    var isStoryMode = false
+
+    private var thread: LpspConversation? {
+        threads.first { $0.id == threadId }
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                Button(action: onBack) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+                .buttonStyle(LpspInstagramIGPressableStyle())
+
+                Circle()
+                    .fill(LpspInstagramTokens.igActionBlue.opacity(0.25))
+                    .frame(width: 32, height: 32)
+                    .overlay(
+                        Text(String((thread?.contactName ?? "?").prefix(1)).uppercased())
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                    )
+
+                Text(thread?.contactName ?? "")
+                    .font(LpspInstagramFonts.igUsername)
+                    .foregroundStyle(.white)
+
+                Spacer()
+
+                Image(systemName: "info.circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.white)
+            }
+            .padding(.horizontal, 12)
+            .frame(height: 56)
+            .background(LpspInstagramTokens.igElevatedDark)
+
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(thread?.messages ?? []) { message in
+                        HStack {
+                            if message.isUser { Spacer(minLength: 48) }
+                            Text(message.text)
+                                .font(LpspInstagramFonts.igDMBubble)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .fill(message.isUser
+                                              ? LpspInstagramTokens.igActionBlue
+                                              : LpspInstagramTokens.igSurfaceInputD)
+                                )
+                            if !message.isUser { Spacer(minLength: 48) }
+                        }
+                        .padding(.horizontal, 12)
+                    }
+                }
+                .padding(.vertical, 12)
+            }
+
+            if !isStoryMode {
+                HStack(spacing: 10) {
+                    Image(systemName: "camera")
+                        .foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                    Text("Message...")
+                        .foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                    Spacer()
+                    Image(systemName: "photo")
+                        .foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                }
+                .font(.system(size: 16))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(LpspInstagramTokens.igElevatedDark)
+            }
+        }
+        .background(LpspInstagramTokens.igCanvasDark.ignoresSafeArea())
+        .navigationBarHidden(true)
     }
 }
 
@@ -367,20 +729,33 @@ private struct LpspInstagramFeedTabScreen: View {
 }
 
 private struct LpspInstagramExploreTabScreen: View {
+    var isStoryMode = false
     let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 2) {
-                    ForEach(0..<15, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspInstagramTokens.igActionBlue.opacity(0.08 + Double(i) * 0.04))
-                            .aspectRatio(1, contentMode: .fit)
+            Group {
+                if isStoryMode {
+                    ContentUnavailableView(
+                        "No posts to explore",
+                        systemImage: "magnifyingglass",
+                        description: Text("Suggested posts will appear here.")
+                    )
+                } else {
+                    ScrollView {
+                        LazyVGrid(columns: cols, spacing: 2) {
+                            ForEach(0..<15, id: \.self) { i in
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(LpspInstagramTokens.igActionBlue.opacity(0.08 + Double(i) * 0.04))
+                                    .aspectRatio(1, contentMode: .fit)
+                            }
+                        }
                     }
                 }
             }
-            .navigationTitle("Explorer")
+            .navigationTitle("Search")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
+        .background(LpspInstagramTokens.igCanvasDark.ignoresSafeArea())
     }
 }
 
@@ -399,24 +774,63 @@ private struct LpspInstagramReelsTabScreen: View {
 }
 
 private struct LpspInstagramProfileTabScreen: View {
+    let profile: LpspInstagramProfile
+    var isStoryMode = false
+
+    private var initials: String {
+        String(profile.username.prefix(2)).uppercased()
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspInstagramTokens.igActionBlue.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("lost.phone").font(.system(size: 20, weight: .bold))
-                    Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)
+                    Circle()
+                        .fill(LpspInstagramGradients.instagramBrandShort)
+                        .frame(width: 88, height: 88)
+                        .overlay(Text(initials).font(.title.bold()).foregroundStyle(.white))
+                    Text(profile.username)
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.white)
+                    Text(profile.bio)
+                        .font(.subheadline)
+                        .foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
                     HStack(spacing: 32) {
-                        VStack { Text("128").font(.headline); Text("Publications").font(.caption) }
-                        VStack { Text("1,2 k").font(.headline); Text("Abonnés").font(.caption) }
-                        VStack { Text("340").font(.headline); Text("Abonnements").font(.caption) }
+                        VStack {
+                            Text("\(profile.posts.count)").font(.headline).foregroundStyle(.white)
+                            Text("posts").font(.caption).foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                        }
+                        if !isStoryMode {
+                            VStack {
+                                Text("1.2K").font(.headline).foregroundStyle(.white)
+                                Text("followers").font(.caption).foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                            }
+                            VStack {
+                                Text("340").font(.headline).foregroundStyle(.white)
+                                Text("following").font(.caption).foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                            }
+                        }
+                    }
+                    if !profile.posts.isEmpty {
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
+                            ForEach(profile.posts) { _ in
+                                Rectangle()
+                                    .fill(LpspInstagramTokens.igSurfaceInputD)
+                                    .aspectRatio(1, contentMode: .fit)
+                                    .overlay(Image(systemName: "photo").foregroundStyle(LpspInstagramTokens.igTextSecondaryD))
+                            }
+                        }
+                        .padding(.top, 8)
                     }
                 }
                 .padding()
             }
-            .navigationTitle("Profil")
+            .navigationTitle("Profile")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
+        .background(LpspInstagramTokens.igCanvasDark.ignoresSafeArea())
     }
 }
 
@@ -430,14 +844,27 @@ private struct LpspInstagramCommunitiesTabScreen: View {
 }
 
 private struct LpspInstagramCreateTabScreen: View {
+    var isStoryMode = false
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspInstagramTokens.igActionBlue)
-            Text("Nouvelle publication").font(.title2.bold())
-            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        Group {
+            if isStoryMode {
+                ContentUnavailableView(
+                    "Create",
+                    systemImage: "plus.app.fill",
+                    description: Text("Share photos, reels, or stories from here.")
+                )
+            } else {
+                VStack(spacing: 16) {
+                    Image(systemName: "plus.app.fill")
+                        .font(.system(size: 56))
+                        .foregroundStyle(LpspInstagramTokens.igActionBlue)
+                    Text("New post").font(.title2.bold()).foregroundStyle(.white)
+                    Text("Photo, reel or story").foregroundStyle(LpspInstagramTokens.igTextSecondaryD)
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(LpspInstagramTokens.igCanvasLight.ignoresSafeArea())
+        .background(LpspInstagramTokens.igCanvasDark.ignoresSafeArea())
     }
 }
 
@@ -448,7 +875,9 @@ private struct LpspInstagramSocialTabScreen: View {
         if low.contains("créer") || low.contains("create") { LpspInstagramCreateTabScreen() }
         else if low.contains("explor") || low.contains("search") { LpspInstagramExploreTabScreen() }
         else if low.contains("reel") { LpspInstagramReelsTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspInstagramProfileTabScreen() }
+        else if low.contains("profil") || low.contains("profile") {
+            LpspInstagramProfileTabScreen(profile: LpspInstagramShowroomData.profile)
+        }
         else { LpspInstagramFeedTabScreen() }
     }
 }

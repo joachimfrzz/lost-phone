@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeCoinbaseView: View {
     var body: some View {
-        LpspCoinbaseShowroomRoot()
+        LpspCoinbaseShowroomRoot(store: LpspCoinbaseStore())
     }
 }
 
@@ -351,173 +351,647 @@ fileprivate struct LpspCoinbaseWalletAddressView: View {
 
 
 
-// MARK: - Écrans showroom
+// MARK: - Showroom data & store
 
-private struct LpspCoinbaseShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspCoinbaseSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house") }
-                .tag(0)
-            LpspCoinbaseFinanceHomeTabScreen()
-                .tabItem { Label("Trade", systemImage: "arrow.left.arrow.right") }
-                .tag(1)
-            LpspCoinbaseFinanceCardsTabScreen()
-                .tabItem { Label("Cards", systemImage: "creditcard") }
-                .tag(2)
-            LpspCoinbaseFinanceHomeTabScreen()
-                .tabItem { Label("Earn", systemImage: "percent") }
-                .tag(3)
-            LpspCoinbaseFinanceHomeTabScreen()
-                .tabItem { Label("Wallet", systemImage: "wallet.pass") }
-                .tag(4)
+private enum LpspCoinbaseShowroomTab: String, CaseIterable, Identifiable {
+    case home, trade, cards, earn, wallet
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .trade: "Trade"
+        case .cards: "Cards"
+        case .earn: "Earn"
+        case .wallet: "Wallet"
         }
-        .tint(LpspCoinbaseTokens.cbTextPrimary)
-        
     }
-}
 
-
-private struct LpspCoinbaseGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspCoinbaseTokens.cbTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspCoinbaseTokens.cbTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .trade: "arrow.left.arrow.right"
+        case .cards: "creditcard.fill"
+        case .earn: "chart.line.uptrend.xyaxis"
+        case .wallet: "wallet.pass.fill"
         }
     }
 }
 
-
-private struct LpspCoinbaseFinanceHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Solde total").font(.subheadline).foregroundStyle(.secondary)
-                        Text("2 847,50 €").font(.system(size: 36, weight: .bold))
-                    }
-                    .padding(.horizontal)
-
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [LpspCoinbaseTokens.cbTextPrimary, LpspCoinbaseTokens.cbTextPrimary.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(height: 180)
-                        .overlay(alignment: .bottomLeading) {
-                            Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
-                        }
-                        .padding(.horizontal)
-
-                    Text("Transactions").font(.headline).padding(.horizontal)
-
-                    ForEach(LpspCoinbaseDemoTx.items) { tx in
-                        HStack {
-                            Circle().fill(LpspCoinbaseTokens.cbTextPrimary.opacity(0.15)).frame(width: 40, height: 40)
-                            VStack(alignment: .leading) { Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }
-                            Spacer()
-                            Text(tx.amount).font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
-                        }
-                        .padding(.horizontal)
-                    }
-
-                }
-                .padding(.vertical)
-            }
-            .background(LpspCoinbaseTokens.cbCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-        }
-    }
+private struct LpspCoinbaseAsset: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let ticker: String
+    let holdings: String
+    let value: Double
+    let dayChangePct: Double
+    let iconColor: Color
+    let glyph: String
+    let sparklinePoints: [(Double, Double)]
 }
 
-private struct LpspCoinbaseFinanceCardsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    RoundedRectangle(cornerRadius: 16).fill(LpspCoinbaseTokens.cbTextPrimary).frame(height: 180).padding(.horizontal)
-                    Text("Gérez vos cartes").font(.headline)
-                }
-                .padding(.vertical)
-            }
-            .background(LpspCoinbaseTokens.cbCanvas.ignoresSafeArea())
-            .navigationTitle("Cartes")
-        }
-    }
-}
+private enum LpspCoinbaseShowroomData {
+    static let rangeChips = ["1H", "1D", "1W", "1M", "1Y", "ALL"]
 
-private struct LpspCoinbaseDemoTx: Identifiable {
-    let id = UUID()
-    let title: String
-    let date: String
-    let amount: String
-    let incoming: Bool
-    let icon: String
-    static let items: [LpspCoinbaseDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
+    static let portfolioChart: [(Double, Double)] = [
+        (0, 60), (18, 55), (36, 58), (54, 50), (72, 52), (90, 48), (108, 42),
+        (126, 46), (144, 38), (162, 40), (180, 32), (198, 30), (216, 28),
+        (234, 22), (252, 24), (270, 18), (288, 14), (306, 16), (320, 10),
+    ]
+
+    static let assets: [LpspCoinbaseAsset] = [
+        LpspCoinbaseAsset(
+            id: "btc",
+            name: "Bitcoin",
+            ticker: "BTC",
+            holdings: "0.1842 BTC",
+            value: 12389.42,
+            dayChangePct: 0.0192,
+            iconColor: LpspCoinbaseTokens.cbBitcoin,
+            glyph: "₿",
+            sparklinePoints: [(0, 9), (6, 7), (12, 8), (18, 5), (24, 6), (30, 3), (36, 4), (40, 2)]
+        ),
+        LpspCoinbaseAsset(
+            id: "eth",
+            name: "Ethereum",
+            ticker: "ETH",
+            holdings: "0.62 ETH",
+            value: 1847.62,
+            dayChangePct: -0.0084,
+            iconColor: LpspCoinbaseTokens.cbEthereum,
+            glyph: "Ξ",
+            sparklinePoints: [(0, 4), (6, 5), (12, 3), (18, 7), (24, 6), (30, 9), (36, 8), (40, 11)]
+        ),
+        LpspCoinbaseAsset(
+            id: "usdc",
+            name: "USD Coin",
+            ticker: "USDC",
+            holdings: "420.00 USDC",
+            value: 420.00,
+            dayChangePct: 0.0001,
+            iconColor: LpspCoinbaseTokens.cbUSDC,
+            glyph: "$",
+            sparklinePoints: [(0, 7), (8, 7), (16, 6), (24, 7), (32, 7), (40, 6)]
+        ),
+        LpspCoinbaseAsset(
+            id: "sol",
+            name: "Solana",
+            ticker: "SOL",
+            holdings: "2.84 SOL",
+            value: 590.81,
+            dayChangePct: 0.0342,
+            iconColor: LpspCoinbaseTokens.cbSolana,
+            glyph: "S",
+            sparklinePoints: [(0, 11), (6, 8), (12, 9), (18, 5), (24, 7), (30, 3), (36, 5), (40, 2)]
+        ),
+    ]
+
+    static let earnProducts = [
+        ("USDC", "4.10% APY"),
+        ("ETH", "3.25% APY"),
+        ("SOL", "5.80% APY"),
     ]
 }
 
+@MainActor
+fileprivate final class LpspCoinbaseStore: ObservableObject {
+    @Published var selectedTab: LpspCoinbaseShowroomTab = .home
+    @Published var portfolioValue: Double = 12_847.93
+    @Published var dayChange: Double = 847.93
+    @Published var dayChangePct: Double = 0.0659
+    @Published var selectedRange = "1D"
+    @Published var assets: [LpspCoinbaseAsset] = LpspCoinbaseShowroomData.assets
+    @Published var selectedAssetID = "btc"
+    @Published var lastActionMessage = ""
+    @Published var showReceiveSheet = false
+    @Published var tradeSide: TradeSide = .buy
 
-private struct LpspCoinbaseSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 16) {
+    enum TradeSide: Hashable { case buy, sell }
 
-            } .foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-        ZStack(alignment: .bottomLeading) {
-            Text("Portfolio Balance").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-            Text("$12,847.93").font(.system(size: 36.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-            Text("+$847.93 (+6.59%) Today").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-        } .frame(height: 420)
-            Text("1H").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-            Text("1D").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-            Text("1W").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-            Text("1M").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-            Text("1Y").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-            Text("ALL").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                Text("Buy").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                Text("Sell").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                Text("Send").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                Text("Receive").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-            Text("Your assets").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                Text("₿").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("Bitcoin").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                        Text("BTC").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("$12,389.42").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("+1.92%").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                Text("Ξ").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("Ethereum").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                        Text("ETH").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("$1,847.62").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("−0.84%").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                Text("$").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("USD Coin").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                        Text("USDC").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("$420.00").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("+0.01%").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                Text("S").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("Solana").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                        Text("SOL").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("$590.81").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-                    Text("+3.42%").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.039, green: 0.043, blue: 0.051))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    var selectedAsset: LpspCoinbaseAsset {
+        assets.first { $0.id == selectedAssetID } ?? LpspCoinbaseShowroomData.assets[0]
+    }
+
+    func setRange(_ range: String) {
+        selectedRange = range
+    }
+
+    func selectAsset(_ asset: LpspCoinbaseAsset) {
+        selectedAssetID = asset.id
+        selectedTab = .trade
+    }
+
+    func buy() {
+        tradeSide = .buy
+        selectedTab = .trade
+        lastActionMessage = "Buy \(selectedAsset.ticker)"
+    }
+
+    func sell() {
+        tradeSide = .sell
+        selectedTab = .trade
+        lastActionMessage = "Sell \(selectedAsset.ticker)"
+    }
+
+    func send() {
+        lastActionMessage = "Send \(selectedAsset.ticker) opened"
+        selectedTab = .wallet
+    }
+
+    func receive() {
+        showReceiveSheet = true
+        lastActionMessage = "Receive address ready"
+    }
+
+    func executeTrade() {
+        let delta = tradeSide == .buy ? 120.0 : -120.0
+        portfolioValue += delta
+        dayChange += delta * 0.15
+        lastActionMessage = "\(tradeSide == .buy ? "Bought" : "Sold") \(selectedAsset.ticker)"
     }
 }
 
+// MARK: - Écrans showroom
+
+private struct LpspCoinbaseShowroomRoot: View {
+    @ObservedObject var store: LpspCoinbaseStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspCoinbaseSpectrHomeTabScreen(store: store)
+                case .trade:
+                    LpspCoinbaseTradeTabScreen(store: store)
+                case .cards:
+                    LpspCoinbaseCardsTabScreen()
+                case .earn:
+                    LpspCoinbaseEarnTabScreen()
+                case .wallet:
+                    LpspCoinbaseWalletTabScreen(store: store)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspCoinbaseLabeledTabBar(store: store)
+        }
+        .background(LpspCoinbaseTokens.cbCanvas.ignoresSafeArea())
+        .sheet(isPresented: $store.showReceiveSheet) {
+            LpspCoinbaseReceiveSheet(asset: store.selectedAsset)
+        }
+    }
+}
+
+private struct LpspCoinbaseLabeledTabBar: View {
+    @ObservedObject var store: LpspCoinbaseStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspCoinbaseShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspCoinbaseFonts.cbTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspCoinbaseTokens.cbBlue
+                            : LpspCoinbaseTokens.cbTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspCoinbaseTokens.cbCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspCoinbaseTokens.cbDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspCoinbaseSpectrTopBar: View {
+    var body: some View {
+        HStack {
+            LpspCoinbaseCoinbaseCMark(size: 28)
+
+            Spacer()
+
+            HStack(spacing: 20) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                Image(systemName: "bell")
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+    }
+}
+
+private struct LpspCoinbaseShowroomPortfolioHero: View {
+    @ObservedObject var store: LpspCoinbaseStore
+
+    var body: some View {
+        LpspCoinbasePortfolioHero(
+            value: store.portfolioValue,
+            dayChange: store.dayChange,
+            dayChangePct: store.dayChangePct
+        )
+    }
+}
+
+private struct LpspCoinbasePortfolioChart: View {
+    let points: [(Double, Double)]
+
+    var body: some View {
+        GeometryReader { geo in
+            Path { path in
+                guard !points.isEmpty else { return }
+                let xs = points.map(\.0)
+                let ys = points.map(\.1)
+                guard let xMin = xs.min(), let xMax = xs.max(),
+                      let yMin = ys.min(), let yMax = ys.max(),
+                      xMax > xMin, yMax > yMin else { return }
+                let xRange = xMax - xMin
+                let yRange = yMax - yMin
+                for (index, point) in points.enumerated() {
+                    let x = CGFloat((point.0 - xMin) / xRange) * geo.size.width
+                    let y = CGFloat((point.1 - yMin) / yRange) * geo.size.height
+                    if index == 0 {
+                        path.move(to: CGPoint(x: x, y: y))
+                    } else {
+                        path.addLine(to: CGPoint(x: x, y: y))
+                    }
+                }
+            }
+            .stroke(
+                LpspCoinbaseTokens.cbBlue,
+                style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+            )
+        }
+        .frame(height: 90)
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+    }
+}
+
+private struct LpspCoinbaseRangeChipRow: View {
+    @ObservedObject var store: LpspCoinbaseStore
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(LpspCoinbaseShowroomData.rangeChips, id: \.self) { range in
+                    Button {
+                        store.setRange(range)
+                    } label: {
+                        Text(range)
+                            .font(LpspCoinbaseFonts.cbRangeChip.weight(store.selectedRange == range ? .semibold : .regular))
+                            .foregroundStyle(
+                                store.selectedRange == range
+                                    ? LpspCoinbaseTokens.cbTextPrimary
+                                    : LpspCoinbaseTokens.cbTextSecondary
+                            )
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(
+                                Capsule()
+                                    .fill(
+                                        store.selectedRange == range
+                                            ? LpspCoinbaseTokens.cbSurfaceGray2
+                                            : LpspCoinbaseTokens.cbSurfaceGray
+                                    )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+    }
+}
+
+private struct LpspCoinbaseShowroomActionRow: View {
+    @ObservedObject var store: LpspCoinbaseStore
+
+    var body: some View {
+        LpspCoinbaseAssetActionRow(
+            onBuy: { store.buy() },
+            onSell: { store.sell() },
+            onSend: { store.send() },
+            onReceive: { store.receive() }
+        )
+        .padding(.bottom, 8)
+    }
+}
+
+private struct LpspCoinbaseShowroomAssetRow: View {
+    let asset: LpspCoinbaseAsset
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            LpspCoinbaseAssetRow(
+                assetName: asset.name,
+                ticker: asset.ticker,
+                holdings: asset.holdings,
+                price: asset.value,
+                dayChange: asset.value * asset.dayChangePct,
+                dayChangePct: asset.dayChangePct,
+                iconColor: asset.iconColor,
+                glyph: asset.glyph,
+                sparklinePoints: asset.sparklinePoints
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspCoinbaseSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspCoinbaseStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                LpspCoinbaseSpectrTopBar()
+                LpspCoinbaseShowroomPortfolioHero(store: store)
+                LpspCoinbasePortfolioChart(points: LpspCoinbaseShowroomData.portfolioChart)
+                LpspCoinbaseRangeChipRow(store: store)
+                LpspCoinbaseShowroomActionRow(store: store)
+
+                Text("Your assets")
+                    .font(LpspCoinbaseFonts.cbSectionHeader.weight(.bold))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 4)
+
+                ForEach(store.assets) { asset in
+                    LpspCoinbaseShowroomAssetRow(asset: asset) {
+                        store.selectAsset(asset)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspCoinbaseTradeTabScreen: View {
+    @ObservedObject var store: LpspCoinbaseStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Trade")
+                    .font(LpspCoinbaseFonts.cbScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                HStack(spacing: 0) {
+                    ForEach([LpspCoinbaseStore.TradeSide.buy, .sell], id: \.self) { side in
+                        Button {
+                            store.tradeSide = side
+                        } label: {
+                            Text(side == .buy ? "Buy" : "Sell")
+                                .font(LpspCoinbaseFonts.cbButton.weight(.semibold))
+                                .foregroundStyle(
+                                    store.tradeSide == side
+                                        ? .white
+                                        : LpspCoinbaseTokens.cbTextSecondary
+                                )
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 40)
+                                .background(
+                                    store.tradeSide == side
+                                        ? LpspCoinbaseTokens.cbBlue
+                                        : LpspCoinbaseTokens.cbSurfaceGray
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding(.horizontal, 16)
+
+                ForEach(store.assets) { asset in
+                    Button {
+                        store.selectedAssetID = asset.id
+                    } label: {
+                        HStack {
+                            Circle()
+                                .fill(asset.iconColor)
+                                .frame(width: 32, height: 32)
+                                .overlay(
+                                    Text(asset.glyph)
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundStyle(.white)
+                                )
+                            Text(asset.ticker)
+                                .font(LpspCoinbaseFonts.cbAssetTitle.weight(.semibold))
+                                .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                            Spacer()
+                            if store.selectedAssetID == asset.id {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(LpspCoinbaseTokens.cbBlue)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                Text(store.selectedAsset.value, format: .currency(code: "USD"))
+                    .font(LpspCoinbaseFonts.cbBuyAmount.weight(.bold))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 8)
+
+                LpspCoinbaseCBPrimaryButton(
+                    label: store.tradeSide == .buy
+                        ? "Buy \(store.selectedAsset.ticker)"
+                        : "Sell \(store.selectedAsset.ticker)"
+                ) {
+                    store.executeTrade()
+                }
+                .padding(.horizontal, 16)
+
+                if !store.lastActionMessage.isEmpty {
+                    Text(store.lastActionMessage)
+                        .font(LpspCoinbaseFonts.cbBodySmall)
+                        .foregroundStyle(LpspCoinbaseTokens.cbTextSecondary)
+                        .padding(.horizontal, 16)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspCoinbaseCardsTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: [LpspCoinbaseTokens.cbBlue, LpspCoinbaseTokens.cbBluePressed],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(height: 180)
+                    .overlay(alignment: .bottomLeading) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Coinbase Card")
+                                .font(LpspCoinbaseFonts.cbAssetTitle.weight(.semibold))
+                                .foregroundStyle(.white)
+                            Text("•••• 4829")
+                                .font(LpspCoinbaseFonts.cbBody)
+                                .foregroundStyle(.white.opacity(0.85))
+                        }
+                        .padding(20)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                Text("Spend crypto anywhere Visa is accepted")
+                    .font(LpspCoinbaseFonts.cbBody)
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspCoinbaseEarnTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Earn")
+                    .font(LpspCoinbaseFonts.cbScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                ForEach(LpspCoinbaseShowroomData.earnProducts, id: \.0) { product in
+                    HStack {
+                        Circle()
+                            .fill(LpspCoinbaseTokens.cbBlueTint)
+                            .frame(width: 40, height: 40)
+                            .overlay(
+                                Text(product.0)
+                                    .font(LpspCoinbaseFonts.cbTicker.weight(.bold))
+                                    .foregroundStyle(LpspCoinbaseTokens.cbBlue)
+                            )
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Earn \(product.0)")
+                                .font(LpspCoinbaseFonts.cbAssetTitle)
+                                .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                            Text(product.1)
+                                .font(LpspCoinbaseFonts.cbBodySmall)
+                                .foregroundStyle(LpspCoinbaseTokens.cbSuccess)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(LpspCoinbaseTokens.cbTextTertiary)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspCoinbaseWalletTabScreen: View {
+    @ObservedObject var store: LpspCoinbaseStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                LpspCoinbaseShowroomPortfolioHero(store: store)
+                    .padding(.top, 8)
+
+                Text("Holdings")
+                    .font(LpspCoinbaseFonts.cbSectionHeader.weight(.bold))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                    .padding(.horizontal, 16)
+
+                ForEach(store.assets) { asset in
+                    LpspCoinbaseShowroomAssetRow(asset: asset) {
+                        store.selectAsset(asset)
+                    }
+                }
+
+                if !store.lastActionMessage.isEmpty {
+                    Text(store.lastActionMessage)
+                        .font(LpspCoinbaseFonts.cbBodySmall)
+                        .foregroundStyle(LpspCoinbaseTokens.cbBlue)
+                        .padding(.horizontal, 16)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspCoinbaseReceiveSheet: View {
+    let asset: LpspCoinbaseAsset
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Receive \(asset.ticker)")
+                    .font(LpspCoinbaseFonts.cbSectionHeader.weight(.bold))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+
+                LpspCoinbaseWalletAddressView(
+                    address: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+                )
+
+                LpspCoinbaseCBSecondaryButton(label: "Share address") {
+                    dismiss()
+                }
+
+                Spacer()
+            }
+            .padding(16)
+            .background(LpspCoinbaseTokens.cbCanvas)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
 

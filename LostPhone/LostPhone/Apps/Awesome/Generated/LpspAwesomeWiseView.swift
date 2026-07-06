@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeWiseView: View {
     var body: some View {
-        LpspWiseShowroomRoot()
+        LpspWiseShowroomRoot(store: LpspWiseStore())
     }
 }
 
@@ -253,173 +253,542 @@ fileprivate struct LpspWiseLiveDot: View {
 
 // Fee card reveal: stagger lines with .transition(.opacity) and per-row delay
 
-// MARK: - Écrans showroom
+// MARK: - Showroom data & store
 
-private struct LpspWiseShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspWiseSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspWiseFinanceCardsTabScreen()
-                .tabItem { Label("Card", systemImage: "creditcard.fill") }
-                .tag(1)
-            LpspWiseFinanceHomeTabScreen()
-                .tabItem { Label("Recipients", systemImage: "person.2.fill") }
-                .tag(2)
-            LpspWiseFinanceHomeTabScreen()
-                .tabItem { Label("Payments", systemImage: "arrow.left.arrow.right") }
-                .tag(3)
-            LpspWiseFinanceHomeTabScreen()
-                .tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
-                .tag(4)
+private enum LpspWiseShowroomTab: String, CaseIterable, Identifiable {
+    case home, card, recipients, payments, account
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .card: "Card"
+        case .recipients: "Recipients"
+        case .payments: "Payments"
+        case .account: "Account"
         }
-        .tint(LpspWiseTokens.wiseTextPrimary)
-        
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .card: "creditcard.fill"
+        case .recipients: "person.2.fill"
+        case .payments: "arrow.left.arrow.right"
+        case .account: "person.crop.circle.fill"
+        }
     }
 }
 
+private enum LpspWiseQuickAction: String, Identifiable {
+    case send, add, request, convert
 
-private struct LpspWiseGenericTabScreen: View {
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .send: "Send"
+        case .add: "Add"
+        case .request: "Request"
+        case .convert: "Convert"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .send: "paperplane.fill"
+        case .add: "plus"
+        case .request: "arrow.down"
+        case .convert: "arrow.left.arrow.right"
+        }
+    }
+}
+
+private struct LpspWiseCurrencyAccount: Identifiable, Equatable {
+    let id: String
+    let flag: String
+    let code: String
+    let name: String
+    var balance: String
+}
+
+private struct LpspWisePayment: Identifiable, Equatable {
+    let id: String
     let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspWiseTokens.wiseTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspWiseTokens.wiseTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private struct LpspWiseFinanceHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Solde total").font(.subheadline).foregroundStyle(.secondary)
-                        Text("2 847,50 €").font(.system(size: 36, weight: .bold))
-                    }
-                    .padding(.horizontal)
-
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [LpspWiseTokens.wiseTextPrimary, LpspWiseTokens.wiseTextPrimary.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(height: 180)
-                        .overlay(alignment: .bottomLeading) {
-                            Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
-                        }
-                        .padding(.horizontal)
-
-                    Text("Transactions").font(.headline).padding(.horizontal)
-
-                    ForEach(LpspWiseDemoTx.items) { tx in
-                        HStack {
-                            Circle().fill(LpspWiseTokens.wiseTextPrimary.opacity(0.15)).frame(width: 40, height: 40)
-                            VStack(alignment: .leading) { Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }
-                            Spacer()
-                            Text(tx.amount).font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
-                        }
-                        .padding(.horizontal)
-                    }
-
-                }
-                .padding(.vertical)
-            }
-            .background(LpspWiseTokens.wiseCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-        }
-    }
-}
-
-private struct LpspWiseFinanceCardsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    RoundedRectangle(cornerRadius: 16).fill(LpspWiseTokens.wiseTextPrimary).frame(height: 180).padding(.horizontal)
-                    Text("Gérez vos cartes").font(.headline)
-                }
-                .padding(.vertical)
-            }
-            .background(LpspWiseTokens.wiseCanvas.ignoresSafeArea())
-            .navigationTitle("Cartes")
-        }
-    }
-}
-
-private struct LpspWiseDemoTx: Identifiable {
-    let id = UUID()
-    let title: String
-    let date: String
+    let meta: String
     let amount: String
     let incoming: Bool
-    let icon: String
-    static let items: [LpspWiseDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
+}
+
+private enum LpspWiseShowroomData {
+    static let userInitials = "AM"
+    static let totalBalance = "£12,480.65"
+
+    static let accounts: [LpspWiseCurrencyAccount] = [
+        LpspWiseCurrencyAccount(id: "GBP", flag: "🇬🇧", code: "GBP", name: "British Pound", balance: "£8,240.10"),
+        LpspWiseCurrencyAccount(id: "EUR", flag: "🇪🇺", code: "EUR", name: "Euro", balance: "€3,180.55"),
+        LpspWiseCurrencyAccount(id: "USD", flag: "🇺🇸", code: "USD", name: "US Dollar", balance: "$1,060.00"),
+    ]
+
+    static let recipients = ["Jamie Cole", "Mara Singh", "Alex Mercer"]
+
+    static let payments: [LpspWisePayment] = [
+        LpspWisePayment(id: "1", title: "Jamie Cole", meta: "Sent · Yesterday", amount: "-£120.00", incoming: false),
+        LpspWisePayment(id: "2", title: "Salary", meta: "Received · Monday", amount: "+£2,400.00", incoming: true),
+        LpspWisePayment(id: "3", title: "EUR conversion", meta: "Converted · Sunday", amount: "-£200.00", incoming: false),
     ]
 }
 
+@MainActor
+fileprivate final class LpspWiseStore: ObservableObject {
+    @Published var selectedTab: LpspWiseShowroomTab = .home
+    @Published var accounts: [LpspWiseCurrencyAccount] = LpspWiseShowroomData.accounts
+    @Published var payments: [LpspWisePayment] = LpspWiseShowroomData.payments
+    @Published var selectedAccountId = "GBP"
+    @Published var activeQuickAction: LpspWiseQuickAction?
+    @Published var sendAmount = "£250"
 
-private struct LpspWiseSpectrHomeTabScreen: View {
+    func selectAccount(_ id: String) {
+        selectedAccountId = id
+    }
+
+    func openQuickAction(_ action: LpspWiseQuickAction) {
+        activeQuickAction = action
+    }
+
+    func dismissQuickAction() {
+        activeQuickAction = nil
+    }
+
+    func addMoney() {
+        let payment = LpspWisePayment(
+            id: "add-\(payments.count + 1)",
+            title: "Added money",
+            meta: "Just now · GBP",
+            amount: "+£100.00",
+            incoming: true
+        )
+        payments.insert(payment, at: 0)
+        accounts = accounts.map { account in
+            guard account.id == "GBP" else { return account }
+            var copy = account
+            copy.balance = "£8,340.10"
+            return copy
+        }
+        activeQuickAction = nil
+    }
+
+    func sendMoney() {
+        let payment = LpspWisePayment(
+            id: "send-\(payments.count + 1)",
+            title: "Jamie Cole",
+            meta: "Just now · Sent",
+            amount: "-\(sendAmount)",
+            incoming: false
+        )
+        payments.insert(payment, at: 0)
+        activeQuickAction = nil
+    }
+
+    func requestMoney() {
+        let payment = LpspWisePayment(
+            id: "req-\(payments.count + 1)",
+            title: "Request sent",
+            meta: "Pending · Mara Singh",
+            amount: "+£50.00",
+            incoming: true
+        )
+        payments.insert(payment, at: 0)
+        activeQuickAction = nil
+    }
+
+    func convertCurrency() {
+        accounts = accounts.map { account in
+            switch account.id {
+            case "GBP":
+                var copy = account
+                copy.balance = "£8,040.10"
+                return copy
+            case "EUR":
+                var copy = account
+                copy.balance = "€3,380.55"
+                return copy
+            default:
+                return account
+            }
+        }
+        selectedAccountId = "EUR"
+        activeQuickAction = nil
+    }
+}
+
+// MARK: - Écrans showroom
+
+private struct LpspWiseShowroomRoot: View {
+    @ObservedObject var store: LpspWiseStore
+
     var body: some View {
         VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Text("AM").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-            Text("Home").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-        } .padding(.horizontal, 16).frame(height: 44)
-            ZStack(alignment: .bottomLeading) {
-                Text("Total balance").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                Text("£12,480.65").font(.system(size: 38.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                Text("Add money").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-            } .frame(height: 420)
-        HStack(spacing: 0) {
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.420, green: 0.357, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Send").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.420, green: 0.357, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Add").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.420, green: 0.357, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Request").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.420, green: 0.357, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Convert").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-            } .frame(maxWidth: .infinity)
-        } .padding(.horizontal, 8).padding(.vertical, 16)
-        Text("Your accounts").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                Text("🇬🇧").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                    Text("GBP").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                    Text("British Pound").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                Text("£8,240.10").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                Text("🇪🇺").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                    Text("EUR").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                    Text("Euro").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                Text("€3,180.55").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                Text("🇺🇸").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                    Text("USD").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                    Text("US Dollar").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
-                Text("$1,060.00").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.055, green: 0.059, blue: 0.047))
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspWiseHomeTabScreen(store: store)
+                case .card:
+                    LpspWiseCardTabScreen()
+                case .recipients:
+                    LpspWiseRecipientsTabScreen()
+                case .payments:
+                    LpspWisePaymentsTabScreen(store: store)
+                case .account:
+                    LpspWiseAccountTabScreen()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspWiseLabeledTabBar(store: store)
         }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        .background(LpspWiseTokens.wiseCanvas.ignoresSafeArea())
+        .sheet(item: $store.activeQuickAction) { action in
+            LpspWiseQuickActionSheet(store: store, action: action)
+        }
+    }
+}
+
+private struct LpspWiseLabeledTabBar: View {
+    @ObservedObject var store: LpspWiseStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspWiseShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 20, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspWiseFonts.wiseTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspWiseTokens.wiseForest
+                            : LpspWiseTokens.wiseTextTertiary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspWiseTokens.wiseCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspWiseTokens.wiseDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspWiseHomeTabScreen: View {
+    @ObservedObject var store: LpspWiseStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                LpspWiseSpectrTopBar()
+
+                Button {
+                    store.openQuickAction(.add)
+                } label: {
+                    LpspWiseForestAccountHero(total: LpspWiseShowroomData.totalBalance)
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                LpspWiseQuickActionRow { action in
+                    store.openQuickAction(action)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 16)
+
+                Text("Your accounts")
+                    .font(LpspWiseFonts.wiseMeta.weight(.semibold))
+                    .foregroundStyle(LpspWiseTokens.wiseTextSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+
+                VStack(spacing: 0) {
+                    ForEach(store.accounts) { account in
+                        Button {
+                            store.selectAccount(account.id)
+                        } label: {
+                            LpspWiseCurrencyRow(
+                                flag: account.flag,
+                                code: account.code,
+                                name: account.name,
+                                balance: account.balance
+                            )
+                            .background(
+                                store.selectedAccountId == account.id
+                                    ? LpspWiseTokens.wiseBrightTint.opacity(0.35)
+                                    : Color.clear
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspWiseSpectrTopBar: View {
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(LpspWiseShowroomData.userInitials)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(LpspWiseTokens.wiseForest)
+                .frame(width: 36, height: 36)
+                .background(Circle().fill(LpspWiseTokens.wiseBrightTint))
+
+            Text("Home")
+                .font(LpspWiseFonts.wiseTitle.weight(.semibold))
+                .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+
+            Spacer()
+
+            Image(systemName: "bell")
+                .font(.system(size: 20))
+                .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+
+            Image(systemName: "gearshape")
+                .font(.system(size: 20))
+                .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 44)
+    }
+}
+
+private struct LpspWiseQuickActionRow: View {
+    let onAction: (LpspWiseQuickAction) -> Void
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach([LpspWiseQuickAction.send, .add, .request, .convert]) { action in
+                Button {
+                    onAction(action)
+                } label: {
+                    VStack(spacing: 6) {
+                        ZStack {
+                            Circle()
+                                .fill(
+                                    action == .send
+                                        ? LpspWiseTokens.wiseBright
+                                        : LpspWiseTokens.wiseSurface
+                                )
+                                .frame(width: 52, height: 52)
+                            Image(systemName: action.icon)
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundStyle(LpspWiseTokens.wiseForest)
+                        }
+                        Text(action.title)
+                            .font(LpspWiseFonts.wiseCaption)
+                            .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
+private struct LpspWiseQuickActionSheet: View {
+    @ObservedObject var store: LpspWiseStore
+    let action: LpspWiseQuickAction
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 20) {
+                Text(action.title)
+                    .font(LpspWiseFonts.wiseSection.weight(.bold))
+                    .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+
+                switch action {
+                case .send:
+                    TextField("Amount", text: $store.sendAmount)
+                        .font(LpspWiseFonts.wiseCurrency)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(LpspWiseTokens.wiseSurface)
+                        )
+                    LpspWiseWisePrimaryButton(title: "Send money") {
+                        store.sendMoney()
+                        dismiss()
+                    }
+                case .add:
+                    Text("Add GBP to your balance instantly.")
+                        .font(LpspWiseFonts.wiseBody)
+                        .foregroundStyle(LpspWiseTokens.wiseTextSecondary)
+                    LpspWiseWisePrimaryButton(title: "Add £100") {
+                        store.addMoney()
+                        dismiss()
+                    }
+                case .request:
+                    Text("Request money from Mara Singh")
+                        .font(LpspWiseFonts.wiseBody)
+                        .foregroundStyle(LpspWiseTokens.wiseTextSecondary)
+                    LpspWiseWisePrimaryButton(title: "Send request") {
+                        store.requestMoney()
+                        dismiss()
+                    }
+                case .convert:
+                    LpspWiseFeeBreakdownCard(lines: [
+                        .init(label: "You send", value: "£200.00"),
+                        .init(label: "Fee", value: "£0.42"),
+                        .init(label: "They get", value: "€230.15", emphasized: true),
+                    ])
+                    LpspWiseWisePrimaryButton(title: "Convert") {
+                        store.convertCurrency()
+                        dismiss()
+                    }
+                }
+
+                Spacer()
+            }
+            .padding(16)
+            .background(LpspWiseTokens.wiseCanvas)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") {
+                        store.dismissQuickAction()
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
+
+private struct LpspWiseCardTabScreen: View {
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(LpspWiseTokens.wiseForest)
+                    .frame(height: 200)
+                    .overlay(alignment: .bottomLeading) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Wise Debit")
+                                .font(LpspWiseFonts.wiseTitle.weight(.semibold))
+                                .foregroundStyle(.white)
+                            Text("•••• 4829")
+                                .font(LpspWiseFonts.wiseMeta)
+                                .foregroundStyle(LpspWiseTokens.wiseBright)
+                        }
+                        .padding(20)
+                    }
+                    .padding(.horizontal, 16)
+
+                Text("Spend abroad with the real exchange rate")
+                    .font(LpspWiseFonts.wiseBody)
+                    .foregroundStyle(LpspWiseTokens.wiseTextSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+            }
+            .padding(.vertical, 24)
+        }
+    }
+}
+
+private struct LpspWiseRecipientsTabScreen: View {
+    var body: some View {
+        List {
+            ForEach(LpspWiseShowroomData.recipients, id: \.self) { name in
+                HStack(spacing: 12) {
+                    Circle()
+                        .fill(LpspWiseTokens.wiseBrightTint)
+                        .frame(width: 44, height: 44)
+                        .overlay {
+                            Text(String(name.prefix(1)))
+                                .font(LpspWiseFonts.wiseTitle.weight(.semibold))
+                                .foregroundStyle(LpspWiseTokens.wiseForest)
+                        }
+                    Text(name)
+                        .font(LpspWiseFonts.wiseTitle)
+                        .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+                }
+                .listRowBackground(LpspWiseTokens.wiseCanvas)
+            }
+        }
+        .scrollContentBackground(.hidden)
+    }
+}
+
+private struct LpspWisePaymentsTabScreen: View {
+    @ObservedObject var store: LpspWiseStore
+
+    var body: some View {
+        List {
+            ForEach(store.payments) { payment in
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(payment.title)
+                            .font(LpspWiseFonts.wiseTitle.weight(.semibold))
+                            .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+                        Text(payment.meta)
+                            .font(LpspWiseFonts.wiseMeta)
+                            .foregroundStyle(LpspWiseTokens.wiseTextSecondary)
+                    }
+                    Spacer()
+                    Text(payment.amount)
+                        .font(LpspWiseFonts.wiseAmount.weight(.semibold))
+                        .foregroundStyle(payment.incoming ? LpspWiseTokens.wiseSuccess : LpspWiseTokens.wiseTextPrimary)
+                }
+                .listRowBackground(LpspWiseTokens.wiseCanvas)
+            }
+        }
+        .scrollContentBackground(.hidden)
+    }
+}
+
+private struct LpspWiseAccountTabScreen: View {
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                Text(LpspWiseShowroomData.userInitials)
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(LpspWiseTokens.wiseForest)
+                    .frame(width: 88, height: 88)
+                    .background(Circle().fill(LpspWiseTokens.wiseBrightTint))
+
+                Text("Alex Mercer")
+                    .font(LpspWiseFonts.wiseSection.weight(.bold))
+                    .foregroundStyle(LpspWiseTokens.wiseTextPrimary)
+
+                Text("Personal account · Verified")
+                    .font(LpspWiseFonts.wiseMeta)
+                    .foregroundStyle(LpspWiseTokens.wiseTextSecondary)
+
+                LpspWiseWiseForestButton(title: "Account details") {}
+                    .padding(.horizontal, 32)
+            }
+            .padding(.vertical, 32)
+        }
     }
 }
 

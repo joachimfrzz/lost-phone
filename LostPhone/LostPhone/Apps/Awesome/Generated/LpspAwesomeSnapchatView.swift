@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSnapchatView: View {
     var body: some View {
-        LpspSnapchatShowroomRoot()
+        LpspSnapchatShowroomRoot(store: LpspSnapchatStore())
     }
 }
 
@@ -136,12 +136,12 @@ fileprivate struct LpspSnapchatSnapCaptureButton: View {
     }
 }
 
-fileprivate struct LpspSnapchatSnapChatRow: View {
+fileprivate struct LpspSnapchatSnapChatRow<Bitmoji: View>: View {
     enum LpspSnapchatSnapType { case photo, video, chat, audio, none }
     enum LpspSnapchatDirection { case incoming, outgoing }
 
     let name: String
-    let bitmoji: Image
+    let bitmoji: Bitmoji
     let status: String           // "Received · 2m ago"
     let timestamp: String        // "2m"
     let snapType: LpspSnapchatSnapType
@@ -152,7 +152,6 @@ fileprivate struct LpspSnapchatSnapChatRow: View {
     var body: some View {
         HStack(spacing: 12) {
             bitmoji
-                .resizable()
                 .frame(width: 48, height: 48)
                 .clipShape(Circle())
 
@@ -226,20 +225,18 @@ fileprivate struct LpspSnapchatSnapTypeIndicator: View {
     }
 }
 
-fileprivate struct LpspSnapchatSnapStoryThumb: View {
+fileprivate struct LpspSnapchatSnapStoryThumb<Bitmoji: View, Preview: View>: View {
     enum ReadState { case unread, read, live }
 
     let creatorName: String
-    let bitmoji: Image
-    let preview: Image
+    let bitmoji: Bitmoji
+    let preview: Preview
     let state: ReadState
     @State private var ringOpacity: Double = 1.0
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             preview
-                .resizable()
-                .aspectRatio(contentMode: .fill)
                 .frame(width: 120, height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .overlay(
@@ -249,7 +246,6 @@ fileprivate struct LpspSnapchatSnapStoryThumb: View {
                 )
 
             bitmoji
-                .resizable()
                 .frame(width: 40, height: 40)
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.white, lineWidth: 2))
@@ -413,240 +409,549 @@ fileprivate struct LpspSnapchatLensCarousel: View {
 }
 
 
+
 fileprivate struct LpspSnapchatSnapNavIndicator: View {
-    let selected: Int
-    private let icons = ["map.fill", "bubble.left.fill", "camera.fill", "play.rectangle.fill", "diamond.fill"]
+    @Binding var selected: LpspSnapchatShowroomTab
+
+    private let tabs: [LpspSnapchatShowroomTab] = [.map, .chat, .camera, .stories, .spotlight]
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(Array(icons.enumerated()), id: \.offset) { i, icon in
-                Image(systemName: icon)
-                    .font(.system(size: 28))
-                    .foregroundStyle(i == selected ? Color.white : LpspSnapchatTokens.snapTextTertiary)
-                    .frame(maxWidth: .infinity, minHeight: 56)
+            ForEach(tabs) { tab in
+                Button {
+                    selected = tab
+                } label: {
+                    if tab == .camera {
+                        Circle()
+                            .fill(selected == tab ? LpspSnapchatTokens.snapYellow : LpspSnapchatTokens.snapTextTertiary)
+                            .frame(width: 8, height: 8)
+                            .frame(maxWidth: .infinity, minHeight: 40)
+                    } else {
+                        Circle()
+                            .fill(selected == tab ? Color.white : LpspSnapchatTokens.snapTextTertiary)
+                            .frame(width: 6, height: 6)
+                            .frame(maxWidth: .infinity, minHeight: 40)
+                    }
+                }
+                .buttonStyle(.plain)
             }
         }
-        .background(.black.opacity(0.5))
+        .padding(.horizontal, 24)
+        .padding(.bottom, 8)
+        .background(.black.opacity(0.35))
+    }
+}
+
+// MARK: - Showroom data & store
+
+private enum LpspSnapchatShowroomTab: String, CaseIterable, Identifiable {
+    case map, chat, camera, stories, spotlight
+
+    var id: String { rawValue }
+
+    var navIcon: String {
+        switch self {
+        case .map: "map.fill"
+        case .chat: "bubble.left.fill"
+        case .camera: "camera.fill"
+        case .stories: "play.rectangle.fill"
+        case .spotlight: "diamond.fill"
+        }
+    }
+}
+
+private struct LpspSnapchatConversation: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let emoji: String
+    let status: String
+    let timestamp: String
+    let snapType: LpspSnapchatSnapChatRow<LpspSnapchatBitmoji>.LpspSnapchatSnapType
+    let direction: LpspSnapchatSnapChatRow<LpspSnapchatBitmoji>.LpspSnapchatDirection
+    let isUnread: Bool
+    let streakDays: Int?
+}
+
+private struct LpspSnapchatStoryItem: Identifiable, Equatable {
+    let id: String
+    let creatorName: String
+    let emoji: String
+    let state: LpspSnapchatSnapStoryThumb<LpspSnapchatBitmoji, LpspSnapchatStoryPreview>.ReadState
+}
+
+private enum LpspSnapchatShowroomData {
+    static let lenses = ["🌸", "🦋", "✨", "🔥", "🎭"]
+    static let lensNames = ["Cherry Bloom", "Butterfly", "Sunset Beach", "Fire Lens", "Theater"]
+
+    static let conversations: [LpspSnapchatConversation] = [
+        .init(id: "jamie", name: "Jamie Cole", emoji: "🦊", status: "Received · 2m ago", timestamp: "2m", snapType: .photo, direction: .incoming, isUnread: true, streakDays: 142),
+        .init(id: "kira", name: "Kira Tan", emoji: "🐯", status: "New Chat · 8m ago", timestamp: "8m", snapType: .chat, direction: .incoming, isUnread: true, streakDays: nil),
+        .init(id: "alex", name: "Alex Mercer", emoji: "🐻", status: "Opened · 1h ago", timestamp: "1h", snapType: .video, direction: .outgoing, isUnread: false, streakDays: 28),
+    ]
+
+    static let stories: [LpspSnapchatStoryItem] = [
+        .init(id: "jamie", creatorName: "Jamie", emoji: "🦊", state: .unread),
+        .init(id: "kira", creatorName: "Kira", emoji: "🐯", state: .unread),
+        .init(id: "team", creatorName: "Team Snap", emoji: "👻", state: .read),
+    ]
+
+    static let mapFriends = [
+        ("Jamie", 0.28, 0.42),
+        ("Kira", 0.62, 0.55),
+        ("Alex", 0.44, 0.68),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspSnapchatStore: ObservableObject {
+    @Published var selectedTab: LpspSnapchatShowroomTab = .camera
+    @Published var selectedLensIndex = 2
+    @Published var isRecording = false
+    @Published var recordProgress = 0.0
+    @Published var flashOn = false
+    @Published var frontCamera = true
+    @Published var snapCount = 0
+    @Published var conversations = LpspSnapchatShowroomData.conversations
+    @Published var stories = LpspSnapchatShowroomData.stories
+    @Published var selectedChatId: String?
+    @Published var showChatSheet = false
+    @Published var chatDraft = ""
+    @Published var chatMessages: [String: [String]] = [
+        "kira": ["Want to try the Sunset Beach lens?", "Meet at the pier?"],
+    ]
+
+    var activeLensName: String {
+        LpspSnapchatShowroomData.lensNames[selectedLensIndex]
+    }
+
+    func selectLens(_ index: Int) {
+        selectedLensIndex = index
+    }
+
+    func toggleFlash() {
+        flashOn.toggle()
+    }
+
+    func flipCamera() {
+        frontCamera.toggle()
+    }
+
+    func capturePhoto() {
+        snapCount += 1
+    }
+
+    func startRecording() {
+        isRecording = true
+        recordProgress = 0.15
+    }
+
+    func stopRecording() {
+        isRecording = false
+        recordProgress = 0
+        snapCount += 1
+    }
+
+    func openChat(_ id: String) {
+        selectedChatId = id
+        showChatSheet = true
+        conversations = conversations.map { chat in
+            guard chat.id == id else { return chat }
+            return LpspSnapchatConversation(
+                id: chat.id,
+                name: chat.name,
+                emoji: chat.emoji,
+                status: "Opened · just now",
+                timestamp: "now",
+                snapType: chat.snapType,
+                direction: chat.direction,
+                isUnread: false,
+                streakDays: chat.streakDays
+            )
+        }
+    }
+
+    func sendChatMessage() {
+        let text = chatDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty, let id = selectedChatId else { return }
+        var thread = chatMessages[id] ?? []
+        thread.append(text)
+        chatMessages[id] = thread
+        chatDraft = ""
+    }
+
+    func markStoryRead(_ id: String) {
+        stories = stories.map { story in
+            guard story.id == id else { return story }
+            return LpspSnapchatStoryItem(
+                id: story.id,
+                creatorName: story.creatorName,
+                emoji: story.emoji,
+                state: .read
+            )
+        }
     }
 }
 
 // MARK: - Écrans showroom
 
 private struct LpspSnapchatShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspSnapchatSpectrHomeTabScreen()
-                .tabItem { Label("Accueil", systemImage: "house.fill") }
-                .tag(0)
-            LpspSnapchatExploreTabScreen()
-                .tabItem { Label("Explorer", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspSnapchatProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle") }
-                .tag(2)
-        }
-        .tint(LpspSnapchatTokens.snapYellow)
-        
-    }
-}
+    @ObservedObject var store: LpspSnapchatStore
 
-
-private struct LpspSnapchatGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspSnapchatTokens.snapYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspSnapchatTokens.snapYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private struct LpspSnapchatDemoStory: Identifiable {
-    let id = UUID()
-    let name: String
-    let unread: Bool
-}
-
-private enum LpspSnapchatDemoStories {
-    static let items: [LpspSnapchatDemoStory] = [
-        .init(name: "Votre story", unread: false),
-        .init(name: "Alex", unread: true),
-        .init(name: "Léa", unread: true),
-    ]
-}
-
-private struct LpspSnapchatFeedTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 14) {
-                            ForEach(LpspSnapchatDemoStories.items) { s in
-                                VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspSnapchatTokens.snapYellow, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspSnapchatTokens.snapYellow.opacity(0.2)).frame(width: 58, height: 58))
-                                    Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 10)
-                    }
-
-
-                    ForEach(0..<3, id: \.self) { i in
-                        LpspSnapchatGenericFeedCard(index: i, accent: LpspSnapchatTokens.snapYellow)
-                    }
-
-                }
-            }
-            .background(LpspSnapchatTokens.snapCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-
-private struct LpspSnapchatExploreTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 2) {
-                    ForEach(0..<15, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspSnapchatTokens.snapYellow.opacity(0.08 + Double(i) * 0.04))
-                            .aspectRatio(1, contentMode: .fit)
-                    }
-                }
-            }
-            .navigationTitle("Explorer")
-        }
-    }
-}
-
-private struct LpspSnapchatReelsTabScreen: View {
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Spacer()
-                Image(systemName: "play.rectangle.fill").font(.system(size: 64)).foregroundStyle(.white.opacity(0.85))
-                Text("Reels").font(.title2.bold()).foregroundStyle(.white)
-                Spacer()
+            LpspSnapchatTokens.snapCanvas.ignoresSafeArea()
+
+            switch store.selectedTab {
+            case .map:
+                LpspSnapchatMapTabScreen(store: store)
+            case .chat:
+                LpspSnapchatChatTabScreen(store: store)
+            case .camera:
+                LpspSnapchatCameraTabScreen(store: store)
+            case .stories:
+                LpspSnapchatStoriesTabScreen(store: store)
+            case .spotlight:
+                LpspSnapchatSpotlightTabScreen(store: store)
+            }
+        }
+        .preferredColorScheme(.dark)
+        .sheet(isPresented: $store.showChatSheet) {
+            if let id = store.selectedChatId,
+               let chat = store.conversations.first(where: { $0.id == id }) {
+                LpspSnapchatChatSheet(store: store, chat: chat)
             }
         }
     }
 }
 
-private struct LpspSnapchatProfileTabScreen: View {
+private struct LpspSnapchatCameraTabScreen: View {
+    @ObservedObject var store: LpspSnapchatStore
+
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    Circle().fill(LpspSnapchatTokens.snapYellow.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("lost.phone").font(.system(size: 20, weight: .bold))
-                    Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)
-                    HStack(spacing: 32) {
-                        VStack { Text("128").font(.headline); Text("Publications").font(.caption) }
-                        VStack { Text("1,2 k").font(.headline); Text("Abonnés").font(.caption) }
-                        VStack { Text("340").font(.headline); Text("Abonnements").font(.caption) }
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color(red: 0.15, green: 0.08, blue: 0.22),
+                    Color(red: 0.05, green: 0.12, blue: 0.18),
+                    Color.black,
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    Circle()
+                        .fill(LpspSnapchatTokens.snapYellow)
+                        .frame(width: 36, height: 36)
+                        .overlay {
+                            Text("👻")
+                                .font(.system(size: 18))
+                        }
+
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text("Search")
+                            .font(LpspSnapchatFonts.snapHudLabel)
+                    }
+                    .foregroundStyle(LpspSnapchatTokens.snapTextPrimary)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(LpspSnapchatTokens.snapSurface2.opacity(0.85)))
+
+                    Spacer()
+
+                    Button { store.toggleFlash() } label: {
+                        Image(systemName: "plus.circle")
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundStyle(.white)
                     }
                 }
-                .padding()
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+
+                Spacer()
+
+                Text(store.activeLensName)
+                    .font(LpspSnapchatFonts.snapLensLabel.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
+
+                LpspSnapchatLensCarousel(
+                    lenses: LpspSnapchatShowroomData.lenses,
+                    selected: Binding(
+                        get: { store.selectedLensIndex },
+                        set: { store.selectLens($0) }
+                    )
+                )
+                .padding(.vertical, 12)
+
+                HStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(LpspSnapchatTokens.snapSurface2)
+                        .frame(width: 36, height: 48)
+                        .overlay {
+                            Image(systemName: "photo.stack.fill")
+                                .foregroundStyle(.white)
+                        }
+
+                    Spacer()
+
+                    LpspSnapchatSnapCaptureButton(
+                        isRecording: $store.isRecording,
+                        recordProgress: $store.recordProgress,
+                        onPhoto: { store.capturePhoto() },
+                        onVideoStart: { store.startRecording() },
+                        onVideoStop: { store.stopRecording() },
+                        onFlip: { store.flipCamera() }
+                    )
+
+                    Spacer()
+
+                    Button { store.flipCamera() } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath.camera.fill")
+                            .font(.system(size: 28))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                    }
+                }
+                .padding(.horizontal, 32)
+
+                LpspSnapchatSnapNavIndicator(selected: $store.selectedTab)
             }
-            .navigationTitle("Profil")
         }
     }
 }
 
-private struct LpspSnapchatCommunitiesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
-        }
-    }
-}
+private struct LpspSnapchatChatTabScreen: View {
+    @ObservedObject var store: LpspSnapchatStore
 
-private struct LpspSnapchatCreateTabScreen: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspSnapchatTokens.snapYellow)
-            Text("Nouvelle publication").font(.title2.bold())
-            Text("Photo, reel ou story").foregroundStyle(.secondary)
+        VStack(spacing: 0) {
+            HStack {
+                Text("Chat")
+                    .font(LpspSnapchatFonts.snapScreenTitle.weight(.semibold))
+                    .foregroundStyle(.white)
+                Spacer()
+                Image(systemName: "person.badge.plus")
+                    .foregroundStyle(LpspSnapchatTokens.snapYellow)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+
+            ScrollView {
+                VStack(spacing: 0) {
+                    ForEach(store.conversations) { chat in
+                        Button {
+                            store.openChat(chat.id)
+                        } label: {
+                            LpspSnapchatSnapChatRow(
+                                name: chat.name,
+                                bitmoji: LpspSnapchatBitmoji(emoji: chat.emoji),
+                                status: chat.status,
+                                timestamp: chat.timestamp,
+                                snapType: chat.snapType,
+                                direction: chat.direction,
+                                isUnread: chat.isUnread,
+                                streakDays: chat.streakDays
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            LpspSnapchatSnapNavIndicator(selected: $store.selectedTab)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(LpspSnapchatTokens.snapCanvas.ignoresSafeArea())
     }
 }
 
-private struct LpspSnapchatSocialTabScreen: View {
-    let title: String
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("créer") || low.contains("create") { LpspSnapchatCreateTabScreen() }
-        else if low.contains("explor") || low.contains("search") { LpspSnapchatExploreTabScreen() }
-        else if low.contains("reel") { LpspSnapchatReelsTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspSnapchatProfileTabScreen() }
-        else { LpspSnapchatFeedTabScreen() }
-    }
-}
+private struct LpspSnapchatStoriesTabScreen: View {
+    @ObservedObject var store: LpspSnapchatStore
 
-private struct LpspSnapchatGenericFeedCard: View {
-    let index: Int
-    let accent: Color
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Circle().fill(accent.opacity(0.2)).frame(width: 32, height: 32)
-                Text("utilisateur_\(index)").font(.system(size: 14, weight: .semibold))
-                Spacer()
+        VStack(spacing: 0) {
+            Text("Stories")
+                .font(LpspSnapchatFonts.snapScreenTitle.weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 14) {
+                    ForEach(store.stories) { story in
+                        Button {
+                            store.markStoryRead(story.id)
+                        } label: {
+                            LpspSnapchatSnapStoryThumb(
+                                creatorName: story.creatorName,
+                                bitmoji: LpspSnapchatBitmoji(emoji: story.emoji),
+                                preview: LpspSnapchatStoryPreview(emoji: story.emoji),
+                                state: story.state
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 12)
-            RoundedRectangle(cornerRadius: 0).fill(accent.opacity(0.12)).frame(height: 280)
-            HStack(spacing: 16) {
-                Image(systemName: "heart"); Image(systemName: "bubble.right"); Spacer(); Image(systemName: "bookmark")
-            }
-            .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
+
+            Spacer()
+
+            LpspSnapchatSnapNavIndicator(selected: $store.selectedTab)
         }
+        .background(LpspSnapchatTokens.snapCanvas.ignoresSafeArea())
     }
 }
 
+private struct LpspSnapchatMapTabScreen: View {
+    @ObservedObject var store: LpspSnapchatStore
 
-private struct LpspSnapchatSpectrHomeTabScreen: View {
     var body: some View {
         ZStack {
-        Color.black.ignoresSafeArea()
-        VStack {
-                    Text("Search").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Sunset Beach").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("🌸").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("🦋").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("✨").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("🔥").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("🎭").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            LinearGradient(
+                colors: [Color(red: 0.08, green: 0.16, blue: 0.28), Color.black],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
+            GeometryReader { geo in
+                ForEach(LpspSnapchatShowroomData.mapFriends, id: \.0) { name, x, y in
+                    VStack(spacing: 4) {
+                        Circle()
+                            .fill(LpspSnapchatTokens.snapYellow)
+                            .frame(width: 44, height: 44)
+                            .overlay { Text("👻").font(.system(size: 20)) }
+                        Text(name)
+                            .font(LpspSnapchatFonts.snapStoryName)
+                            .foregroundStyle(.white)
+                    }
+                    .position(x: geo.size.width * x, y: geo.size.height * y)
+                }
+            }
+
+            VStack {
+                Spacer()
+                LpspSnapchatSnapNavIndicator(selected: $store.selectedTab)
+            }
         }
+    }
+}
+
+private struct LpspSnapchatSpotlightTabScreen: View {
+    @ObservedObject var store: LpspSnapchatStore
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                Spacer()
+                Image(systemName: "play.rectangle.fill")
+                    .font(.system(size: 64))
+                    .foregroundStyle(LpspSnapchatTokens.snapYellow)
+                Text("Spotlight")
+                    .font(LpspSnapchatFonts.snapScreenTitle.weight(.semibold))
+                    .foregroundStyle(.white)
+                Text("Trending snaps from creators")
+                    .font(LpspSnapchatFonts.snapSpotlightCap)
+                    .foregroundStyle(LpspSnapchatTokens.snapTextSecondary)
+                Spacer()
+                LpspSnapchatSnapNavIndicator(selected: $store.selectedTab)
+            }
         }
-        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+    }
+}
+
+private struct LpspSnapchatChatSheet: View {
+    @ObservedObject var store: LpspSnapchatStore
+    let chat: LpspSnapchatConversation
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(store.chatMessages[chat.id] ?? [], id: \.self) { message in
+                            LpspSnapchatSnapChatBubble(text: message, sender: .them)
+                        }
+                    }
+                    .padding(.vertical, 16)
+                }
+
+                HStack(spacing: 12) {
+                    TextField("Send a chat", text: $store.chatDraft)
+                        .font(LpspSnapchatFonts.snapChatMessage)
+                        .padding(12)
+                        .background(RoundedRectangle(cornerRadius: 20).fill(LpspSnapchatTokens.snapSurface2))
+
+                    Button {
+                        store.sendChatMessage()
+                    } label: {
+                        Image(systemName: "paperplane.fill")
+                            .foregroundStyle(LpspSnapchatTokens.snapYellow)
+                    }
+                }
+                .padding(16)
+            }
+            .background(LpspSnapchatTokens.snapCanvas.ignoresSafeArea())
+            .navigationTitle(chat.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") {
+                        store.showChatSheet = false
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspSnapchatBitmoji: View {
+    let emoji: String
+
+    var body: some View {
+        Circle()
+            .fill(
+                LinearGradient(
+                    colors: [LpspSnapchatTokens.snapSurface2, LpspSnapchatTokens.snapSurface1],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay {
+                Text(emoji)
+                    .font(.system(size: 22))
+            }
+    }
+}
+
+private struct LpspSnapchatStoryPreview: View {
+    let emoji: String
+
+    var body: some View {
+        LinearGradient(
+            colors: [
+                Color(red: 0.25, green: 0.12, blue: 0.45),
+                Color(red: 0.08, green: 0.18, blue: 0.32),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .overlay {
+            Text(emoji)
+                .font(.system(size: 48))
+        }
+    }
+}
 

@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeStravaView: View {
     var body: some View {
-        LpspStravaShowroomRoot()
+        LpspStravaShowroomRoot(store: LpspStravaStore())
     }
 }
 
@@ -99,6 +99,7 @@ fileprivate struct LpspStravaStatCell: View {
             Text(value)
                 .font(LpspStravaFonts.stravaStatValue)
                 .foregroundStyle(LpspStravaTokens.stravaInkPrimary)
+                .monospacedDigit()
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
@@ -174,6 +175,7 @@ fileprivate struct LpspStravaKudosButton: View {
                 Text("\(kudosCount)")
                     .font(LpspStravaFonts.stravaKudosCount)
                     .foregroundStyle(LpspStravaTokens.stravaInkPrimary)
+                    .monospacedDigit()
             }
             .padding(.horizontal, 4)
             .padding(.vertical, 8)
@@ -205,7 +207,7 @@ fileprivate struct LpspStravaConfettiBurst: View {
 }
 
 fileprivate struct LpspStravaActivityCard: View {
-    let athleteAvatar: Image
+    let athleteInitials: String
     let athleteName: String
     let timestamp: String
     let activityTitle: String
@@ -213,28 +215,22 @@ fileprivate struct LpspStravaActivityCard: View {
     let distance: String
     let elapsed: String
     let pace: String
-    @State private var kudosCount: Int
-
-    init(athleteAvatar: Image, athleteName: String, timestamp: String, activityTitle: String,
-         routeCoords: [CLLocationCoordinate2D], distance: String, elapsed: String, pace: String,
-         kudosCount: Int) {
-        self.athleteAvatar = athleteAvatar
-        self.athleteName = athleteName
-        self.timestamp = timestamp
-        self.activityTitle = activityTitle
-        self.routeCoords = routeCoords
-        self.distance = distance
-        self.elapsed = elapsed
-        self.pace = pace
-        self._kudosCount = State(initialValue: kudosCount)
-    }
+    let commentCount: Int
+    let badges: [(icon: String, text: String)]
+    @Binding var kudosCount: Int
+    var onViewActivity: () -> Void = {}
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header
             HStack(spacing: 12) {
-                athleteAvatar.resizable().scaledToFill()
-                    .frame(width: 40, height: 40).clipShape(Circle())
+                Circle()
+                    .fill(LpspStravaTokens.stravaSurfaceCool)
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        Text(athleteInitials)
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(LpspStravaTokens.stravaInkPrimary)
+                    )
                 VStack(alignment: .leading, spacing: 2) {
                     Text(athleteName).font(LpspStravaFonts.stravaAthlete).foregroundStyle(LpspStravaTokens.stravaInkPrimary)
                     Text(timestamp).font(LpspStravaFonts.stravaMeta).foregroundStyle(LpspStravaTokens.stravaInkSecondary)
@@ -243,26 +239,38 @@ fileprivate struct LpspStravaActivityCard: View {
                 Image(systemName: "figure.run").font(.system(size: 18)).foregroundStyle(LpspStravaTokens.stravaOrange)
             }
 
-            // Title
             Text(activityTitle).font(LpspStravaFonts.stravaActivityTitle).foregroundStyle(LpspStravaTokens.stravaInkPrimary)
 
-            // Map snapshot
+            if !badges.isEmpty {
+                HStack(spacing: 8) {
+                    ForEach(badges, id: \.text) { badge in
+                        LpspStravaAchievementBadge(icon: badge.icon, text: badge.text)
+                    }
+                }
+            }
+
             LpspStravaRouteMapSnapshot(coordinates: routeCoords)
 
-            // 3-up stat grid
             LpspStravaStatGrid(stats: [("Distance", distance), ("Time", elapsed), ("Pace", pace)])
 
             Divider().background(LpspStravaTokens.stravaDivider)
 
-            // Kudos + comments + view
             HStack(spacing: 16) {
                 LpspStravaKudosButton(kudosCount: $kudosCount)
                 HStack(spacing: 6) {
                     Image(systemName: "bubble.left").font(.system(size: 16)).foregroundStyle(LpspStravaTokens.stravaInkSecondary)
-                    Text("12").font(LpspStravaFonts.stravaKudosCount).foregroundStyle(LpspStravaTokens.stravaInkSecondary)
+                    Text("\(commentCount)")
+                        .font(LpspStravaFonts.stravaKudosCount)
+                        .foregroundStyle(LpspStravaTokens.stravaInkSecondary)
+                        .monospacedDigit()
                 }
                 Spacer()
-                Text("View Activity").font(LpspStravaFonts.stravaButtonSm).foregroundStyle(LpspStravaTokens.stravaOrange)
+                Button(action: onViewActivity) {
+                    Text("View Activity")
+                        .font(LpspStravaFonts.stravaButtonSm)
+                        .foregroundStyle(LpspStravaTokens.stravaOrange)
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 16)
@@ -349,136 +357,566 @@ fileprivate struct LpspStravaAchievementBadge: View {
 
 
 
+// MARK: - Données & état (showroom Lost Phone)
+
+fileprivate struct LpspStravaBadge: Hashable {
+    let icon: String
+    let text: String
+}
+
+fileprivate struct LpspStravaActivity: Identifiable {
+    let id: String
+    let athleteInitials: String
+    let athleteName: String
+    let timestamp: String
+    let title: String
+    let sportIcon: String
+    let routeCoords: [CLLocationCoordinate2D]
+    let distance: String
+    let elapsed: String
+    let pace: String
+    var kudosCount: Int
+    let commentCount: Int
+    let badges: [LpspStravaBadge]
+    let heroDistance: String
+    let heroElapsed: String
+    let heroPace: String
+}
+
+fileprivate struct LpspStravaClub: Identifiable {
+    let id: String
+    let name: String
+    let members: Int
+    let subtitle: String
+}
+
+private enum LpspStravaTab: CaseIterable {
+    case home, maps, groups, you
+
+    var label: String {
+        switch self {
+        case .home: "Home"
+        case .maps: "Maps"
+        case .groups: "Groups"
+        case .you: "You"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house"
+        case .maps: "map"
+        case .groups: "person.3"
+        case .you: "person.crop.circle"
+        }
+    }
+}
+
+@MainActor
+fileprivate final class LpspStravaStore: ObservableObject {
+    @Published var selectedTab: LpspStravaTab = .home
+    @Published var activities: [LpspStravaActivity]
+    @Published var selectedActivityID: String?
+    @Published var showRecording = false
+    @Published var recordingElapsed = 0
+
+    let clubs: [LpspStravaClub] = LpspStravaShowroomData.clubs
+    let userName = "Mathieu G."
+    let weeklyDistance = "12.4 km"
+    let weeklyTime = "1h 05m"
+
+    private var recordingTask: Task<Void, Never>?
+
+    init() {
+        self.activities = LpspStravaShowroomData.activities
+    }
+
+    var selectedActivity: LpspStravaActivity? {
+        guard let selectedActivityID else { return nil }
+        return activities.first { $0.id == selectedActivityID }
+    }
+
+    func kudosBinding(for activityID: String) -> Binding<Int> {
+        Binding(
+            get: { self.activities.first { $0.id == activityID }?.kudosCount ?? 0 },
+            set: { newValue in
+                guard let index = self.activities.firstIndex(where: { $0.id == activityID }) else { return }
+                self.activities[index].kudosCount = newValue
+            }
+        )
+    }
+
+    func openActivity(_ id: String) {
+        selectedActivityID = id
+    }
+
+    func startRecording() {
+        showRecording = true
+        recordingElapsed = 0
+        recordingTask?.cancel()
+        recordingTask = Task { @MainActor in
+            while !Task.isCancelled, showRecording {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                recordingElapsed += 1
+            }
+        }
+    }
+
+    func stopRecording() {
+        showRecording = false
+        recordingTask?.cancel()
+        selectedTab = .home
+    }
+
+    static func formatRecordingTime(_ seconds: Int) -> String {
+        String(format: "%d:%02d", seconds / 60, seconds % 60)
+    }
+}
+
+private enum LpspStravaShowroomData {
+    static let defaultActivityID = "casey-boston-run"
+
+    static let bostonRoute: [CLLocationCoordinate2D] = [
+        .init(latitude: 42.3601, longitude: -71.0589),
+        .init(latitude: 42.3625, longitude: -71.0550),
+        .init(latitude: 42.3650, longitude: -71.0510),
+        .init(latitude: 42.3675, longitude: -71.0470),
+        .init(latitude: 42.3700, longitude: -71.0430),
+    ]
+
+    static let seineRoute: [CLLocationCoordinate2D] = [
+        .init(latitude: 48.8530, longitude: 2.3499),
+        .init(latitude: 48.8550, longitude: 2.3520),
+        .init(latitude: 48.8570, longitude: 2.3545),
+        .init(latitude: 48.8590, longitude: 2.3570),
+    ]
+
+    static let gennevilliersRoute: [CLLocationCoordinate2D] = [
+        .init(latitude: 48.9330, longitude: 2.2950),
+        .init(latitude: 48.9310, longitude: 2.3000),
+        .init(latitude: 48.9290, longitude: 2.3050),
+        .init(latitude: 48.9270, longitude: 2.3100),
+    ]
+
+    static let activities: [LpspStravaActivity] = [
+        .init(
+            id: "casey-boston-run",
+            athleteInitials: "CR",
+            athleteName: "Casey Reardon",
+            timestamp: "2 hours ago · Boston, MA",
+            title: "Tuesday Morning Run",
+            sportIcon: "figure.run",
+            routeCoords: bostonRoute,
+            distance: "8.2 mi",
+            elapsed: "1:14:23",
+            pace: "9:03 /mi",
+            kudosCount: 27,
+            commentCount: 12,
+            badges: [
+                .init(icon: "trophy.fill", text: "1 PR"),
+                .init(icon: "figure.run.circle.fill", text: "3 Best Efforts"),
+            ],
+            heroDistance: "8.2",
+            heroElapsed: "1:14:23",
+            heroPace: "9:03"
+        ),
+        .init(
+            id: "mathieu-seine",
+            athleteInitials: "MG",
+            athleteName: "Mathieu G.",
+            timestamp: "Yesterday · Paris 11e",
+            title: "Evening Run – Seine loop",
+            sportIcon: "figure.run",
+            routeCoords: seineRoute,
+            distance: "6.4 km",
+            elapsed: "32:18",
+            pace: "5:02 /km",
+            kudosCount: 8,
+            commentCount: 2,
+            badges: [],
+            heroDistance: "6.4",
+            heroElapsed: "32:18",
+            heroPace: "5:02"
+        ),
+        .init(
+            id: "sam-gennevilliers",
+            athleteInitials: "SV",
+            athleteName: "Sam V.",
+            timestamp: "Monday · Gennevilliers",
+            title: "Ride to transfer point",
+            sportIcon: "figure.outdoor.cycle",
+            routeCoords: gennevilliersRoute,
+            distance: "14.2 km",
+            elapsed: "41:05",
+            pace: "22.1 km/h",
+            kudosCount: 15,
+            commentCount: 4,
+            badges: [.init(icon: "bolt.fill", text: "Fastest Time")],
+            heroDistance: "14.2",
+            heroElapsed: "41:05",
+            heroPace: "22.1"
+        ),
+        .init(
+            id: "nadia-louvre-jog",
+            athleteInitials: "NB",
+            athleteName: "Nadia B.",
+            timestamp: "Sunday · Paris 1er",
+            title: "Morning jog – Palais Royal",
+            sportIcon: "figure.run",
+            routeCoords: [
+                .init(latitude: 48.8630, longitude: 2.3360),
+                .init(latitude: 48.8610, longitude: 2.3380),
+                .init(latitude: 48.8590, longitude: 2.3400),
+            ],
+            distance: "4.1 km",
+            elapsed: "24:52",
+            pace: "6:04 /km",
+            kudosCount: 19,
+            commentCount: 6,
+            badges: [],
+            heroDistance: "4.1",
+            heroElapsed: "24:52",
+            heroPace: "6:04"
+        ),
+    ]
+
+    static let clubs: [LpspStravaClub] = [
+        .init(id: "eventscult", name: "EventsCult Running", members: 12, subtitle: "Private · brief S7 prep"),
+        .init(id: "night-owls", name: "Paris Night Owls", members: 847, subtitle: "Evening routes · Seine"),
+        .init(id: "louvre-loop", name: "Louvre Loop Crew", members: 203, subtitle: "Segment hunters"),
+    ]
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspStravaShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspStravaStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspStravaSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house") }
-                .tag(0)
-            LpspStravaFitnessTabScreen(title: "Maps", tabIndex: 1)
-                .tabItem { Label("Maps", systemImage: "map") }
-                .tag(1)
-            LpspStravaFitnessTabScreen(title: "Groups", tabIndex: 2)
-                .tabItem { Label("Groups", systemImage: "person.3") }
-                .tag(2)
-            LpspStravaFitnessTabScreen(title: "You", tabIndex: 3)
-                .tabItem { Label("You", systemImage: "person.crop.circle") }
-                .tag(3)
+        ZStack(alignment: .bottom) {
+            VStack(spacing: 0) {
+                Group {
+                    switch store.selectedTab {
+                    case .home:
+                        LpspStravaHomeScreen(store: store)
+                    case .maps:
+                        LpspStravaMapsScreen(store: store)
+                    case .groups:
+                        LpspStravaGroupsScreen(store: store)
+                    case .you:
+                        LpspStravaYouScreen(store: store)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                LpspStravaTabBar(store: store)
+            }
+
+            if store.showRecording {
+                LpspStravaRecordingOverlay(store: store)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
-        .tint(LpspStravaTokens.stravaHeartRed)
-        .preferredColorScheme(.dark)
+        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: store.showRecording)
+        .sheet(item: Binding(
+            get: { store.selectedActivity.map { LpspStravaActivitySheetID(id: $0.id) } },
+            set: { store.selectedActivityID = $0?.id }
+        )) { wrapper in
+            if let activity = store.activities.first(where: { $0.id == wrapper.id }) {
+                LpspStravaActivityDetailSheet(activity: activity)
+            }
+        }
     }
 }
 
+private struct LpspStravaActivitySheetID: Identifiable {
+    let id: String
+}
 
-private struct LpspStravaGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
+private struct LpspStravaTabBar: View {
+    @ObservedObject var store: LpspStravaStore
+
+    var body: some View {
+        HStack(spacing: 0) {
+            tabButton(.home)
+            tabButton(.maps)
+
+            LpspStravaRecordButton {
+                store.startRecording()
+            }
+            .frame(maxWidth: .infinity)
+
+            tabButton(.groups)
+            tabButton(.you)
+        }
+        .padding(.top, 4)
+        .padding(.bottom, 4)
+        .background(LpspStravaTokens.stravaCanvas)
+        .overlay(alignment: .top) {
+            Rectangle().fill(LpspStravaTokens.stravaDivider).frame(height: 0.5)
+        }
+    }
+
+    private func tabButton(_ tab: LpspStravaTab) -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.15)) { store.selectedTab = tab }
+        } label: {
+            VStack(spacing: 2) {
+                Image(systemName: tab.icon)
+                    .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                Text(tab.label)
+                    .font(LpspStravaFonts.stravaTab)
+            }
+            .foregroundStyle(store.selectedTab == tab ? LpspStravaTokens.stravaOrange : LpspStravaTokens.stravaInkSecondary)
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.plain)
+        .sensoryFeedback(.selection, trigger: store.selectedTab)
+    }
+}
+
+private struct LpspStravaHomeScreen: View {
+    @ObservedObject var store: LpspStravaStore
+
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspStravaTokens.stravaHeartRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspStravaTokens.stravaHeartRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+            ScrollView {
+                LazyVStack(spacing: 1) {
+                    ForEach(store.activities) { activity in
+                        LpspStravaActivityCard(
+                            athleteInitials: activity.athleteInitials,
+                            athleteName: activity.athleteName,
+                            timestamp: activity.timestamp,
+                            activityTitle: activity.title,
+                            routeCoords: activity.routeCoords,
+                            distance: activity.distance,
+                            elapsed: activity.elapsed,
+                            pace: activity.pace,
+                            commentCount: activity.commentCount,
+                            badges: activity.badges.map { (icon: $0.icon, text: $0.text) },
+                            kudosCount: store.kudosBinding(for: activity.id),
+                            onViewActivity: { store.openActivity(activity.id) }
+                        )
+                        Divider().background(LpspStravaTokens.stravaDivider)
                     }
                 }
             }
-            .navigationTitle(title)
+            .background(LpspStravaTokens.stravaSurfaceWarm.ignoresSafeArea())
+            .navigationTitle("Home")
+            .navigationBarTitleDisplayMode(.large)
         }
     }
 }
 
+private struct LpspStravaMapsScreen: View {
+    @ObservedObject var store: LpspStravaStore
 
-private struct LpspStravaFitnessFeedTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView { VStack(spacing: 12) { 
-                    LpspStravaActivityCard(
-                        athleteAvatar: Image(systemName: "person.circle.fill"),
-                        athleteName: "Alex Martin",
-                        timestamp: "Aujourd'hui · 07:42",
-                        activityTitle: "Course matinale",
-                        routeCoords: [CLLocationCoordinate2D(latitude: 48.86, longitude: 2.35), CLLocationCoordinate2D(latitude: 48.87, longitude: 2.36)],
-                        distance: "5,2 km",
-                        elapsed: "28:14",
-                        pace: "5:26 /km",
-                        kudosCount: 12
-                    )
-                    .padding(.horizontal)
- } }
-            .background(LpspStravaTokens.stravaCanvas.ignoresSafeArea())
-            .navigationTitle("Fil")
-        }
-    }
-}
-
-private struct LpspStravaFitnessMapTabScreen: View {
     var body: some View {
         ZStack {
-            Color.gray.opacity(0.12).ignoresSafeArea()
-            VStack { Spacer(); LpspStravaRecordButton(onRecord: {}).padding(.bottom, 40) }
+            LpspStravaTokens.stravaDarkCanvas.ignoresSafeArea()
+            Map {
+                if let activity = store.activities.first(where: { $0.id == LpspStravaShowroomData.defaultActivityID }) {
+                    MapPolyline(coordinates: activity.routeCoords)
+                        .stroke(LpspStravaTokens.stravaOrangeHalo, style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
+                    MapPolyline(coordinates: activity.routeCoords)
+                        .stroke(LpspStravaTokens.stravaOrange, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+                }
+            }
+            .mapStyle(.standard(elevation: .flat))
+
+            VStack {
+                Text("Explore routes near you")
+                    .font(LpspStravaFonts.stravaSectionHdr)
+                    .foregroundStyle(LpspStravaTokens.stravaDarkText)
+                    .padding(.top, 60)
+                Spacer()
+            }
         }
     }
 }
 
-private struct LpspStravaFitnessYouTabScreen: View {
+private struct LpspStravaGroupsScreen: View {
+    @ObservedObject var store: LpspStravaStore
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspStravaTokens.stravaHeartRed.gradient).frame(width: 72, height: 72)
-                Text("lost.phone").font(.title2.bold())
+            List(store.clubs) { club in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(club.name)
+                        .font(LpspStravaFonts.stravaActivityTitle)
+                    Text("\(club.members.formatted()) members · \(club.subtitle)")
+                        .font(LpspStravaFonts.stravaMeta)
+                        .foregroundStyle(LpspStravaTokens.stravaInkSecondary)
+                }
+                .padding(.vertical, 4)
             }
-            .navigationTitle("Vous")
+            .navigationTitle("Groups")
         }
     }
 }
 
-private struct LpspStravaFitnessTabScreen: View {
-    let title: String
-    let tabIndex: Int
+private struct LpspStravaYouScreen: View {
+    @ObservedObject var store: LpspStravaStore
+
     var body: some View {
-        let low = title.lowercased()
-        if low.contains("carte") || low.contains("map") { LpspStravaFitnessMapTabScreen() }
-        else if low.contains("vous") || low.contains("profile") || low.contains("profil") { LpspStravaFitnessYouTabScreen() }
-        else { LpspStravaFitnessFeedTabScreen() }
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    Circle()
+                        .fill(LpspStravaTokens.stravaOrange.opacity(0.15))
+                        .frame(width: 80, height: 80)
+                        .overlay(
+                            Text("MG")
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundStyle(LpspStravaTokens.stravaOrange)
+                        )
+
+                    Text(store.userName)
+                        .font(LpspStravaFonts.stravaLargeNav)
+
+                    VStack(spacing: 0) {
+                        Text("THIS WEEK")
+                            .font(LpspStravaFonts.stravaStatLabel)
+                            .tracking(0.6)
+                            .foregroundStyle(LpspStravaTokens.stravaInkSecondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 12)
+
+                        LpspStravaStatGrid(stats: [
+                            ("Distance", store.weeklyDistance),
+                            ("Time", store.weeklyTime),
+                            ("Activities", "3"),
+                        ])
+                    }
+                    .background(LpspStravaTokens.stravaCanvas)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                    Text("Recent Activities")
+                        .font(LpspStravaFonts.stravaSectionHdr)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    ForEach(store.activities.filter { $0.athleteInitials == "MG" }) { activity in
+                        Button { store.openActivity(activity.id) } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(activity.title)
+                                        .font(LpspStravaFonts.stravaActivityTitle)
+                                        .foregroundStyle(LpspStravaTokens.stravaInkPrimary)
+                                    Text(activity.timestamp)
+                                        .font(LpspStravaFonts.stravaMeta)
+                                        .foregroundStyle(LpspStravaTokens.stravaInkSecondary)
+                                }
+                                Spacer()
+                                Text(activity.distance)
+                                    .font(LpspStravaFonts.stravaStatValue)
+                                    .foregroundStyle(LpspStravaTokens.stravaOrange)
+                                    .monospacedDigit()
+                            }
+                            .padding(.vertical, 8)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(16)
+            }
+            .background(LpspStravaTokens.stravaSurfaceWarm.ignoresSafeArea())
+            .navigationTitle("You")
+        }
     }
 }
 
+private struct LpspStravaActivityDetailSheet: View {
+    let activity: LpspStravaActivity
+    @Environment(\.dismiss) private var dismiss
 
-private struct LpspStravaSpectrHomeTabScreen: View {
     var body: some View {
-        VStack(spacing: 0) {
-            Text("Home").font(.system(size: 24.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        ScrollView {
-            VStack(spacing: 12) {
-                    Text("CR").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Casey Reardon").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("2 hours ago · Boston, MA").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Tuesday Morning Run").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Distance").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("8.2 mi").font(.system(size: 18.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Time").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("1:14:23").font(.system(size: 18.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Pace").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("9:03 /mi").font(.system(size: 18.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("1 PR").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("3 Best Efforts").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("27").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("12").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("View Activity").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(activity.title)
+                        .font(LpspStravaFonts.stravaActivityTitle)
+
+                    LpspStravaRouteMapSnapshot(coordinates: activity.routeCoords)
+
+                    HStack(spacing: 24) {
+                        heroStat(value: activity.heroDistance, unit: activity.distance.contains("mi") ? "mi" : "km", label: "Distance")
+                        heroStat(value: activity.heroElapsed, unit: "", label: "Time")
+                        heroStat(value: activity.heroPace, unit: activity.pace.contains("/mi") ? "/mi" : activity.pace.contains("km/h") ? "km/h" : "/km", label: "Pace")
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    if !activity.badges.isEmpty {
+                        HStack(spacing: 8) {
+                            ForEach(activity.badges, id: \.text) { badge in
+                                LpspStravaAchievementBadge(icon: badge.icon, text: badge.text)
+                            }
+                        }
+                    }
+                }
+                .padding(16)
+            }
+            .background(LpspStravaTokens.stravaCanvas)
+            .navigationTitle(activity.athleteName)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                        .foregroundStyle(LpspStravaTokens.stravaOrange)
+                }
             }
         }
+    }
+
+    private func heroStat(value: String, unit: String, label: String) -> some View {
+        VStack(spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                Text(value)
+                    .font(LpspStravaFonts.stravaHeroStat)
+                    .foregroundStyle(LpspStravaTokens.stravaInkPrimary)
+                    .monospacedDigit()
+                if !unit.isEmpty {
+                    Text(unit)
+                        .font(LpspStravaFonts.stravaHeroUnit)
+                        .foregroundStyle(LpspStravaTokens.stravaInkSecondary)
+                }
+            }
+            Text(label.uppercased())
+                .font(LpspStravaFonts.stravaStatLabel)
+                .tracking(0.6)
+                .foregroundStyle(LpspStravaTokens.stravaInkSecondary)
         }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 
+private struct LpspStravaRecordingOverlay: View {
+    @ObservedObject var store: LpspStravaStore
 
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            Text(LpspStravaStore.formatRecordingTime(store.recordingElapsed))
+                .font(LpspStravaFonts.stravaHeroStat)
+                .foregroundStyle(.white)
+                .monospacedDigit()
+
+            Text("Recording Run")
+                .font(LpspStravaFonts.stravaBody)
+                .foregroundStyle(LpspStravaTokens.stravaDarkTextSec)
+
+            Button {
+                store.stopRecording()
+            } label: {
+                Text("Finish")
+                    .font(LpspStravaFonts.stravaButton)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, minHeight: 48)
+                    .background(RoundedRectangle(cornerRadius: 8).fill(LpspStravaTokens.stravaOrange))
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 100)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspStravaTokens.stravaDarkCanvas.opacity(0.96).ignoresSafeArea())
+    }
+}

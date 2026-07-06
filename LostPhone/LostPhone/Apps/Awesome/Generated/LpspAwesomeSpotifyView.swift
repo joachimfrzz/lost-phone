@@ -1,6 +1,7 @@
 import SwiftUI
 
 // Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/spotify
+// Showroom interactif — build déclenché après passage du repo en public
 // Meliwat/awesome-ios-design-md/music/spotify/DESIGN-swiftui.md
 struct LpspAwesomeSpotifyView: View {
     var data: LpspSpotifyData?

@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDisneyView: View {
     var body: some View {
-        LpspDisneyShowroomRoot()
+        LpspDisneyShowroomRoot(store: LpspDisneyStore())
     }
 }
 
@@ -218,212 +218,728 @@ fileprivate struct LpspDisneyEpisodeRow: View {
 
 
 
+// MARK: - Données & état (showroom Spectr)
+
+private enum LpspDisneyShowroomTab: String, CaseIterable, Identifiable {
+    case home
+    case search
+    case watchlist
+    case downloads
+    case profile
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: return "Home"
+        case .search: return "Search"
+        case .watchlist: return "Watchlist"
+        case .downloads: return "Downloads"
+        case .profile: return "Profile"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: return "house.fill"
+        case .search: return "magnifyingglass"
+        case .watchlist: return "plus.rectangle.on.rectangle"
+        case .downloads: return "arrow.down.circle"
+        case .profile: return "person.crop.circle"
+        }
+    }
+}
+
+fileprivate enum LpspDisneyBrandPortal: String, CaseIterable, Identifiable {
+    case disney
+    case pixar
+    case marvel
+    case starWars
+    case natGeo
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .disney: return "DISNEY"
+        case .pixar: return "PIXAR"
+        case .marvel: return "MARVEL"
+        case .starWars: return "STAR WARS"
+        case .natGeo: return "NAT GEO"
+        }
+    }
+
+    var gradient: [Color] {
+        switch self {
+        case .disney:
+            return [Color(red: 0.07, green: 0.24, blue: 0.81), Color(red: 0.0, green: 0.39, blue: 0.90)]
+        case .pixar:
+            return [Color(red: 0.35, green: 0.72, blue: 0.92), Color(red: 0.10, green: 0.46, blue: 1.0)]
+        case .marvel:
+            return [Color(red: 0.77, green: 0.12, blue: 0.23), Color(red: 0.36, green: 0.04, blue: 0.08)]
+        case .starWars:
+            return [Color(red: 0.10, green: 0.10, blue: 0.10), Color(red: 1.0, green: 0.91, blue: 0.12)]
+        case .natGeo:
+            return [Color(red: 1.0, green: 0.80, blue: 0.0), Color(red: 0.0, green: 0.66, blue: 0.42)]
+        }
+    }
+}
+
+fileprivate struct LpspDisneyTitle: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let meta: String
+    let brand: LpspDisneyBrandPortal
+    let gradient: [Color]
+    var progress: Double?
+    var inWatchlist: Bool
+}
+
+private enum LpspDisneyShowroomData {
+    static let featuredID = "andor"
+
+    static let featured = LpspDisneyTitle(
+        id: featuredID,
+        name: "ANDOR",
+        meta: "Action · Sci-Fi · TV-14 · 2024",
+        brand: .starWars,
+        gradient: [
+            Color(red: 0.12, green: 0.10, blue: 0.22),
+            Color(red: 0.55, green: 0.28, blue: 0.08),
+            LpspDisneyTokens.dpCanvas,
+        ],
+        progress: nil,
+        inWatchlist: false
+    )
+
+    static let continueWatching: [LpspDisneyTitle] = [
+        .init(
+            id: "mandalorian",
+            name: "The Mandalorian",
+            meta: "Sci-Fi · TV-14",
+            brand: .starWars,
+            gradient: [Color(red: 0.18, green: 0.32, blue: 0.48), Color(red: 0.05, green: 0.12, blue: 0.28)],
+            progress: 0.42,
+            inWatchlist: true
+        ),
+        .init(
+            id: "loki",
+            name: "Loki",
+            meta: "Action · TV-14",
+            brand: .marvel,
+            gradient: [Color(red: 0.45, green: 0.18, blue: 0.55), Color(red: 0.12, green: 0.05, blue: 0.22)],
+            progress: 0.68,
+            inWatchlist: false
+        ),
+        .init(
+            id: "elemental",
+            name: "Elemental",
+            meta: "Family · PG",
+            brand: .pixar,
+            gradient: [Color(red: 0.95, green: 0.45, blue: 0.20), Color(red: 0.20, green: 0.55, blue: 0.88)],
+            progress: nil,
+            inWatchlist: false
+        ),
+    ]
+
+    static let catalog: [LpspDisneyTitle] = [
+        featured,
+        continueWatching[0],
+        continueWatching[1],
+        continueWatching[2],
+        .init(
+            id: "inside-out-2",
+            name: "Inside Out 2",
+            meta: "Family · PG",
+            brand: .pixar,
+            gradient: [Color(red: 0.55, green: 0.25, blue: 0.75), Color(red: 0.20, green: 0.55, blue: 0.95)],
+            progress: nil,
+            inWatchlist: false
+        ),
+        .init(
+            id: "bluey",
+            name: "Bluey",
+            meta: "Kids · TV-Y",
+            brand: .disney,
+            gradient: [Color(red: 0.20, green: 0.55, blue: 0.95), Color(red: 0.10, green: 0.30, blue: 0.72)],
+            progress: nil,
+            inWatchlist: true
+        ),
+        .init(
+            id: "cosmos",
+            name: "Cosmos",
+            meta: "Documentary · TV-PG",
+            brand: .natGeo,
+            gradient: [Color(red: 0.10, green: 0.18, blue: 0.42), Color(red: 0.0, green: 0.45, blue: 0.55)],
+            progress: nil,
+            inWatchlist: false
+        ),
+    ]
+
+    static let searchSuggestions = [
+        "Star Wars",
+        "Marvel",
+        "Pixar",
+        "Documentaries",
+        "Kids",
+        "Action",
+    ]
+
+    static let downloads = [
+        ("Andor S1E3 · Reckoning", "1.2 GB"),
+        ("Elemental", "2.4 GB"),
+    ]
+
+    static let profiles: [(name: String, color: Color, isKids: Bool)] = [
+        ("Primary", LpspDisneyTokens.dpBlue, false),
+        ("Kids", Color(red: 0.20, green: 0.72, blue: 0.55), true),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspDisneyStore: ObservableObject {
+    @Published var selectedTab: LpspDisneyShowroomTab = .home
+    @Published var selectedPortal: LpspDisneyBrandPortal = .pixar
+    @Published var titles: [LpspDisneyTitle]
+    @Published var searchQuery = ""
+    @Published var isHeroMuted = true
+    @Published var isPlaying = false
+    @Published var playingTitleID: String?
+    @Published var focusedContinueID: String?
+    @Published var activeProfile = "Primary"
+
+    init() {
+        titles = LpspDisneyShowroomData.catalog
+        focusedContinueID = LpspDisneyShowroomData.continueWatching.first?.id
+    }
+
+    var featured: LpspDisneyTitle {
+        titles.first { $0.id == LpspDisneyShowroomData.featuredID } ?? LpspDisneyShowroomData.featured
+    }
+
+    var continueWatching: [LpspDisneyTitle] {
+        LpspDisneyShowroomData.continueWatching.compactMap { item in
+            titles.first { $0.id == item.id } ?? item
+        }
+    }
+
+    var watchlist: [LpspDisneyTitle] {
+        titles.filter(\.inWatchlist)
+    }
+
+    var filteredCatalog: [LpspDisneyTitle] {
+        guard !searchQuery.isEmpty else { return titles }
+        return titles.filter {
+            $0.name.localizedCaseInsensitiveContains(searchQuery)
+                || $0.brand.label.localizedCaseInsensitiveContains(searchQuery)
+                || $0.meta.localizedCaseInsensitiveContains(searchQuery)
+        }
+    }
+
+    func selectPortal(_ portal: LpspDisneyBrandPortal) {
+        selectedPortal = portal
+    }
+
+    func focusContinue(_ id: String) {
+        focusedContinueID = id
+    }
+
+    func toggleWatchlist(titleID: String) {
+        guard let index = titles.firstIndex(where: { $0.id == titleID }) else { return }
+        titles[index].inWatchlist.toggle()
+    }
+
+    func playFeatured() {
+        playingTitleID = LpspDisneyShowroomData.featuredID
+        isPlaying = true
+    }
+
+    func resumeTitle(_ id: String) {
+        playingTitleID = id
+        isPlaying = true
+        selectedTab = .home
+    }
+
+    func toggleHeroMute() {
+        isHeroMuted.toggle()
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspDisneyShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspDisneyStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspDisneySpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspDisneyVideoHomeTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspDisneyProfilePickerTabScreen()
-                .tabItem { Label("Watchlist", systemImage: "plus.rectangle.on.rectangle") }
-                .tag(2)
-            LpspDisneyVideoDownloadsTabScreen()
-                .tabItem { Label("Downloads", systemImage: "arrow.down.circle") }
-                .tag(3)
-            LpspDisneyProfilePickerTabScreen()
-                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
-                .tag(4)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspDisneyShowroomTab.allCases) { tab in
+                LpspDisneyShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
+                    }
+                    .tag(tab)
+            }
         }
-        .tint(LpspDisneyTokens.dpLiveRed)
+        .tint(LpspDisneyTokens.dpBlue)
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspDisneyShowroomTabScreen: View {
+    @ObservedObject var store: LpspDisneyStore
+    let tab: LpspDisneyShowroomTab
 
-private struct LpspDisneyGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspDisneyTokens.dpLiveRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDisneyTokens.dpLiveRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+            Group {
+                switch tab {
+                case .home:
+                    LpspDisneyHomeTabScreen(store: store)
+                case .search:
+                    LpspDisneySearchTabScreen(store: store)
+                case .watchlist:
+                    LpspDisneyWatchlistTabScreen(store: store)
+                case .downloads:
+                    LpspDisneyDownloadsTabScreen()
+                case .profile:
+                    LpspDisneyProfileTabScreen(store: store)
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle(tab == .home ? "" : tab.title)
+            .navigationBarTitleDisplayMode(tab == .home ? .inline : .large)
+            .background(LpspDisneyTokens.dpCanvas.ignoresSafeArea())
         }
     }
 }
 
-
-private struct LpspDisneyDemoPosterURLs {
-    static let items: [URL] = [
-        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
+private struct LpspDisneyStarfield: View {
+    private let stars: [(x: CGFloat, y: CGFloat, size: CGFloat, opacity: Double)] = [
+        (0.12, 0.08, 1.5, 0.55), (0.28, 0.14, 1.0, 0.35), (0.44, 0.06, 1.2, 0.45),
+        (0.62, 0.11, 1.0, 0.30), (0.78, 0.18, 1.4, 0.50), (0.88, 0.09, 1.0, 0.40),
+        (0.18, 0.24, 1.0, 0.25), (0.52, 0.22, 1.2, 0.38), (0.70, 0.28, 1.0, 0.32),
+        (0.34, 0.32, 1.0, 0.28), (0.90, 0.34, 1.3, 0.42), (0.08, 0.36, 1.0, 0.22),
     ]
-}
-private struct LpspDisneyDemoProfile: Identifiable {
-    let id = UUID()
-    let name: String
-    let color: Color
-    let isKids: Bool
-}
 
-private enum LpspDisneyDemoProfiles {
-    static let items: [LpspDisneyDemoProfile] = [
-        .init(name: "Lost Phone", color: .red, isKids: false),
-        .init(name: "Enfants", color: .orange, isKids: true),
-    ]
-}
-
-private struct LpspDisneyVideoHomeTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.08, green: 0.08, blue: 0.08), Color.black],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .frame(height: 220)
-                            .overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill").font(.system(size: 56)).foregroundStyle(.white.opacity(0.9))
-                            }
-                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
-                            .frame(height: 80)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .padding(.horizontal, 12)
-                    LpspDisneyDPPlayButton(label: "Lecture", action: {})
-                        .padding(.horizontal, 12)
-                    Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(0..<6, id: \.self) { i in
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.15, green: 0.15, blue: 0.15))
-                                    .frame(width: 110, height: 165)
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                    }
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("")
-            .toolbarBackground(.hidden, for: .navigationBar)
-        }
-    }
-}
-
-private struct LpspDisneyProfilePickerTabScreen: View {
-    var body: some View {
-        LpspDisneyDemoProfilePicker()
-    }
-}
-
-private struct LpspDisneyVideoNewTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-
-                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
-                }
-                .padding(.vertical, 8)
-            }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("New & Hot")
-        }
-    }
-}
-
-private struct LpspDisneyVideoDownloadsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
-                    VStack(alignment: .leading) {
-                        Text(title).font(.headline).foregroundStyle(.white)
-                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("Downloads")
-        }
-    }
-}
-
-private struct LpspDisneyDemoProfilePicker: View {
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 32) {
-                Text("Qui regarde ?").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
-                ForEach(LpspDisneyDemoProfiles.items) { p in
-                    VStack(spacing: 8) {
-                        Circle().fill(p.color).frame(width: 72, height: 72)
-                        Text(p.name).foregroundStyle(.gray)
-                    }
-                }
+        GeometryReader { geo in
+            ForEach(Array(stars.enumerated()), id: \.offset) { _, star in
+                Circle()
+                    .fill(Color.white.opacity(star.opacity))
+                    .frame(width: star.size, height: star.size)
+                    .position(x: geo.size.width * star.x, y: geo.size.height * star.y)
             }
         }
     }
 }
 
+private struct LpspDisneyHomeTabScreen: View {
+    @ObservedObject var store: LpspDisneyStore
 
-private struct LpspDisneySpectrHomeTabScreen: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
+                LpspDisneyBillboardHero(store: store)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(LpspDisneyBrandPortal.allCases) { portal in
+                            LpspDisneyPortalTile(
+                                portal: portal,
+                                isFocused: store.selectedPortal == portal,
+                                onSelect: { store.selectPortal(portal) }
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+                .padding(.top, 18)
+
+                Text("Continue Watching")
+                    .font(LpspDisneyFonts.dpRowHeader.weight(.semibold))
+                    .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 22)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(store.continueWatching) { title in
+                            LpspDisneyContinueCard(
+                                title: title,
+                                isFocused: store.focusedContinueID == title.id,
+                                onFocus: { store.focusContinue(title.id) },
+                                onPlay: { store.resumeTitle(title.id) }
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
+                }
+            }
+        }
+        .toolbarBackground(.hidden, for: .navigationBar)
+    }
+}
+
+private struct LpspDisneyBillboardHero: View {
+    @ObservedObject var store: LpspDisneyStore
+
+    private var featured: LpspDisneyTitle { store.featured }
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            ZStack {
+                LinearGradient(
+                    colors: featured.gradient,
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+
+                LpspDisneyStarfield()
+
+                LinearGradient(
+                    colors: [.clear, .clear, LpspDisneyTokens.dpCanvas],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            .frame(height: 380)
+
+            Button {
+                store.toggleHeroMute()
+            } label: {
+                Image(systemName: store.isHeroMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 32, height: 32)
+                    .background(Circle().fill(Color.black.opacity(0.45)))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+            .padding(.trailing, 16)
+            .padding(.bottom, 96)
+
+            VStack(spacing: 12) {
+                Text(featured.name)
+                    .font(LpspDisneyFonts.dpBillboard.weight(.bold))
+                    .kerning(4)
+                    .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+                    .shadow(color: .black.opacity(0.5), radius: 12, y: 2)
+
+                Text(featured.meta)
+                    .font(LpspDisneyFonts.dpMetaStrip.weight(.semibold))
+                    .foregroundStyle(LpspDisneyTokens.dpTextSecondary)
+
+                HStack(spacing: 12) {
+                    LpspDisneyDPPlayButton(label: store.isPlaying && store.playingTitleID == featured.id ? "Playing" : "Play") {
+                        store.playFeatured()
+                    }
+
+                    LpspDisneyDPSecondaryButton(
+                        icon: featured.inWatchlist ? "checkmark" : "plus",
+                        label: featured.inWatchlist ? "Watchlisted" : "Watchlist"
+                    ) {
+                        store.toggleWatchlist(titleID: featured.id)
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspDisneyPortalTile: View {
+    let portal: LpspDisneyBrandPortal
+    let isFocused: Bool
+    let onSelect: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            Text(portal.label)
+                .font(LpspDisneyFonts.dpCardTitle.weight(.bold))
+                .kerning(1)
+                .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+                .frame(width: 132, height: 80)
+                .background(
+                    LinearGradient(
+                        colors: portal.gradient,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(
+                            isFocused ? LpspDisneyTokens.dpGlowBlue : LpspDisneyTokens.dpDivider,
+                            lineWidth: isFocused ? 2 : 1
+                        )
+                )
+                .scaleEffect(isFocused ? 1.04 : 1)
+                .shadow(color: isFocused ? LpspDisneyTokens.dpGlowBlue.opacity(0.35) : .clear, radius: 24)
+                .animation(.easeOut(duration: 0.18), value: isFocused)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspDisneyContinueCard: View {
+    let title: LpspDisneyTitle
+    let isFocused: Bool
+    let onFocus: () -> Void
+    let onPlay: () -> Void
+
+    var body: some View {
+        Button {
+            onFocus()
+            onPlay()
+        } label: {
+            ZStack(alignment: .bottom) {
+                LinearGradient(
+                    colors: title.gradient,
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .frame(width: 200, height: 113)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .overlay {
+                    Image(systemName: "play.circle.fill")
+                        .font(.system(size: 34))
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+
+                if let progress = title.progress {
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Rectangle().fill(Color.white.opacity(0.25))
+                            Rectangle()
+                                .fill(LpspDisneyTokens.dpBlue)
+                                .frame(width: geo.size.width * progress)
+                        }
+                    }
+                    .frame(height: 3)
+                }
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .strokeBorder(isFocused ? LpspDisneyTokens.dpGlowBlue : .clear, lineWidth: 2)
+            )
+            .scaleEffect(isFocused ? 1.04 : 1)
+            .shadow(color: isFocused ? LpspDisneyTokens.dpFocusGlow : .clear, radius: 24)
+            .animation(.easeOut(duration: 0.18), value: isFocused)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspDisneySearchTabScreen: View {
+    @ObservedObject var store: LpspDisneyStore
+
+    var body: some View {
+        List {
+            Section {
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspDisneyTokens.dpTextSecondary)
+                    TextField("Movies, series, brands", text: $store.searchQuery)
+                        .textInputAutocapitalization(.never)
+                        .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+                }
+            }
+
+            Section("Popular") {
+                ForEach(LpspDisneyShowroomData.searchSuggestions, id: \.self) { item in
+                    Button {
+                        store.searchQuery = item
+                    } label: {
+                        Text(item)
+                            .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+                    }
+                }
+            }
+
+            if !store.searchQuery.isEmpty {
+                Section("Results") {
+                    ForEach(store.filteredCatalog) { title in
+                        Button {
+                            store.resumeTitle(title.id)
+                        } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: title.gradient,
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(width: 88, height: 50)
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(title.name)
+                                        .font(LpspDisneyFonts.dpCardTitle.weight(.semibold))
+                                        .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+                                    Text(title.meta)
+                                        .font(LpspDisneyFonts.dpMeta)
+                                        .foregroundStyle(LpspDisneyTokens.dpTextSecondary)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .background(LpspDisneyTokens.dpCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspDisneyWatchlistTabScreen: View {
+    @ObservedObject var store: LpspDisneyStore
+
+    var body: some View {
+        Group {
+            if store.watchlist.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "plus.rectangle.on.rectangle")
+                        .font(.system(size: 40))
+                        .foregroundStyle(LpspDisneyTokens.dpTextTertiary)
+                    Text("Your watchlist is empty")
+                        .font(LpspDisneyFonts.dpSubtitle)
+                        .foregroundStyle(LpspDisneyTokens.dpTextSecondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List {
+                    ForEach(store.watchlist) { title in
+                        Button {
+                            store.resumeTitle(title.id)
+                        } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: title.gradient,
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(width: 120, height: 68)
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(title.name)
+                                        .font(LpspDisneyFonts.dpCardTitle.weight(.semibold))
+                                        .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+                                    Text(title.brand.label)
+                                        .font(LpspDisneyFonts.dpMeta)
+                                        .foregroundStyle(LpspDisneyTokens.dpTextSecondary)
+                                }
+
+                                Spacer()
+
+                                Button {
+                                    store.toggleWatchlist(titleID: title.id)
+                                } label: {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(LpspDisneyTokens.dpBlue)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                }
+                .scrollContentBackground(.hidden)
+            }
+        }
+        .background(LpspDisneyTokens.dpCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspDisneyDownloadsTabScreen: View {
+    var body: some View {
+        List {
+            ForEach(LpspDisneyShowroomData.downloads, id: \.0) { title, size in
+                HStack(spacing: 12) {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(LpspDisneyTokens.dpSurface2)
+                        .frame(width: 88, height: 50)
+                        .overlay {
+                            Image(systemName: "arrow.down.circle.fill")
+                                .foregroundStyle(LpspDisneyTokens.dpBlue)
+                        }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(title)
+                            .font(LpspDisneyFonts.dpCardTitle.weight(.semibold))
+                            .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+                        Text(size)
+                            .font(LpspDisneyFonts.dpMeta)
+                            .foregroundStyle(LpspDisneyTokens.dpTextSecondary)
+                    }
+                }
+                .listRowBackground(LpspDisneyTokens.dpSurface1)
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .background(LpspDisneyTokens.dpCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspDisneyProfileTabScreen: View {
+    @ObservedObject var store: LpspDisneyStore
+
+    var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
-            ZStack(alignment: .bottomLeading) {
-                    Text("ANDOR").font(.system(size: 30.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Action · Sci-Fi · TV-14 · 2024").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Play").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Watchlist").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(height: 380)
-                Text("DISNEY").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("PIXAR").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("MARVEL").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("STAR WARS").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("NAT GEO").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Continue Watching").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            VStack(spacing: 28) {
+                Text("Who's watching?")
+                    .font(LpspDisneyFonts.dpBillboard.weight(.bold))
+                    .foregroundStyle(LpspDisneyTokens.dpTextPrimary)
+
+                ForEach(LpspDisneyShowroomData.profiles, id: \.name) { profile in
+                    Button {
+                        store.activeProfile = profile.name
+                    } label: {
+                        VStack(spacing: 10) {
+                            Circle()
+                                .fill(profile.color.opacity(0.85))
+                                .frame(width: 72, height: 72)
+                                .overlay {
+                                    Text(String(profile.name.prefix(1)))
+                                        .font(.title2.weight(.bold))
+                                        .foregroundStyle(.white)
+                                }
+                                .overlay(
+                                    Circle()
+                                        .stroke(
+                                            store.activeProfile == profile.name
+                                                ? LpspDisneyTokens.dpGlowBlue
+                                                : Color.clear,
+                                            lineWidth: 3
+                                        )
+                                )
+                                .scaleEffect(store.activeProfile == profile.name ? 1.04 : 1)
+                                .shadow(
+                                    color: store.activeProfile == profile.name
+                                        ? LpspDisneyTokens.dpFocusGlow
+                                        : .clear,
+                                    radius: 24
+                                )
+
+                            Text(profile.name)
+                                .font(LpspDisneyFonts.dpSubtitle)
+                                .foregroundStyle(
+                                    store.activeProfile == profile.name
+                                        ? LpspDisneyTokens.dpTextPrimary
+                                        : LpspDisneyTokens.dpTextSecondary
+                                )
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .animation(.easeOut(duration: 0.18), value: store.activeProfile)
+                }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, 32)
         }
-            }
-        }
-        .background(Color(red: 0.039, green: 0.055, blue: 0.165).ignoresSafeArea())
-        .preferredColorScheme(.dark)
     }
 }
 

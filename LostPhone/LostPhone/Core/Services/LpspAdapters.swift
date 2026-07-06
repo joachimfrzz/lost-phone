@@ -335,7 +335,7 @@ enum LpspAdapters {
         )
     }
 
-    private static func isThreadUnread(rawMessages: [AnyCodable]) -> Bool {
+    static func isThreadUnread(rawMessages: [AnyCodable]) -> Bool {
         for raw in rawMessages.reversed() {
             guard let object = raw.objectValue else { continue }
             let sender = (object["de"] ?? object["expediteur"] ?? object["from"])?.stringValue ?? ""

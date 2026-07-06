@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeHingeView: View {
     var body: some View {
-        LpspHingeShowroomRoot()
+        LpspHingeShowroomRoot(store: LpspHingeStore())
     }
 }
 
@@ -382,170 +382,663 @@ fileprivate struct LpspHingeMatchCelebration: View {
 
 
 
+// MARK: - Données & état (showroom Spectr)
+
+private enum LpspHingeShowroomTab: String, CaseIterable, Identifiable {
+    case discover
+    case likesYou
+    case standouts
+    case matches
+    case profile
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .discover: return "Discover"
+        case .likesYou: return "Likes You"
+        case .standouts: return "Standouts"
+        case .matches: return "Matches"
+        case .profile: return "Profile"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .discover: return "line.3.horizontal.decrease"
+        case .likesYou: return "heart.fill"
+        case .standouts: return "star.fill"
+        case .matches: return "bubble.left.fill"
+        case .profile: return "person.fill"
+        }
+    }
+}
+
+fileprivate struct LpspHingePromptItem: Identifiable, Equatable {
+    let id: String
+    let question: String
+    let answer: String
+    var isLiked: Bool
+}
+
+fileprivate struct LpspHingeDiscoverProfile: Equatable {
+    let id: String
+    let name: String
+    let age: Int
+    let distance: String
+    let height: String
+    let job: String
+    let location: String
+    let jobVerified: Bool
+    var prompts: [LpspHingePromptItem]
+    var photoLiked: Bool
+    let photoGradient: [Color]
+}
+
+private enum LpspHingeShowroomData {
+    static let sigrun = LpspHingeDiscoverProfile(
+        id: "sigrun",
+        name: "Sigrún",
+        age: 28,
+        distance: "2 mi away",
+        height: "5'9\"",
+        job: "Engineer",
+        location: "SF",
+        jobVerified: true,
+        prompts: [
+            .init(
+                id: "geek-out",
+                question: "I geek out on _",
+                answer: "Specialty coffee, vintage Vespas, and the chess opening called the Sicilian Najdorf.",
+                isLiked: false
+            ),
+            .init(
+                id: "simple-pleasures",
+                question: "My simple pleasures",
+                answer: "Sunday mornings with a record on.",
+                isLiked: false
+            ),
+        ],
+        photoLiked: false,
+        photoGradient: [
+            Color(red: 0.85, green: 0.78, blue: 0.68),
+            Color(red: 0.62, green: 0.52, blue: 0.44),
+        ]
+    )
+
+    static let standoutAnswer = "Sunday mornings with a record on."
+
+    static let likesYouCount = 3
+
+    static let matches: [(name: String, preview: String, time: String)] = [
+        ("Mara", "That Sicilian Najdorf line is wild", "2h"),
+        ("Kellen", "Sent a Rose", "1d"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspHingeStore: ObservableObject {
+    @Published var selectedTab: LpspHingeShowroomTab = .discover
+    @Published var profile: LpspHingeDiscoverProfile
+    @Published var showCommentSheet = false
+    @Published var activePromptID: String?
+    @Published var commentText = ""
+    @Published var showMatch = false
+    @Published var rosesSent = 0
+
+    init() {
+        profile = LpspHingeShowroomData.sigrun
+    }
+
+    func openComment(for promptID: String) {
+        activePromptID = promptID
+        showCommentSheet = true
+    }
+
+    func togglePromptLike(_ promptID: String) {
+        guard let index = profile.prompts.firstIndex(where: { $0.id == promptID }) else { return }
+        var updated = profile
+        updated.prompts[index].isLiked.toggle()
+        profile = updated
+    }
+
+    func setPromptLiked(_ promptID: String, liked: Bool) {
+        guard let index = profile.prompts.firstIndex(where: { $0.id == promptID }) else { return }
+        var updated = profile
+        updated.prompts[index].isLiked = liked
+        profile = updated
+    }
+
+    func setPhotoLiked(_ liked: Bool) {
+        var updated = profile
+        updated.photoLiked = liked
+        profile = updated
+    }
+
+    func togglePhotoLike() {
+        setPhotoLiked(!profile.photoLiked)
+    }
+
+    func sendComment() {
+        let trimmed = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        if let activePromptID {
+            togglePromptLike(activePromptID)
+        }
+        commentText = ""
+        showCommentSheet = false
+    }
+
+    func passProfile() {
+        var updated = profile
+        updated.photoLiked = false
+        for index in updated.prompts.indices {
+            updated.prompts[index].isLiked = false
+        }
+        profile = updated
+    }
+
+    func likeProfile() {
+        showMatch = true
+    }
+
+    func sendRose() {
+        rosesSent += 1
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspHingeShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspHingeSpectrHomeTabScreen()
-                .tabItem { Label("Discover", systemImage: "safari") }
-                .tag(0)
-            LpspHingeDatingTabScreen(title: "Likes You", tabIndex: 1)
-                .tabItem { Label("Likes You", systemImage: "heart") }
-                .tag(1)
-            LpspHingeDatingTopPicksTabScreen()
-                .tabItem { Label("Standouts", systemImage: "star") }
-                .tag(2)
-            LpspHingeDatingTabScreen(title: "Matches", tabIndex: 3)
-                .tabItem { Label("Matches", systemImage: "bubble.left") }
-                .tag(3)
-            LpspHingeDatingProfileTabScreen()
-                .tabItem { Label("Profile", systemImage: "person") }
-                .tag(4)
-        }
-        .tint(LpspHingeTokens.hingeMatchGreen)
-        
-    }
-}
+    @ObservedObject var store: LpspHingeStore
 
-
-private struct LpspHingeGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspHingeTokens.hingeMatchGreen.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspHingeTokens.hingeMatchGreen))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspHingeShowroomTab.allCases) { tab in
+                LpspHingeShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
                     }
-                }
+                    .tag(tab)
             }
-            .navigationTitle(title)
+        }
+        .tint(LpspHingeTokens.hingeBlack)
+        .sheet(isPresented: $store.showCommentSheet) {
+            LpspHingeShowroomCommentSheet(store: store)
+        }
+        .fullScreenCover(isPresented: $store.showMatch) {
+            LpspHingeShowroomMatchScreen(store: store)
         }
     }
 }
 
+private struct LpspHingeShowroomTabScreen: View {
+    @ObservedObject var store: LpspHingeStore
+    let tab: LpspHingeShowroomTab
 
-private struct LpspHingeDemoChatBubble: View {
-    let text: String
-    var outgoing: Bool
     var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 40) }
-            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspHingeTokens.hingeMatchGreen.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 40) }
-        }.padding(.horizontal)
-    }
-}
-
-private struct LpspHingeDatingDiscoverTabScreen: View {
-    var body: some View {
-        ZStack {
-            Color(.systemBackground).ignoresSafeArea()
-            LpspHingeDemoSwipeCard(accent: LpspHingeTokens.hingeMatchGreen)
-        }
-    }
-}
-
-private struct LpspHingeDatingMessagesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                ScrollView { LazyVStack(spacing: 8) { 
-                    LpspHingeDemoChatBubble(text: "Salut ! On se voit ce week-end ?", outgoing: false)
-                    LpspHingeDemoChatBubble(text: "Avec plaisir 😊", outgoing: true)
- } .padding(.vertical) }
-                HStack {
-                    TextField("Message", text: .constant(""))
-                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-                }.padding(8)
+        Group {
+            switch tab {
+            case .discover:
+                LpspHingeDiscoverTabScreen(store: store)
+            case .likesYou:
+                LpspHingeLikesYouTabScreen()
+            case .standouts:
+                LpspHingeStandoutsTabScreen(store: store)
+            case .matches:
+                LpspHingeMatchesTabScreen()
+            case .profile:
+                LpspHingeProfileTabScreen()
             }
-            .navigationTitle("Messages")
         }
+        .background(LpspHingeTokens.hingeCream.ignoresSafeArea())
     }
 }
 
-private struct LpspHingeDatingTopPicksTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView { LpspHingeStandoutsCard(photo: Image(systemName: "person.fill"), answer: "Mon spot préféré à Paris", onSendRose: {}).padding() }
-            .navigationTitle("Top Picks")
-        }
-    }
-}
+private struct LpspHingeDiscoverTabScreen: View {
+    @ObservedObject var store: LpspHingeStore
 
-private struct LpspHingeDatingProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspHingeTokens.hingeMatchGreen.gradient).frame(width: 88, height: 88)
-                Text("Alex, 28").font(.title2.bold())
-                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
-            }
-            .navigationTitle("Profil")
-        }
-    }
-}
+    private var profile: LpspHingeDiscoverProfile { store.profile }
 
-private struct LpspHingeDatingTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspHingeDatingDiscoverTabScreen() }
-        else if low.contains("message") || low.contains("chat") { LpspHingeDatingMessagesTabScreen() }
-        else if low.contains("star") || low.contains("top") { LpspHingeDatingTopPicksTabScreen() }
-        else { LpspHingeDatingProfileTabScreen() }
-    }
-}
-
-private struct LpspHingeDemoSwipeCard: View {
-    let accent: Color
-    var body: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(LinearGradient(colors: [accent.opacity(0.3), .black.opacity(0.8)], startPoint: .top, endPoint: .bottom))
-            .frame(width: 320, height: 480)
-            .overlay(alignment: .bottomLeading) {
-                VStack(alignment: .leading) {
-                    Text("Alex, 28").font(.title.bold()).foregroundStyle(.white)
-                    Text("Paris · Photo · Voyage").foregroundStyle(.white.opacity(0.9))
-                }
-                .padding(20)
-            }
-    }
-}
-
-
-private struct LpspHingeSpectrHomeTabScreen: View {
     var body: some View {
         VStack(spacing: 0) {
-        HStack {
-            Text("H").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Discover").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 16).frame(height: 48)
-        ScrollView {
-                Text("Sigrún, 28").font(.system(size: 26.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("2 mi away").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("5'9\"").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Engineer").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("SF").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("I geek out on _").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Specialty coffee, vintage Vespas, and the chess opening called the Sicilian Najdorf.").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("My simple pleasures").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Sunday mornings with a record on.").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        }
-        HStack(spacing: 16) {
+            LpspHingeDiscoverHeader()
 
-        } .font(.system(size: 22)).padding(.horizontal, 14).frame(height: 44)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("\(profile.name), \(profile.age)")
+                            .font(LpspHingeFonts.hingeName.weight(.bold))
+                            .foregroundStyle(LpspHingeTokens.hingeBlack)
+                        Text(profile.distance)
+                            .font(LpspHingeFonts.hingeMeta)
+                            .foregroundStyle(LpspHingeTokens.hingeGraphite)
+                    }
+
+                    HStack(spacing: 8) {
+                        LpspHingeAttributeChip(glyph: "ruler", label: profile.height)
+                        LpspHingeAttributeChip(glyph: "briefcase.fill", label: profile.job, isVerified: profile.jobVerified)
+                        LpspHingeAttributeChip(glyph: "mappin.and.ellipse", label: profile.location)
+                    }
+
+                    ForEach(Array(profile.prompts.enumerated()), id: \.element.id) { index, prompt in
+                        if index == 1 {
+                            LpspHingeGradientPhotoCard(
+                                isLiked: Binding(
+                                    get: { store.profile.photoLiked },
+                                    set: { store.setPhotoLiked($0) }
+                                ),
+                                gradient: profile.photoGradient,
+                                onCommentTap: { store.togglePhotoLike() }
+                            )
+                        }
+
+                        LpspHingeShowroomPromptCard(
+                            prompt: prompt,
+                            isLiked: Binding(
+                                get: { store.profile.prompts.first(where: { $0.id == prompt.id })?.isLiked ?? false },
+                                set: { store.setPromptLiked(prompt.id, liked: $0) }
+                            ),
+                            onCommentTap: { store.openComment(for: prompt.id) }
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
+            }
+
+            LpspHingeDiscoverActionBar(
+                onPass: { store.passProfile() },
+                onLike: { store.likeProfile() }
+            )
         }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+    }
+}
+
+private struct LpspHingeDiscoverHeader: View {
+    var body: some View {
+        HStack {
+            Text("H")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(LpspHingeTokens.hingePaper)
+                .frame(width: 28, height: 28)
+                .background(Circle().fill(LpspHingeTokens.hingeBlack))
+
+            Text("Discover")
+                .font(LpspHingeFonts.hingeSection.weight(.bold))
+                .foregroundStyle(LpspHingeTokens.hingeBlack)
+
+            Spacer()
+
+            Image(systemName: "line.3.horizontal.decrease")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(LpspHingeTokens.hingeBlack)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 48)
+        .background(LpspHingeTokens.hingeCream)
+    }
+}
+
+private struct LpspHingeShowroomPromptCard: View {
+    let prompt: LpspHingePromptItem
+    @Binding var isLiked: Bool
+    let onCommentTap: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(prompt.question)
+                .font(LpspHingeFonts.hingePromptQ)
+                .foregroundStyle(LpspHingeTokens.hingeGraphite)
+                .italic()
+                .padding(.bottom, 12)
+
+            Text(prompt.answer)
+                .font(LpspHingeFonts.hingePromptA.weight(.semibold))
+                .foregroundStyle(LpspHingeTokens.hingeBlack)
+                .lineSpacing(4)
+                .padding(.bottom, 16)
+
+            HStack {
+                Spacer()
+                LpspHingeHeartTap(isFilled: $isLiked, onTap: onCommentTap)
+            }
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(LpspHingeTokens.hingePaper)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(LpspHingeTokens.hingeDividerBone, lineWidth: 0.5)
+                )
+        )
+        .shadow(color: Color(red: 0.110, green: 0.078, blue: 0.039).opacity(0.06), radius: 8, y: 2)
+        .onTapGesture { onCommentTap() }
+    }
+}
+
+private struct LpspHingeGradientPhotoCard: View {
+    @Binding var isLiked: Bool
+    let gradient: [Color]
+    let onCommentTap: () -> Void
+
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: gradient,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .aspectRatio(4/5, contentMode: .fill)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+
+            LpspHingeHeartTap(isFilled: $isLiked, onTap: onCommentTap)
+                .padding(16)
+        }
+        .shadow(color: Color(red: 0.110, green: 0.078, blue: 0.039).opacity(0.06), radius: 8, y: 2)
+    }
+}
+
+private struct LpspHingeDiscoverActionBar: View {
+    let onPass: () -> Void
+    let onLike: () -> Void
+
+    var body: some View {
+        HStack(spacing: 16) {
+            Button(action: onPass) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(LpspHingeTokens.hingeBlack)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(LpspHingeTokens.hingeDividerBone, lineWidth: 1)
+                            .background(RoundedRectangle(cornerRadius: 12).fill(LpspHingeTokens.hingePaper))
+                    )
+            }
+            .buttonStyle(.plain)
+
+            Button(action: onLike) {
+                Image(systemName: "heart.fill")
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(LpspHingeTokens.hingePaper)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(LpspHingeTokens.hingeBlack)
+                    )
+            }
+            .buttonStyle(.plain)
+            .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(LpspHingeTokens.hingeCream)
+    }
+}
+
+private struct LpspHingeShowroomCommentSheet: View {
+    @ObservedObject var store: LpspHingeStore
+    @Environment(\.dismiss) private var dismiss
+
+    private var activePrompt: LpspHingePromptItem? {
+        guard let id = store.activePromptID else { return nil }
+        return store.profile.prompts.first { $0.id == id }
+    }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            if let prompt = activePrompt {
+                LpspHingeShowroomPromptCard(
+                    prompt: prompt,
+                    isLiked: Binding(
+                        get: { prompt.isLiked },
+                        set: { store.setPromptLiked(prompt.id, liked: $0) }
+                    ),
+                    onCommentTap: {}
+                )
+                .padding(.horizontal, 16)
+            }
+
+            HStack(spacing: 10) {
+                TextField("Add a comment about her response", text: $store.commentText, axis: .vertical)
+                    .font(LpspHingeFonts.hingeCommentInput)
+                    .foregroundStyle(LpspHingeTokens.hingeBlack)
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 20)
+                    .background(Capsule().fill(LpspHingeTokens.hingeSand))
+                    .lineLimit(1...4)
+
+                Button {
+                    store.sendComment()
+                    dismiss()
+                } label: {
+                    Image(systemName: "arrow.up")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(LpspHingeTokens.hingePaper)
+                        .frame(width: 44, height: 44)
+                        .background(
+                            Circle().fill(
+                                store.commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                    ? LpspHingeTokens.hingeBone
+                                    : LpspHingeTokens.hingeBlack
+                            )
+                        )
+                }
+                .disabled(store.commentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 24)
+        }
+        .padding(.top, 24)
+        .presentationDetents([.medium, .large])
+        .presentationBackground(LpspHingeTokens.hingePaper)
+    }
+}
+
+private struct LpspHingeShowroomMatchScreen: View {
+    @ObservedObject var store: LpspHingeStore
+
+    var body: some View {
+        LpspHingeMatchCelebration(
+            myAvatar: Image(systemName: "person.circle.fill"),
+            theirName: store.profile.name,
+            theirAvatar: Image(systemName: "person.circle.fill"),
+            onMessage: { store.showMatch = false; store.selectedTab = .matches },
+            onKeepBrowsing: { store.showMatch = false }
+        )
+    }
+}
+
+private struct LpspHingeLikesYouTabScreen: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("\(LpspHingeShowroomData.likesYouCount)")
+                .font(LpspHingeFonts.hingeDisplay.weight(.bold))
+                .foregroundStyle(LpspHingeTokens.hingeBlack)
+
+            Text("people like you")
+                .font(LpspHingeFonts.hingeBody)
+                .foregroundStyle(LpspHingeTokens.hingeGraphite)
+
+            HStack(spacing: 12) {
+                ForEach(0..<3, id: \.self) { index in
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(LpspHingeTokens.hingeSand)
+                        .frame(width: 96, height: 120)
+                        .overlay {
+                            Image(systemName: "heart.fill")
+                                .foregroundStyle(LpspHingeTokens.hingeRose.opacity(0.55))
+                        }
+                        .blur(radius: index == 0 ? 0 : 6)
+                }
+            }
+
+            LpspHingeHingePrimaryButton(label: "See who likes you") {}
+                .padding(.horizontal, 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+private struct LpspHingeStandoutsTabScreen: View {
+    @ObservedObject var store: LpspHingeStore
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                LpspHingeStandoutsGradientCard(
+                    answer: LpspHingeShowroomData.standoutAnswer,
+                    onSendRose: { store.sendRose() }
+                )
+
+                if store.rosesSent > 0 {
+                    Text("Rose sent · \(store.rosesSent)")
+                        .font(LpspHingeFonts.hingeMeta.weight(.semibold))
+                        .foregroundStyle(LpspHingeTokens.hingeRose)
+                }
+            }
+            .padding(16)
+        }
+    }
+}
+
+private struct LpspHingeStandoutsGradientCard: View {
+    let answer: String
+    let onSendRose: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 6) {
+                Image(systemName: "star.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(LpspHingeTokens.hingeRose)
+                Text("Standout")
+                    .font(LpspHingeFonts.hingeCaption.weight(.bold))
+                    .foregroundStyle(LpspHingeTokens.hingeBlack)
+                Spacer()
+            }
+            .frame(height: 32)
+            .padding(.horizontal, 16)
+            .background(LpspHingeTokens.hingeRoseLight)
+
+            RoundedRectangle(cornerRadius: 0)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.88, green: 0.72, blue: 0.55),
+                            Color(red: 0.62, green: 0.48, blue: 0.38),
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .aspectRatio(1, contentMode: .fill)
+
+            VStack(alignment: .leading, spacing: 16) {
+                Text(answer)
+                    .font(LpspHingeFonts.hingePromptA.weight(.semibold))
+                    .foregroundStyle(LpspHingeTokens.hingeBlack)
+                LpspHingeRoseCTA(label: "Send a Rose", action: onSendRose)
+            }
+            .padding(16)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(LpspHingeTokens.hingePaper)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [LpspHingeTokens.hingeRose, LpspHingeTokens.hingeRoseLight, LpspHingeTokens.hingeRose],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(color: Color(red: 0.110, green: 0.078, blue: 0.039).opacity(0.10), radius: 12, y: 4)
+    }
+}
+
+private struct LpspHingeMatchesTabScreen: View {
+    var body: some View {
+        List {
+            ForEach(LpspHingeShowroomData.matches, id: \.name) { match in
+                HStack(spacing: 12) {
+                    Circle()
+                        .fill(LpspHingeTokens.hingeSand)
+                        .frame(width: 48, height: 48)
+                        .overlay {
+                            Text(String(match.name.prefix(1)))
+                                .font(LpspHingeFonts.hingeButton.weight(.bold))
+                                .foregroundStyle(LpspHingeTokens.hingeBlack)
+                        }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(match.name)
+                            .font(LpspHingeFonts.hingeBodyBold.weight(.semibold))
+                            .foregroundStyle(LpspHingeTokens.hingeBlack)
+                        Text(match.preview)
+                            .font(LpspHingeFonts.hingeMeta)
+                            .foregroundStyle(LpspHingeTokens.hingeGraphite)
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    Text(match.time)
+                        .font(LpspHingeFonts.hingeCaption)
+                        .foregroundStyle(LpspHingeTokens.hingeStone)
+                }
+                .listRowBackground(LpspHingeTokens.hingeCream)
+            }
+        }
+        .scrollContentBackground(.hidden)
+    }
+}
+
+private struct LpspHingeProfileTabScreen: View {
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [LpspHingeTokens.hingeRoseLight, LpspHingeTokens.hingeSand],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 88, height: 88)
+                    .overlay {
+                        Text("Y")
+                            .font(.title.weight(.bold))
+                            .foregroundStyle(LpspHingeTokens.hingeBlack)
+                    }
+
+                Text("You, 29")
+                    .font(LpspHingeFonts.hingeName.weight(.bold))
+                    .foregroundStyle(LpspHingeTokens.hingeBlack)
+
+                Text("SF · Design · Coffee")
+                    .font(LpspHingeFonts.hingeMeta)
+                    .foregroundStyle(LpspHingeTokens.hingeGraphite)
+
+                LpspHingeHingePrimaryButton(label: "Edit profile") {}
+                    .padding(.horizontal, 24)
+            }
+            .padding(.vertical, 24)
+        }
     }
 }
 

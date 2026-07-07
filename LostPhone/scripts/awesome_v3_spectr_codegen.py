@@ -419,6 +419,7 @@ def render_spectr_home_swift(slug: str, prefix: str) -> str:
 private struct {prefix}SpectrHomeTabScreen: View {{
     var body: some View {{
         {wrapper}
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background({bg}.ignoresSafeArea()){scheme}
     }}
 }}

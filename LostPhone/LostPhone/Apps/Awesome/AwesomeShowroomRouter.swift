@@ -1,9 +1,26 @@
 import SwiftUI
 
+/// Force Awesome TabView roots to fill the full-screen app container.
+private struct AwesomeShowroomShell<Content: View>: View {
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        content()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+}
+
 /// Routage showroom → vues Awesome v3 (Spectr / Meliwat DESIGN-swiftui.md).
 enum AwesomeShowroomRouter {
     @ViewBuilder
     static func view(for appName: String) -> some View {
+        AwesomeShowroomShell {
+            routedView(for: appName)
+        }
+    }
+
+    @ViewBuilder
+    private static func routedView(for appName: String) -> some View {
         switch LpspAppAliases.canonical(appName) {
         case "WhatsApp": LpspAwesomeWhatsAppView()
         case "Signal": LpspAwesomeSignalView()

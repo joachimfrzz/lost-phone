@@ -120,6 +120,7 @@ private struct {root}: View {{
         TabView(selection: $selectedTab) {{
 {chr(10).join(tab_views)}
         }}
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         {tint_line}
         {color_scheme}
     }}

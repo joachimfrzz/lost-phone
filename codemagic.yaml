@@ -13,8 +13,10 @@ workflows:
 
     environment:
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.lostphone.game
+        certificates:
+          - codemagic_certificate
+        provisioning_profiles:
+          - codemagic_profile
       vars:
         BUNDLE_ID: "com.lostphone.game"
         PROFILE_NAME: "Lost Phone App Store"

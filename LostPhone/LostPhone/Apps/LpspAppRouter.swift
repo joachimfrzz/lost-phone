@@ -84,6 +84,8 @@ struct LpspAppRouter: View {
     private func showroomAppView(named appName: String, canonical: String) -> some View {
         if CloneAppCatalog.isCloneApp(appName) {
             showroomCloneView(named: appName)
+        } else if VendoredShowroomCatalog.isVendored(canonical) {
+            VendoredShowroomRouter.view(for: canonical)
         } else if AwesomeShowroomCatalog.tierApps.contains(canonical) {
             AwesomeShowroomRouter.view(for: canonical)
         } else {

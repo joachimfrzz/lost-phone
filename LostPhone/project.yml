@@ -24,6 +24,7 @@ targets:
           - "**/Resources/stories/**"
           - "**/README.md"
           - "**/INTEGRATION.md"
+          - "**/SOURCE.md"
           - "**/playground/**"
     resources:
       # Folder reference preserves stories/<id>/lpsp.json (avoids flattening duplicate lpsp.json).

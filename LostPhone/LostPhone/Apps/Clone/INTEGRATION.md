@@ -12,13 +12,20 @@
 | Dictaphone | mushthak/voice-memos-clone-swiftui | `DictaphoneClone/` | `DictaphoneCloneAppView()` |
 | Wallet | Meliwat/awesome-ios-design-md apple-wallet | `WalletClone/` | `WalletCloneAppView()` |
 
-## Étape 2 — apps tierces Awesome
+## Étape 2 — apps tierces Awesome (fallback)
 
 Spec : [Meliwat/awesome-ios-design-md](https://github.com/Meliwat/awesome-ios-design-md) — chaque app suit `DESIGN-swiftui.md`.
 
 - Génération : `python3 LostPhone/scripts/generate_awesome_apps_v3.py [design-md-root]` (composants Spectr extraits des specs)
 - Vues : `LostPhone/Apps/Awesome/Generated/LpspAwesome*.swift`
 - Routage : `AwesomeShowroomRouter.swift` + `AwesomeShowroomCatalog.swift`
+
+## Étape 2b — apps tierces vendored (prioritaire)
+
+Recette zerocode117 — voir `Apps/Vendored/README.md` et `docs/VENDORED_MATRIX.md`.
+
+- Vues : `LostPhone/Apps/Vendored/<App>/`
+- Routage : `VendoredShowroomRouter.swift` (prioritaire sur Awesome dans le showroom)
 
 ## Règles
 

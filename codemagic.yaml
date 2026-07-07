@@ -12,10 +12,6 @@ workflows:
       app_store_connect: Codemagic
 
     environment:
-      # Auto signing via App Store Connect API — no manual .mobileprovision upload.
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.lostphone.game
       vars:
         BUNDLE_ID: "com.lostphone.game"
       xcode: latest
@@ -43,9 +39,23 @@ workflows:
           cd LostPhone
           xcodegen generate
 
+      - name: Set up keychain
+        script: keychain initialize
+
+      - name: Fetch signing files from Apple
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create \
+            --delete-stale-profiles
+
+      - name: Add certificates to keychain
+        script: keychain add-certificates
+
       - name: Set up code signing
         script: |
           xcode-project use-profiles \
+            --project LostPhone/LostPhone.xcodeproj \
             --custom-export-options='{"testFlightInternalTestingOnly": true}'
 
       - name: Build IPA

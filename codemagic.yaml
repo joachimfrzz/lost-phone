@@ -8,12 +8,14 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m2
 
+    integrations:
+      app_store_connect: Codemagic
+
     environment:
+      # Auto signing via App Store Connect API — no manual .mobileprovision upload.
       ios_signing:
-        provisioning_profiles:
-          - codemagic_profile
-        certificates:
-          - codemagic_certificate
+        distribution_type: app_store
+        bundle_identifier: com.lostphone.game
       vars:
         BUNDLE_ID: "com.lostphone.game"
       xcode: latest
@@ -42,7 +44,9 @@ workflows:
           xcodegen generate
 
       - name: Set up code signing
-        script: xcode-project use-profiles
+        script: |
+          xcode-project use-profiles \
+            --custom-export-options='{"testFlightInternalTestingOnly": true}'
 
       - name: Build IPA
         script: |
@@ -56,12 +60,9 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
 
     publishing:
-      email:
-        recipients:
-          - user@example.com
-        notify:
-          success: true
-          failure: true
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
 
   lost-phone-ios:
     name: Lost Phone iOS

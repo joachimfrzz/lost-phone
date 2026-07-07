@@ -54,6 +54,7 @@ targets:
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: ""
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: NO
+        INFOPLIST_KEY_UIRequiresFullScreen: YES
         GENERATE_INFOPLIST_FILE: NO
     scheme:
       testTargets: []

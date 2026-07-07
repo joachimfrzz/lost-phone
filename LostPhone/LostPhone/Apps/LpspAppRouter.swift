@@ -16,6 +16,7 @@ struct LpspAppContainerView: View {
                     LpspAppRouter(appName: appName)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .environment(\.lpspReadOnly, !phone.isCloneShowroom)
             .environment(\.lpspStoryId, phone.currentStoryId)
             .environment(\.deviceOwner, phone.deviceOwner)

@@ -12,8 +12,12 @@ workflows:
       app_store_connect: Codemagic
 
     environment:
+      ios_signing:
+        certificates:
+          - codemagic_certificate
       vars:
         BUNDLE_ID: "com.lostphone.game"
+        PROFILE_NAME: "Lost Phone App Store"
       xcode: latest
 
     triggering:
@@ -42,12 +46,34 @@ workflows:
       - name: Set up keychain
         script: keychain initialize
 
-      - name: Fetch signing files from Apple
+      - name: Ensure App Store provisioning profile
         script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+          set -e
+          PROFILE_JSON=$(app-store-connect profiles list \
             --type IOS_APP_STORE \
-            --create \
-            --delete-stale-profiles
+            --name "$PROFILE_NAME" \
+            --state ACTIVE \
+            --json)
+          if [ "$PROFILE_JSON" = "[]" ]; then
+            BUNDLE_ID_RES=$(app-store-connect bundle-ids list \
+              --bundle-id-identifier "$BUNDLE_ID" \
+              --strict-match-identifier \
+              --json | python3 -c "import sys,json; print(json.load(sys.stdin)[0]['id'])")
+            CERT_ID=$(app-store-connect certificates list \
+              --type IOS_DISTRIBUTION \
+              --json | python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0]['id'])")
+            app-store-connect profiles create "$BUNDLE_ID_RES" \
+              --type IOS_APP_STORE \
+              --name "$PROFILE_NAME" \
+              --certificate-ids "$CERT_ID" \
+              --save
+          else
+            app-store-connect profiles list \
+              --type IOS_APP_STORE \
+              --name "$PROFILE_NAME" \
+              --state ACTIVE \
+              --save
+          fi
 
       - name: Add certificates to keychain
         script: keychain add-certificates

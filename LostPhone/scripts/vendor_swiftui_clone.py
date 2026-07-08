@@ -148,8 +148,12 @@ def vendor(
         out = dest_app / rel
         out.parent.mkdir(parents=True, exist_ok=True)
         prefixed = prefix_types(text, mapping)
+        # Unique filename per app (Xcode rejects duplicate basenames in one target).
+        stem = out.stem
+        if stem not in ("SOURCE",) and not stem.startswith("LpspVendored"):
+            out = out.with_name(f"{type_prefix}{stem}.swift")
         out.write_text(prefixed, encoding="utf-8")
-        print(f"  {rel}")
+        print(f"  {rel} -> {out.name}")
 
     copy_assets(source, dest_app)
     entry_prefixed = f"{type_prefix}{entry_type}"

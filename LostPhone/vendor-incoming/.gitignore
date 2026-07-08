@@ -1,9 +1,11 @@
-# Ne pas committer les archives (trop lourdes) — utiliser Drive ou LFS si besoin
+# Ne pas committer les archives (trop lourdes)
 *.zip
 *.tar
 *.tar.gz
 *.rar
+sopheamen-bundle/
 
-# Garder le README
+# Garder la doc
 !README.md
+!SOPHEAMEN_MANIFEST.md
 !.gitignore

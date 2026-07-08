@@ -87,7 +87,7 @@ struct VendoredPayPalProfileTile: View {
                 .overlay(
                     VStack {
                         Rectangle()
-                            .fill(Color.color2)
+                            .fill(Color("Color 2"))
                             .frame(height: 210)
                             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous)
                                 .trim(from: 0.5, to: 1.0))

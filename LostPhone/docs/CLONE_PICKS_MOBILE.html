@@ -1,509 +1,242 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Lost Phone — Clones</title>
-  <style>
-    :root {
-      --bg: #0d0d0f;
-      --card: #1a1a1e;
-      --text: #f2f2f7;
-      --muted: #98989f;
-      --link: #64d2ff;
-      --border: #2c2c2e;
-      --choisi: #30d158;
-      --patreon: #ff9f0a;
-      --hybride: #bf5af2;
-      --adecider: #ffd60a;
-      --attention: #ff453a;
-      --verifier: #ac8e68;
-      --ecarte: #636366;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.45;
-      padding: 12px 12px 48px;
-      max-width: 480px;
-      margin: 0 auto;
-      -webkit-text-size-adjust: 100%;
-    }
-    header {
-      padding: 8px 4px 16px;
-      position: sticky;
-      top: 0;
-      background: rgba(13,13,15,.92);
-      backdrop-filter: blur(12px);
-      z-index: 10;
-      border-bottom: 1px solid var(--border);
-      margin: -12px -12px 12px;
-      padding: 16px 16px 12px;
-    }
-    h1 { font-size: 1.25rem; font-weight: 700; }
-    .sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 12px;
-    }
-    .badge {
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 6px;
-      white-space: nowrap;
-    }
-    .badge.choisi { background: rgba(48,209,88,.2); color: var(--choisi); }
-    .badge.patreon { background: rgba(255,159,10,.2); color: var(--patreon); }
-    .badge.hybride { background: rgba(191,90,242,.2); color: var(--hybride); }
-    .badge.adecider { background: rgba(255,214,10,.15); color: var(--adecider); }
-    .badge.attention { background: rgba(255,69,58,.2); color: var(--attention); }
-    .badge.verifier { background: rgba(172,142,104,.2); color: var(--verifier); }
-    .badge.ecarte { background: rgba(99,99,102,.3); color: var(--ecarte); }
-    .badge.fait { background: rgba(100,210,255,.15); color: var(--link); }
-
-    details {
-      margin-bottom: 8px;
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--card);
-      border: 1px solid var(--border);
-    }
-    summary {
-      padding: 14px 16px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      list-style: none;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    summary::-webkit-details-marker { display: none; }
-    summary::after { content: "›"; font-size: 1.2rem; color: var(--muted); transform: rotate(90deg); transition: .2s; }
-    details[open] summary::after { transform: rotate(-90deg); }
-    .section-body { padding: 0 12px 12px; }
-
-    .app {
-      background: rgba(255,255,255,.04);
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 8px;
-    }
-    .app:last-child { margin-bottom: 0; }
-    .app-name {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .app-name .badge { font-size: 0.65rem; }
-    .note {
-      font-size: 0.82rem;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    a.link {
-      display: block;
-      color: var(--link);
-      font-size: 0.85rem;
-      word-break: break-all;
-      padding: 10px 12px;
-      background: rgba(100,210,255,.08);
-      border-radius: 8px;
-      text-decoration: none;
-      margin-bottom: 6px;
-    }
-    a.link:last-child { margin-bottom: 0; }
-    a.link:active { opacity: .7; }
-    .link-label {
-      font-size: 0.72rem;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 2px;
-    }
-    .spec {
-      background: rgba(191,90,242,.1);
-      border: 1px solid rgba(191,90,242,.25);
-      border-radius: 10px;
-      padding: 12px;
-      margin: 12px 0;
-      font-size: 0.85rem;
-    }
-    .spec strong { color: var(--hybride); }
-    .spec ol { padding-left: 1.2rem; margin-top: 8px; }
-    .spec li { margin-bottom: 4px; }
-    .todo {
-      background: var(--card);
-      border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      margin-top: 16px;
-      font-size: 0.85rem;
-    }
-    .todo h2 { font-size: 0.9rem; margin-bottom: 10px; }
-    .todo-item {
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      color: var(--muted);
-    }
-    .todo-item:last-child { border-bottom: none; }
-    .todo-item span { color: var(--text); font-weight: 500; }
-    footer {
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 24px;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lost Phone Clones</title>
+<style>
+body {
+  font-family: -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 16px;
+  background: #fff;
+  color: #111;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+h1 { font-size: 22px; margin: 0 0 8px; }
+p.meta { color: #666; font-size: 14px; margin: 0 0 20px; }
+h2 {
+  font-size: 18px;
+  margin: 28px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #007aff;
+}
+h3 { font-size: 16px; margin: 16px 0 6px; }
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.ok { background: #d4edda; color: #155724; }
+.pat { background: #fff3cd; color: #856404; }
+.hyb { background: #e2d5f1; color: #4a235a; }
+.tbd { background: #fff3cd; color: #856404; }
+.warn { background: #f8d7da; color: #721c24; }
+a {
+  color: #007aff;
+  display: block;
+  padding: 12px 14px;
+  margin: 6px 0;
+  background: #f2f2f7;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 15px;
+  -webkit-tap-highlight-color: rgba(0,122,255,.2);
+}
+a:active { background: #e5e5ea; }
+.note { color: #666; font-size: 14px; margin: 4px 0 8px; }
+.box {
+  background: #f9f9f9;
+  border-left: 4px solid #7b2cbf;
+  padding: 12px 14px;
+  margin: 12px 0;
+  font-size: 15px;
+}
+.todo { background: #f2f2f7; padding: 14px; border-radius: 10px; margin-top: 24px; }
+.todo div { padding: 6px 0; border-bottom: 1px solid #ddd; font-size: 15px; }
+.todo div:last-child { border: none; }
+</style>
 </head>
 <body>
 
-<header>
-  <h1>Lost Phone — Clones</h1>
-  <p class="sub">Catalogue priorisé · 8 juil. 2026 · iOS 17+ SwiftUI</p>
-  <div class="legend">
-    <span class="badge choisi">choisi</span>
-    <span class="badge patreon">patreon</span>
-    <span class="badge hybride">hybride</span>
-    <span class="badge adecider">à décider</span>
-    <span class="badge attention">attention</span>
-    <span class="badge verifier">à vérifier</span>
-  </div>
-</header>
+<h1>Lost Phone — Clones</h1>
+<p class="meta">8 juil. 2026 · SwiftUI iOS 17+</p>
 
-<details open>
-  <summary>Déjà fait ✓</summary>
-  <div class="section-body">
-    <div class="app">
-      <div class="app-name">Apple Music, Rappels, Contacts, Wallet, Dictaphone, page 1 Apple <span class="badge fait">fait</span></div>
-      <p class="note">zerocode117 — ne pas refaire</p>
-    </div>
-  </div>
-</details>
+<h2>Déjà fait</h2>
+<p class="note">Apple Music, Rappels, Contacts, Wallet, Dictaphone, page 1 Apple</p>
 
-<details open>
-  <summary>Messagerie</summary>
-  <div class="section-body">
+<h2>Messagerie</h2>
 
-    <div class="app">
-      <div class="app-name">WhatsApp <span class="badge choisi">choisi</span></div>
-      <p class="note">MIT · Firebase · adapter iOS 17</p>
-      <a class="link" href="https://github.com/efxlve/whatsapp-clone"><span class="link-label">GitHub</span>efxlve/whatsapp-clone</a>
-    </div>
+<h3>WhatsApp <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/efxlve/whatsapp-clone">github.com/efxlve/whatsapp-clone</a>
 
-    <div class="app">
-      <div class="app-name">Telegram <span class="badge attention">attention</span></div>
-      <p class="note">App officielle UIKit — build lourd</p>
-      <a class="link" href="https://github.com/Swiftgram/Telegram-iOS"><span class="link-label">Actuel (officiel)</span>Swiftgram/Telegram-iOS</a>
-      <a class="link" href="https://github.com/levochkaa/BetterTG"><span class="link-label">Alt SwiftUI</span>levochkaa/BetterTG</a>
-      <a class="link" href="https://github.com/dopebase/messenger-iOS-chat-swift-firestore"><span class="link-label">Alt chat</span>dopebase/messenger (~789★)</a>
-    </div>
+<h3>Telegram <span class="tag warn">attention</span></h3>
+<p class="note">App officielle UIKit — trop lourd</p>
+<a href="https://github.com/Swiftgram/Telegram-iOS">Swiftgram/Telegram-iOS (actuel)</a>
+<a href="https://github.com/levochkaa/BetterTG">Alt : BetterTG (SwiftUI)</a>
+<a href="https://github.com/dopebase/messenger-iOS-chat-swift-firestore">Alt : dopebase messenger</a>
 
-    <div class="app">
-      <div class="app-name">Microsoft Teams <span class="badge adecider">à décider</span></div>
-      <p class="note">Pas encore choisi</p>
-      <a class="link" href="https://github.com/techschneiderrr/Ms-Teams-Clone"><span class="link-label">Suggestion</span>techschneiderrr/Ms-Teams-Clone</a>
-    </div>
+<h3>Teams <span class="tag tbd">à décider</span></h3>
+<a href="https://github.com/techschneiderrr/Ms-Teams-Clone">techschneiderrr/Ms-Teams-Clone</a>
 
-    <div class="app">
-      <div class="app-name">Messenger <span class="badge attention">attention</span></div>
-      <p class="note">Flutter — pas SwiftUI natif</p>
-      <a class="link" href="https://github.com/sopheamen007/app.mobile.facebook-messenger-app-ui"><span class="link-label">Flutter Sopheamen</span>sopheamen007/messenger-ui</a>
-      <a class="link" href="https://github.com/23122K/Messenger-Clone"><span class="link-label">Alt SwiftUI</span>23122K/Messenger-Clone</a>
-    </div>
+<h3>Messenger <span class="tag warn">attention</span></h3>
+<p class="note">Flutter — pas SwiftUI</p>
+<a href="https://github.com/sopheamen007/app.mobile.facebook-messenger-app-ui">Sopheamen Flutter</a>
+<a href="https://github.com/23122K/Messenger-Clone">Alt SwiftUI</a>
 
-    <div class="app">
-      <div class="app-name">Signal <span class="badge attention">attention</span></div>
-      <p class="note">App officielle — pas clone showroom</p>
-      <a class="link" href="https://github.com/signalapp/Signal-iOS"><span class="link-label">Officiel</span>signalapp/Signal-iOS</a>
-    </div>
+<h3>Signal <span class="tag warn">attention</span></h3>
+<a href="https://github.com/signalapp/Signal-iOS">signalapp/Signal-iOS (officiel)</a>
 
-  </div>
-</details>
+<h2>Social</h2>
 
-<details>
-  <summary>Réseaux sociaux</summary>
-  <div class="section-body">
+<h3>Instagram <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/dmakarau/InstagramClone">dmakarau/InstagramClone</a>
 
-    <div class="app">
-      <div class="app-name">Instagram <span class="badge choisi">choisi</span></div>
-      <p class="note">Swift 6 · 2025–2026</p>
-      <a class="link" href="https://github.com/dmakarau/InstagramClone">dmakarau/InstagramClone</a>
-    </div>
+<h3>Snapchat <span class="tag pat">patreon</span></h3>
+<a href="https://www.patreon.com/sopheamenvan/posts/swiftui-snapchat-106774973">Sopheamen SwiftUI Snapchat</a>
 
-    <div class="app">
-      <div class="app-name">Snapchat <span class="badge patreon">patreon</span></div>
-      <a class="link" href="https://www.patreon.com/sopheamenvan/posts/swiftui-snapchat-106774973">Sopheamen — SwiftUI Snapchat</a>
-    </div>
+<h3>Facebook <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/omarthamri/FacebookClone">omarthamri/FacebookClone</a>
+<a href="https://github.com/jmmanoza/Facebook">jmmanoza/Facebook (backup)</a>
 
-    <div class="app">
-      <div class="app-name">Facebook <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/omarthamri/FacebookClone"><span class="link-label">Principal</span>omarthamri/FacebookClone</a>
-      <a class="link" href="https://github.com/jmmanoza/Facebook"><span class="link-label">Backup</span>jmmanoza/Facebook</a>
-    </div>
+<h3>LinkedIn <span class="tag pat">patreon</span></h3>
+<a href="https://www.patreon.com/sopheamenvan/posts/swiftui-linkedin-106774147">Sopheamen SwiftUI LinkedIn</a>
 
-    <div class="app">
-      <div class="app-name">LinkedIn <span class="badge patreon">patreon</span></div>
-      <a class="link" href="https://www.patreon.com/sopheamenvan/posts/swiftui-linkedin-106774147">Sopheamen — SwiftUI LinkedIn</a>
-    </div>
+<h3>Twitter / X <span class="tag hyb">hybride</span></h3>
+<a href="https://github.com/boardguy1024/TwitterSwiftUI">Base UI : boardguy1024</a>
+<a href="https://github.com/jurmadani/TwitterClone">Dock home : jurmadani</a>
+<div class="box">UI boardguy1024 + bottom bar jurmadani sur l'accueil</div>
 
-    <div class="app">
-      <div class="app-name">Twitter / X <span class="badge hybride">hybride</span></div>
-      <p class="note">UI boardguy1024 + dock home jurmadani</p>
-      <a class="link" href="https://github.com/boardguy1024/TwitterSwiftUI"><span class="link-label">Base UI</span>boardguy1024/TwitterSwiftUI</a>
-      <a class="link" href="https://github.com/jurmadani/TwitterClone"><span class="link-label">Dock onglets</span>jurmadani/TwitterClone</a>
-    </div>
+<h2>Dating</h2>
 
-  </div>
-</details>
+<h3>Tinder <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/enesozmus/SwiftUI-Tinder-Clone">enesozmus/SwiftUI-Tinder-Clone</a>
+<a href="https://github.com/FranckNdame/swiftui.builds">À vérifier : FranckNdame</a>
+<a href="https://github.com/alejandro-piguave/TinderCloneSwiftUI">Alt : alejandro-piguave</a>
 
-<div class="spec">
-  <strong>Twitter — spec hybride</strong>
-  <ol>
-    <li>Vendorer boardguy1024 (timeline, profil…)</li>
-    <li>Extraire TabView / dock home de jurmadani</li>
-    <li>Greffer le bottom bar sur l’accueil</li>
-    <li>Données mock LPSP</li>
-  </ol>
-</div>
+<h3>Happn / Bumble / Hinge <span class="tag tbd">à décider</span></h3>
+<a href="https://github.com/zabloncharles/Fumble">zabloncharles/Fumble</a>
 
-<details>
-  <summary>Rencontres</summary>
-  <div class="section-body">
+<h2>Spotify</h2>
+<a href="https://github.com/denoni/SpotifyClone">denoni/SpotifyClone (~291★)</a>
+<a href="https://github.com/adriancysvillegast/Spotify-SwiftUI">adriancysvillegast/Spotify-SwiftUI</a>
+<a href="https://github.com/SwiftlyCoded/Spotify-Clone-SwiftUI">SwiftlyCoded/Spotify-Clone-SwiftUI</a>
 
-    <div class="app">
-      <div class="app-name">Tinder</div>
-      <a class="link" href="https://github.com/enesozmus/SwiftUI-Tinder-Clone"><span class="link-label">choisi</span>enesozmus/SwiftUI-Tinder-Clone</a>
-      <a class="link" href="https://github.com/FranckNdame/swiftui.builds"><span class="link-label">à vérifier — pas Tinder dédié</span>FranckNdame/swiftui.builds</a>
-      <a class="link" href="https://github.com/alejandro-piguave/TinderCloneSwiftUI"><span class="link-label">alt ~113★</span>alejandro-piguave/TinderCloneSwiftUI</a>
-    </div>
+<h2>Vidéo</h2>
 
-    <div class="app">
-      <div class="app-name">Happn / Bumble / Hinge <span class="badge adecider">à décider</span></div>
-      <a class="link" href="https://github.com/zabloncharles/Fumble"><span class="link-label">Suggestion Bumble</span>zabloncharles/Fumble</a>
-    </div>
+<h3>Netflix <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/qeude/Notflix">qeude/Notflix</a>
 
-  </div>
-</details>
+<h3>YouTube <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/milika/SmartTubeIOS">milika/SmartTubeIOS</a>
 
-<details>
-  <summary>Musique</summary>
-  <div class="section-body">
-    <div class="app">
-      <div class="app-name">Spotify <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/denoni/SpotifyClone"><span class="link-label">~291★ API</span>denoni/SpotifyClone</a>
-      <a class="link" href="https://github.com/adriancysvillegast/Spotify-SwiftUI"><span class="link-label">sans deps</span>adriancysvillegast/Spotify-SwiftUI</a>
-      <a class="link" href="https://github.com/SwiftlyCoded/Spotify-Clone-SwiftUI"><span class="link-label">backup</span>SwiftlyCoded/Spotify-Clone-SwiftUI</a>
-      <p class="note" style="margin-top:8px">Écarté : 7adans/SpotifySwiftUI (qualité insuffisante)</p>
-    </div>
-  </div>
-</details>
+<h3>YouTube Music <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/barisozgenn/YoutubeMusicClone-SwiftUI-UIKit">barisozgenn/YoutubeMusicClone</a>
 
-<details>
-  <summary>Vidéo</summary>
-  <div class="section-body">
+<h3>Prime Video <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/yagizdo/PrimeVideoDesignWithSwift">yagizdo/PrimeVideoDesignWithSwift</a>
 
-    <div class="app">
-      <div class="app-name">Netflix <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/qeude/Notflix">qeude/Notflix (~95★)</a>
-    </div>
+<h3>Disney+ <span class="tag tbd">à décider</span></h3>
+<a href="https://github.com/GouthamShiv/iOS_DisneyPlus">GouthamShiv/iOS_DisneyPlus</a>
 
-    <div class="app">
-      <div class="app-name">YouTube <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/milika/SmartTubeIOS">milika/SmartTubeIOS (~122★)</a>
-    </div>
+<h2>IA</h2>
 
-    <div class="app">
-      <div class="app-name">YouTube Music <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/barisozgenn/YoutubeMusicClone-SwiftUI-UIKit">barisozgenn/YoutubeMusicClone</a>
-    </div>
+<h3>ChatGPT <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/acalderon20/chatGPT_clone">acalderon20/chatGPT_clone</a>
 
-    <div class="app">
-      <div class="app-name">Prime Video <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/yagizdo/PrimeVideoDesignWithSwift">yagizdo/PrimeVideoDesignWithSwift</a>
-    </div>
+<h3>2e IA <span class="tag tbd">à décider</span></h3>
+<a href="https://github.com/CherryHQ/hanlin-ai">CherryHQ/hanlin-ai</a>
 
-    <div class="app">
-      <div class="app-name">Disney+ <span class="badge adecider">à décider</span></div>
-      <a class="link" href="https://github.com/GouthamShiv/iOS_DisneyPlus">GouthamShiv/iOS_DisneyPlus</a>
-    </div>
+<h2>Finance</h2>
 
-  </div>
-</details>
+<h3>Banque LPSP <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/Pankajrana01/SuperWallet-SwiftUI">Pankajrana01/SuperWallet-SwiftUI</a>
+<a href="https://github.com/govardhansbhati/pocketpulse">govardhansbhati/pocketpulse</a>
 
-<details>
-  <summary>IA</summary>
-  <div class="section-body">
+<h3>PayPal <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/pikkukurkku/PayPalClone">pikkukurkku/PayPalClone</a>
 
-    <div class="app">
-      <div class="app-name">ChatGPT <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/acalderon20/chatGPT_clone">acalderon20/chatGPT_clone</a>
-    </div>
+<h3>Revolut <span class="tag tbd">à décider</span></h3>
+<p class="note">Reskin banque générique</p>
 
-    <div class="app">
-      <div class="app-name">2e IA <span class="badge adecider">à décider</span></div>
-      <a class="link" href="https://github.com/CherryHQ/hanlin-ai"><span class="link-label">Suggestion multi-provider</span>CherryHQ/hanlin-ai (~230★)</a>
-    </div>
+<h3>Crypto</h3>
+<a href="https://github.com/RedDragonJ/Swift-Learning/tree/main/SwiftUIAndCoinbase">RedDragonJ (à vérifier)</a>
+<a href="https://www.patreon.com/sopheamenvan/posts/build-phantom-on-124537380">Sopheamen Phantom</a>
 
-  </div>
-</details>
+<h2>Shopping & mobilité</h2>
 
-<details>
-  <summary>Finance</summary>
-  <div class="section-body">
+<h3>Amazon <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/Djallil14/Amazing.ca-Amazon-SwiftUI-Clone">Djallil14/Amazing.ca-Amazon</a>
+<a href="https://github.com/404ibra/AmazonClone">404ibra/AmazonClone</a>
 
-    <div class="app">
-      <div class="app-name">Banque LPSP <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/Pankajrana01/SuperWallet-SwiftUI">Pankajrana01/SuperWallet-SwiftUI</a>
-      <a class="link" href="https://github.com/govardhansbhati/pocketpulse"><span class="link-label">backup</span>govardhansbhati/pocketpulse</a>
-    </div>
+<h3>Uber <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/Huss3n/UberSwiftUI">Huss3n/UberSwiftUI</a>
+<a href="https://github.com/WorkWithAfridi/SwiftUI-iUber_A-Uber-Clone">WorkWithAfridi/iUber</a>
 
-    <div class="app">
-      <div class="app-name">PayPal <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/pikkukurkku/PayPalClone">pikkukurkku/PayPalClone</a>
-    </div>
+<h3>Uber Eats <span class="tag pat">patreon</span></h3>
+<a href="https://www.patreon.com/sopheamenvan/posts/build-uber-clone-116211445">Sopheamen Uber clone</a>
 
-    <div class="app">
-      <div class="app-name">Revolut <span class="badge adecider">à décider</span></div>
-      <p class="note">Pas de clone — reskin banque générique</p>
-    </div>
+<h3>Discord <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/piwien/Discord-Clone">piwien/Discord-Clone</a>
 
-    <div class="app">
-      <div class="app-name">Crypto</div>
-      <a class="link" href="https://github.com/RedDragonJ/Swift-Learning/tree/main/SwiftUIAndCoinbase"><span class="link-label">à vérifier — tutoriel</span>RedDragonJ/SwiftUIAndCoinbase</a>
-      <a class="link" href="https://www.patreon.com/sopheamenvan/posts/build-phantom-on-124537380"><span class="link-label">patreon Phantom</span>Sopheamen Phantom</a>
-    </div>
+<h3>Waze <span class="tag tbd">à décider</span></h3>
+<a href="https://github.com/GGCIRILLO/Waze-Clone-NC1">GGCIRILLO/Waze-Clone-NC1</a>
 
-  </div>
-</details>
+<h2>Voyage</h2>
 
-<details>
-  <summary>Shopping & mobilité</summary>
-  <div class="section-body">
+<h3>Airbnb / Hôtels</h3>
+<a href="https://github.com/piwien/Airbnb-Clone">piwien/Airbnb-Clone (à vérifier)</a>
+<a href="https://github.com/Keerthi-Sparkout/AirbnbClone-SwiftUI">Keerthi-Sparkout/AirbnbClone</a>
+<a href="https://github.com/sebastian-nunez/airbnb-ios">sebastian-nunez/airbnb-ios</a>
 
-    <div class="app">
-      <div class="app-name">Amazon <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/Djallil14/Amazing.ca-Amazon-SwiftUI-Clone">Djallil14/Amazing.ca-Amazon</a>
-      <a class="link" href="https://github.com/404ibra/AmazonClone">404ibra/AmazonClone</a>
-    </div>
+<h3>Hôtel Booking <span class="tag tbd">à décider</span></h3>
+<a href="https://github.com/williamsouef/Travel-Booking-App-SwiftUI">williamsouef/Travel-Booking</a>
 
-    <div class="app">
-      <div class="app-name">Uber <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/Huss3n/UberSwiftUI">Huss3n/UberSwiftUI</a>
-      <a class="link" href="https://github.com/WorkWithAfridi/SwiftUI-iUber_A-Uber-Clone"><span class="link-label">backup</span>WorkWithAfridi/iUber</a>
-    </div>
+<h3>Flighty <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/chrisfree/flightySwiftUI">chrisfree/flightySwiftUI</a>
 
-    <div class="app">
-      <div class="app-name">Uber Eats <span class="badge patreon">patreon</span></div>
-      <a class="link" href="https://www.patreon.com/sopheamenvan/posts/build-uber-clone-116211445">Sopheamen — Uber clone</a>
-    </div>
+<h3>Trains <span class="tag tbd">à décider</span></h3>
+<a href="https://github.com/alfredang/sgmrtapp">alfredang/sgmrtapp</a>
 
-    <div class="app">
-      <div class="app-name">Discord <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/piwien/Discord-Clone">piwien/Discord-Clone</a>
-    </div>
+<h2>Utilitaires</h2>
 
-    <div class="app">
-      <div class="app-name">Waze <span class="badge adecider">à décider</span></div>
-      <a class="link" href="https://github.com/GGCIRILLO/Waze-Clone-NC1"><span class="link-label">Suggestion</span>GGCIRILLO/Waze-Clone-NC1</a>
-    </div>
+<h3>Fichiers <span class="tag tbd">à décider</span></h3>
+<a href="https://github.com/noppefoxwolf/FileManagerUI">noppefoxwolf/FileManagerUI</a>
 
-  </div>
-</details>
+<h3>Plans <span class="tag ok">choisi</span></h3>
+<a href="https://github.com/karanb03/iOS-map-clone">karanb03/iOS-map-clone</a>
 
-<details>
-  <summary>Voyage</summary>
-  <div class="section-body">
+<h3>Cloud PC <span class="tag tbd">à décider</span></h3>
+<p class="note">Sur mesure</p>
 
-    <div class="app">
-      <div class="app-name">Airbnb / Hôtels</div>
-      <a class="link" href="https://github.com/piwien/Airbnb-Clone"><span class="link-label">à vérifier</span>piwien/Airbnb-Clone</a>
-      <a class="link" href="https://github.com/Keerthi-Sparkout/AirbnbClone-SwiftUI"><span class="link-label">alt ~11★</span>Keerthi-Sparkout/AirbnbClone</a>
-      <a class="link" href="https://github.com/sebastian-nunez/airbnb-ios"><span class="link-label">alt booking</span>sebastian-nunez/airbnb-ios</a>
-    </div>
+<h3>Strava <span class="tag tbd">optionnel</span></h3>
+<a href="https://github.com/renzoventura/stride">renzoventura/stride</a>
 
-    <div class="app">
-      <div class="app-name">Hôtel Booking <span class="badge adecider">à décider</span></div>
-      <a class="link" href="https://github.com/williamsouef/Travel-Booking-App-SwiftUI"><span class="link-label">Suggestion</span>williamsouef/Travel-Booking</a>
-    </div>
-
-    <div class="app">
-      <div class="app-name">Flighty / Vols <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/chrisfree/flightySwiftUI">chrisfree/flightySwiftUI (~55★)</a>
-    </div>
-
-    <div class="app">
-      <div class="app-name">Trains SNCF <span class="badge adecider">à décider</span></div>
-      <a class="link" href="https://github.com/alfredang/sgmrtapp"><span class="link-label">Suggestion reskin</span>alfredang/sgmrtapp</a>
-    </div>
-
-  </div>
-</details>
-
-<details>
-  <summary>Utilitaires</summary>
-  <div class="section-body">
-
-    <div class="app">
-      <div class="app-name">Fichiers <span class="badge adecider">à décider</span></div>
-      <a class="link" href="https://github.com/noppefoxwolf/FileManagerUI">noppefoxwolf/FileManagerUI</a>
-    </div>
-
-    <div class="app">
-      <div class="app-name">Plans / Maps <span class="badge choisi">choisi</span></div>
-      <a class="link" href="https://github.com/karanb03/iOS-map-clone">karanb03/iOS-map-clone</a>
-    </div>
-
-    <div class="app">
-      <div class="app-name">Cloud PC <span class="badge adecider">à décider</span></div>
-      <p class="note">Sur mesure Lost Phone — pas de clone</p>
-    </div>
-
-    <div class="app">
-      <div class="app-name">Strava <span class="badge adecider">optionnel</span></div>
-      <a class="link" href="https://github.com/renzoventura/stride">renzoventura/stride</a>
-    </div>
-
-  </div>
-</details>
-
-<details>
-  <summary>Patreon Sopheamen</summary>
-  <div class="section-body">
-    <a class="link" href="https://www.patreon.com/cw/sopheamenvan"><span class="link-label">Profil</span>patreon.com/cw/sopheamenvan</a>
-    <a class="link" href="https://www.patreon.com/sopheamenvan/posts/swiftui-snapchat-106774973">Snapchat</a>
-    <a class="link" href="https://www.patreon.com/sopheamenvan/posts/swiftui-linkedin-106774147">LinkedIn</a>
-    <a class="link" href="https://www.patreon.com/sopheamenvan/posts/build-uber-clone-116211445">Uber Eats</a>
-    <a class="link" href="https://www.patreon.com/sopheamenvan/posts/build-phantom-on-124537380">Phantom (crypto)</a>
-  </div>
-</details>
+<h2>Patreon Sopheamen</h2>
+<a href="https://www.patreon.com/cw/sopheamenvan">Profil Patreon</a>
 
 <div class="todo">
-  <h2>À modifier</h2>
-  <div class="todo-item"><span>Teams :</span> …</div>
-  <div class="todo-item"><span>Telegram :</span> …</div>
-  <div class="todo-item"><span>Signal :</span> …</div>
-  <div class="todo-item"><span>Messenger :</span> …</div>
-  <div class="todo-item"><span>Dating 2 :</span> …</div>
-  <div class="todo-item"><span>Disney+ :</span> …</div>
-  <div class="todo-item"><span>2e IA :</span> …</div>
-  <div class="todo-item"><span>Revolut :</span> …</div>
-  <div class="todo-item"><span>Hôtel :</span> …</div>
-  <div class="todo-item"><span>Trains :</span> …</div>
-  <div class="todo-item"><span>Fichiers :</span> …</div>
-  <div class="todo-item"><span>Waze :</span> …</div>
+<strong>À modifier</strong>
+<div>Teams :</div>
+<div>Telegram :</div>
+<div>Signal :</div>
+<div>Messenger :</div>
+<div>Dating 2 :</div>
+<div>Disney+ :</div>
+<div>2e IA :</div>
+<div>Revolut :</div>
+<div>Hôtel :</div>
+<div>Trains :</div>
+<div>Fichiers :</div>
+<div>Waze :</div>
 </div>
-
-<footer>Lost Phone · joachimfrzz/lost-phone</footer>
 
 </body>
 </html>

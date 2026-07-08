@@ -19,7 +19,7 @@ struct VendoredGmailSideMenuView: View {
             .padding(.vertical)
         }
         .frame(width: 300)
-        .background(Color.vendoredGmailSideMenuBackground)
+        .background(Color.vendoredGmailVendoredGmailSideMenuBackground)
     }
 }
 
@@ -71,11 +71,11 @@ struct VendoredGmailListItemRowView:View {
             HStack (spacing: 14){
                 Image(systemName: sidemenu.icon)
                     .font(.system(size: 18))
-                    .foregroundStyle(Color.vendoredGmailPrimary)
+                    .foregroundStyle(Color.vendoredGmailVendoredGmailPrimary)
                 Text(sidemenu.title)
                     .font(.headline)
                     .fontWeight(.regular)
-                    .foregroundStyle(Color.vendoredGmailPrimary)
+                    .foregroundStyle(Color.vendoredGmailVendoredGmailPrimary)
                 Spacer()
                 
                 // badge number
@@ -85,7 +85,7 @@ struct VendoredGmailListItemRowView:View {
                         .padding(.horizontal, 10)
                         .font(.footnote)
                         .fontWeight(.regular)
-                        .foregroundStyle(Color.vendoredGmailPrimary)
+                        .foregroundStyle(Color.vendoredGmailVendoredGmailPrimary)
                         .background(sidemenu.badgeColor ?? .clear)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
@@ -93,7 +93,7 @@ struct VendoredGmailListItemRowView:View {
             .padding(.leading, 20)
             .padding(.trailing, 10)
             .padding(.vertical)
-            .background(Color.vendoredGmailPrimaryBackground)
+            .background(Color.vendoredGmailVendoredGmailPrimaryBackground)
             .clipShape(VendoredGmailRightRoundedRectangle(cornerRadius: 30))
             .padding(.trailing, 20)
             

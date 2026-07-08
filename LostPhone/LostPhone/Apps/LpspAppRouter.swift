@@ -113,20 +113,17 @@ struct LpspAppRouter: View {
     private func thirdPartyView(named appName: String, payload: AnyCodable?) -> some View {
         switch LpspAppAliases.canonical(appName) {
         case "WhatsApp":
-            LpspAwesomeWhatsAppView(conversations: LpspAdapters.whatsApp(from: payload))
+            LpspVendoredWhatsAppRootView()
         case "Signal":
             LpspAwesomeSignalView(conversations: LpspAdapters.signal(from: payload))
         case "Messenger":
-            LpspAwesomeMessengerView(conversations: LpspAdapters.messenger(from: payload))
+            LpspVendoredMessengerRootView()
         case "Telegram":
             LpspAwesomeTelegramView(conversations: LpspAdapters.telegram(from: payload))
         case "Contacts":
             ContactsView(contacts: contacts)
         case "Uber":
-            LpspAwesomeUberView(
-                rides: LpspAdapters.uber(from: payload),
-                account: LpspAdapters.uberAccount(from: payload)
-            )
+            LpspVendoredUberRootView()
         case "Banque":
             AwesomeShowroomRouter.view(for: "Banque")
         case "Plans":
@@ -136,19 +133,21 @@ struct LpspAppRouter: View {
         case "Rappels":
             LpspAwesomeRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Instagram":
-            LpspAwesomeInstagramView(conversations: LpspAdapters.instagramDM(from: payload))
+            LpspVendoredInstagramRootView()
         case "Spotify":
             LpspAwesomeSpotifyView(data: LpspAdapters.spotify(from: payload))
         case "Netflix":
-            AwesomeShowroomRouter.view(for: "Netflix")
+            LpspVendoredNetflixRootView()
         case "Apple Music":
-            AwesomeShowroomRouter.view(for: "Apple Music")
+            LpspVendoredAppleMusicRootView()
         case "Dictaphone":
             LpspDictaphoneView()
         case "Wallet":
             LpspWalletView()
         default:
-            if AwesomeShowroomCatalog.tierApps.contains(LpspAppAliases.canonical(appName)) {
+            if VendoredShowroomCatalog.isVendored(LpspAppAliases.canonical(appName)) {
+                VendoredShowroomRouter.view(for: appName)
+            } else if AwesomeShowroomCatalog.tierApps.contains(LpspAppAliases.canonical(appName)) {
                 AwesomeShowroomRouter.view(for: appName)
             } else {
                 GenericLpspAppView(appName: appName, payload: payload)

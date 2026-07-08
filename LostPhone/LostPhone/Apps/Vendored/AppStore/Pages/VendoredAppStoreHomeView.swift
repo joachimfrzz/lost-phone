@@ -198,8 +198,8 @@ struct VendoredAppStoreListIconsView:View {
                                     .fontWeight(.semibold)
                                     .padding(.vertical, 8)
                                     .padding(.horizontal, 24)
-                                    .foregroundStyle(Color.vendoredAppStorePrimary)
-                                    .background(Color.vendoredAppStoreButtonGray)
+                                    .foregroundStyle(Color.vendoredAppStoreVendoredAppStorePrimary)
+                                    .background(Color.vendoredAppStoreVendoredAppStoreButtonGray)
                                     .clipShape(RoundedRectangle(cornerRadius: 20))
                             }
                             // text
@@ -279,8 +279,8 @@ struct VendoredAppStoreHightLightView:View {
                                     .fontWeight(.semibold)
                                     .padding(.vertical, 8)
                                     .padding(.horizontal, 24)
-                                    .foregroundStyle(Color.vendoredAppStorePrimary)
-                                    .background(Color.vendoredAppStoreButtonGray)
+                                    .foregroundStyle(Color.vendoredAppStoreVendoredAppStorePrimary)
+                                    .background(Color.vendoredAppStoreVendoredAppStoreButtonGray)
                                     .clipShape(RoundedRectangle(cornerRadius: 20))
                             }
                             

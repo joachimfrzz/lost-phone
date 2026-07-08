@@ -32,7 +32,7 @@ struct VendoredAppleMusicHomeView: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 24, height: 24)
-                            .foregroundStyle(Color.vendoredAppleMusicPrimary)
+                            .foregroundStyle(Color.vendoredAppleMusicVendoredAppleMusicPrimary)
                     }
                 }
             }

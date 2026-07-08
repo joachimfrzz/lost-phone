@@ -15,14 +15,14 @@ let sidemenuData: [VendoredGmailSidemenuResponse] = [
         icon: "envelope.fill",
         badge: "99+",
         badgeColor: nil,
-        backgroundColor: Color.vendoredGmailPrimary
+        backgroundColor: Color.vendoredGmailVendoredGmailPrimary
     ),
     VendoredGmailSidemenuResponse(
         title: "Social",
         titleColor: .white,
         icon: "person.2.fill",
         badge: "52 new",
-        badgeColor: Color.vendoredGmailBlue,
+        badgeColor: Color.vendoredGmailVendoredGmailBlue,
         backgroundColor: .clear
     ),
     VendoredGmailSidemenuResponse(
@@ -30,7 +30,7 @@ let sidemenuData: [VendoredGmailSidemenuResponse] = [
         titleColor: .white,
         icon: "tag.fill",
         badge: "6 new",
-        badgeColor: Color.vendoredGmailGreen,
+        badgeColor: Color.vendoredGmailVendoredGmailGreen,
         backgroundColor: .clear
     ),
     VendoredGmailSidemenuResponse(

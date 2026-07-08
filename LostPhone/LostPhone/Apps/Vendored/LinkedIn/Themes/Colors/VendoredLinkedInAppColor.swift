@@ -1,0 +1,28 @@
+import SwiftUI
+
+extension Color {
+    static let vendoredLinkedInVendoredLinkedInPrimary = Color(hex: "#0a66c2")
+    static let vendoredLinkedInDangerColor = Color(hex: "#FD3C31")
+    static let vendoredLinkedInBackgroundColor = Color(hex: "#E9E5DF")
+    static let vendoredLinkedInBlackOpacity = Color.black.opacity(0.6)
+    static let vendoredLinkedInTextFieldBackgroundColor = Color(hex: "#EFF3F6")
+    static let vendoredLinkedInNotificationBackgroundColor = Color(hex: "#EAF4FE")
+    static let vendoredLinkedInAvatarColor = Color(hex: "#3379F5")
+    static let vendoredLinkedInStarredMessageColor = Color(hex: "#FFC700")
+    static let vendoredLinkedInLinkedDeviceColor = Color(hex: "#0DADA0")
+    static let vendoredLinkedInAccountColor = Color(hex: "#017AFF")
+    static let vendoredLinkedInPrivacyColor = Color(hex: "#36A8DC")
+    static let vendoredLinkedInChatColor = Color(hex: "#4CD862")
+    static let vendoredLinkedInNotificationColor = Color(hex: "#FF3C31")
+    static let vendoredLinkedInStorageDataColor = Color(hex: "#36C759")
+    static let vendoredLinkedInHelpColor = Color(hex: "#017AFF")
+    static let vendoredLinkedInTellFriendColor = Color(hex: "#FE2D56")
+    static let vendoredLinkedInTodayChatBackground = Color(hex: "#F5F3EF")
+    static let vendoredLinkedInSettingChatBackground = Color(hex: "#FFF4BB")
+    static let vendoredLinkedInMeChatBackground = Color(hex: "#E1FFD3")
+    static let vendoredLinkedInActiveGreenTab = Color(hex:"#397447")
+    static let vendoredLinkedInButtonPremiumColor = Color(hex: "#F1C888")
+    static let vendoredLinkedInLikeIconColor = Color(hex: "#1485BD").opacity(0.6)
+    static let vendoredLinkedInHeartIconColor = Color(hex: "#DF704D").opacity(0.6)
+    static let vendoredLinkedInLightIconColor = Color(hex: "#F5BB5C").opacity(0.6)
+}

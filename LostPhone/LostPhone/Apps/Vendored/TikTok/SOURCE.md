@@ -2,25 +2,14 @@
 
 | Champ | Valeur |
 |-------|--------|
-| **Repo** | https://github.com/johannpires/TikTok-Clone-App |
-| **Commit** | `main` @ clone 2026-07-07 (shallow) |
-| **Licence** | MIT (Johann Pires, 2023) |
-| **Langage** | Swift / SwiftUI / AVKit |
-| **Entrée Lost Phone** | `LpspVendoredTikTokRootView()` → `MainTabView()` |
-
-## Fichiers copiés
-
-- `Core/**` (16 fichiers Swift)
-- `Models/Post.swift`
-- `LpspVendoredTikTokRootView.swift` (wrapper Lost Phone)
+| **Repo** | sopheamenvan/Patreon:Youtube_Tiktok_v1.zip |
+| **Licence** | Patreon (usage projet) |
+| **Entrée Lost Phone** | `LpspVendoredTikTokRootView()` → `VendoredTikTokContentView` |
 
 ## Adaptations Lost Phone
 
-- Aucune modification du code vendored (showroom demo).
-- Vidéos : URLs publiques Google sample (déjà dans `FeedViewModel`).
-- Pas de Firebase / backend.
+- Types préfixés pour éviter les collisions avec les autres clones.
+- Fichiers `@main` / tests exclus du bundle.
 
-## Notes
+- Source : bundle Patreon Sopheamen Van.
 
-- Onglets Inbox/Profile : indices `selectedTab` du repo d’origine (cosmétique).
-- Remplace `LpspAwesomeTikTokView` dans le showroom lorsque l’app est listée dans `VendoredShowroomCatalog`.

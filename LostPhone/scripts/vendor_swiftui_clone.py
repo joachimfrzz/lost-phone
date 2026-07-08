@@ -11,7 +11,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 VENDORED_ROOT = REPO_ROOT / "LostPhone" / "Apps" / "Vendored"
 
-SKIP_DIR_NAMES = {"tests", "test", "uitests", "preview content", "preview", "pods", ".git"}
+SKIP_DIR_NAMES = {"tests", "test", "uitests", "preview content", "preview", "pods", ".git", "videos", "build"}
 SKIP_FILE_PATTERNS = ("test", "uitest", "preview provider", "_preview")
 
 TYPE_DEF = re.compile(

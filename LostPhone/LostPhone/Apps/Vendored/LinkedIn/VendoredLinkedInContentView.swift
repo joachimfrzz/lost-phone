@@ -1,17 +1,19 @@
 //
 //  VendoredLinkedInContentView.swift
-//  linkedin_clone
+//  LinkedIn Clone
 //
-//  Created by Dipak on 21/02/23.
+//  Created by Sopheamen VAN on 22/4/24.
 //
 
 import SwiftUI
 
 struct VendoredLinkedInContentView: View {
+    
     var body: some View {
-        VStack(){
-            VendoredLinkedInPostView()
-        }
+        VendoredLinkedInRootApp()
     }
 }
 
+#Preview {
+    VendoredLinkedInContentView()
+}

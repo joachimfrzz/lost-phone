@@ -83,7 +83,7 @@ struct VendoredGmailMainHomeView:View {
                     }
                     .padding(.horizontal)
                     .frame(height:50)
-                    .background(Color.vendoredGmailGray)
+                    .background(Color.vendoredGmailVendoredGmailGray)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     
                     // inbox title
@@ -139,7 +139,7 @@ struct VendoredGmailEmailRowView:View {
                     ForEach(email.attachments, id:\.self) { attachment in
                         HStack {
                             Image(systemName: "photo")
-                                .foregroundStyle(Color.vendoredGmailPrimary)
+                                .foregroundStyle(Color.vendoredGmailVendoredGmailPrimary)
                             Text(attachment)
                                 .font(.caption)
                                 .lineLimit(1)
@@ -162,7 +162,7 @@ struct VendoredGmailEmailRowView:View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 20, height: 20)
-                    .foregroundStyle(email.isStarred ? Color.vendoredGmailStarred : .white.opacity(0.6))
+                    .foregroundStyle(email.isStarred ? Color.vendoredGmailVendoredGmailStarred : .white.opacity(0.6))
             }
         }
     }
@@ -178,14 +178,14 @@ struct VendoredGmailFloatingButtonView:View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 20, height: 20)
-                    .foregroundStyle(Color.vendoredGmailPrimary)
+                    .foregroundStyle(Color.vendoredGmailVendoredGmailPrimary)
                 Text("Compose")
                     .font(.headline)
-                    .foregroundStyle(Color.vendoredGmailPrimary)
+                    .foregroundStyle(Color.vendoredGmailVendoredGmailPrimary)
             }
             .padding(.vertical, 14)
             .padding(.horizontal, 24)
-            .background(Color.vendoredGmailSideMenuBackground)
+            .background(Color.vendoredGmailVendoredGmailSideMenuBackground)
             .clipShape(RoundedRectangle(cornerRadius: 30))
         }
         .padding(.trailing, 20)

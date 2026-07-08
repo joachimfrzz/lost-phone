@@ -2,12 +2,14 @@
 
 | Champ | Valeur |
 |-------|--------|
-| **Repo** | https://github.com/PankajGaikar/Instagram-Clone-SwiftUI |
-| **Licence** | MIT |
-| **Entrée Lost Phone** | `LpspVendoredInstagramRootView()` → `VendoredInstagramRootContainerView` |
+| **Repo** | sopheamenvan/Patreon:Instagram clone patreon.zip |
+| **Licence** | Patreon (usage projet) |
+| **Entrée Lost Phone** | `LpspVendoredInstagramRootView()` → `VendoredInstagramContentView` |
 
 ## Adaptations Lost Phone
 
 - Types préfixés pour éviter les collisions avec les autres clones.
 - Fichiers `@main` / tests exclus du bundle.
+
+- Source : bundle Patreon Sopheamen Van.
 

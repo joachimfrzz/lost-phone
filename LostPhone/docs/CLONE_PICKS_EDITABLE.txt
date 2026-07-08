@@ -1,0 +1,307 @@
+# LOST PHONE — Mes choix clones
+# Remplis ce fichier et renvoie-le (copier-coller ou fichier joint)
+# Date : ___________
+
+# Légende STATUT (une seule par app)
+# choisi = on intègre ce lien
+# patreon = code Sopheamen à acheter
+# hybride = combiner plusieurs sources
+# alt = garder en backup seulement
+# ignorer = ne pas faire
+# a_decider = pas encore tranché
+
+# ─────────────────────────────────────────
+# DÉJÀ FAIT — ne pas toucher
+# ─────────────────────────────────────────
+# Apple Music, Rappels, Contacts, Wallet, Dictaphone, apps Apple page 1
+
+# ─────────────────────────────────────────
+# MESSAGERIE
+# ─────────────────────────────────────────
+
+APP: WhatsApp
+STATUT: choisi
+LIEN: https://github.com/efxlve/whatsapp-clone
+ALT:
+NOTES:
+
+APP: Telegram
+STATUT: a_decider
+LIEN: https://github.com/Swiftgram/Telegram-iOS
+ALT: https://github.com/levochkaa/BetterTG
+NOTES:
+
+APP: Microsoft Teams
+STATUT: a_decider
+LIEN:
+ALT: https://github.com/techschneiderrr/Ms-Teams-Clone
+NOTES:
+
+APP: Messenger
+STATUT: a_decider
+LIEN: https://github.com/sopheamen007/app.mobile.facebook-messenger-app-ui
+ALT: https://github.com/23122K/Messenger-Clone
+NOTES:
+
+APP: Signal
+STATUT: a_decider
+LIEN: https://github.com/signalapp/Signal-iOS
+ALT:
+NOTES:
+
+# ─────────────────────────────────────────
+# RÉSEAUX SOCIAUX
+# ─────────────────────────────────────────
+
+APP: Instagram
+STATUT: choisi
+LIEN: https://github.com/dmakarau/InstagramClone
+ALT:
+NOTES:
+
+APP: Snapchat
+STATUT: patreon
+LIEN: https://www.patreon.com/sopheamenvan/posts/swiftui-snapchat-106774973
+ALT:
+NOTES:
+
+APP: Facebook
+STATUT: choisi
+LIEN: https://github.com/omarthamri/FacebookClone
+ALT: https://github.com/jmmanoza/Facebook
+NOTES:
+
+APP: LinkedIn
+STATUT: patreon
+LIEN: https://www.patreon.com/sopheamenvan/posts/swiftui-linkedin-106774147
+ALT:
+NOTES:
+
+APP: Twitter / X
+STATUT: hybride
+LIEN: https://github.com/boardguy1024/TwitterSwiftUI
+ALT: https://github.com/jurmadani/TwitterClone
+NOTES: UI boardguy1024 + dock onglets home jurmadani
+
+# ─────────────────────────────────────────
+# RENCONTRES
+# ─────────────────────────────────────────
+
+APP: Tinder
+STATUT: choisi
+LIEN: https://github.com/enesozmus/SwiftUI-Tinder-Clone
+ALT: https://github.com/alejandro-piguave/TinderCloneSwiftUI
+NOTES:
+
+APP: Happn / Bumble / Hinge (1 seule)
+STATUT: a_decider
+LIEN:
+ALT: https://github.com/zabloncharles/Fumble
+NOTES:
+
+# ─────────────────────────────────────────
+# MUSIQUE
+# ─────────────────────────────────────────
+
+APP: Spotify
+STATUT: choisi
+LIEN: https://github.com/denoni/SpotifyClone
+ALT: https://github.com/adriancysvillegast/Spotify-SwiftUI
+NOTES:
+
+# ─────────────────────────────────────────
+# VIDÉO
+# ─────────────────────────────────────────
+
+APP: Netflix
+STATUT: choisi
+LIEN: https://github.com/qeude/Notflix
+ALT:
+NOTES:
+
+APP: YouTube
+STATUT: choisi
+LIEN: https://github.com/milika/SmartTubeIOS
+ALT:
+NOTES:
+
+APP: YouTube Music
+STATUT: choisi
+LIEN: https://github.com/barisozgenn/YoutubeMusicClone-SwiftUI-UIKit
+ALT:
+NOTES:
+
+APP: Prime Video
+STATUT: choisi
+LIEN: https://github.com/yagizdo/PrimeVideoDesignWithSwift
+ALT:
+NOTES:
+
+APP: Disney+ (ou autre vidéo)
+STATUT: a_decider
+LIEN: https://github.com/GouthamShiv/iOS_DisneyPlus
+ALT:
+NOTES:
+
+# ─────────────────────────────────────────
+# INTELLIGENCE ARTIFICIELLE
+# ─────────────────────────────────────────
+
+APP: ChatGPT
+STATUT: choisi
+LIEN: https://github.com/acalderon20/chatGPT_clone
+ALT:
+NOTES:
+
+APP: 2e IA (Gemini, Claude, etc.)
+STATUT: a_decider
+LIEN:
+ALT: https://github.com/CherryHQ/hanlin-ai
+NOTES:
+
+# ─────────────────────────────────────────
+# FINANCE
+# ─────────────────────────────────────────
+
+APP: Banque générique LPSP
+STATUT: choisi
+LIEN: https://github.com/Pankajrana01/SuperWallet-SwiftUI
+ALT: https://github.com/govardhansbhati/pocketpulse
+NOTES:
+
+APP: PayPal
+STATUT: choisi
+LIEN: https://github.com/pikkukurkku/PayPalClone
+ALT:
+NOTES:
+
+APP: Revolut
+STATUT: a_decider
+LIEN:
+ALT:
+NOTES:
+
+APP: Crypto (Coinbase / Binance / Phantom)
+STATUT: a_decider
+LIEN: https://www.patreon.com/sopheamenvan/posts/build-phantom-on-124537380
+ALT: https://github.com/RedDragonJ/Swift-Learning/tree/main/SwiftUIAndCoinbase
+NOTES:
+
+# ─────────────────────────────────────────
+# SHOPPING & MOBILITÉ
+# ─────────────────────────────────────────
+
+APP: Amazon
+STATUT: choisi
+LIEN: https://github.com/404ibra/AmazonClone
+ALT: https://github.com/Djallil14/Amazing.ca-Amazon-SwiftUI-Clone
+NOTES:
+
+APP: Uber
+STATUT: choisi
+LIEN: https://github.com/Huss3n/UberSwiftUI
+ALT: https://github.com/WorkWithAfridi/SwiftUI-iUber_A-Uber-Clone
+NOTES:
+
+APP: Uber Eats
+STATUT: patreon
+LIEN: https://www.patreon.com/sopheamenvan/posts/build-uber-clone-116211445
+ALT:
+NOTES:
+
+APP: Discord
+STATUT: choisi
+LIEN: https://github.com/piwien/Discord-Clone
+ALT:
+NOTES:
+
+APP: Waze
+STATUT: a_decider
+LIEN:
+ALT: https://github.com/GGCIRILLO/Waze-Clone-NC1
+NOTES:
+
+# ─────────────────────────────────────────
+# VOYAGE
+# ─────────────────────────────────────────
+
+APP: Airbnb / Hôtels
+STATUT: a_decider
+LIEN: https://github.com/piwien/Airbnb-Clone
+ALT: https://github.com/Keerthi-Sparkout/AirbnbClone-SwiftUI
+NOTES:
+
+APP: Hôtel Booking
+STATUT: a_decider
+LIEN:
+ALT: https://github.com/williamsouef/Travel-Booking-App-SwiftUI
+NOTES:
+
+APP: Flighty / Vols
+STATUT: choisi
+LIEN: https://github.com/chrisfree/flightySwiftUI
+ALT:
+NOTES:
+
+APP: Trains (SNCF / Trainline)
+STATUT: a_decider
+LIEN:
+ALT: https://github.com/alfredang/sgmrtapp
+NOTES:
+
+# ─────────────────────────────────────────
+# UTILITAIRES
+# ─────────────────────────────────────────
+
+APP: Fichiers
+STATUT: a_decider
+LIEN:
+ALT: https://github.com/noppefoxwolf/FileManagerUI
+NOTES:
+
+APP: Plans / Maps
+STATUT: choisi
+LIEN: https://github.com/karanb03/iOS-map-clone
+ALT:
+NOTES:
+
+APP: Cloud PC
+STATUT: a_decider
+LIEN:
+ALT:
+NOTES:
+
+APP: Strava (optionnel)
+STATUT: a_decider
+LIEN:
+ALT: https://github.com/renzoventura/stride
+NOTES:
+
+# ─────────────────────────────────────────
+# PATREON SOPHEAMEN (si tu achètes)
+# ─────────────────────────────────────────
+# Profil : https://www.patreon.com/cw/sopheamenvan
+# Snapchat, LinkedIn, Uber Eats, Phantom → liens ci-dessus
+
+# ─────────────────────────────────────────
+# AUTRES APPS À AJOUTER
+# ─────────────────────────────────────────
+
+APP:
+STATUT:
+LIEN:
+ALT:
+NOTES:
+
+APP:
+STATUT:
+LIEN:
+ALT:
+NOTES:
+
+# ─────────────────────────────────────────
+# REMARQUES GÉNÉRALES
+# ─────────────────────────────────────────
+# (priorités, apps à virer, qualité min, budget Sopheamen, etc.)
+
+

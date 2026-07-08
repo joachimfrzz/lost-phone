@@ -1,0 +1,206 @@
+LOST PHONE — Choix clones
+(Modifie ce texte puis renvoie-le en copier-coller)
+
+
+===== DEJA FAIT (ne pas refaire) =====
+Apple Music, Rappels, Contacts, Wallet, Dictaphone, apps Apple page 1
+
+
+===== MESSAGERIE =====
+
+WhatsApp — choisi
+https://github.com/efxlve/whatsapp-clone
+Notes :
+
+Telegram — a decider
+https://github.com/Swiftgram/Telegram-iOS
+Alt : https://github.com/levochkaa/BetterTG
+Alt : https://github.com/dopebase/messenger-iOS-chat-swift-firestore
+Notes :
+
+Teams — a decider
+https://github.com/techschneiderrr/Ms-Teams-Clone
+Notes :
+
+Messenger — a decider
+https://github.com/sopheamen007/app.mobile.facebook-messenger-app-ui
+Alt : https://github.com/23122K/Messenger-Clone
+Notes :
+
+Signal — a decider
+https://github.com/signalapp/Signal-iOS
+Notes :
+
+
+===== SOCIAL =====
+
+Instagram — choisi
+https://github.com/dmakarau/InstagramClone
+Notes :
+
+Snapchat — patreon
+https://www.patreon.com/sopheamenvan/posts/swiftui-snapchat-106774973
+Notes :
+
+Facebook — choisi
+https://github.com/omarthamri/FacebookClone
+Alt : https://github.com/jmmanoza/Facebook
+Notes :
+
+LinkedIn — patreon
+https://www.patreon.com/sopheamenvan/posts/swiftui-linkedin-106774147
+Notes :
+
+Twitter / X — hybride
+Base UI : https://github.com/boardguy1024/TwitterSwiftUI
+Dock home : https://github.com/jurmadani/TwitterClone
+Notes : UI boardguy + bottom bar jurmadani sur accueil
+
+Discord — choisi
+https://github.com/piwien/Discord-Clone
+Notes :
+
+
+===== DATING =====
+
+Tinder — choisi
+https://github.com/enesozmus/SwiftUI-Tinder-Clone
+Alt : https://github.com/alejandro-piguave/TinderCloneSwiftUI
+Alt : https://github.com/FranckNdame/swiftui.builds
+Notes :
+
+Happn / Bumble / Hinge — a decider
+Alt : https://github.com/zabloncharles/Fumble
+Notes :
+
+
+===== MUSIQUE =====
+
+Spotify — choisi
+https://github.com/denoni/SpotifyClone
+Alt : https://github.com/adriancysvillegast/Spotify-SwiftUI
+Alt : https://github.com/SwiftlyCoded/Spotify-Clone-SwiftUI
+Notes :
+
+
+===== VIDEO =====
+
+Netflix — choisi
+https://github.com/qeude/Notflix
+Notes :
+
+YouTube — choisi
+https://github.com/milika/SmartTubeIOS
+Notes :
+
+YouTube Music — choisi
+https://github.com/barisozgenn/YoutubeMusicClone-SwiftUI-UIKit
+Notes :
+
+Prime Video — choisi
+https://github.com/yagizdo/PrimeVideoDesignWithSwift
+Notes :
+
+Disney+ — a decider
+https://github.com/GouthamShiv/iOS_DisneyPlus
+Notes :
+
+
+===== IA =====
+
+ChatGPT — choisi
+https://github.com/acalderon20/chatGPT_clone
+Notes :
+
+2e IA — a decider
+Alt : https://github.com/CherryHQ/hanlin-ai
+Notes :
+
+
+===== FINANCE =====
+
+Banque LPSP — choisi
+https://github.com/Pankajrana01/SuperWallet-SwiftUI
+Alt : https://github.com/govardhansbhati/pocketpulse
+Notes :
+
+PayPal — choisi
+https://github.com/pikkukurkku/PayPalClone
+Notes :
+
+Revolut — a decider
+Notes :
+
+Crypto — a decider
+https://www.patreon.com/sopheamenvan/posts/build-phantom-on-124537380
+Alt : https://github.com/RedDragonJ/Swift-Learning/tree/main/SwiftUIAndCoinbase
+Notes :
+
+
+===== SHOPPING & MOBILITE =====
+
+Amazon — choisi
+https://github.com/404ibra/AmazonClone
+Alt : https://github.com/Djallil14/Amazing.ca-Amazon-SwiftUI-Clone
+Notes :
+
+Uber — choisi
+https://github.com/Huss3n/UberSwiftUI
+Alt : https://github.com/WorkWithAfridi/SwiftUI-iUber_A-Uber-Clone
+Notes :
+
+Uber Eats — patreon
+https://www.patreon.com/sopheamenvan/posts/build-uber-clone-116211445
+Notes :
+
+Waze — a decider
+Alt : https://github.com/GGCIRILLO/Waze-Clone-NC1
+Notes :
+
+
+===== VOYAGE =====
+
+Airbnb / Hotels — a decider
+https://github.com/piwien/Airbnb-Clone
+Alt : https://github.com/Keerthi-Sparkout/AirbnbClone-SwiftUI
+Alt : https://github.com/sebastian-nunez/airbnb-ios
+Notes :
+
+Hotel Booking — a decider
+Alt : https://github.com/williamsouef/Travel-Booking-App-SwiftUI
+Notes :
+
+Flighty / Vols — choisi
+https://github.com/chrisfree/flightySwiftUI
+Notes :
+
+Trains — a decider
+Alt : https://github.com/alfredang/sgmrtapp
+Notes :
+
+
+===== UTILITAIRES =====
+
+Fichiers — a decider
+Alt : https://github.com/noppefoxwolf/FileManagerUI
+Notes :
+
+Plans — choisi
+https://github.com/karanb03/iOS-map-clone
+Notes :
+
+Cloud PC — a decider
+Notes :
+
+Strava — a decider
+Alt : https://github.com/renzoventura/stride
+Notes :
+
+
+===== PATREON SOPHEAMEN =====
+https://www.patreon.com/cw/sopheamenvan
+
+
+===== REMARQUES GENERALES =====
+
+

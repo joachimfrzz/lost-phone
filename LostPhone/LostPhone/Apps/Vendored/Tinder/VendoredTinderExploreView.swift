@@ -5,6 +5,7 @@ struct VendoredTinderExploreView: View {
     @State private var dragOffset: CGSize = .zero
     @State private var showLike = false
     @State private var showNope = false
+    @State private var selectedProfile: VendoredTinderProfile?
 
     private var profiles: [VendoredTinderProfile] { VendoredTinderData.explore }
     private var current: VendoredTinderProfile? {
@@ -13,25 +14,31 @@ struct VendoredTinderExploreView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack {
-                if let profile = current {
-                    card(for: profile)
-                        .offset(dragOffset)
-                        .rotationEffect(.degrees(Double(dragOffset.width / 20)))
-                        .gesture(dragGesture)
-                } else {
-                    Text("Plus de profils")
-                        .foregroundStyle(.secondary)
+        NavigationStack {
+            VStack(spacing: 0) {
+                ZStack {
+                    if let profile = current {
+                        card(for: profile)
+                            .offset(dragOffset)
+                            .rotationEffect(.degrees(Double(dragOffset.width / 20)))
+                            .gesture(dragGesture)
+                            .onTapGesture { selectedProfile = profile }
+                    } else {
+                        Text("Plus de profils")
+                            .foregroundStyle(.secondary)
+                    }
                 }
-            }
-            .padding(.horizontal, 15)
-            .padding(.vertical, 20)
-            .frame(maxHeight: .infinity)
+                .padding(.horizontal, 15)
+                .padding(.vertical, 20)
+                .frame(maxHeight: .infinity)
 
-            actionBar
+                actionBar
+            }
+            .background(Color.white)
+            .navigationDestination(item: $selectedProfile) { profile in
+                VendoredTinderExploreDetailView(profile: profile)
+            }
         }
-        .background(Color.white)
     }
 
     private func card(for profile: VendoredTinderProfile) -> some View {

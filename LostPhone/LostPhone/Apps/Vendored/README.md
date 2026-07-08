@@ -54,7 +54,7 @@ Voir `SopheamenShowroomCatalog.swift` — **18 apps** pages 3+ + **3 Apple** pag
 | Facebook | `Facebook/` | Youtube_Facebook_v1.zip |
 | Messenger | `Messenger/` | Youtube_FacebookMessenger_v1.zip |
 | Threads | `Threads/` | Youtube_Threads_v1.zip |
-| Grok | — | grok_clone_v1.zip (**Flutter** → Awesome fallback) |
+| Grok | `Grok/` | grok_clone_v1.zip (**port SwiftUI** depuis Flutter) |
 | Gemini | `Gemini/` | Youtube_Gemini_clone_v1.zip |
 | Netflix | `Netflix/` | Youtube_Netflix_v1.zip |
 | YouTube | `YouTube/` | Youtube_Youtube_v1.zip |
@@ -63,7 +63,7 @@ Voir `SopheamenShowroomCatalog.swift` — **18 apps** pages 3+ + **3 Apple** pag
 | Uber | `Uber/` | Youtube_uber_clone_v1.zip |
 | Uber Eats | `UberEats/` | food-delivery-ui-kit-cart-checkout.zip |
 | Airbnb | `Airbnb/` | youtube_airbnb_clone_v1.zip |
-| Tinder | — | tinder_clone_ui_kit.zip (**Flutter** → Awesome fallback) |
+| Tinder | `Tinder/` | tinder_clone_ui_kit.zip (**port SwiftUI** depuis Flutter) |
 | TikTok | `TikTok/` | Youtube_Tiktok_v1.zip |
 
 Scripts : `vendor_sopheamen_batch.py`, `fix_vendored_colors.py`

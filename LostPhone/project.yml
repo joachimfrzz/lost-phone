@@ -39,6 +39,8 @@ targets:
       - path: LostPhone/Resources/stories
         type: folder
         buildPhase: resources
+      - path: LostPhone/Apps/Vendored/Tinder/Resources/girls
+        buildPhase: resources
     postBuildScripts:
       - name: Embed LPSP stories
         basedOnDependencyAnalysis: false

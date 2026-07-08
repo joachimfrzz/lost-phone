@@ -20,8 +20,7 @@ enum VendoredShowroomRouter {
         case "Threads":
             LpspVendoredThreadsRootView()
         case "Grok":
-            // Zip Sopheamen = Flutter — fallback Awesome SwiftUI showroom.
-            LpspAwesomeGrokView()
+            LpspVendoredGrokRootView()
         case "Gemini":
             LpspVendoredGeminiRootView()
         case "Netflix":
@@ -39,8 +38,7 @@ enum VendoredShowroomRouter {
         case "Airbnb":
             LpspVendoredAirbnbRootView()
         case "Tinder":
-            // Zip Sopheamen = Flutter — fallback Awesome SwiftUI showroom.
-            LpspAwesomeTinderView()
+            LpspVendoredTinderRootView()
         case "TikTok":
             LpspVendoredTikTokRootView()
         default:

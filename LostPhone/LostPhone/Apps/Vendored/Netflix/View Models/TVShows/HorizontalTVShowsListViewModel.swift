@@ -8,7 +8,6 @@
 
 import Foundation
 import Combine
-import CocoaLumberjack
 
 class VendoredNetflixHorizontalTVShowsListViewModel: ObservableObject {
     enum VendoredNetflixState {

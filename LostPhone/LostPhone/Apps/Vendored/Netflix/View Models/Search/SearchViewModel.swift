@@ -8,7 +8,6 @@
 
 import Foundation
 import Combine
-import CocoaLumberjack
 
 struct VendoredNetflixSearchItemViewModel {
     enum VendoredNetflixSearchItemType {

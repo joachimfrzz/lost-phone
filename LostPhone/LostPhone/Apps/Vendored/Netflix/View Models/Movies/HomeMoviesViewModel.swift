@@ -8,7 +8,6 @@
 
 import Foundation
 import Combine
-import CocoaLumberjack
 
 class VendoredNetflixHomeMoviesViewModel: ObservableObject {
     enum VendoredNetflixState {

@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import CocoaLumberjack
 import Combine
 
 struct VendoredNetflixTVShowDetails: View {

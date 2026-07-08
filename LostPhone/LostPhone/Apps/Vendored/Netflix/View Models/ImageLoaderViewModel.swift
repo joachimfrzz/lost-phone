@@ -9,7 +9,6 @@
 import Foundation
 import SwiftUI
 import Combine
-import CocoaLumberjack
 
 class VendoredNetflixImageCache {
     var cache = NSCache<NSString, UIImage>()
@@ -66,11 +65,11 @@ class VendoredNetflixImageLoaderViewModel: ObservableObject {
 
     func loadImageFromCache() -> Bool {
         guard let cacheImage = cache.get(forKey: url.absoluteString) else {
-            DDLogDebug("not found in cache")
+            // DDLogDebug("not found in cache")
             return false
         }
 
-        DDLogDebug("Hit from cache")
+        // DDLogDebug("Hit from cache")
         image = cacheImage
         return true
     }

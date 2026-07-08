@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import CocoaLumberjack
 
 struct VendoredNetflixHorizontalTVShowsListView: View {
     @ObservedObject var tvShowsViewModel: VendoredNetflixHorizontalTVShowsListViewModel

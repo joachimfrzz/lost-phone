@@ -5,6 +5,17 @@ import Foundation
 enum VendoredShowroomCatalog {
     static let tierApps: [String] = [
         "TikTok",
+        "Instagram",
+        "LinkedIn",
+        "Teams",
+        "Spotify",
+        "Netflix",
+        "Disney+",
+        "ChatGPT",
+        "PayPal",
+        "Uber",
+        "Airbnb",
+        "Booking",
     ]
 
     static func isVendored(_ appName: String) -> Bool {

@@ -1,0 +1,23 @@
+LOST PHONE — Choix clones
+Remplis la colonne "Mes notes" ou change "Statut" / les liens.
+Renvoie le fichier CSV ou une capture d'écran du tableau.
+
+STATUT : choisi | patreon | hybride | à décider | ignorer
+
+Ouvrir avec :
+• iPhone → Fichiers → télécharger le .csv → ouvrir avec Numbers
+• Android → Google Sheets (importer le fichier)
+• PC → Excel / LibreOffice
+
+Lien téléchargement :
+https://github.com/joachimfrzz/lost-phone/raw/cursor/vendored-clones-a052/LostPhone/docs/CLONE_PICKS_EDITABLE.csv
+
+Colonnes :
+1 App
+2 Catégorie
+3 Statut (à modifier)
+4 Lien principal (à modifier)
+5 Lien alternatif (à modifier)
+6 Mes notes (tes commentaires)
+
+Remarques générales → écris dans la colonne "Mes notes" de la dernière ligne vide ou renvoie un message séparé.

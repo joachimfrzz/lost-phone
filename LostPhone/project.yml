@@ -6,6 +6,11 @@ options:
     iOS: "17.0"
   createIntermediateGroups: true
 
+packages:
+  Kingfisher:
+    url: https://github.com/onevcat/Kingfisher.git
+    from: 8.0.0
+
 settings:
   base:
     SWIFT_VERSION: "5.9"
@@ -17,6 +22,8 @@ targets:
   LostPhone:
     type: application
     platform: iOS
+    dependencies:
+      - package: Kingfisher
     sources:
       - path: LostPhone
         excludes:
@@ -26,6 +33,7 @@ targets:
           - "**/INTEGRATION.md"
           - "**/SOURCE.md"
           - "**/playground/**"
+          - "**/_backup/**"
     resources:
       # Folder reference preserves stories/<id>/lpsp.json (avoids flattening duplicate lpsp.json).
       - path: LostPhone/Resources/stories

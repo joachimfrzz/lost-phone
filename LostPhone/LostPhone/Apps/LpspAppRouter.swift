@@ -168,7 +168,7 @@ struct LpspAppRouter: View {
         case "Safari":
             SafariView()
         case "Mail":
-            MailView()
+            LpspVendoredGmailRootView()
         case "Notes":
             NotesView()
         case "Calendrier":
@@ -184,9 +184,9 @@ struct LpspAppRouter: View {
         case "Appareil photo", "Camera", "Caméra":
             CameraView()
         case "App Store":
-            AppStoreView()
+            LpspVendoredAppStoreRootView()
         case "Musique", "Music":
-            MusicView()
+            LpspVendoredAppleMusicRootView()
         case "Contacts":
             ContactsView()
         case "Rappels":
@@ -221,7 +221,7 @@ struct LpspAppRouter: View {
                 history: LpspAdapters.safariHistory(from: payload)
             ))
         case "Mail":
-            MailView(manager: LpspCloneBridge.mailManager(from: LpspAdapters.mail(from: payload)))
+            LpspVendoredGmailRootView()
         case "Notes":
             NotesView(manager: LpspCloneBridge.notesManager(from: LpspAdapters.notes(from: payload)))
         case "Calendrier":
@@ -237,9 +237,9 @@ struct LpspAppRouter: View {
         case "Appareil photo", "Camera", "Caméra":
             CameraView()
         case "App Store":
-            AppStoreView()
+            LpspVendoredAppStoreRootView()
         case "Musique", "Music":
-            MusicView(manager: LpspCloneBridge.musicManager(from: payload))
+            LpspVendoredAppleMusicRootView()
         case "Contacts":
             ContactsView(contacts: contacts)
         case "Rappels":
@@ -265,12 +265,12 @@ struct LpspAppRouter: View {
         case .weather: WeatherView()
         case .calculator: CalculatorView()
         case .settings: SettingsView()
-        case .appStore: AppStoreView()
+        case .appStore: LpspVendoredAppStoreRootView()
         case .clock: ClockView()
         case .calendar:
             CalendarView(events: LpspCloneBridge.calendarEvents(from: LpspAdapters.calendar(from: payload)))
         case .camera: CameraView()
-        case .music: MusicView(manager: LpspCloneBridge.musicManager(from: payload))
+        case .music: LpspVendoredAppleMusicRootView()
         default:
             GenericLpspAppView(appName: appName, payload: payload)
         }

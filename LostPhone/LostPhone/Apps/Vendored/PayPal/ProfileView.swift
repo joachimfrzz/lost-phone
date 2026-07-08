@@ -107,7 +107,7 @@ struct VendoredPayPalProfileTile: View {
                         .padding(4)
                     ZStack {
                         Circle()
-                            .fill(Color.color1)
+                            .fill(Color("Color 1"))
                             .frame(width: 40)
                             .overlay(
                                 Image(systemName: "qrcode")

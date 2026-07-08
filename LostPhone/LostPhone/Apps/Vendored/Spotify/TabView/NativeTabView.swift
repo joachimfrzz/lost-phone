@@ -18,49 +18,52 @@ struct VendoredSpotifyNativeTabView<LogoView: View>: View {
     var body: some View {
         NavigationStack {        
             TabView(selection: $selected) {
-                Tab(
-                    VendoredSpotifySpotifyTabItem.home.title,
-                    systemImage: VendoredSpotifySpotifyTabItem.home.icon,
-                    value: .home
-                ) {
-                    VendoredSpotifyHomeView(
-                        endAnimation: $endAnimation,
-                        animation: animation,
-                        logo: logo
+                VendoredSpotifyHomeView(
+                    endAnimation: $endAnimation,
+                    animation: animation,
+                    logo: logo
+                )
+                .tag(VendoredSpotifySpotifyTabItem.home)
+                .tabItem {
+                    Label(
+                        VendoredSpotifySpotifyTabItem.home.title,
+                        systemImage: VendoredSpotifySpotifyTabItem.home.icon
                     )
                 }
-                
-                Tab(
-                    VendoredSpotifySpotifyTabItem.reels.title,
-                    systemImage: VendoredSpotifySpotifyTabItem.reels.icon,
-                    value: .reels
-                ) {
-                    VendoredSpotifyReelView(
-                        geometry: geometry,
-                        showTabBar: .constant(true),
-                        selected: .constant(.home),
+
+                VendoredSpotifyReelView(
+                    geometry: geometry,
+                    showTabBar: .constant(true),
+                    selected: .constant(.home),
+                )
+                .tag(VendoredSpotifySpotifyTabItem.reels)
+                .tabItem {
+                    Label(
+                        VendoredSpotifySpotifyTabItem.reels.title,
+                        systemImage: VendoredSpotifySpotifyTabItem.reels.icon
                     )
                 }
-                
-                Tab(
-                    VendoredSpotifySpotifyTabItem.premium.title,
-                    systemImage: VendoredSpotifySpotifyTabItem.premium.icon,
-                    value: .premium
-                ) {
-                    VendoredSpotifyPremiumView()
-                }
-                
-                Tab(
-                    VendoredSpotifySpotifyTabItem.search.title,
-                    systemImage: VendoredSpotifySpotifyTabItem.search.icon,
-                    value: .search,
-                    role: .search
-                ) {
-                    VendoredSpotifySearchView()
-                        .navigationTitle("Search")
-                        .searchable(text: $searchKey)
-                        .toolbarColorScheme(.dark, for: .navigationBar)
-                }
+
+                VendoredSpotifyPremiumView()
+                    .tag(VendoredSpotifySpotifyTabItem.premium)
+                    .tabItem {
+                        Label(
+                            VendoredSpotifySpotifyTabItem.premium.title,
+                            systemImage: VendoredSpotifySpotifyTabItem.premium.icon
+                        )
+                    }
+
+                VendoredSpotifySearchView()
+                    .navigationTitle("Search")
+                    .searchable(text: $searchKey)
+                    .toolbarColorScheme(.dark, for: .navigationBar)
+                    .tag(VendoredSpotifySpotifyTabItem.search)
+                    .tabItem {
+                        Label(
+                            VendoredSpotifySpotifyTabItem.search.title,
+                            systemImage: VendoredSpotifySpotifyTabItem.search.icon
+                        )
+                    }
             }
             .accentColor(Color.spotifyGreen)
         }

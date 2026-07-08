@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+private struct VendoredSpotifyScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct VendoredSpotifyResizableHeader<Header: View, Content: View>: View {
     var minimumHeight: CGFloat
     var maximumHeight: CGFloat
@@ -38,13 +46,18 @@ struct VendoredSpotifyResizableHeader<Header: View, Content: View>: View {
                         .frame(height: maximumHeight + safeArea.top)
                     }
                 }
+                .background(
+                    GeometryReader { proxy in
+                        Color.clear.preference(
+                            key: VendoredSpotifyScrollOffsetKey.self,
+                            value: -(proxy.frame(in: .named("vendoredSpotifyScroll")).minY) + safeArea.top
+                        )
+                    }
+                )
             }
+            .coordinateSpace(name: "vendoredSpotifyScroll")
+            .onPreferenceChange(VendoredSpotifyScrollOffsetKey.self) { offsetaY = $0 }
             .ignoresSafeArea(.container, edges: ignoreSafeAreaTop ? [.top] : [])
-            .onScrollGeometryChange(for: CGFloat.self) {
-                $0.contentOffset.y + $0.contentInsets.top
-            } action: { oldValue, newValue in
-                offsetaY = newValue
-            }
         }
     }
 }

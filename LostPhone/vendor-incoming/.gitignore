@@ -1,0 +1,9 @@
+# Ne pas committer les archives (trop lourdes) — utiliser Drive ou LFS si besoin
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Garder le README
+!README.md
+!.gitignore

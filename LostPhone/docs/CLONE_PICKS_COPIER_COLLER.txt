@@ -1,206 +1,154 @@
-LOST PHONE — Choix clones
-(Modifie ce texte puis renvoie-le en copier-coller)
+LOST PHONE — Choix clones JOACHIM (2026-07-08 soir)
+(Modifie puis renvoie en copier-coller)
 
 
-===== DEJA FAIT (ne pas refaire) =====
+===== DEJA FAIT =====
 Apple Music, Rappels, Contacts, Wallet, Dictaphone, apps Apple page 1
 
 
 ===== MESSAGERIE =====
 
-WhatsApp — choisi
+WhatsApp
 https://github.com/efxlve/whatsapp-clone
-Notes :
 
-Telegram — a decider
+Telegram
 https://github.com/Swiftgram/Telegram-iOS
-Alt : https://github.com/levochkaa/BetterTG
-Alt : https://github.com/dopebase/messenger-iOS-chat-swift-firestore
-Notes :
 
-Teams — a decider
-https://github.com/techschneiderrr/Ms-Teams-Clone
-Notes :
+Microsoft Teams
+(vide)
 
-Messenger — a decider
+Messenger (?)
 https://github.com/sopheamen007/app.mobile.facebook-messenger-app-ui
-Alt : https://github.com/23122K/Messenger-Clone
-Notes :
 
-Signal — a decider
+Signal
 https://github.com/signalapp/Signal-iOS
-Notes :
 
 
 ===== SOCIAL =====
 
-Instagram — choisi
+Instagram
 https://github.com/dmakarau/InstagramClone
-Notes :
 
-Snapchat — patreon
+Snapchat
 https://www.patreon.com/sopheamenvan/posts/swiftui-snapchat-106774973
-Notes :
 
-Facebook — choisi
+Facebook
 https://github.com/omarthamri/FacebookClone
-Alt : https://github.com/jmmanoza/Facebook
-Notes :
+ou https://github.com/jmmanoza/Facebook
 
-LinkedIn — patreon
+LinkedIn
 https://www.patreon.com/sopheamenvan/posts/swiftui-linkedin-106774147
-Notes :
 
-Twitter / X — hybride
-Base UI : https://github.com/boardguy1024/TwitterSwiftUI
-Dock home : https://github.com/jurmadani/TwitterClone
-Notes : UI boardguy + bottom bar jurmadani sur accueil
+Twitter
+https://github.com/boardguy1024/TwitterSwiftUI
++ https://github.com/jurmadani/TwitterClone
 
-Discord — choisi
+Discord
 https://github.com/piwien/Discord-Clone
-Notes :
 
 
 ===== DATING =====
 
-Tinder — choisi
+Tinder
+https://github.com/FranckNdame/swiftui.builds
 https://github.com/enesozmus/SwiftUI-Tinder-Clone
-Alt : https://github.com/alejandro-piguave/TinderCloneSwiftUI
-Alt : https://github.com/FranckNdame/swiftui.builds
-Notes :
 
-Happn / Bumble / Hinge — a decider
-Alt : https://github.com/zabloncharles/Fumble
-Notes :
+Happn / Bumble / Hinge
+(vide)
 
 
 ===== MUSIQUE =====
 
-Spotify — choisi
+Spotify
 https://github.com/denoni/SpotifyClone
-Alt : https://github.com/adriancysvillegast/Spotify-SwiftUI
-Alt : https://github.com/SwiftlyCoded/Spotify-Clone-SwiftUI
-Notes :
+https://github.com/adriancysvillegast/Spotify-SwiftUI
+https://github.com/SwiftlyCoded/Spotify-Clone-SwiftUI
 
 
 ===== VIDEO =====
 
-Netflix — choisi
+Netflix
 https://github.com/qeude/Notflix
-Notes :
 
-YouTube — choisi
-https://github.com/milika/SmartTubeIOS
-Notes :
-
-YouTube Music — choisi
+YouTube Music
 https://github.com/barisozgenn/YoutubeMusicClone-SwiftUI-UIKit
-Notes :
 
-Prime Video — choisi
+YouTube
+https://github.com/milika/SmartTubeIOS
+
+Prime Video
 https://github.com/yagizdo/PrimeVideoDesignWithSwift
-Notes :
-
-Disney+ — a decider
-https://github.com/GouthamShiv/iOS_DisneyPlus
-Notes :
 
 
 ===== IA =====
 
-ChatGPT — choisi
+ChatGPT
 https://github.com/acalderon20/chatGPT_clone
-Notes :
 
-2e IA — a decider
-Alt : https://github.com/CherryHQ/hanlin-ai
-Notes :
+Grok
+grok_clone_v1.zip (local)
 
 
 ===== FINANCE =====
 
-Banque LPSP — choisi
+Banque
 https://github.com/Pankajrana01/SuperWallet-SwiftUI
-Alt : https://github.com/govardhansbhati/pocketpulse
-Notes :
+https://github.com/govardhansbhati/pocketpulse
 
-PayPal — choisi
+PayPal
 https://github.com/pikkukurkku/PayPalClone
-Notes :
 
-Revolut — a decider
-Notes :
-
-Crypto — a decider
+Coinbase / Binance
+https://github.com/RedDragonJ/Swift-Learning/tree/main/SwiftUIAndCoinbase (a verifier)
 https://www.patreon.com/sopheamenvan/posts/build-phantom-on-124537380
-Alt : https://github.com/RedDragonJ/Swift-Learning/tree/main/SwiftUIAndCoinbase
-Notes :
 
 
 ===== SHOPPING & MOBILITE =====
 
-Amazon — choisi
+Amazon
+https://github.com/Djallil14/Amazing.ca-Amazon-SwiftUI-Clone
 https://github.com/404ibra/AmazonClone
-Alt : https://github.com/Djallil14/Amazing.ca-Amazon-SwiftUI-Clone
-Notes :
 
-Uber — choisi
+Uber
 https://github.com/Huss3n/UberSwiftUI
-Alt : https://github.com/WorkWithAfridi/SwiftUI-iUber_A-Uber-Clone
-Notes :
+https://github.com/WorkWithAfridi/SwiftUI-iUber_A-Uber-Clone
 
-Uber Eats — patreon
-https://www.patreon.com/sopheamenvan/posts/build-uber-clone-116211445
-Notes :
+Uber Eats
+(vide)
 
-Waze — a decider
-Alt : https://github.com/GGCIRILLO/Waze-Clone-NC1
-Notes :
+Waze
+https://github.com/GGCIRILLO/Waze-Clone-NC1
 
 
 ===== VOYAGE =====
 
-Airbnb / Hotels — a decider
+AirBNB
 https://github.com/piwien/Airbnb-Clone
-Alt : https://github.com/Keerthi-Sparkout/AirbnbClone-SwiftUI
-Alt : https://github.com/sebastian-nunez/airbnb-ios
-Notes :
 
-Hotel Booking — a decider
-Alt : https://github.com/williamsouef/Travel-Booking-App-SwiftUI
-Notes :
+Hotel
+(vide)
 
-Flighty / Vols — choisi
+Flighty
 https://github.com/chrisfree/flightySwiftUI
-Notes :
 
-Trains — a decider
-Alt : https://github.com/alfredang/sgmrtapp
-Notes :
+Train
+(vide)
 
 
 ===== UTILITAIRES =====
 
-Fichiers — a decider
-Alt : https://github.com/noppefoxwolf/FileManagerUI
-Notes :
+Fichiers
+(vide)
 
-Plans — choisi
+Plans
 https://github.com/karanb03/iOS-map-clone
-Notes :
-
-Cloud PC — a decider
-Notes :
-
-Strava — a decider
-Alt : https://github.com/renzoventura/stride
-Notes :
 
 
-===== PATREON SOPHEAMEN =====
-https://www.patreon.com/cw/sopheamenvan
+===== ZIPS LOCAUX (21 au total — a envoyer) =====
+grok_clone_v1.zip
+(+ 20 autres a lister)
 
 
-===== REMARQUES GENERALES =====
+===== REMARQUES =====
 
 

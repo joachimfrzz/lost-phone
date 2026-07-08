@@ -45,8 +45,3 @@ struct VendoredInstagramProfileMediaSelectionView: View {
     }
 }
 
-struct ProfileMediaSelectionView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramProfileMediaSelectionView()
-    }
-}

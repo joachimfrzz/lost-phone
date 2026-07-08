@@ -29,8 +29,3 @@ struct VendoredInstagramPostGridView: View {
     }
 }
 
-struct PostGridView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramPostGridView(posts: VendoredInstagramMockData().posts)
-    }
-}

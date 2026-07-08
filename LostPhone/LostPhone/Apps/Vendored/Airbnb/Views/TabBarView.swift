@@ -37,8 +37,3 @@ struct VendoredAirbnbTabBarView: View {
     }
 }
 
-struct TabBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredAirbnbTabBarView()
-    }
-}

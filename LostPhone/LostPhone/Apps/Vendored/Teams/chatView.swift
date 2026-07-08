@@ -119,9 +119,3 @@ struct VendoredTeamsdiv: View {
 }
 
 
-struct chatView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredTeamschatView()
-            .preferredColorScheme(.dark)
-    }
-}

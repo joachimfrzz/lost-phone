@@ -141,7 +141,7 @@ def vendor(
         file_texts[f] = text
         all_types.update(discover_types(text))
 
-    mapping = {name: f"{type_prefix}{name}" for name in sorted(all_types, key=len, reverse=True)}
+    mapping = {name: f"{type_prefix}{name}" for name in sorted(all_types, key=len, reverse=True) if name != "State"}
 
     for src_f, text in file_texts.items():
         rel = src_f.relative_to(source)

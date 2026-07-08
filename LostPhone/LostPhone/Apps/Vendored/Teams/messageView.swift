@@ -74,8 +74,3 @@ struct VendoredTeamsmessageView: View {
     }
 }
 
-struct messageView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredTeamsmessageView(name:"ARYAN KHANNA",mes:"You: konsa wala",stat:1,date: "12-09",pic:"ak")
-    }
-}

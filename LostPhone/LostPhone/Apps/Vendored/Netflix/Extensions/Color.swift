@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 extension Color {
-    static let darkGray = Color("darkGray")
-    static let darkerGray = Color("darkerGray")
-    static let lightGray = Color("lightGray")
+    static let vendoredNetflixDarkGray = Color("darkGray")
+    static let vendoredNetflixDarkerGray = Color("darkerGray")
+    static let vendoredNetflixLightGray = Color("lightGray")
 }

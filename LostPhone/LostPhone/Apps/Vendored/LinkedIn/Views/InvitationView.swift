@@ -37,8 +37,3 @@ struct VendoredLinkedInInvitationView: View {
     }
 }
 
-struct InvitationView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredLinkedInInvitationView(profileData: sampleData)
-    }
-}

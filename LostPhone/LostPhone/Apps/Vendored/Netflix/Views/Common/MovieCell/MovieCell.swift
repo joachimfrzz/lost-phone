@@ -23,24 +23,3 @@ struct VendoredNetflixMovieCell: View {
     }
 }
 
-struct MovieCell_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredNetflixMovieCell(for: VendoredNetflixMovie(id: 330457,
-                                      title: "Frozen II",
-                                      overview: """
-                Elsa, Anna, Kristoff and Olaf head far into
-                the forest to learn the truth about an ancient
-                mystery of their kingdom.
-        """,
-                                      popularity: 190.236,
-                                      voteAverage: 7.1,
-                                      video: false,
-                                      adult: false,
-                                      voteCount: 2860,
-                                      genreIds: [6125, 2],
-                                      genres: nil,
-                                      posterPath: "/pjeMs3yqRmFL3giJy4PMXWZTTPa.jpg",
-                                      backdropPath: "/xJWPZIYOEFIjZpBL7SVBGnzRYXp.jpg",
-                                      releaseDate: "2019-11-20"))
-    }
-}

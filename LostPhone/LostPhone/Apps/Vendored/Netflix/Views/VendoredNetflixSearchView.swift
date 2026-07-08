@@ -111,7 +111,7 @@ struct VendoredNetflixSearchView: View {
                 }
             }
             .frame(width: 100, height: 160)
-            .background(Color.darkGray)
+            .background(Color.vendoredNetflixDarkGray)
             .cornerRadius(8.0)
             Text(item.title)
                 .font(.system(size: 12, weight: .bold))
@@ -122,8 +122,3 @@ struct VendoredNetflixSearchView: View {
     }
 }
 
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredNetflixSearchView()
-    }
-}

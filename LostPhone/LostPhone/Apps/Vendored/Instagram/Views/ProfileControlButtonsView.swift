@@ -43,8 +43,3 @@ struct VendoredInstagramProfileControlButtonsView: View {
     }
 }
 
-struct ProfileControlButtonsView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramProfileControlButtonsView()
-    }
-}

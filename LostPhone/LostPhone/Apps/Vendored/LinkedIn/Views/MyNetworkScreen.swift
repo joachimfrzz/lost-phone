@@ -53,8 +53,3 @@ struct VendoredLinkedInMyNetworkScreen: View {
     }
 }
 
-struct MyNetworkScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredLinkedInMyNetworkScreen()
-    }
-}

@@ -49,12 +49,3 @@ struct VendoredNetflixHorizontalMoviesListView: View {
             }.transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.5)))
         }
     }
-struct HorizontalMoviesListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            Color(.black).edgesIgnoringSafeArea(.all)
-            VendoredNetflixHorizontalMoviesListView(horizontalMoviesListViewModel: VendoredNetflixHorizontalMoviesListViewModel(fetcher: VendoredNetflixAPIEndpoints.popularMovies),
-                                     listName: "Popular Movies")
-        }
-    }
-}

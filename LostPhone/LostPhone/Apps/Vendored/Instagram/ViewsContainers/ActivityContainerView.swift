@@ -26,8 +26,3 @@ struct VendoredInstagramActivityContainerView: View {
     }
 }
 
-struct ActivityView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramActivityContainerView()
-    }
-}

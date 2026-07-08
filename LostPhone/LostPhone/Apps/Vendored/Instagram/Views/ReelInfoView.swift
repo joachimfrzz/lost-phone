@@ -98,12 +98,3 @@ struct VendoredInstagramReelInfoView: View {
     }
 }
 
-struct ReelInfoView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramReelInfoView(video: VendoredInstagramVideo(player: AVPlayer(url: URL(fileURLWithPath: Bundle.main.path(forResource: "reel_7", ofType: "mp4")!)),
-                                  likes: "17M",
-                                  comments: "2k",
-                                  caption: "After all, for mankind as a whole there are no exports. We did not start developing by obtaining foreign exchange from Mars or the moon. Mankind is a closed society.",
-                                  user: VendoredInstagramUser(userName: "fernandotorres", userImage: "user_11")))
-    }
-}

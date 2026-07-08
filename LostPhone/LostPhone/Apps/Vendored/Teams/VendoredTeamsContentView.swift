@@ -20,9 +20,3 @@ struct VendoredTeamsContentView: View {
 
 
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredTeamsContentView()
-            .preferredColorScheme(.dark)
-    }
-}

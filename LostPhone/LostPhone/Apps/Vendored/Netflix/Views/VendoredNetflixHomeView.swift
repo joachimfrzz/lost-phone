@@ -14,7 +14,7 @@ enum VendoredNetflixSelectedType {
 }
 
 struct VendoredNetflixHomeView: View {
-    @VendoredNetflixState public var selectedType: VendoredNetflixSelectedType = .tvShows
+    @State public var selectedType: VendoredNetflixSelectedType = .tvShows
 
     var body: some View {
         NavigationView {
@@ -58,8 +58,3 @@ struct VendoredNetflixHomeView: View {
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredNetflixHomeView()
-    }
-}

@@ -36,8 +36,3 @@ struct VendoredDisneyMovieCarouselView: View {
     }
 }
 
-struct MovieCarouselView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredDisneyMovieCarouselView(pageViews: [Image("pg-mandalorian"), Image("pg-mulan")])
-    }
-}

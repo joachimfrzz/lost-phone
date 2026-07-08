@@ -56,8 +56,3 @@ struct VendoredInstagramProfileHeader: View {
     }
 }
 
-struct ProfileHeader_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramProfileHeader(user: VendoredInstagramUser(userName: "pankajgaikar", userImage: "sample_post"))
-    }
-}

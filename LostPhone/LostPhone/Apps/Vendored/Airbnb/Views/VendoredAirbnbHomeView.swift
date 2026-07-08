@@ -116,17 +116,7 @@ struct VendoredAirbnbPropertyView: View {
     }
 }
 
-struct PropertyView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredAirbnbPropertyView(item: VendoredAirbnbExperiences(image: "property1", name: "1", price: "2"))
-    }
-}
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredAirbnbHomeView()
-    }
-}
 
 struct VendoredAirbnbCategoriesView: View {
     var item: VendoredAirbnbCategory

@@ -57,8 +57,3 @@ struct VendoredTeamsheaderView: View {
     }
 }
 
-struct headerView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredTeamsheaderView()
-    }
-}

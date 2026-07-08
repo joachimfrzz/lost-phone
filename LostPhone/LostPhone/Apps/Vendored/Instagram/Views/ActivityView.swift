@@ -98,14 +98,6 @@ struct VendoredInstagramActivityView: View {
     }
 }
 
-struct LikedActivityView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramActivityView(activity: VendoredInstagramActivity(activity: .liked,
-                                             duration: "5h",
-                                             usersInContext: [VendoredInstagramUser(userName: "axeyked", userImage: "user_2")],
-                                             post: VendoredInstagramPost(user: VendoredInstagramUser(userName: "pankajgaikar", userImage: "sample_post") , postImage: "post_18", caption: "If any one attempts to haul down the American flag, shoot him on the spot.", likes: "leomessi and others liked")))
-    }
-}
 
 struct VendoredInstagramLikedActivityView_Previews_Comment: PreviewProvider {
     static var previews: some View {

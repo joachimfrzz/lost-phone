@@ -61,7 +61,7 @@ struct VendoredNetflixMovieCastListView: View {
                 }
             } else {
                VStack(alignment: .center, spacing: 16) {
-                Color.darkerGray
+                Color.vendoredNetflixDarkerGray
                     .frame(width: 130, height: 130)
                     .clipShape(Circle())
                 Text(actor.name).foregroundColor(.white)
@@ -71,11 +71,3 @@ struct VendoredNetflixMovieCastListView: View {
     }
 }
 
-struct MovieCastListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-            VendoredNetflixMovieCastListView(movieId: 330457)
-        }
-    }
-}

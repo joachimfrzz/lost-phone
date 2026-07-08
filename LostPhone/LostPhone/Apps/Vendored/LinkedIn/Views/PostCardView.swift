@@ -52,8 +52,3 @@ struct VendoredLinkedInPostCardView: View {
     }
 }
 
-struct PostCardView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredLinkedInPostCardView(data: samplePostCardData)
-    }
-}

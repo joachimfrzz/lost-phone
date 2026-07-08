@@ -46,13 +46,3 @@ struct VendoredDisneyHomeView: View {
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredDisneyHomeView()
-            .environment(\.colorScheme, .light)
-            .environmentObject(VendoredDisneyHomeViewModel())
-        VendoredDisneyHomeView()
-            .environment(\.colorScheme, .dark)
-            .environmentObject(VendoredDisneyHomeViewModel())
-    }
-}

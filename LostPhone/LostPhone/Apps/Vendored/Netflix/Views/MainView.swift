@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct VendoredNetflixMainView: View {
-    @VendoredNetflixState public var selectedTab: Int = 0
-    @VendoredNetflixState public var showSplashScreen: Bool = true
+    @State public var selectedTab: Int = 0
+    @State public var showSplashScreen: Bool = true
 
     init() {
         UITabBar.appearance().barTintColor = UIColor.black

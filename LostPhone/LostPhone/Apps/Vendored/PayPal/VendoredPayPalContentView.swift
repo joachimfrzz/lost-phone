@@ -119,14 +119,4 @@ var rect = UIScreen.main.bounds
 
 
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            VendoredPayPalContentView()
-                .preferredColorScheme(.light)
-            VendoredPayPalContentView()
-                .preferredColorScheme(.dark)
-        }
-    }
-}
 

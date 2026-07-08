@@ -35,8 +35,3 @@ struct VendoredLinkedInSearchBarView: View {
     }
 }
 
-struct SearchBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredLinkedInSearchBarView()
-    }
-}

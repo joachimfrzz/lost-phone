@@ -108,8 +108,3 @@ struct VendoredDisneyMovieGroupView: View {
     }
 }
 
-struct MovieGroupView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredDisneyMovieGroupView(movieGroup: .marvel)
-    }
-}

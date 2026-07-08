@@ -38,8 +38,3 @@ struct VendoredInstagramMessagesContainerView: View {
     }
 }
 
-struct MessagesContainerView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramMessagesContainerView()
-    }
-}

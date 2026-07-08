@@ -61,11 +61,11 @@ struct VendoredNetflixTVShowDetails: View {
                                    defaultView: {
                                     AnyView(
                                         Rectangle()
-                                            .fill(Color.darkerGray)
+                                            .fill(Color.vendoredNetflixDarkerGray)
                                     )
                         })
                     } else {
-                        Color.darkerGray
+                        Color.vendoredNetflixDarkerGray
                     }
                 }
             }
@@ -128,11 +128,3 @@ struct VendoredNetflixTVShowDetails: View {
     }
 }
 
-struct TVShowDetails_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            Color(.black).edgesIgnoringSafeArea(.all)
-            VendoredNetflixTVShowDetails(tvShowId: 1402)
-        }
-    }
-}

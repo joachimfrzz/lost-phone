@@ -50,12 +50,3 @@ struct VendoredNetflixHorizontalTVShowsListView: View {
     }
 }
 
-struct HorizontalTVShowsListView_Previews: PreviewProvider {
-    static var previews: some View {
-         ZStack {
-            Color(.black).edgesIgnoringSafeArea(.all)
-            VendoredNetflixHorizontalTVShowsListView(tvShowsViewModel: VendoredNetflixHorizontalTVShowsListViewModel(fetcher: VendoredNetflixAPIEndpoints.popularTVShows),
-                                      listName: "Popular TV Shows")
-        }
-    }
-}

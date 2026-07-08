@@ -54,11 +54,11 @@ struct VendoredNetflixMovieDetails: View {
                                    defaultView: {
                                     AnyView(
                                         Rectangle()
-                                            .fill(Color.darkerGray)
+                                            .fill(Color.vendoredNetflixDarkerGray)
                                     )
                         })
                     } else {
-                        Color.darkerGray
+                        Color.vendoredNetflixDarkerGray
                     }
                 }
             }
@@ -116,8 +116,3 @@ struct VendoredNetflixMovieDetails: View {
     }
 }
 
-struct MovieDetails_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredNetflixMovieDetails(movieId: 330457)
-    }
-}

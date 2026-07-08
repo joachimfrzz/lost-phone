@@ -30,8 +30,3 @@ struct VendoredInstagramStoryView: View {
     }
 }
 
-struct StoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramStoryView(story: VendoredInstagramMockData().stories.first!)
-    }
-}

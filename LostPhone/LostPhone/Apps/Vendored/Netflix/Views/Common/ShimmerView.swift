@@ -10,11 +10,11 @@ import SwiftUI
 
 struct VendoredNetflixShimmerView: View {
 
-    @VendoredNetflixState private var opacity: Double = 0.25
+    @State private var opacity: Double = 0.25
 
     var body: some View {
         RoundedRectangle(cornerRadius: 4)
-            .fill(Color.darkGray)
+            .fill(Color.vendoredNetflixDarkGray)
             .opacity(opacity)
             .transition(.opacity)
             .onAppear {
@@ -27,40 +27,3 @@ struct VendoredNetflixShimmerView: View {
     }
 }
 
-struct ShimmerView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-            VStack {
-                VendoredNetflixShimmerView()
-                    .frame(width: 100, height: 100)
-
-                VendoredNetflixShimmerView()
-                    .frame(height: 20)
-
-                VendoredNetflixShimmerView()
-                    .frame(height: 20)
-
-                VendoredNetflixShimmerView()
-                    .frame(height: 100)
-
-                VendoredNetflixShimmerView()
-                    .frame(height: 50)
-
-                VendoredNetflixShimmerView()
-                    .frame(height: 20)
-
-                VendoredNetflixShimmerView()
-                    .frame(height: 100)
-
-                VendoredNetflixShimmerView()
-                    .frame(height: 50)
-
-                VendoredNetflixShimmerView()
-                    .frame(height: 20)
-            }
-            .padding()
-
-        }
-    }
-}

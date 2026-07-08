@@ -33,7 +33,7 @@ struct VendoredNetflixTVSeasonListView: View {
                                                    defaultView: {
                                                     AnyView(
                                                         RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                                            .fill(Color.darkGray)
+                                                            .fill(Color.vendoredNetflixDarkGray)
                                                     )
                                         }
                                         )
@@ -42,7 +42,7 @@ struct VendoredNetflixTVSeasonListView: View {
                                             .cornerRadius(16)
                                     } else {
                                         RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                            .fill(Color.darkGray)
+                                            .fill(Color.vendoredNetflixDarkGray)
                                             .frame(width: 150, height: 90)
                                     }
                                 }
@@ -73,14 +73,3 @@ struct VendoredNetflixTVSeasonListView: View {
     }
 }
 
-struct TVSeasonListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            VendoredNetflixTVSeasonListView(tvShowId: 1402,
-                             tvSeason: VendoredNetflixTVSeason(id: 3643,
-                                                name: "Season 1",
-                                                overview: "Rick Grimes embarks on a survivalist.",
-                                                seasonNumber: 1, posterPath: "/yaOB2Y8GcoXwjNQ3apq67bMbNHF.jpg"))
-        }
-    }
-}

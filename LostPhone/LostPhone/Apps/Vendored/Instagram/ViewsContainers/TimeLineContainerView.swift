@@ -52,8 +52,3 @@ struct VendoredInstagramTimeLineContainerView: View {
     }
 }
 
-struct TimeLineView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramTimeLineContainerView()
-    }
-}

@@ -29,11 +29,3 @@ struct VendoredNetflixHomeTVShowsView: View {
     }
 }
 
-struct HomeTVShowsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack {
-            Color(.black).edgesIgnoringSafeArea(.all)
-            VendoredNetflixHomeTVShowsView()
-        }
-    }
-}

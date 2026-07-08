@@ -44,10 +44,3 @@ struct VendoredInstagramProfileContainerView: View {
     }
 }
 
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            VendoredInstagramProfileContainerView()
-        }
-    }
-}

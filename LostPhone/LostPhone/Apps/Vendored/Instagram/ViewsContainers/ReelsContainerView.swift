@@ -23,8 +23,3 @@ struct VendoredInstagramReelsContainerView: View {
     }
 }
 
-struct ReelsView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredInstagramReelsContainerView()
-    }
-}

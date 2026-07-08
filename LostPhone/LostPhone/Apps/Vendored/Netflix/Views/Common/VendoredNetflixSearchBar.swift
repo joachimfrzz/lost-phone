@@ -14,17 +14,17 @@ struct VendoredNetflixSearchBar: View {
     var body: some View {
         HStack {
             HStack {
-                Image(systemName: "magnifyingglass").foregroundColor(Color.lightGray)
+                Image(systemName: "magnifyingglass").foregroundColor(Color.vendoredNetflixLightGray)
 
                 TextField("Search", text: $text)
-                    .foregroundColor(Color.lightGray)
+                    .foregroundColor(Color.vendoredNetflixLightGray)
 
                 Group {
                     if !text.isEmpty {
                         Button(action: {
                             self.text = ""
                         }, label: {
-                            Image(systemName: "xmark.circle.fill").foregroundColor(Color.lightGray)
+                            Image(systemName: "xmark.circle.fill").foregroundColor(Color.vendoredNetflixLightGray)
 
                         })
                     } else {
@@ -33,16 +33,11 @@ struct VendoredNetflixSearchBar: View {
                 }
             }
             .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-            .foregroundColor(Color.lightGray)
-            .background(Color.darkGray)
+            .foregroundColor(Color.vendoredNetflixLightGray)
+            .background(Color.vendoredNetflixDarkGray)
             .cornerRadius(10.0)
         }
         .padding(.horizontal)
     }
 }
 
-struct SearchBar_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredNetflixSearchBar(text: .constant("Search"))
-    }
-}

@@ -44,8 +44,3 @@ struct VendoredTeamsnavView: View {
     }
 }
 
-struct navView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredTeamsnavView(img:"bell",text:"Activity",stat:1)
-    }
-}

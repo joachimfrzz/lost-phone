@@ -41,8 +41,3 @@ struct VendoredLinkedInProfileAndPostView: View {
     }
 }
 
-struct ProfileAndPostView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredLinkedInProfileAndPostView()
-    }
-}

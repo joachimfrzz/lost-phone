@@ -10,7 +10,7 @@ import SwiftUI
 
 struct VendoredNetflixAsyncImage: View {
     @ObservedObject private var loader: VendoredNetflixImageLoaderViewModel
-    @VendoredNetflixState var shouldAnimate = true
+    @State var shouldAnimate = true
     private let configuration: (Image) -> AnyView
     private let defaultView: (() -> AnyView?)?
 
@@ -44,8 +44,3 @@ struct VendoredNetflixAsyncImage: View {
     }
 }
 
-struct AsyncImage_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredNetflixAsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg")!)
-    }
-}

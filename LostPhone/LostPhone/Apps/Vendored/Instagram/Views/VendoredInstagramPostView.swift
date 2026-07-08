@@ -84,10 +84,3 @@ struct VendoredInstagramPostView: View {
     }
 }
 
-struct PostView_Previews: PreviewProvider {
-    static var previews: some View {
-        GeometryReader { geometry in
-            VendoredInstagramPostView(post: VendoredInstagramMockData().posts.first!, screenWidth: geometry.size.width)
-        }
-    }
-}

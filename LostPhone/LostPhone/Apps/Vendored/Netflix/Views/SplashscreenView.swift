@@ -17,8 +17,3 @@ struct VendoredNetflixSplashscreenView: View {
     }
 }
 
-struct SplashscreenView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredNetflixSplashscreenView()
-    }
-}

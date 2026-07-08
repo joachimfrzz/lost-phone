@@ -65,8 +65,3 @@ struct VendoredDisneyButtonGroupView: View {
     }
 }
 
-struct ButtonGroupView_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredDisneyButtonGroupView()
-    }
-}

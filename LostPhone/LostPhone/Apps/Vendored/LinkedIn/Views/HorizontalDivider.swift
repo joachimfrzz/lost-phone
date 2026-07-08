@@ -23,8 +23,3 @@ struct VendoredLinkedInHorizontalDivider: View {
     }
 }
 
-struct HorizontalDivider_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredLinkedInHorizontalDivider(color:.gray, height:5)
-    }
-}

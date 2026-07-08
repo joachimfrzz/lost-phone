@@ -39,8 +39,3 @@ struct VendoredDisneyHorizontalList: View {
     }
 }
 
-struct HorizontalList_Previews: PreviewProvider {
-    static var previews: some View {
-        VendoredDisneyHorizontalList(group: VendoredDisneyListGroup.recommendation)
-    }
-}

@@ -472,7 +472,7 @@ struct VendoredUberCategoryView:View {
 
 struct VendoredUberFeaturedRestaurantView:View {
     // load featured item
-    var restaurantDatas:[VendoredUberEatsRestaurantResponse] = eatsRestaurantsFeaturedData
+    var restaurantDatas:[VendoredUberEmbeddedRestaurantResponse] = eatsRestaurantsFeaturedData
     
     var body: some View {
         VStack (spacing:12){
@@ -513,7 +513,7 @@ struct VendoredUberFeaturedRestaurantView:View {
 }
 
 struct VendoredUberRestraurantView:View {
-    var restaurant:VendoredUberEatsRestaurantResponse
+    var restaurant:VendoredUberEmbeddedRestaurantResponse
     // get screen width
     var width = UIScreen.main.bounds.width
     
@@ -588,7 +588,7 @@ struct VendoredUberRestraurantView:View {
 
 struct VendoredUberPlaceYouMightLikeView:View {
     // load featured item
-    var restaurantDatas:[VendoredUberEatsRestaurantResponse] = placesYouMightLikeData
+    var restaurantDatas:[VendoredUberEmbeddedRestaurantResponse] = placesYouMightLikeData
     
     var body: some View {
         VStack (spacing:12){

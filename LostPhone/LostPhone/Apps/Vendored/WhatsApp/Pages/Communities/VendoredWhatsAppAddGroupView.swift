@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct VendoredWhatsAppCommunitiesView: View {
+struct VendoredWhatsAppAddGroupView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -118,5 +118,5 @@ struct VendoredWhatsAppCommunitiesView: View {
 }
 
 #Preview {
-    VendoredWhatsAppCommunitiesView()
+    VendoredWhatsAppAddGroupView()
 }

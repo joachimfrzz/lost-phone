@@ -22,7 +22,7 @@ struct VendoredGeminiHomeView: View {
                 .font(.title)
                 .fontWeight(.semibold)
                 .foregroundStyle(
-                    LinearGradient(gradient: Gradient(colors: [Color.vendoredGeminiPrimary1, Color.vendoredGeminiPrimary2, Color.vendoredGeminiPrimary3]), startPoint: .leading, endPoint: .trailing)
+                    LinearGradient(gradient: Gradient(colors: [Color.vendoredGeminiPrimaryColor1, Color.vendoredGeminiPrimaryColor2, Color.vendoredGeminiPrimaryColor3]), startPoint: .leading, endPoint: .trailing)
                 )
                 .frame(maxHeight: .infinity)
                 // floating button

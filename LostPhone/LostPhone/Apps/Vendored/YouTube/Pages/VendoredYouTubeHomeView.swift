@@ -114,7 +114,7 @@ struct VendoredYouTubeCategoryButtonView:View {
                             .foregroundStyle(selectedIndex == index ? .black : .white)
                             .padding(.horizontal, 16)
                             .padding(.vertical , 10)
-                            .background(selectedIndex == index ? .white : Color.grayButtonColor)
+                            .background(selectedIndex == index ? .white : Color.vendoredYouTubeGrayButton)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }

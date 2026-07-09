@@ -122,7 +122,7 @@ struct VendoredYouTubeContentInfoView:View {
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
-                    .background(Color.grayButtonColor)
+                    .background(Color.vendoredYouTubeGrayButton)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.white)
                 }
@@ -166,7 +166,7 @@ struct VendoredYouTubeActionButtonsView:View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.grayButtonColor)
+                    .background(Color.vendoredYouTubeGrayButton)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.white)
                 }
@@ -186,7 +186,7 @@ struct VendoredYouTubeActionButtonsView:View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.grayButtonColor)
+                    .background(Color.vendoredYouTubeGrayButton)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.white)
                 }
@@ -207,7 +207,7 @@ struct VendoredYouTubeActionButtonsView:View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.grayButtonColor)
+                    .background(Color.vendoredYouTubeGrayButton)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.white)
                 }
@@ -228,7 +228,7 @@ struct VendoredYouTubeActionButtonsView:View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.grayButtonColor)
+                    .background(Color.vendoredYouTubeGrayButton)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.white)
                 }
@@ -249,7 +249,7 @@ struct VendoredYouTubeActionButtonsView:View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.grayButtonColor)
+                    .background(Color.vendoredYouTubeGrayButton)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.white)
                 }
@@ -270,7 +270,7 @@ struct VendoredYouTubeActionButtonsView:View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.grayButtonColor)
+                    .background(Color.vendoredYouTubeGrayButton)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.white)
                 }
@@ -291,7 +291,7 @@ struct VendoredYouTubeActionButtonsView:View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
-                    .background(Color.grayButtonColor)
+                    .background(Color.vendoredYouTubeGrayButton)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .foregroundStyle(.white)
                 }
@@ -331,7 +331,7 @@ struct VendoredYouTubeLastCommentView:View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal)
         .padding(.vertical, 12)
-        .background(Color.grayButtonColor)
+        .background(Color.vendoredYouTubeGrayButton)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

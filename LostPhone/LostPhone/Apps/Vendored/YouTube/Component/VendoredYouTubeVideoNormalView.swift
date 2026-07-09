@@ -24,7 +24,7 @@ struct VendoredYouTubeVideoNormalView:View {
                     .font(.footnote)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Color.grayButtonColor.opacity(0.6))
+                    .background(Color.vendoredYouTubeGrayButton.opacity(0.6))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .padding(.horizontal, 12)
                     .foregroundStyle(.white)

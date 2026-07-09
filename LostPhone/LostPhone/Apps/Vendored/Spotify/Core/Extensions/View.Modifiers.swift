@@ -33,8 +33,8 @@ private struct RelativeFrameModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         GeometryReader { geometry in
-            let width = widthPercent.map { geometry.size.width * ($0 / 100) }
-            let height = heightPercent.map { geometry.size.height * ($0 / 100) }
+            let width = widthPercent.map { CGFloat(geometry.size.width * ($0 / 100)) }
+            let height = heightPercent.map { CGFloat(geometry.size.height * ($0 / 100)) }
 
             content
                 .frame(width: width, height: height, alignment: .center)

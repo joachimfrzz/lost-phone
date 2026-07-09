@@ -34,11 +34,19 @@ workflows:
       - name: Install XcodeGen
         script: brew install xcodegen
 
+      - name: Skip macro validation (vendored SwiftUI @Entry)
+        script: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+
       - name: Sync LPSP stories into bundle
         script: |
           cd LostPhone
           mkdir -p LostPhone/Resources/stories
           cp -R ../public/stories/* LostPhone/Resources/stories/
+
+      - name: iOS build preflight
+        script: |
+          chmod +x LostPhone/scripts/ios-build-preflight.sh
+          LostPhone/scripts/ios-build-preflight.sh
 
       - name: Generate Xcode project
         script: |

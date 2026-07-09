@@ -23,14 +23,17 @@ export interface NormalizedRide {
   duration?: string;
 }
 
-function msgFromRaw(m: Record<string, unknown>): NormalizedMessage {
+function msgFromRaw(m: Record<string, unknown>, ownerHint?: string): NormalizedMessage {
   const sender = String(m.de ?? m.expediteur ?? m.from ?? "");
   const text = String(m.texte ?? m.contenu ?? m.body ?? m.message ?? "");
+  const owner = (ownerHint ?? "mathieu").toLowerCase();
   const outgoing =
     sender.toLowerCase() === "moi" ||
     sender.toLowerCase() === "me" ||
     sender.toLowerCase() === "mathieu" ||
-    sender.toLowerCase() === "m";
+    sender.toLowerCase() === "m" ||
+    sender.toLowerCase().includes(owner) ||
+    sender.toLowerCase().includes("garnier");
   return {
     id: m.id as string | undefined,
     text,
@@ -42,7 +45,7 @@ function msgFromRaw(m: Record<string, unknown>): NormalizedMessage {
 export function adaptThreads(data: unknown): NormalizedThread[] {
   const d = data as { threads?: Array<Record<string, unknown>> };
   return (d?.threads ?? []).map((t) => {
-    const messages = ((t.messages as Array<Record<string, unknown>>) ?? []).map(msgFromRaw);
+    const messages = ((t.messages as Array<Record<string, unknown>>) ?? []).map((m) => msgFromRaw(m));
     const last = messages[messages.length - 1];
     return {
       contact: String(t.contact ?? "Inconnu"),
@@ -55,7 +58,7 @@ export function adaptThreads(data: unknown): NormalizedThread[] {
 export function adaptSignal(data: unknown): NormalizedThread[] {
   const d = data as { conversations?: Array<Record<string, unknown>> };
   return (d?.conversations ?? []).map((c) => {
-    const messages = ((c.messages as Array<Record<string, unknown>>) ?? []).map(msgFromRaw);
+    const messages = ((c.messages as Array<Record<string, unknown>>) ?? []).map((m) => msgFromRaw(m));
     const last = messages[messages.length - 1];
     return {
       contact: String(c.contact ?? "Inconnu"),
@@ -106,16 +109,22 @@ export function adaptInstagram(data: unknown) {
     feed: ((d.feed as Array<Record<string, unknown>>) ?? []).map((p) => ({
       caption: String(p.caption ?? p.legende ?? ""),
       likes: Number(p.likes ?? 0),
-      comments: Number(p.commentaires ?? 0),
+      comments: Number(p.commentaires ?? p.comments ?? (Number(p.likes ?? 0) > 40 ? 3 : 1)),
       date: p.date as string | undefined,
     })),
-    dms: ((d.dm_threads as Array<Record<string, unknown>>) ?? []).map((t) => ({
-      contact: String(t.contact ?? ""),
-      preview: String(
-        ((t.messages as Array<Record<string, unknown>>) ?? []).at(-1)?.texte ??
-          ((t.messages as Array<Record<string, unknown>>) ?? []).at(-1)?.contenu ??
-          ""
-      ),
+    dms: ((d.dm_threads as Array<Record<string, unknown>>) ?? []).map((t) => {
+      const owner = String(profil.pseudo ?? "mathieu");
+      const messages = ((t.messages as Array<Record<string, unknown>>) ?? []).map((m) => msgFromRaw(m, owner));
+      const last = messages[messages.length - 1];
+      return {
+        contact: String(t.contact_display_name ?? t.contact ?? ""),
+        messages,
+        preview: last?.text?.slice(0, 90) ?? "",
+      };
+    }),
+    stories: ((d.stories as Array<Record<string, unknown>>) ?? []).map((s) => ({
+      username: String(s.auteur ?? s.username ?? ""),
+      seen: Boolean(s.vu),
     })),
   };
 }
@@ -207,13 +216,73 @@ export function adaptSpotify(data: unknown) {
 }
 
 export function adaptDisney(data: unknown) {
+  return adaptNetflix(data);
+}
+
+export function adaptNetflix(data: unknown) {
   const d = data as Record<string, unknown>;
+  const cw = d.continuer_a_regarder as Record<string, unknown> | undefined;
+  const mathieu = (cw?.profil_mathieu as Array<Record<string, unknown>>) ?? [];
+  const hugo = (cw?.profil_hugo as Array<Record<string, unknown>>) ?? [];
   return {
     account: d.compte as Record<string, unknown> | undefined,
     profiles: (d.profils as Array<Record<string, unknown>>) ?? [],
-    continueWatching: (d.continuer_a_regarder as Array<Record<string, unknown>>) ?? [],
-    favorites: (d.catalogue_favori as Array<Record<string, unknown>>) ?? [],
+    continueWatching: [...mathieu, ...hugo],
+    continueByProfile: { mathieu, hugo },
+    favorites: (d.recommandations as Array<Record<string, unknown>>) ?? [],
   };
+}
+
+export function adaptChatBot(data: unknown, fallback: NormalizedMessage[]): NormalizedMessage[] {
+  const d = data as { messages?: Array<Record<string, unknown>>; historique?: Array<Record<string, unknown>> };
+  const raw = d.messages ?? d.historique ?? [];
+  if (raw.length === 0) return fallback;
+  return raw.map((m) => msgFromRaw(m));
+}
+
+export function adaptTikTok(data: unknown) {
+  const d = data as { feed?: Array<Record<string, unknown>>; videos?: Array<Record<string, unknown>> };
+  const items = d.feed ?? d.videos ?? [];
+  if (items.length > 0) {
+    return items.map((v) => ({
+      author: String(v.auteur ?? v.fullName ?? "créateur"),
+      caption: String(v.caption ?? v.legende ?? ""),
+      likes: String(v.likes ?? v.totalLikes ?? "0"),
+    }));
+  }
+  return [
+    { author: "mathieu.garnier.studio", caption: "Lumière du Louvre 🎨", likes: "1,2k" },
+    { author: "pabordeaux", caption: "Vernissage hier soir", likes: "890" },
+    { author: "studio_paris", caption: "Typo du jour", likes: "2,4k" },
+  ];
+}
+
+export function adaptTinder(data: unknown) {
+  const d = data as { matches?: Array<Record<string, unknown>>; profil?: Record<string, unknown> };
+  const matches = (d.matches ?? []).map((m) => ({
+    name: String(m.nom ?? m.name ?? "Match"),
+    age: Number(m.age ?? 0) || undefined,
+    bio: String(m.bio ?? ""),
+    distance: String(m.distance ?? ""),
+  }));
+  if (matches.length > 0) return { profile: d.profil, matches };
+  return {
+    profile: d.profil ?? { nom: "Mathieu", bio: "Graphiste · Paris" },
+    matches: [
+      { name: "Léa", age: 29, bio: "Musées & vin naturel", distance: "3 km" },
+      { name: "Camille", age: 31, bio: "Design & running", distance: "5 km" },
+    ],
+  };
+}
+
+export function adaptSocialFeed(data: unknown) {
+  const d = data as { posts?: Array<Record<string, unknown>>; feed?: Array<Record<string, unknown>> };
+  return (d.posts ?? d.feed ?? []).map((p) => ({
+    author: String(p.auteur ?? p.author ?? "Contact"),
+    text: String(p.texte ?? p.caption ?? p.contenu ?? ""),
+    likes: Number(p.likes ?? p.reactions ?? 0),
+    comments: Number(p.commentaires ?? p.comments ?? 0),
+  }));
 }
 
 export function adaptTelephone(data: unknown) {

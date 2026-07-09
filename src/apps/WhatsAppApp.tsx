@@ -14,10 +14,10 @@ export function WhatsAppApp({ data }: { data: unknown }) {
     const t = threads[active];
     return (
       <AppShell theme="whatsapp">
-        <header className="ui-nav ui-nav--wa">
+        <header className="ui-nav ui-nav--wa ui-nav--wa-thread">
           <div className="ui-nav__side">
             <button type="button" className="ui-nav__back ui-nav__back--wa" onClick={() => setActive(null)}>
-              ← Messages
+              ← Chats
             </button>
           </div>
           <h1 className="ui-nav__title">{t.contact}</h1>
@@ -25,9 +25,10 @@ export function WhatsAppApp({ data }: { data: unknown }) {
         </header>
         <ChatThread
           theme="whatsapp"
+          scrollToEnd
           messages={t.messages.map((m) => ({ id: m.id, text: m.text, outgoing: m.outgoing, time: m.time }))}
         />
-        <ChatComposer theme="whatsapp" placeholder="Message" />
+        <ChatComposer theme="whatsapp" placeholder="Message" readOnly />
       </AppShell>
     );
   }
@@ -39,7 +40,7 @@ export function WhatsAppApp({ data }: { data: unknown }) {
         <h1 className="ui-nav__title">WhatsApp</h1>
         <div className="ui-nav__side ui-nav__side--right" />
       </header>
-      <div className="ui-scroll">
+      <div className="ui-wa-chats ui-scroll">
         <Group>
           {threads.map((t, i) => (
             <Cell

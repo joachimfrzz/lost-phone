@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { AppPluginProps } from "./registry";
+import { usePhone } from "../runtime/PhoneProvider";
 import { AppShell } from "../ios/ui/AppShell";
 import { Cell, Group } from "../ios/ui/List";
 import { SFSearch } from "../ios/ui/SFSymbols";
@@ -12,8 +13,18 @@ function SettingIcon({ color, children }: { color: string; children: ReactNode }
   );
 }
 
-/** Réglages iOS 17 */
+/** Réglages iOS 17 — adaptés au propriétaire du téléphone (LPSP). */
 export function SettingsApp(_props: AppPluginProps) {
+  const { lpsp, getAppData } = usePhone();
+  const contactsData = getAppData("Contacts") as { proprietaire?: { nom?: string } } | null;
+  const bankingData = getAppData("Crédit Agricole") as { titulaire?: string | { nom?: string } } | null;
+  const titulaire = bankingData?.titulaire;
+  const displayName =
+    contactsData?.proprietaire?.nom
+    ?? (typeof titulaire === "string" ? titulaire : titulaire?.nom)
+    ?? "Mathieu Garnier";
+  const initials = displayName.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+
   return (
     <AppShell theme="light">
       <header className="ui-nav ui-nav--settings">
@@ -28,8 +39,8 @@ export function SettingsApp(_props: AppPluginProps) {
       <div className="ui-scroll">
         <Group>
           <Cell
-            icon={<span className="ui-settings-avatar">MG</span>}
-            label="Mathieu Garnier"
+            icon={<span className="ui-settings-avatar">{initials}</span>}
+            label={displayName}
             subtitle="Apple ID, iCloud, Médias et achats"
             chevron
           />
@@ -56,8 +67,8 @@ export function SettingsApp(_props: AppPluginProps) {
           <Cell icon={<SettingIcon color="#007AFF"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></SettingIcon>} label="Confidentialité et sécurité" chevron />
         </Group>
 
-        <Group footer="iOS 17.5.1">
-          <Cell icon={<SettingIcon color="#8E8E93"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><rect x="7" y="2" width="10" height="20" rx="2"/></svg></SettingIcon>} label="Infos" subtitle="Mathieu Garnier" chevron />
+        <Group footer={`iOS 17.5.1 · ${lpsp.content.envelope.date_verrou ?? ""}`}>
+          <Cell icon={<SettingIcon color="#8E8E93"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><rect x="7" y="2" width="10" height="20" rx="2"/></svg></SettingIcon>} label="Infos" subtitle={displayName} chevron />
         </Group>
       </div>
     </AppShell>

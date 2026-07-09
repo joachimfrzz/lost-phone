@@ -10,6 +10,9 @@ packages:
   Kingfisher:
     url: https://github.com/onevcat/Kingfisher.git
     from: 8.0.0
+  MarkdownUI:
+    url: https://github.com/gonzalezreal/swift-markdown-ui
+    from: 2.4.0
 
 settings:
   base:
@@ -24,6 +27,7 @@ targets:
     platform: iOS
     dependencies:
       - package: Kingfisher
+      - package: MarkdownUI
     sources:
       - path: LostPhone
         excludes:
@@ -34,6 +38,15 @@ targets:
           - "**/SOURCE.md"
           - "**/playground/**"
           - "**/_backup/**"
+          - "**/Sopheamen/Youtube_*"
+          - "**/Sopheamen/youtube_*"
+          - "**/Sopheamen/Instagram clone patreon/**"
+          - "**/Sopheamen/WhatsAppclone patreon/**"
+          - "**/Sopheamen/Snapchat Clone patreon/**"
+          - "**/Sopheamen/LinkedIn Clone patreon/**"
+          - "**/Sopheamen/food-delivery-ui-kit-cart-checkout/**"
+          - "**/Sopheamen/grok_clone_v1/**"
+          - "**/Sopheamen/tinder_clone_ui_kit/**"
     resources:
       # Folder reference preserves stories/<id>/lpsp.json (avoids flattening duplicate lpsp.json).
       - path: LostPhone/Resources/stories
@@ -42,6 +55,9 @@ targets:
       - path: LostPhone/Apps/Vendored/Tinder/Resources/girls
         type: folder
         buildPhase: resources
+      - path: LostPhone/LostPhone/Apps/Sopheamen/Integrated/TikTok/TikTokIcons.ttf
+        buildPhase: resources
+        optional: true
     postBuildScripts:
       - name: Embed LPSP stories
         basedOnDependencyAnalysis: false

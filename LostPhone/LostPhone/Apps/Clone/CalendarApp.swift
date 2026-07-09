@@ -3,57 +3,39 @@ import Combine
 
 // MARK: - Models
 struct CalendarEvent: Identifiable {
-    let id: UUID
+    let id = UUID()
     let title: String
     let location: String?
-    let note: String?
+    let notes: String?
     let start: Date
     let end: Date
     let color: Color
-
-    init(stableId: String, title: String, location: String?, note: String? = nil, start: Date, end: Date, color: Color) {
-        self.id = LpspStableId.uuid(stableId)
-        self.title = title
-        self.location = location
-        self.note = note
-        self.start = start
-        self.end = end
-        self.color = color
-    }
-
-    init(title: String, location: String?, note: String? = nil, start: Date, end: Date, color: Color) {
-        self.id = UUID()
-        self.title = title
-        self.location = location
-        self.note = note
-        self.start = start
-        self.end = end
-        self.color = color
-    }
 }
 
 // MARK: - Main View
 struct CalendarView: View {
-    let events: [CalendarEvent]
     @State private var selectedDate = Date()
-    @Environment(\.lpspReadOnly) private var readOnly
-
-    init(events: [CalendarEvent] = []) {
-        self.events = events
-    }
+    @State private var displayedMonth = Date()
+    @State private var selectedEvent: CalendarEvent?
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 // 1. Month/Year Header
-                CalendarHeaderView(date: selectedDate, readOnly: readOnly)
+                CalendarHeaderView(date: displayedMonth, onPrevious: previousMonth, onNext: nextMonth)
                 
                 // 2. Days of Week
                 WeekDaysHeader()
                 
                 // 3. Month Grid
-                MonthGridView(selectedDate: $selectedDate, events: events)
+                MonthGridView(selectedDate: $selectedDate, displayedMonth: displayedMonth)
                     .padding(.bottom, 10)
+                    .gesture(
+                        DragGesture(minimumDistance: 30).onEnded { value in
+                            if value.translation.width < -30 { nextMonth() }
+                            else if value.translation.width > 30 { previousMonth() }
+                        }
+                    )
                 
                 Divider()
                 
@@ -61,49 +43,53 @@ struct CalendarView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         ZStack(alignment: .top) {
-                            // Background Grid (Hour Lines)
                             TimelineGridView()
-                            
-                            // Events Layer
-                            EventsLayoutView(selectedDate: selectedDate, events: events)
-                            
-                            // Current Time Line indicator
+                            EventsLayoutView(selectedDate: selectedDate, onSelect: { selectedEvent = $0 })
                             if Calendar.current.isDateInToday(selectedDate) {
                                 CurrentTimeLineView()
                             }
                         }
-                        .frame(height: 1440) // 24 hours * 60pts per hour
+                        .frame(height: 1440)
                     }
                     .onAppear {
-                        // Scroll to 8 AM by default
                         proxy.scrollTo(8, anchor: .top)
                     }
                 }
             }
-            // Bottom Toolbar
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
                     HStack {
-                        Button("Aujourd'hui") {
-                            selectedDate = Date()
-                        }
-                        .foregroundStyle(.red)
-                        
-                        Button("Calendriers") {
-                            selectedDate = Date()
-                        }
-                        .foregroundStyle(.red)
-                        
-                        Button("Boîte de réception") {
-                            selectedDate = Date()
-                        }
-                        .foregroundStyle(.red)
+                        Button("Today") { goToToday() }
+                            .foregroundStyle(.red)
+                        Button("Calendars") { goToToday() }
+                            .foregroundStyle(.red)
                     }
                     .font(.system(size: 16))
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(item: $selectedEvent) { event in
+                EventDetailSheet(event: event)
+            }
         }
+    }
+    
+    private func previousMonth() {
+        if let newMonth = Calendar.current.date(byAdding: .month, value: -1, to: displayedMonth) {
+            displayedMonth = newMonth
+        }
+    }
+    
+    private func nextMonth() {
+        if let newMonth = Calendar.current.date(byAdding: .month, value: 1, to: displayedMonth) {
+            displayedMonth = newMonth
+        }
+    }
+    
+    private func goToToday() {
+        let today = Date()
+        selectedDate = today
+        displayedMonth = today
     }
 }
 
@@ -111,26 +97,38 @@ struct CalendarView: View {
 
 struct CalendarHeaderView: View {
     let date: Date
-    var readOnly: Bool = false
+    var onPrevious: () -> Void = {}
+    var onNext: () -> Void = {}
     
     var body: some View {
         HStack {
+            Button(action: onPrevious) {
+                Image(systemName: "chevron.left")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.red)
+            }
+            
             Text(date.formatted(.dateTime.month(.wide)))
-                .font(.system(size: 34, weight: .bold)) // Standard Apple Header Size
+                .font(.system(size: 34, weight: .bold))
                 .foregroundStyle(Color.primary)
             + Text("\(date.formatted(.dateTime.year()))")
-                .font(.system(size: 34, weight: .regular)) // Year is usually thinner
+                .font(.system(size: 34, weight: .regular))
                 .foregroundStyle(Color.secondary)
             
             Spacer()
+            
+            Button(action: onNext) {
+                Image(systemName: "chevron.right")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.red)
+            }
             
             HStack(spacing: 18) {
                 Image(systemName: "magnifyingglass")
                 Image(systemName: "plus")
             }
             .font(.title2)
-            .foregroundStyle(readOnly ? .gray.opacity(0.35) : .red)
-            .allowsHitTesting(!readOnly)
+            .foregroundStyle(.red)
         }
         .padding(.horizontal)
         .padding(.top, 10)
@@ -155,30 +153,24 @@ struct WeekDaysHeader: View {
 
 struct MonthGridView: View {
     @Binding var selectedDate: Date
-    let events: [CalendarEvent]
+    let displayedMonth: Date
     private let calendar = Calendar.current
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     
     var body: some View {
-        let days = generateDaysInMonth(for: selectedDate)
+        let days = generateDaysInMonth(for: displayedMonth)
         
         LazyVGrid(columns: columns, spacing: 12) {
             ForEach(days, id: \.self) { date in
                 if let date = date {
-                    DayCell(date: date, selectedDate: $selectedDate, events: events)
+                    DayCell(date: date, selectedDate: $selectedDate)
                 } else {
-                    Text("") // Empty placeholder for offset days
+                    Text("")
                         .frame(height: 35)
                 }
             }
         }
         .padding(.horizontal)
-        .gesture(DragGesture().onEnded { value in
-            // Simple gesture placeholder for swiping months
-            if value.translation.width < 0 {
-                // Next month logic here
-            }
-        })
     }
     
     func generateDaysInMonth(for date: Date) -> [Date?] {
@@ -201,13 +193,11 @@ struct MonthGridView: View {
 struct DayCell: View {
     let date: Date
     @Binding var selectedDate: Date
-    let events: [CalendarEvent]
     private let calendar = Calendar.current
     
     var body: some View {
         let isToday = calendar.isDateInToday(date)
         let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
-        let hasEvents = events.contains { calendar.isDate($0.start, inSameDayAs: date) }
         
         Button {
             selectedDate = date
@@ -229,7 +219,8 @@ struct DayCell: View {
                         .foregroundStyle(isToday ? .white : (isSelected ? Color(uiColor: .systemBackground) : .primary))
                 }
                 
-                if hasEvents {
+                // Mock Event Dot
+                if [2, 5, 14, 19, 23].contains(calendar.component(.day, from: date)) {
                     Circle()
                         .fill(isToday ? .red : (isSelected ? .primary : .gray))
                         .frame(width: 4, height: 4)
@@ -279,21 +270,15 @@ struct TimelineGridView: View {
 
 struct EventsLayoutView: View {
     let selectedDate: Date
-    let events: [CalendarEvent]
-    @Environment(\.lpspReadOnly) private var readOnly
-    @State private var selectedEvent: CalendarEvent?
-    private let calendar = Calendar.current
+    var onSelect: (CalendarEvent) -> Void = { _ in }
     
     var body: some View {
-        let dayEvents = events.filter { calendar.isDate($0.start, inSameDayAs: selectedDate) }
-        let displayEvents = dayEvents.isEmpty && !readOnly
-            ? getMockEvents(for: selectedDate)
-            : dayEvents
+        let events = getMockEvents(for: selectedDate)
         
         ZStack(alignment: .topLeading) {
-            ForEach(displayEvents) { event in
+            ForEach(events) { event in
                 Button {
-                    selectedEvent = event
+                    onSelect(event)
                 } label: {
                     EventCard(event: event)
                 }
@@ -303,9 +288,6 @@ struct EventsLayoutView: View {
                 .offset(y: calculateOffset(for: event.start))
                 .frame(height: calculateHeight(start: event.start, end: event.end))
             }
-        }
-        .sheet(item: $selectedEvent) { event in
-            CalendarEventDetailView(event: event)
         }
     }
     
@@ -331,10 +313,10 @@ struct EventsLayoutView: View {
         }
         
         return [
-            CalendarEvent(title: "Team Standup", location: "Zoom", start: createDate(hour: 9, minute: 30), end: createDate(hour: 10, minute: 0), color: .orange),
-            CalendarEvent(title: "Design Review", location: "Conference Room A", start: createDate(hour: 11, minute: 0), end: createDate(hour: 12, minute: 30), color: .blue),
-            CalendarEvent(title: "Lunch", location: "Cafeteria", start: createDate(hour: 13, minute: 0), end: createDate(hour: 14, minute: 0), color: .gray),
-            CalendarEvent(title: "Project Sync", location: nil, start: createDate(hour: 15, minute: 15), end: createDate(hour: 16, minute: 15), color: .purple)
+            CalendarEvent(title: "Team Standup", location: "Zoom", notes: "Daily sync with design team.", start: createDate(hour: 9, minute: 30), end: createDate(hour: 10, minute: 0), color: .orange),
+            CalendarEvent(title: "Design Review", location: "Conference Room A", notes: "Review mockups for Q3 launch.", start: createDate(hour: 11, minute: 0), end: createDate(hour: 12, minute: 30), color: .blue),
+            CalendarEvent(title: "Lunch", location: "Cafeteria", notes: nil, start: createDate(hour: 13, minute: 0), end: createDate(hour: 14, minute: 0), color: .gray),
+            CalendarEvent(title: "Project Sync", location: nil, notes: "Align on deliverables before deadline.", start: createDate(hour: 15, minute: 15), end: createDate(hour: 16, minute: 15), color: .purple)
         ]
     }
 }
@@ -344,10 +326,12 @@ struct EventCard: View {
     
     var body: some View {
         HStack(spacing: 0) {
+            // Color Indicator Line
             Rectangle()
                 .fill(event.color)
                 .frame(width: 4)
             
+            // Content
             VStack(alignment: .leading, spacing: 2) {
                 Text(event.title)
                     .font(.system(size: 12, weight: .semibold))
@@ -371,58 +355,6 @@ struct EventCard: View {
             RoundedRectangle(cornerRadius: 4)
                 .stroke(event.color.opacity(0.5), lineWidth: 0.5)
         )
-    }
-}
-
-struct CalendarEventDetailView: View {
-    let event: CalendarEvent
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.lpspReadOnly) private var readOnly
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    HStack(spacing: 12) {
-                        Circle()
-                            .fill(event.color)
-                            .frame(width: 14, height: 14)
-                        Text(event.title)
-                            .font(.title2.bold())
-                    }
-                }
-
-                Section {
-                    LabeledContent("Starts") {
-                        Text(event.start.formatted(date: .abbreviated, time: .shortened))
-                    }
-                    LabeledContent("Ends") {
-                        Text(event.end.formatted(date: .abbreviated, time: .shortened))
-                    }
-                    if let location = event.location, !location.isEmpty {
-                        LabeledContent("Location", value: location)
-                    }
-                }
-
-                if let note = event.note, !note.isEmpty {
-                    Section("Notes") {
-                        Text(note)
-                    }
-                }
-            }
-            .navigationTitle("Événement")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Terminé") { dismiss() }
-                }
-                if !readOnly {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button("Modifier") { }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -461,6 +393,38 @@ struct CurrentTimeLineView: View {
         let minute = calendar.component(.minute, from: date)
         // 1 hour = 60 points, 1 minute = 1 point
         currentTimeOffset = CGFloat(hour * 60 + minute)
+    }
+}
+
+struct EventDetailSheet: View {
+    let event: CalendarEvent
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    LabeledContent("Début", value: event.start.formatted(date: .abbreviated, time: .shortened))
+                    LabeledContent("Fin", value: event.end.formatted(date: .abbreviated, time: .shortened))
+                    if let location = event.location {
+                        LabeledContent("Lieu", value: location)
+                    }
+                }
+                if let notes = event.notes, !notes.isEmpty {
+                    Section("Notes") {
+                        Text(notes)
+                    }
+                }
+            }
+            .navigationTitle(event.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("OK") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 }
 

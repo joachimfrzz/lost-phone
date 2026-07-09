@@ -1,0 +1,654 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2632E43A2BFF1070000DEE40 /* RootApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2632E4392BFF1070000DEE40 /* RootApp.swift */; };
+		2632E43D2BFF2125000DEE40 /* SpotlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2632E43C2BFF2125000DEE40 /* SpotlightView.swift */; };
+		2664A3CA2C0598FB005946D9 /* CustomVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2664A3C92C0598FB005946D9 /* CustomVideoPlayer.swift */; };
+		2664A3CC2C07079F005946D9 /* IconImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2664A3CB2C07079F005946D9 /* IconImageButton.swift */; };
+		267BF6FE2BF8463B009BC60C /* Snapchat_CloneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF6FD2BF8463B009BC60C /* Snapchat_CloneApp.swift */; };
+		267BF7002BF8463B009BC60C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF6FF2BF8463B009BC60C /* ContentView.swift */; };
+		267BF7022BF8463C009BC60C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 267BF7012BF8463C009BC60C /* Assets.xcassets */; };
+		267BF7052BF8463C009BC60C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 267BF7042BF8463C009BC60C /* Preview Assets.xcassets */; };
+		267BF70E2BF8492E009BC60C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 267BF70D2BF8492E009BC60C /* Kingfisher */; };
+		267BF7182BF84AF3009BC60C /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7172BF84AF3009BC60C /* AppColor.swift */; };
+		267BF7202BF84DFF009BC60C /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF71F2BF84DFF009BC60C /* MapView.swift */; };
+		267BF7222BF84E07009BC60C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7212BF84E07009BC60C /* CameraView.swift */; };
+		267BF7242BF84E0E009BC60C /* StoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7232BF84E0E009BC60C /* StoriesView.swift */; };
+		267BF7262BF84E16009BC60C /* StoriesDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7252BF84E16009BC60C /* StoriesDetailView.swift */; };
+		267BF7282BF84E1C009BC60C /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7272BF84E1C009BC60C /* ChatView.swift */; };
+		267BF72A2BF84EFB009BC60C /* UserSnapchatResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7292BF84EFB009BC60C /* UserSnapchatResponse.swift */; };
+		267BF72E2BF8683A009BC60C /* StoriesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF72D2BF86839009BC60C /* StoriesResponse.swift */; };
+		267BF7312BFAE2EF009BC60C /* MusicResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7302BFAE2EF009BC60C /* MusicResponse.swift */; };
+		267BF7332BFAE4FF009BC60C /* UserSnapchatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7322BFAE4FF009BC60C /* UserSnapchatData.swift */; };
+		267BF7352BFAE66B009BC60C /* MusicData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7342BFAE66B009BC60C /* MusicData.swift */; };
+		267BF7372BFAEC72009BC60C /* StoriesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7362BFAEC72009BC60C /* StoriesData.swift */; };
+		267BF7392BFAF50A009BC60C /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7382BFAF50A009BC60C /* ProfileImageView.swift */; };
+		267BF73C2BFAFB5E009BC60C /* IconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF73B2BFAFB5E009BC60C /* IconButton.swift */; };
+		267BF73F2BFB1FDB009BC60C /* CustomToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF73E2BFB1FDB009BC60C /* CustomToolbar.swift */; };
+		267BF7422BFB3D14009BC60C /* GenerateThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7412BFB3D14009BC60C /* GenerateThumbnail.swift */; };
+		267BF7452BFB3D8F009BC60C /* ThumbnailImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7442BFB3D8F009BC60C /* ThumbnailImageView.swift */; };
+		267BF7472BFC5BF5009BC60C /* IconButtonOpacity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7462BFC5BF5009BC60C /* IconButtonOpacity.swift */; };
+		267BF7492BFCAAD2009BC60C /* CircleProfileTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF7482BFCAAD2009BC60C /* CircleProfileTextView.swift */; };
+		267BF74B2BFCADB5009BC60C /* CircleBuildingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267BF74A2BFCADB5009BC60C /* CircleBuildingTextView.swift */; };
+		26BF40462C04354A007EE087 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BF40452C04354A007EE087 /* CameraPreview.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2632E4392BFF1070000DEE40 /* RootApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootApp.swift; sourceTree = "<group>"; };
+		2632E43C2BFF2125000DEE40 /* SpotlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightView.swift; sourceTree = "<group>"; };
+		2664A3C92C0598FB005946D9 /* CustomVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVideoPlayer.swift; sourceTree = "<group>"; };
+		2664A3CB2C07079F005946D9 /* IconImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconImageButton.swift; sourceTree = "<group>"; };
+		267BF6FA2BF8463B009BC60C /* Snapchat Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Snapchat Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		267BF6FD2BF8463B009BC60C /* Snapchat_CloneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snapchat_CloneApp.swift; sourceTree = "<group>"; };
+		267BF6FF2BF8463B009BC60C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		267BF7012BF8463C009BC60C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		267BF7042BF8463C009BC60C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		267BF7172BF84AF3009BC60C /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
+		267BF71F2BF84DFF009BC60C /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		267BF7212BF84E07009BC60C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		267BF7232BF84E0E009BC60C /* StoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesView.swift; sourceTree = "<group>"; };
+		267BF7252BF84E16009BC60C /* StoriesDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesDetailView.swift; sourceTree = "<group>"; };
+		267BF7272BF84E1C009BC60C /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		267BF7292BF84EFB009BC60C /* UserSnapchatResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSnapchatResponse.swift; sourceTree = "<group>"; };
+		267BF72D2BF86839009BC60C /* StoriesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesResponse.swift; sourceTree = "<group>"; };
+		267BF7302BFAE2EF009BC60C /* MusicResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicResponse.swift; sourceTree = "<group>"; };
+		267BF7322BFAE4FF009BC60C /* UserSnapchatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSnapchatData.swift; sourceTree = "<group>"; };
+		267BF7342BFAE66B009BC60C /* MusicData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicData.swift; sourceTree = "<group>"; };
+		267BF7362BFAEC72009BC60C /* StoriesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesData.swift; sourceTree = "<group>"; };
+		267BF7382BFAF50A009BC60C /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
+		267BF73B2BFAFB5E009BC60C /* IconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconButton.swift; sourceTree = "<group>"; };
+		267BF73E2BFB1FDB009BC60C /* CustomToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToolbar.swift; sourceTree = "<group>"; };
+		267BF7412BFB3D14009BC60C /* GenerateThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateThumbnail.swift; sourceTree = "<group>"; };
+		267BF7442BFB3D8F009BC60C /* ThumbnailImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailImageView.swift; sourceTree = "<group>"; };
+		267BF7462BFC5BF5009BC60C /* IconButtonOpacity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconButtonOpacity.swift; sourceTree = "<group>"; };
+		267BF7482BFCAAD2009BC60C /* CircleProfileTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleProfileTextView.swift; sourceTree = "<group>"; };
+		267BF74A2BFCADB5009BC60C /* CircleBuildingTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleBuildingTextView.swift; sourceTree = "<group>"; };
+		26BF40452C04354A007EE087 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		267BF6F72BF8463B009BC60C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				267BF70E2BF8492E009BC60C /* Kingfisher in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2632E4382BFF1067000DEE40 /* RootApp */ = {
+			isa = PBXGroup;
+			children = (
+				2632E4392BFF1070000DEE40 /* RootApp.swift */,
+			);
+			path = RootApp;
+			sourceTree = "<group>";
+		};
+		2632E43B2BFF2119000DEE40 /* Spotlight */ = {
+			isa = PBXGroup;
+			children = (
+				2632E43C2BFF2125000DEE40 /* SpotlightView.swift */,
+			);
+			path = Spotlight;
+			sourceTree = "<group>";
+		};
+		2664A3C82C0598E3005946D9 /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				2664A3C92C0598FB005946D9 /* CustomVideoPlayer.swift */,
+			);
+			path = VideoPlayer;
+			sourceTree = "<group>";
+		};
+		267BF6F12BF8463B009BC60C = {
+			isa = PBXGroup;
+			children = (
+				267BF6FC2BF8463B009BC60C /* Snapchat Clone */,
+				267BF6FB2BF8463B009BC60C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		267BF6FB2BF8463B009BC60C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				267BF6FA2BF8463B009BC60C /* Snapchat Clone.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		267BF6FC2BF8463B009BC60C /* Snapchat Clone */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7402BFB3D02009BC60C /* Util */,
+				267BF7102BF84970009BC60C /* Models */,
+				267BF70B2BF8490B009BC60C /* Components */,
+				267BF7122BF84A4C009BC60C /* Themes */,
+				267BF7192BF84C21009BC60C /* Pages */,
+				267BF6FD2BF8463B009BC60C /* Snapchat_CloneApp.swift */,
+				267BF6FF2BF8463B009BC60C /* ContentView.swift */,
+				267BF7012BF8463C009BC60C /* Assets.xcassets */,
+				267BF7032BF8463C009BC60C /* Preview Content */,
+			);
+			path = "Snapchat Clone";
+			sourceTree = "<group>";
+		};
+		267BF7032BF8463C009BC60C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7042BF8463C009BC60C /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		267BF70B2BF8490B009BC60C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				2664A3C82C0598E3005946D9 /* VideoPlayer */,
+				26BF40442C043527007EE087 /* CameraPreview */,
+				267BF7432BFB3D6D009BC60C /* ThumbnailImage */,
+				267BF73D2BFB1FCB009BC60C /* Toolbar */,
+				267BF73A2BFAFB51009BC60C /* Button */,
+				267BF70F2BF84935009BC60C /* CircleAvatar */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		267BF70F2BF84935009BC60C /* CircleAvatar */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7382BFAF50A009BC60C /* ProfileImageView.swift */,
+				267BF7482BFCAAD2009BC60C /* CircleProfileTextView.swift */,
+				267BF74A2BFCADB5009BC60C /* CircleBuildingTextView.swift */,
+			);
+			path = CircleAvatar;
+			sourceTree = "<group>";
+		};
+		267BF7102BF84970009BC60C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				267BF72F2BFAE2D9009BC60C /* MusicModel */,
+				267BF72B2BF85071009BC60C /* StoriesModel */,
+				267BF7112BF849AF009BC60C /* UserSnapchatModel */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		267BF7112BF849AF009BC60C /* UserSnapchatModel */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7292BF84EFB009BC60C /* UserSnapchatResponse.swift */,
+				267BF7322BFAE4FF009BC60C /* UserSnapchatData.swift */,
+			);
+			path = UserSnapchatModel;
+			sourceTree = "<group>";
+		};
+		267BF7122BF84A4C009BC60C /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7162BF84AC4009BC60C /* Colors */,
+			);
+			path = Themes;
+			sourceTree = "<group>";
+		};
+		267BF7162BF84AC4009BC60C /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7172BF84AF3009BC60C /* AppColor.swift */,
+			);
+			path = Colors;
+			sourceTree = "<group>";
+		};
+		267BF7192BF84C21009BC60C /* Pages */ = {
+			isa = PBXGroup;
+			children = (
+				2632E43B2BFF2119000DEE40 /* Spotlight */,
+				2632E4382BFF1067000DEE40 /* RootApp */,
+				267BF71E2BF84CFC009BC60C /* Chat */,
+				267BF71D2BF84CF1009BC60C /* StoriesDetail */,
+				267BF71C2BF84CD5009BC60C /* Stories */,
+				267BF71B2BF84CD1009BC60C /* Camera */,
+				267BF71A2BF84CCC009BC60C /* Map */,
+			);
+			path = Pages;
+			sourceTree = "<group>";
+		};
+		267BF71A2BF84CCC009BC60C /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				267BF71F2BF84DFF009BC60C /* MapView.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		267BF71B2BF84CD1009BC60C /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7212BF84E07009BC60C /* CameraView.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		267BF71C2BF84CD5009BC60C /* Stories */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7232BF84E0E009BC60C /* StoriesView.swift */,
+			);
+			path = Stories;
+			sourceTree = "<group>";
+		};
+		267BF71D2BF84CF1009BC60C /* StoriesDetail */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7252BF84E16009BC60C /* StoriesDetailView.swift */,
+			);
+			path = StoriesDetail;
+			sourceTree = "<group>";
+		};
+		267BF71E2BF84CFC009BC60C /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7272BF84E1C009BC60C /* ChatView.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		267BF72B2BF85071009BC60C /* StoriesModel */ = {
+			isa = PBXGroup;
+			children = (
+				267BF72D2BF86839009BC60C /* StoriesResponse.swift */,
+				267BF7362BFAEC72009BC60C /* StoriesData.swift */,
+			);
+			path = StoriesModel;
+			sourceTree = "<group>";
+		};
+		267BF72F2BFAE2D9009BC60C /* MusicModel */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7302BFAE2EF009BC60C /* MusicResponse.swift */,
+				267BF7342BFAE66B009BC60C /* MusicData.swift */,
+			);
+			path = MusicModel;
+			sourceTree = "<group>";
+		};
+		267BF73A2BFAFB51009BC60C /* Button */ = {
+			isa = PBXGroup;
+			children = (
+				267BF73B2BFAFB5E009BC60C /* IconButton.swift */,
+				267BF7462BFC5BF5009BC60C /* IconButtonOpacity.swift */,
+				2664A3CB2C07079F005946D9 /* IconImageButton.swift */,
+			);
+			path = Button;
+			sourceTree = "<group>";
+		};
+		267BF73D2BFB1FCB009BC60C /* Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				267BF73E2BFB1FDB009BC60C /* CustomToolbar.swift */,
+			);
+			path = Toolbar;
+			sourceTree = "<group>";
+		};
+		267BF7402BFB3D02009BC60C /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7412BFB3D14009BC60C /* GenerateThumbnail.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		267BF7432BFB3D6D009BC60C /* ThumbnailImage */ = {
+			isa = PBXGroup;
+			children = (
+				267BF7442BFB3D8F009BC60C /* ThumbnailImageView.swift */,
+			);
+			path = ThumbnailImage;
+			sourceTree = "<group>";
+		};
+		26BF40442C043527007EE087 /* CameraPreview */ = {
+			isa = PBXGroup;
+			children = (
+				26BF40452C04354A007EE087 /* CameraPreview.swift */,
+			);
+			path = CameraPreview;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		267BF6F92BF8463B009BC60C /* Snapchat Clone */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 267BF7082BF8463C009BC60C /* Build configuration list for PBXNativeTarget "Snapchat Clone" */;
+			buildPhases = (
+				267BF6F62BF8463B009BC60C /* Sources */,
+				267BF6F72BF8463B009BC60C /* Frameworks */,
+				267BF6F82BF8463B009BC60C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Snapchat Clone";
+			packageProductDependencies = (
+				267BF70D2BF8492E009BC60C /* Kingfisher */,
+			);
+			productName = "Snapchat Clone";
+			productReference = 267BF6FA2BF8463B009BC60C /* Snapchat Clone.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		267BF6F22BF8463B009BC60C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					267BF6F92BF8463B009BC60C = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = 267BF6F52BF8463B009BC60C /* Build configuration list for PBXProject "Snapchat Clone" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 267BF6F12BF8463B009BC60C;
+			packageReferences = (
+				267BF70C2BF8492E009BC60C /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
+			productRefGroup = 267BF6FB2BF8463B009BC60C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				267BF6F92BF8463B009BC60C /* Snapchat Clone */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		267BF6F82BF8463B009BC60C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				267BF7052BF8463C009BC60C /* Preview Assets.xcassets in Resources */,
+				267BF7022BF8463C009BC60C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		267BF6F62BF8463B009BC60C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				267BF7392BFAF50A009BC60C /* ProfileImageView.swift in Sources */,
+				26BF40462C04354A007EE087 /* CameraPreview.swift in Sources */,
+				267BF7452BFB3D8F009BC60C /* ThumbnailImageView.swift in Sources */,
+				267BF7422BFB3D14009BC60C /* GenerateThumbnail.swift in Sources */,
+				267BF7262BF84E16009BC60C /* StoriesDetailView.swift in Sources */,
+				267BF7182BF84AF3009BC60C /* AppColor.swift in Sources */,
+				2632E43D2BFF2125000DEE40 /* SpotlightView.swift in Sources */,
+				267BF7202BF84DFF009BC60C /* MapView.swift in Sources */,
+				267BF7282BF84E1C009BC60C /* ChatView.swift in Sources */,
+				267BF7352BFAE66B009BC60C /* MusicData.swift in Sources */,
+				267BF72E2BF8683A009BC60C /* StoriesResponse.swift in Sources */,
+				267BF7332BFAE4FF009BC60C /* UserSnapchatData.swift in Sources */,
+				267BF7312BFAE2EF009BC60C /* MusicResponse.swift in Sources */,
+				267BF73F2BFB1FDB009BC60C /* CustomToolbar.swift in Sources */,
+				267BF7242BF84E0E009BC60C /* StoriesView.swift in Sources */,
+				2664A3CC2C07079F005946D9 /* IconImageButton.swift in Sources */,
+				267BF7222BF84E07009BC60C /* CameraView.swift in Sources */,
+				267BF7372BFAEC72009BC60C /* StoriesData.swift in Sources */,
+				267BF7002BF8463B009BC60C /* ContentView.swift in Sources */,
+				267BF73C2BFAFB5E009BC60C /* IconButton.swift in Sources */,
+				2664A3CA2C0598FB005946D9 /* CustomVideoPlayer.swift in Sources */,
+				267BF6FE2BF8463B009BC60C /* Snapchat_CloneApp.swift in Sources */,
+				267BF7492BFCAAD2009BC60C /* CircleProfileTextView.swift in Sources */,
+				267BF74B2BFCADB5009BC60C /* CircleBuildingTextView.swift in Sources */,
+				2632E43A2BFF1070000DEE40 /* RootApp.swift in Sources */,
+				267BF72A2BF84EFB009BC60C /* UserSnapchatResponse.swift in Sources */,
+				267BF7472BFC5BF5009BC60C /* IconButtonOpacity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		267BF7062BF8463C009BC60C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		267BF7072BF8463C009BC60C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		267BF7092BF8463C009BC60C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Snapchat Clone/Preview Content\"";
+				DEVELOPMENT_TEAM = LP846EEF49;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to capture photos";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sopheamen.app.Snapchat-Clone";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		267BF70A2BF8463C009BC60C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Snapchat Clone/Preview Content\"";
+				DEVELOPMENT_TEAM = LP846EEF49;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to capture photos";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sopheamen.app.Snapchat-Clone";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		267BF6F52BF8463B009BC60C /* Build configuration list for PBXProject "Snapchat Clone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				267BF7062BF8463C009BC60C /* Debug */,
+				267BF7072BF8463C009BC60C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		267BF7082BF8463C009BC60C /* Build configuration list for PBXNativeTarget "Snapchat Clone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				267BF7092BF8463C009BC60C /* Debug */,
+				267BF70A2BF8463C009BC60C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		267BF70C2BF8492E009BC60C /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		267BF70D2BF8492E009BC60C /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 267BF70C2BF8492E009BC60C /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 267BF6F22BF8463B009BC60C /* Project object */;
+}

@@ -46,14 +46,18 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>Lost Phone utilise la caméra dans l’application Appareil photo du téléphone simulé.</string>
+	<string>Lost Phone utilise la caméra dans l'application Appareil photo du téléphone simulé.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Lost Phone utilise le micro pour enregistrer des vidéos dans l’application Appareil photo du téléphone simulé.</string>
+	<string>Lost Phone utilise le micro pour enregistrer des vidéos dans l'application Appareil photo du téléphone simulé.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Lost Phone accède à la photothèque pour les applications Photos et Instagram du téléphone simulé.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Lost Phone enregistre les photos et vidéos prises dans l’application Appareil photo du téléphone simulé.</string>
+	<string>Lost Phone enregistre les photos et vidéos prises dans l'application Appareil photo du téléphone simulé.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Lost Phone affiche la carte Uber dans l'application tierce Uber.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>TikTokIcons.ttf</string>
+	</array>
 </dict>
 </plist>

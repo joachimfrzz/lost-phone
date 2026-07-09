@@ -38,6 +38,22 @@
 .ui-app--reminders { background: #f2f2f7; color: #000; }
 .ui-app--calendar { background: #f2f2f7; color: #000; }
 .ui-app--phone { background: #fff; color: #000; }
+.ui-app--tiktok { background: #000; color: #fff; }
+.ui-app--tinder { background: #fff; color: #111; }
+.ui-app--facebook { background: #f0f2f5; color: #050505; }
+.ui-app--messenger { background: #fff; color: #050505; }
+.ui-app--gemini { background: #fff; color: #1f1f1f; }
+.ui-app--grok { background: #000; color: #fff; }
+.ui-app--airbnb { background: #fff; color: #222; }
+.ui-app--snapchat { background: #fff; color: #000; }
+.ui-app--linkedin { background: #f3f2ef; color: #000; }
+.ui-app--youtube { background: #fff; color: #0f0f0f; }
+.ui-app--ytmusic { background: #000; color: #fff; }
+.ui-app--ubereats { background: #fff; color: #000; }
+.ui-app--netflix { background: #000; color: #fff; }
+.ui-app--wallet { background: #000; color: #fff; }
+.ui-app--coinbase { background: #fff; color: #0a0b0d; }
+.ui-app--appstore { background: #f2f2f7; color: #000; }
 
 .ui-scroll {
   flex: 1;
@@ -68,7 +84,12 @@
 .ui-app--notes .ui-nav,
 .ui-app--photos .ui-nav,
 .ui-app--spotify .ui-nav,
-.ui-app--disney .ui-nav {
+.ui-app--disney .ui-nav,
+.ui-app--netflix .ui-nav,
+.ui-app--tiktok .ui-nav,
+.ui-app--grok .ui-nav,
+.ui-app--ytmusic .ui-nav,
+.ui-app--wallet .ui-nav {
   background: rgba(28, 28, 30, 0.94);
   border-bottom-color: rgba(255, 255, 255, 0.08);
   color: #fff;
@@ -1031,3 +1052,290 @@
   width: 16px;
   height: 16px;
 }
+
+.ui-ig-stories {
+  display: flex;
+  gap: 14px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  border-bottom: 1px solid #efefef;
+}
+
+.ui-ig-story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  min-width: 64px;
+  font-size: 11px;
+  color: #262626;
+}
+
+.ui-ig-story__ring {
+  padding: 2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fd5949, #d6249f, #285aeb);
+}
+
+.ui-ig-story--seen .ui-ig-story__ring {
+  background: #dbdbdb;
+}
+
+.ui-ig-story__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fafafa;
+  border: 2px solid #fff;
+  font-weight: 600;
+}
+
+.ui-ig-story__name {
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-ig-post-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #efefef;
+  border-radius: 4px;
+}
+
+.ui-ig-post-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+.ui-ig-post-actions button {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+.ui-phone-call {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  gap: 12px;
+  padding: 24px;
+}
+
+.ui-phone-call__end {
+  margin-top: 32px;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 999px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 17px;
+}
+
+.ui-phone-actions {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.ui-phone-actions button {
+  border: none;
+  background: #f2f2f7;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.ui-mail-compose-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e5ea;
+}
+
+.ui-mail-compose-row span {
+  color: #8e8e93;
+  min-width: 56px;
+}
+
+.ui-mail-compose-row input {
+  flex: 1;
+  border: none;
+  font-size: 17px;
+  outline: none;
+}
+
+.ui-mail-compose-body {
+  width: 100%;
+  margin-top: 12px;
+  border: none;
+  font-size: 17px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+}
+
+.ui-mail-send-btn {
+  margin-top: 16px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  background: #007aff;
+  color: #fff;
+  font-size: 17px;
+}
+
+.ui-mail-send-btn:disabled {
+  opacity: 0.4;
+}
+
+.ui-composer--readonly {
+  opacity: 0.65;
+}
+
+.ui-composer--readonly .ui-composer__send,
+.ui-composer--readonly .ui-composer__plus {
+  pointer-events: none;
+}
+
+/* ——— Sopheamen / tierces ——— */
+
+.ui-uber-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #000;
+  color: #fff;
+}
+.ui-uber-header__logo { font-size: 22px; font-weight: 700; }
+.ui-uber-tabs { display: flex; border-bottom: 1px solid #e5e5ea; }
+.ui-uber-tabs button {
+  flex: 1; padding: 12px; border: none; background: none; font-size: 15px; font-weight: 600; color: #8e8e93;
+}
+.ui-uber-tabs__active { color: #000 !important; border-bottom: 2px solid #000; }
+.ui-uber-map--home { height: 200px; margin: 0; border-radius: 0; }
+.ui-uber-car {
+  width: 40px; height: 20px; background: #000; border-radius: 4px;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.ui-uber-search {
+  display: flex; gap: 10px; align-items: center;
+  margin: 12px 16px; padding: 14px 16px; background: #f2f2f7; border-radius: 12px; color: #000;
+}
+.ui-uber-pin { font-size: 18px; }
+
+.ui-eats-header { padding: 16px; font-size: 24px; font-weight: 700; color: #06c167; }
+.ui-eats-search { margin: 0 16px 12px; padding: 12px; background: #f2f2f7; border-radius: 10px; color: #000; }
+
+.ui-tiktok-feed { flex: 1; position: relative; background: #111; min-height: 100%; }
+.ui-tiktok-video { position: absolute; inset: 0; background: linear-gradient(180deg, #333, #111); }
+.ui-tiktok-side {
+  position: absolute; right: 12px; bottom: 120px; display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff;
+}
+.ui-tiktok-action {
+  width: 44px; height: 44px; border: none; border-radius: 50%; background: rgba(255,255,255,0.15); color: #fff; font-size: 20px;
+}
+.ui-tiktok-caption { position: absolute; left: 12px; right: 72px; bottom: 48px; color: #fff; }
+.ui-tiktok-nav { position: absolute; right: 16px; bottom: 48px; display: flex; flex-direction: column; gap: 8px; }
+.ui-tiktok-nav button { border: none; background: rgba(255,255,255,0.2); color: #fff; padding: 8px; border-radius: 8px; }
+
+.ui-tinder-card { margin: 16px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+.ui-tinder-card__photo { height: 360px; background: linear-gradient(135deg, #fd267a, #ff6036); }
+.ui-tinder-card__info { padding: 16px; color: #111; }
+.ui-tinder-actions { display: flex; justify-content: center; gap: 24px; padding: 16px; }
+.ui-tinder-actions button {
+  width: 56px; height: 56px; border-radius: 50%; border: none; font-size: 24px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+.ui-fb-post { background: #fff; margin: 8px 0; padding: 12px 16px; color: #050505; }
+.ui-fb-post__actions { display: flex; gap: 16px; margin-top: 8px; font-size: 14px; color: #65676b; }
+.ui-fb-post__actions button { border: none; background: none; color: inherit; padding: 0; }
+
+.ui-chat--messenger { background: #fff; }
+.ui-chat--messenger .ui-chat__row--in .ui-chat__bubble { background: #e4e6eb; color: #050505; }
+.ui-chat--messenger .ui-chat__row--out .ui-chat__bubble { background: #0084ff; color: #fff; }
+.ui-composer--messenger { background: #fff; border-top: 1px solid #e4e6eb; }
+.ui-composer--messenger .ui-composer__field { background: #f0f2f5; color: #050505; }
+
+.ui-chat--gemini { background: #f8f9fa; }
+.ui-chat--gemini .ui-chat__row--in .ui-chat__bubble { background: #fff; color: #1f1f1f; border: 1px solid #e8eaed; }
+.ui-chat--gemini .ui-chat__row--out .ui-chat__bubble { background: #d3e3fd; color: #1f1f1f; }
+.ui-composer--gemini { background: #fff; }
+
+.ui-chat--grok { background: #0a0a0a; }
+.ui-chat--grok .ui-chat__row--in .ui-chat__bubble { background: #1a1a1a; color: #fff; }
+.ui-chat--grok .ui-chat__row--out .ui-chat__bubble { background: #2a2a2a; color: #fff; }
+.ui-composer--grok { background: #000; border-top: 1px solid #333; }
+.ui-composer--grok .ui-composer__field { background: #1a1a1a; color: #fff; }
+
+.ui-airbnb-search { margin: 12px 16px; padding: 14px; border-radius: 32px; background: #fff; border: 1px solid #ddd; color: #222; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+.ui-snap-tabs { display: flex; background: #fffc00; }
+.ui-snap-tabs button { flex: 1; padding: 12px; border: none; background: transparent; font-weight: 700; color: #000; }
+.ui-snap-tabs__on { border-bottom: 3px solid #000; }
+.ui-snap-map { flex: 1; position: relative; background: #e8f4e8; min-height: 300px; }
+.ui-snap-bitmoji {
+  position: absolute; width: 44px; height: 44px; border-radius: 50%; background: #fffc00;
+  border: 3px solid #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.ui-snap-bitmoji--me { top: 45%; left: 45%; }
+.ui-chat--snapchat { background: #fffc00; }
+.ui-chat--snapchat .ui-chat__row--in .ui-chat__bubble { background: #fff; color: #000; }
+.ui-chat--snapchat .ui-chat__row--out .ui-chat__bubble { background: #3b5998; color: #fff; }
+
+.ui-li-post { background: #fff; margin: 8px 0; padding: 16px; color: #000; border: 1px solid #e0e0e0; }
+
+.ui-yt-bar { padding: 12px 16px; background: #fff; border-bottom: 1px solid #e5e5ea; }
+.ui-yt-logo { font-weight: 700; color: #0f0f0f; }
+.ui-yt-tabs { display: flex; border-bottom: 1px solid #e5e5ea; }
+.ui-yt-tabs button { flex: 1; padding: 10px; border: none; background: none; color: #606060; font-weight: 600; }
+.ui-yt-tabs__on { color: #0f0f0f !important; border-bottom: 2px solid #0f0f0f; }
+.ui-yt-search { display: block; width: calc(100% - 32px); margin: 12px 16px; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; }
+.ui-yt-thumb { width: 48px; height: 36px; background: #ccc; border-radius: 4px; }
+
+.ui-netflix-profiles { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; padding: 48px 16px; }
+.ui-netflix-profile { border: none; background: none; color: #fff; text-align: center; }
+.ui-netflix-profile__avatar { width: 80px; height: 80px; border-radius: 8px; background: #e50914; margin-bottom: 8px; }
+.ui-netflix-bar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #000; color: #fff; }
+.ui-netflix-bar__back { border: none; background: none; color: #fff; }
+.ui-netflix-bar__logo { font-weight: 900; color: #e50914; font-size: 22px; }
+.ui-netflix-tabs { display: flex; gap: 16px; padding: 8px 16px; background: #141414; }
+.ui-netflix-tabs button { border: none; background: none; color: #808080; font-weight: 600; }
+.ui-netflix-tabs__on { color: #fff !important; }
+
+.ui-coin-hero { padding: 20px; background: #0052ff; color: #fff; }
+.ui-coin-hero strong { display: block; font-size: 28px; margin-top: 4px; }
+.ui-wallet-card { font-size: 22px; }
+
+.ui-wa-chats { background: #fff; }
+.ui-wa-chats .ui-cell__label { color: #000; }
+.ui-wa-chats .ui-cell__subtitle { color: #8e8e93; }
+.ui-nav--wa-thread { position: sticky; top: 0; z-index: 2; }
+
+.ui-ig-dock {
+  display: flex; border-top: 1px solid #efefef; background: #fff; flex-shrink: 0;
+}
+.ui-ig-dock button {
+  flex: 1; padding: 12px; border: none; background: none; font-size: 20px; color: #8e8e93;
+}
+.ui-ig-dock__on { color: #000 !important; }
+.ui-ig-dock__disabled { opacity: 0.35; pointer-events: none; }
+.ui-ig-story-view { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #111; color: #fff; }
+.ui-ig-story-view__media { width: 100%; height: 70%; background: linear-gradient(180deg, #444, #222); }
+.ui-avatar--ig-dm { background: #efefef; color: #262626; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; }

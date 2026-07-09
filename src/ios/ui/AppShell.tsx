@@ -13,13 +13,29 @@ export type AppTheme =
   | "maps"
   | "instagram"
   | "uber"
+  | "ubereats"
   | "bank"
   | "spotify"
   | "disney"
+  | "netflix"
   | "files"
   | "reminders"
   | "calendar"
-  | "phone";
+  | "phone"
+  | "tiktok"
+  | "tinder"
+  | "facebook"
+  | "messenger"
+  | "gemini"
+  | "grok"
+  | "airbnb"
+  | "snapchat"
+  | "linkedin"
+  | "youtube"
+  | "ytmusic"
+  | "wallet"
+  | "coinbase"
+  | "appstore";
 
 interface AppShellProps {
   theme?: AppTheme;

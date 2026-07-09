@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { formatTime } from "./utils";
 
 export interface ChatMessage {
@@ -9,11 +10,20 @@ export interface ChatMessage {
 
 interface ChatThreadProps {
   messages: ChatMessage[];
-  theme?: "messages" | "whatsapp" | "signal";
+  theme?: "messages" | "whatsapp" | "signal" | "messenger" | "gemini" | "grok" | "snapchat" | "tinder";
+  scrollToEnd?: boolean;
 }
 
 /** Fil de conversation style iMessage / WhatsApp / Signal */
-export function ChatThread({ messages, theme = "messages" }: ChatThreadProps) {
+export function ChatThread({ messages, theme = "messages", scrollToEnd = false }: ChatThreadProps) {
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollToEnd) {
+      endRef.current?.scrollIntoView({ behavior: "instant" });
+    }
+  }, [messages, scrollToEnd]);
+
   return (
     <div className={`ui-chat ui-chat--${theme}`}>
       {messages.map((m, i) => (
@@ -24,6 +34,7 @@ export function ChatThread({ messages, theme = "messages" }: ChatThreadProps) {
           </div>
         </div>
       ))}
+      {scrollToEnd && <div ref={endRef} />}
     </div>
   );
 }

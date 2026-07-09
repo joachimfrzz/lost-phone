@@ -2,12 +2,15 @@ import { useState } from "react";
 import { adaptUber } from "../lib/lpsp/adapters";
 import { AppShell } from "../ios/ui/AppShell";
 import { Cell, Group } from "../ios/ui/List";
-import { LargeTitle, NavBar } from "../ios/ui/NavBar";
+import { NavBar } from "../ios/ui/NavBar";
 import { formatShortDate } from "../ios/ui/utils";
 
+/** Clone Uber **courses** (pas Uber Eats) — onglet Trajets + Activité. */
 export function UberApp({ data }: { data: unknown }) {
-  const { rides } = adaptUber(data);
+  const { account, rides } = adaptUber(data);
+  const [tab, setTab] = useState<"home" | "activity">("home");
   const [active, setActive] = useState<number | null>(null);
+  const addresses = (account?.adresses_enregistrees as Array<{ label?: string; adresse?: string }>) ?? [];
 
   if (active != null && rides[active]) {
     const r = rides[active];
@@ -28,21 +31,54 @@ export function UberApp({ data }: { data: unknown }) {
 
   return (
     <AppShell theme="uber">
-      <LargeTitle title="Activité" />
-      <div className="ui-scroll">
-        <Group>
-          {rides.map((r, i) => (
-            <Cell
-              key={r.id ?? i}
-              label={`${r.pickup?.split(",")[0] ?? "Départ"} → ${r.dropoff?.split(",")[0] ?? "Arrivée"}`}
-              subtitle={`${r.driver} · ${formatShortDate(r.date)}`}
-              detail={r.price}
-              chevron
-              onClick={() => setActive(i)}
-            />
-          ))}
-        </Group>
+      <header className="ui-uber-header">
+        <span className="ui-uber-header__logo">Uber</span>
+        <span className="ui-uber-header__user">{String(account?.nom ?? "Mathieu G.")}</span>
+      </header>
+
+      <div className="ui-uber-tabs">
+        <button type="button" className={tab === "home" ? "ui-uber-tabs__active" : ""} onClick={() => setTab("home")}>Trajets</button>
+        <button type="button" className={tab === "activity" ? "ui-uber-tabs__active" : ""} onClick={() => setTab("activity")}>Activité</button>
       </div>
+
+      {tab === "home" ? (
+        <div className="ui-scroll">
+          <div className="ui-uber-map ui-uber-map--home"><div className="ui-uber-car" /></div>
+          <div className="ui-uber-search">
+            <span>🔍</span>
+            <span>Où allez-vous ?</span>
+          </div>
+          <Group header="Suggestions">
+            {addresses.length > 0 ? addresses.map((a, i) => (
+              <Cell key={i} icon={<span className="ui-uber-pin">📍</span>} label={a.label} subtitle={a.adresse} chevron />
+            )) : (
+              <>
+                <Cell icon={<span className="ui-uber-pin">🏠</span>} label="Domicile" subtitle="17 rue de la Roquette, Paris" chevron />
+                <Cell icon={<span className="ui-uber-pin">💙</span>} label="Hugo" subtitle="Vincennes" chevron />
+              </>
+            )}
+          </Group>
+          <Group header="Options">
+            <Cell label="UberX" subtitle="Arrivée dans 4 min" detail="12–15 €" />
+            <Cell label="Comfort" subtitle="Véhicules récents" detail="18–22 €" />
+          </Group>
+        </div>
+      ) : (
+        <div className="ui-scroll">
+          <Group>
+            {rides.map((r, i) => (
+              <Cell
+                key={r.id ?? i}
+                label={`${r.pickup?.split(",")[0] ?? "Départ"} → ${r.dropoff?.split(",")[0] ?? "Arrivée"}`}
+                subtitle={`${r.driver} · ${formatShortDate(r.date)}`}
+                detail={r.price}
+                chevron
+                onClick={() => setActive(i)}
+              />
+            ))}
+          </Group>
+        </div>
+      )}
     </AppShell>
   );
 }

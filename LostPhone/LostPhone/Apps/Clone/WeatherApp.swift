@@ -70,13 +70,6 @@ struct HeaderView: View {
             Text("Plutôt dégagé")
                 .font(.title3.weight(.medium))
                 .foregroundStyle(.white.opacity(0.6))
-            
-            HStack(spacing: 8) {
-                Text("H:82°")
-                Text("L:68°")
-            }
-            .font(.title3.weight(.medium))
-            .foregroundStyle(.white)
         }
     }
 }

@@ -49,9 +49,7 @@ export function PhotosApp({ data }: { data: unknown }) {
       <header className="ui-nav" style={{ background: "rgba(0,0,0,0.85)", borderBottom: "none" }}>
         <div className="ui-nav__side" />
         <h1 className="ui-nav__title">Photos</h1>
-        <div className="ui-nav__side ui-nav__side--right">
-          <span style={{ color: "#0a84ff", fontSize: 17 }}>Sélectionner</span>
-        </div>
+        <div className="ui-nav__side ui-nav__side--right" />
       </header>
       <p style={{ margin: "8px 20px", fontSize: 22, fontWeight: 700, color: "#fff" }}>Bibliothèque</p>
       <p style={{ margin: "0 20px 12px", fontSize: 15, color: "#8e8e93" }}>{recents.length} éléments</p>

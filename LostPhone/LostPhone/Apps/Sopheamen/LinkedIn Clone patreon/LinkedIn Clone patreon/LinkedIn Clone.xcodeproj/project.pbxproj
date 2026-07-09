@@ -1,0 +1,696 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2686152C2BDA576700A415FA /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2686152B2BDA576700A415FA /* NotificationView.swift */; };
+		2699886B2BDB473400FA1D31 /* MyNetworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2699886A2BDB473400FA1D31 /* MyNetworkView.swift */; };
+		26B982782BEA241A00C02CF6 /* UploadPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B982772BEA241A00C02CF6 /* UploadPostView.swift */; };
+		26B9827B2BEB54CA00C02CF6 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B9827A2BEB54CA00C02CF6 /* JobView.swift */; };
+		26DDD6552BDF994C00960E39 /* TopCornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DDD6542BDF994C00960E39 /* TopCornerRadius.swift */; };
+		26DDD6592BDF9F8E00960E39 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DDD6582BDF9F8E00960E39 /* MessageView.swift */; };
+		26DDD65C2BE0F7A900960E39 /* MessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DDD65B2BE0F7A900960E39 /* MessageDetailView.swift */; };
+		26DDD65F2BE32E8200960E39 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DDD65E2BE32E8200960E39 /* Line.swift */; };
+		26DDD6612BE330DA00960E39 /* MessageDetailResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DDD6602BE330DA00960E39 /* MessageDetailResponse.swift */; };
+		26DDD6632BE331D300960E39 /* MessageDetailData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DDD6622BE331D300960E39 /* MessageDetailData.swift */; };
+		26DDD6662BE4963F00960E39 /* RootApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DDD6652BE4963F00960E39 /* RootApp.swift */; };
+		26DFC76A2BF5A8D80031D107 /* UserLinkedInResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DFC7692BF5A8D80031D107 /* UserLinkedInResponse.swift */; };
+		26DFC76C2BF5B1540031D107 /* UserLinkedInData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DFC76B2BF5B1540031D107 /* UserLinkedInData.swift */; };
+		26DFC76F2BF5EA9C0031D107 /* JobResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DFC76E2BF5EA9C0031D107 /* JobResponse.swift */; };
+		26DFC7712BF5EB3A0031D107 /* JobData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DFC7702BF5EB390031D107 /* JobData.swift */; };
+		26E4E7B72BD622C00005FE9D /* LinkedIn_CloneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7B62BD622C00005FE9D /* LinkedIn_CloneApp.swift */; };
+		26E4E7B92BD622C00005FE9D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7B82BD622C00005FE9D /* ContentView.swift */; };
+		26E4E7BB2BD622C10005FE9D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26E4E7BA2BD622C10005FE9D /* Assets.xcassets */; };
+		26E4E7BE2BD622C10005FE9D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26E4E7BD2BD622C10005FE9D /* Preview Assets.xcassets */; };
+		26E4E7CC2BD6254F0005FE9D /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7CB2BD6254F0005FE9D /* AppSetting.swift */; };
+		26E4E7CF2BD625F00005FE9D /* AppStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7CE2BD625F00005FE9D /* AppStyle.swift */; };
+		26E4E7D12BD626090005FE9D /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7D02BD626090005FE9D /* AppColor.swift */; };
+		26E4E7D52BD7669C0005FE9D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7D42BD7669C0005FE9D /* HomeView.swift */; };
+		26E4E7DD2BD7A4EB0005FE9D /* PostResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7DC2BD7A4EB0005FE9D /* PostResponse.swift */; };
+		26E4E7E12BD7A9340005FE9D /* PostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7E02BD7A9340005FE9D /* PostData.swift */; };
+		26E4E7E42BD7B46A0005FE9D /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7E32BD7B46A0005FE9D /* UserViewModel.swift */; };
+		26E4E7E72BD8A0AA0005FE9D /* AudioEventResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7E62BD8A0AA0005FE9D /* AudioEventResponse.swift */; };
+		26E4E7E92BD8A1900005FE9D /* AudioEventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7E82BD8A1900005FE9D /* AudioEventData.swift */; };
+		26E4E7EC2BD8A6CE0005FE9D /* NotificationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7EB2BD8A6CE0005FE9D /* NotificationResponse.swift */; };
+		26E4E7EE2BD8AA380005FE9D /* NotificationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7ED2BD8AA380005FE9D /* NotificationData.swift */; };
+		26E4E7F12BD8AFE50005FE9D /* MessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7F02BD8AFE50005FE9D /* MessageResponse.swift */; };
+		26E4E7F32BD8B1800005FE9D /* MessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7F22BD8B1800005FE9D /* MessageData.swift */; };
+		26E4E7F62BD8C7FA0005FE9D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 26E4E7F52BD8C7FA0005FE9D /* Kingfisher */; };
+		26E4E7F92BD8C8200005FE9D /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7F82BD8C8200005FE9D /* ProfileImageView.swift */; };
+		26E4E7FD2BD8EA8F0005FE9D /* ProfileImageRectangleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E4E7FC2BD8EA8F0005FE9D /* ProfileImageRectangleView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2686152B2BDA576700A415FA /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
+		2699886A2BDB473400FA1D31 /* MyNetworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNetworkView.swift; sourceTree = "<group>"; };
+		26B982772BEA241A00C02CF6 /* UploadPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPostView.swift; sourceTree = "<group>"; };
+		26B9827A2BEB54CA00C02CF6 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
+		26DDD6542BDF994C00960E39 /* TopCornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopCornerRadius.swift; sourceTree = "<group>"; };
+		26DDD6582BDF9F8E00960E39 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
+		26DDD65B2BE0F7A900960E39 /* MessageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailView.swift; sourceTree = "<group>"; };
+		26DDD65E2BE32E8200960E39 /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
+		26DDD6602BE330DA00960E39 /* MessageDetailResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailResponse.swift; sourceTree = "<group>"; };
+		26DDD6622BE331D300960E39 /* MessageDetailData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailData.swift; sourceTree = "<group>"; };
+		26DDD6652BE4963F00960E39 /* RootApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootApp.swift; sourceTree = "<group>"; };
+		26DFC7692BF5A8D80031D107 /* UserLinkedInResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLinkedInResponse.swift; sourceTree = "<group>"; };
+		26DFC76B2BF5B1540031D107 /* UserLinkedInData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLinkedInData.swift; sourceTree = "<group>"; };
+		26DFC76E2BF5EA9C0031D107 /* JobResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobResponse.swift; sourceTree = "<group>"; };
+		26DFC7702BF5EB390031D107 /* JobData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobData.swift; sourceTree = "<group>"; };
+		26E4E7B32BD622C00005FE9D /* LinkedIn Clone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LinkedIn Clone.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		26E4E7B62BD622C00005FE9D /* LinkedIn_CloneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedIn_CloneApp.swift; sourceTree = "<group>"; };
+		26E4E7B82BD622C00005FE9D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		26E4E7BA2BD622C10005FE9D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		26E4E7BD2BD622C10005FE9D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		26E4E7CB2BD6254F0005FE9D /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetting.swift; sourceTree = "<group>"; };
+		26E4E7CE2BD625F00005FE9D /* AppStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStyle.swift; sourceTree = "<group>"; };
+		26E4E7D02BD626090005FE9D /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
+		26E4E7D42BD7669C0005FE9D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		26E4E7DC2BD7A4EB0005FE9D /* PostResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostResponse.swift; sourceTree = "<group>"; };
+		26E4E7E02BD7A9340005FE9D /* PostData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostData.swift; sourceTree = "<group>"; };
+		26E4E7E32BD7B46A0005FE9D /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
+		26E4E7E62BD8A0AA0005FE9D /* AudioEventResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEventResponse.swift; sourceTree = "<group>"; };
+		26E4E7E82BD8A1900005FE9D /* AudioEventData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEventData.swift; sourceTree = "<group>"; };
+		26E4E7EB2BD8A6CE0005FE9D /* NotificationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationResponse.swift; sourceTree = "<group>"; };
+		26E4E7ED2BD8AA380005FE9D /* NotificationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationData.swift; sourceTree = "<group>"; };
+		26E4E7F02BD8AFE50005FE9D /* MessageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageResponse.swift; sourceTree = "<group>"; };
+		26E4E7F22BD8B1800005FE9D /* MessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageData.swift; sourceTree = "<group>"; };
+		26E4E7F82BD8C8200005FE9D /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
+		26E4E7FC2BD8EA8F0005FE9D /* ProfileImageRectangleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageRectangleView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		26E4E7B02BD622C00005FE9D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26E4E7F62BD8C7FA0005FE9D /* Kingfisher in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2686152A2BDA575D00A415FA /* Notification */ = {
+			isa = PBXGroup;
+			children = (
+				2686152B2BDA576700A415FA /* NotificationView.swift */,
+			);
+			path = Notification;
+			sourceTree = "<group>";
+		};
+		269988692BDB471E00FA1D31 /* MyNetwork */ = {
+			isa = PBXGroup;
+			children = (
+				2699886A2BDB473400FA1D31 /* MyNetworkView.swift */,
+			);
+			path = MyNetwork;
+			sourceTree = "<group>";
+		};
+		26B982762BEA240C00C02CF6 /* UploadPost */ = {
+			isa = PBXGroup;
+			children = (
+				26B982772BEA241A00C02CF6 /* UploadPostView.swift */,
+			);
+			path = UploadPost;
+			sourceTree = "<group>";
+		};
+		26B982792BEB54BF00C02CF6 /* Job */ = {
+			isa = PBXGroup;
+			children = (
+				26B9827A2BEB54CA00C02CF6 /* JobView.swift */,
+			);
+			path = Job;
+			sourceTree = "<group>";
+		};
+		26DDD6532BDF993600960E39 /* CornerRadius */ = {
+			isa = PBXGroup;
+			children = (
+				26DDD6542BDF994C00960E39 /* TopCornerRadius.swift */,
+			);
+			path = CornerRadius;
+			sourceTree = "<group>";
+		};
+		26DDD6562BDF9F7E00960E39 /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				26DDD6582BDF9F8E00960E39 /* MessageView.swift */,
+			);
+			path = Message;
+			sourceTree = "<group>";
+		};
+		26DDD65A2BE0F79D00960E39 /* MessageDetail */ = {
+			isa = PBXGroup;
+			children = (
+				26DDD65B2BE0F7A900960E39 /* MessageDetailView.swift */,
+			);
+			path = MessageDetail;
+			sourceTree = "<group>";
+		};
+		26DDD65D2BE32E7B00960E39 /* Line */ = {
+			isa = PBXGroup;
+			children = (
+				26DDD65E2BE32E8200960E39 /* Line.swift */,
+			);
+			path = Line;
+			sourceTree = "<group>";
+		};
+		26DDD6642BE4963100960E39 /* RootApp */ = {
+			isa = PBXGroup;
+			children = (
+				26DDD6652BE4963F00960E39 /* RootApp.swift */,
+			);
+			path = RootApp;
+			sourceTree = "<group>";
+		};
+		26DFC76D2BF5EA8F0031D107 /* JobModel */ = {
+			isa = PBXGroup;
+			children = (
+				26DFC76E2BF5EA9C0031D107 /* JobResponse.swift */,
+				26DFC7702BF5EB390031D107 /* JobData.swift */,
+			);
+			path = JobModel;
+			sourceTree = "<group>";
+		};
+		26E4E7AA2BD622C00005FE9D = {
+			isa = PBXGroup;
+			children = (
+				26E4E7B52BD622C00005FE9D /* LinkedIn Clone */,
+				26E4E7B42BD622C00005FE9D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		26E4E7B42BD622C00005FE9D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7B32BD622C00005FE9D /* LinkedIn Clone.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		26E4E7B52BD622C00005FE9D /* LinkedIn Clone */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7CA2BD625060005FE9D /* Constants */,
+				26E4E7C92BD624130005FE9D /* Modifier */,
+				26E4E7C82BD6240D0005FE9D /* Components */,
+				26E4E7C72BD623F20005FE9D /* Models */,
+				26E4E7C52BD623E30005FE9D /* Themes */,
+				26E4E7C42BD623E00005FE9D /* Pages */,
+				26E4E7B62BD622C00005FE9D /* LinkedIn_CloneApp.swift */,
+				26E4E7B82BD622C00005FE9D /* ContentView.swift */,
+				26E4E7BA2BD622C10005FE9D /* Assets.xcassets */,
+				26E4E7BC2BD622C10005FE9D /* Preview Content */,
+			);
+			path = "LinkedIn Clone";
+			sourceTree = "<group>";
+		};
+		26E4E7BC2BD622C10005FE9D /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7BD2BD622C10005FE9D /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		26E4E7C42BD623E00005FE9D /* Pages */ = {
+			isa = PBXGroup;
+			children = (
+				26B982792BEB54BF00C02CF6 /* Job */,
+				26B982762BEA240C00C02CF6 /* UploadPost */,
+				26DDD6642BE4963100960E39 /* RootApp */,
+				26DDD65A2BE0F79D00960E39 /* MessageDetail */,
+				26DDD6562BDF9F7E00960E39 /* Message */,
+				269988692BDB471E00FA1D31 /* MyNetwork */,
+				2686152A2BDA575D00A415FA /* Notification */,
+				26E4E7D32BD7667B0005FE9D /* Home */,
+			);
+			path = Pages;
+			sourceTree = "<group>";
+		};
+		26E4E7C52BD623E30005FE9D /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7CD2BD625DC0005FE9D /* Styles */,
+				26E4E7C62BD623E80005FE9D /* Colors */,
+			);
+			path = Themes;
+			sourceTree = "<group>";
+		};
+		26E4E7C62BD623E80005FE9D /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7D02BD626090005FE9D /* AppColor.swift */,
+			);
+			path = Colors;
+			sourceTree = "<group>";
+		};
+		26E4E7C72BD623F20005FE9D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				26DFC76D2BF5EA8F0031D107 /* JobModel */,
+				26E4E7EF2BD8AFD30005FE9D /* MessageModel */,
+				26E4E7EA2BD8A6660005FE9D /* NotificationModel */,
+				26E4E7E52BD8A07E0005FE9D /* AudioEventModel */,
+				26E4E7DB2BD7A4DA0005FE9D /* PostModel */,
+				26E4E7D62BD76C5C0005FE9D /* UserLinkedInModel */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		26E4E7C82BD6240D0005FE9D /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				26DDD65D2BE32E7B00960E39 /* Line */,
+				26DDD6532BDF993600960E39 /* CornerRadius */,
+				26E4E7F72BD8C80B0005FE9D /* CircleAvatar */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		26E4E7C92BD624130005FE9D /* Modifier */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Modifier;
+			sourceTree = "<group>";
+		};
+		26E4E7CA2BD625060005FE9D /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7CB2BD6254F0005FE9D /* AppSetting.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		26E4E7CD2BD625DC0005FE9D /* Styles */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7CE2BD625F00005FE9D /* AppStyle.swift */,
+			);
+			path = Styles;
+			sourceTree = "<group>";
+		};
+		26E4E7D32BD7667B0005FE9D /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7D42BD7669C0005FE9D /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		26E4E7D62BD76C5C0005FE9D /* UserLinkedInModel */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7E32BD7B46A0005FE9D /* UserViewModel.swift */,
+				26DFC7692BF5A8D80031D107 /* UserLinkedInResponse.swift */,
+				26DFC76B2BF5B1540031D107 /* UserLinkedInData.swift */,
+			);
+			path = UserLinkedInModel;
+			sourceTree = "<group>";
+		};
+		26E4E7DB2BD7A4DA0005FE9D /* PostModel */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7DC2BD7A4EB0005FE9D /* PostResponse.swift */,
+				26E4E7E02BD7A9340005FE9D /* PostData.swift */,
+			);
+			path = PostModel;
+			sourceTree = "<group>";
+		};
+		26E4E7E52BD8A07E0005FE9D /* AudioEventModel */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7E62BD8A0AA0005FE9D /* AudioEventResponse.swift */,
+				26E4E7E82BD8A1900005FE9D /* AudioEventData.swift */,
+			);
+			path = AudioEventModel;
+			sourceTree = "<group>";
+		};
+		26E4E7EA2BD8A6660005FE9D /* NotificationModel */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7EB2BD8A6CE0005FE9D /* NotificationResponse.swift */,
+				26E4E7ED2BD8AA380005FE9D /* NotificationData.swift */,
+			);
+			path = NotificationModel;
+			sourceTree = "<group>";
+		};
+		26E4E7EF2BD8AFD30005FE9D /* MessageModel */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7F02BD8AFE50005FE9D /* MessageResponse.swift */,
+				26E4E7F22BD8B1800005FE9D /* MessageData.swift */,
+				26DDD6602BE330DA00960E39 /* MessageDetailResponse.swift */,
+				26DDD6622BE331D300960E39 /* MessageDetailData.swift */,
+			);
+			path = MessageModel;
+			sourceTree = "<group>";
+		};
+		26E4E7F72BD8C80B0005FE9D /* CircleAvatar */ = {
+			isa = PBXGroup;
+			children = (
+				26E4E7F82BD8C8200005FE9D /* ProfileImageView.swift */,
+				26E4E7FC2BD8EA8F0005FE9D /* ProfileImageRectangleView.swift */,
+			);
+			path = CircleAvatar;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		26E4E7B22BD622C00005FE9D /* LinkedIn Clone */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 26E4E7C12BD622C10005FE9D /* Build configuration list for PBXNativeTarget "LinkedIn Clone" */;
+			buildPhases = (
+				26E4E7AF2BD622C00005FE9D /* Sources */,
+				26E4E7B02BD622C00005FE9D /* Frameworks */,
+				26E4E7B12BD622C00005FE9D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "LinkedIn Clone";
+			packageProductDependencies = (
+				26E4E7F52BD8C7FA0005FE9D /* Kingfisher */,
+			);
+			productName = "LinkedIn Clone";
+			productReference = 26E4E7B32BD622C00005FE9D /* LinkedIn Clone.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		26E4E7AB2BD622C00005FE9D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				TargetAttributes = {
+					26E4E7B22BD622C00005FE9D = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = 26E4E7AE2BD622C00005FE9D /* Build configuration list for PBXProject "LinkedIn Clone" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 26E4E7AA2BD622C00005FE9D;
+			packageReferences = (
+				26E4E7F42BD8C7FA0005FE9D /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
+			productRefGroup = 26E4E7B42BD622C00005FE9D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				26E4E7B22BD622C00005FE9D /* LinkedIn Clone */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		26E4E7B12BD622C00005FE9D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26E4E7BE2BD622C10005FE9D /* Preview Assets.xcassets in Resources */,
+				26E4E7BB2BD622C10005FE9D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		26E4E7AF2BD622C00005FE9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26E4E7E92BD8A1900005FE9D /* AudioEventData.swift in Sources */,
+				26DFC76F2BF5EA9C0031D107 /* JobResponse.swift in Sources */,
+				26DDD6662BE4963F00960E39 /* RootApp.swift in Sources */,
+				26E4E7EC2BD8A6CE0005FE9D /* NotificationResponse.swift in Sources */,
+				26E4E7B92BD622C00005FE9D /* ContentView.swift in Sources */,
+				26E4E7D12BD626090005FE9D /* AppColor.swift in Sources */,
+				26DDD65F2BE32E8200960E39 /* Line.swift in Sources */,
+				26E4E7F12BD8AFE50005FE9D /* MessageResponse.swift in Sources */,
+				2699886B2BDB473400FA1D31 /* MyNetworkView.swift in Sources */,
+				26E4E7FD2BD8EA8F0005FE9D /* ProfileImageRectangleView.swift in Sources */,
+				26DFC76A2BF5A8D80031D107 /* UserLinkedInResponse.swift in Sources */,
+				26DDD6552BDF994C00960E39 /* TopCornerRadius.swift in Sources */,
+				26E4E7F92BD8C8200005FE9D /* ProfileImageView.swift in Sources */,
+				26E4E7B72BD622C00005FE9D /* LinkedIn_CloneApp.swift in Sources */,
+				26E4E7E72BD8A0AA0005FE9D /* AudioEventResponse.swift in Sources */,
+				26DDD65C2BE0F7A900960E39 /* MessageDetailView.swift in Sources */,
+				26B982782BEA241A00C02CF6 /* UploadPostView.swift in Sources */,
+				26E4E7E12BD7A9340005FE9D /* PostData.swift in Sources */,
+				26DDD6632BE331D300960E39 /* MessageDetailData.swift in Sources */,
+				26DFC76C2BF5B1540031D107 /* UserLinkedInData.swift in Sources */,
+				26E4E7D52BD7669C0005FE9D /* HomeView.swift in Sources */,
+				26E4E7E42BD7B46A0005FE9D /* UserViewModel.swift in Sources */,
+				26E4E7CC2BD6254F0005FE9D /* AppSetting.swift in Sources */,
+				26E4E7F32BD8B1800005FE9D /* MessageData.swift in Sources */,
+				26E4E7DD2BD7A4EB0005FE9D /* PostResponse.swift in Sources */,
+				26B9827B2BEB54CA00C02CF6 /* JobView.swift in Sources */,
+				26E4E7EE2BD8AA380005FE9D /* NotificationData.swift in Sources */,
+				26DDD6592BDF9F8E00960E39 /* MessageView.swift in Sources */,
+				26DDD6612BE330DA00960E39 /* MessageDetailResponse.swift in Sources */,
+				26DFC7712BF5EB3A0031D107 /* JobData.swift in Sources */,
+				26E4E7CF2BD625F00005FE9D /* AppStyle.swift in Sources */,
+				2686152C2BDA576700A415FA /* NotificationView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		26E4E7BF2BD622C10005FE9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		26E4E7C02BD622C10005FE9D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		26E4E7C22BD622C10005FE9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"LinkedIn Clone/Preview Content\"";
+				DEVELOPMENT_TEAM = LP846EEF49;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sopheamen.app.LinkedIn-Clone";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		26E4E7C32BD622C10005FE9D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"LinkedIn Clone/Preview Content\"";
+				DEVELOPMENT_TEAM = LP846EEF49;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "sopheamen.app.LinkedIn-Clone";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		26E4E7AE2BD622C00005FE9D /* Build configuration list for PBXProject "LinkedIn Clone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26E4E7BF2BD622C10005FE9D /* Debug */,
+				26E4E7C02BD622C10005FE9D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		26E4E7C12BD622C10005FE9D /* Build configuration list for PBXNativeTarget "LinkedIn Clone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26E4E7C22BD622C10005FE9D /* Debug */,
+				26E4E7C32BD622C10005FE9D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		26E4E7F42BD8C7FA0005FE9D /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		26E4E7F52BD8C7FA0005FE9D /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26E4E7F42BD8C7FA0005FE9D /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 26E4E7AB2BD622C00005FE9D /* Project object */;
+}

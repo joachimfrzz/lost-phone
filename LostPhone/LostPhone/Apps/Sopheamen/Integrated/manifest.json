@@ -1,0 +1,199 @@
+[
+  {
+    "lpsp": "TikTok",
+    "src": "Youtube_Tiktok_v1/Youtube_Tiktok_v1/Youtube_Tiktok",
+    "prefix": "TikTok",
+    "entry": "TikTokView",
+    "outEntry": "TikTokView",
+    "renames": {
+      "HomeView": "TikTokHomeView",
+      "ContentView": "TikTokContentRoot"
+    }
+  },
+  {
+    "lpsp": "Uber",
+    "src": "Youtube_uber_clone_v1/Youtube_uber_clone_v1/Youtube_uber_clone",
+    "prefix": "Uber",
+    "entry": "HomeView",
+    "outEntry": "UberHomeView",
+    "renames": {
+      "HomeView": "UberHomeView",
+      "ContentView": "UberContentRoot"
+    },
+    "patch": "uber-rides-only"
+  },
+  {
+    "lpsp": "Uber Eats",
+    "src": "food-delivery-ui-kit-cart-checkout/food-delivery-ui-kit-cart-checkout/food-delivery-ui-kit-v1",
+    "prefix": "UberEats",
+    "entry": "ContentView",
+    "outEntry": "UberEatsHomeView",
+    "renames": {
+      "ContentView": "UberEatsHomeView",
+      "HomeView": "UberEatsMapHome"
+    }
+  },
+  {
+    "lpsp": "Facebook",
+    "src": "Youtube_Facebook_v1/Youtube_Facebook_v1/Youtube_Facebook",
+    "prefix": "Facebook",
+    "entry": "HomeView",
+    "outEntry": "FacebookHome",
+    "renames": {
+      "HomeView": "FacebookHome",
+      "ContentView": "FacebookContentRoot"
+    },
+    "patch": "facebook-contrast"
+  },
+  {
+    "lpsp": "Messenger",
+    "src": "Youtube_FacebookMessenger_v1/Youtube_FacebookMessenger_v1/Youtube_FacebookMessenger",
+    "prefix": "Messenger",
+    "entry": "HomeView",
+    "outEntry": "MessengerHome",
+    "renames": {
+      "HomeView": "MessengerHome",
+      "ContentView": "MessengerContentRoot"
+    },
+    "patch": "messenger-contrast"
+  },
+  {
+    "lpsp": "Gemini",
+    "src": "Youtube_Gemini_clone_v1/Youtube_Gemini_clone_v1/Youtube_Gemini_clone",
+    "prefix": "Gemini",
+    "entry": "HomeView",
+    "outEntry": "GeminiView",
+    "renames": {
+      "HomeView": "GeminiView",
+      "ContentView": "GeminiContentRoot",
+      "DetailView": "GeminiDetailView"
+    },
+    "patch": "gemini-contrast"
+  },
+  {
+    "lpsp": "Instagram",
+    "src": "Instagram clone patreon/Instagram clone patreon/Instagram clone",
+    "prefix": "Instagram",
+    "entry": "HomeView",
+    "outEntry": "InstagramHome",
+    "renames": {
+      "HomeView": "InstagramHome",
+      "ContentView": "InstagramContentRoot"
+    }
+  },
+  {
+    "lpsp": "WhatsApp",
+    "src": "WhatsAppclone patreon/WhatsAppclone patreon/WhatsAppclone",
+    "prefix": "WhatsApp",
+    "entry": "HomeView",
+    "outEntry": "WhatsAppView",
+    "renames": {
+      "HomeView": "WhatsAppView",
+      "ContentView": "WhatsAppContentRoot"
+    },
+    "patch": "whatsapp-contrast"
+  },
+  {
+    "lpsp": "Netflix",
+    "src": "Youtube_Netflix_v1/Youtube_Netflix_v1/Youtube_Netflix",
+    "prefix": "Netflix",
+    "entry": "HomeView",
+    "outEntry": "NetflixHome",
+    "renames": {
+      "HomeView": "NetflixHome",
+      "ContentView": "NetflixContentRoot"
+    }
+  },
+  {
+    "lpsp": "YouTube",
+    "src": "Youtube_Youtube_v1/Youtube_Youtube_v1/Youtube_Youtube",
+    "prefix": "YouTube",
+    "entry": "HomeView",
+    "outEntry": "YouTubeHome",
+    "renames": {
+      "HomeView": "YouTubeHome",
+      "ContentView": "YouTubeContentRoot"
+    },
+    "patch": "youtube-branding"
+  },
+  {
+    "lpsp": "YouTube Music",
+    "src": "Youtube_Music_v2_1/Youtube_Music_v2_1/Youtube_Music_v2",
+    "prefix": "YTMusic",
+    "entry": "HomeView",
+    "outEntry": "YTMusicHome",
+    "renames": {
+      "HomeView": "YTMusicHome",
+      "ContentView": "YTMusicContentRoot"
+    }
+  },
+  {
+    "lpsp": "Airbnb",
+    "src": "youtube_airbnb_clone_v1/youtube_airbnb_clone_v1/youtube_airbnb_clone",
+    "prefix": "Airbnb",
+    "entry": "HomeView",
+    "outEntry": "AirbnbHomeView",
+    "renames": {
+      "HomeView": "AirbnbHomeView",
+      "ContentView": "AirbnbContentRoot"
+    },
+    "patch": "airbnb-contrast"
+  },
+  {
+    "lpsp": "LinkedIn",
+    "src": "LinkedIn Clone patreon/LinkedIn Clone patreon/LinkedIn Clone",
+    "prefix": "LinkedIn",
+    "entry": "HomeView",
+    "outEntry": "LinkedInHome",
+    "renames": {
+      "HomeView": "LinkedInHome",
+      "ContentView": "LinkedInContentRoot"
+    }
+  },
+  {
+    "lpsp": "Snapchat",
+    "src": "Snapchat Clone patreon/Snapchat Clone patreon/Snapchat Clone",
+    "prefix": "Snapchat",
+    "entry": "HomeView",
+    "outEntry": "SnapchatHome",
+    "renames": {
+      "HomeView": "SnapchatHome",
+      "ContentView": "SnapchatContentRoot"
+    },
+    "patch": "snapchat-contrast"
+  },
+  {
+    "lpsp": "App Store",
+    "src": "Youtube_Appstore _v1/Youtube_Appstore _v1/Youtube_Appstore",
+    "prefix": "AppStore",
+    "entry": "HomeView",
+    "outEntry": "AppStoreHome",
+    "renames": {
+      "HomeView": "AppStoreHome",
+      "ContentView": "AppStoreContentRoot"
+    }
+  },
+  {
+    "lpsp": "Wallet",
+    "src": "Youtube_Phantom_clone_v1/Youtube_Phantom_clone_v1/Youtube_Phantom_clone",
+    "prefix": "Phantom",
+    "entry": "HomeView",
+    "outEntry": "PhantomHome",
+    "renames": {
+      "HomeView": "PhantomHome",
+      "ContentView": "PhantomContentRoot"
+    }
+  },
+  {
+    "lpsp": "Threads",
+    "src": "Youtube_Threads_v1/Youtube_Threads_v1/Youtube_Threads",
+    "prefix": "Threads",
+    "entry": "HomeView",
+    "outEntry": "ThreadsHome",
+    "renames": {
+      "HomeView": "ThreadsHome",
+      "ContentView": "ThreadsContentRoot"
+    },
+    "disabled": true
+  }
+]

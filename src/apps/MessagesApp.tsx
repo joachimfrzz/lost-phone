@@ -28,6 +28,7 @@ export function MessagesApp({ data }: { data: unknown }) {
         />
         <ChatThread
           theme="messages"
+          scrollToEnd
           messages={t.messages.map((m) => ({ id: m.id, text: m.text, outgoing: m.outgoing, time: m.time }))}
         />
         <ChatComposer theme="messages" placeholder="iMessage" />

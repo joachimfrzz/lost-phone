@@ -129,7 +129,7 @@ jobs:
           gh release create "${{ env.APPETIZE_RELEASE_TAG }}" \
             preview-artifacts/LostPhone-simulator.app.zip \
             --title "Appetize — zip simulateur (${{ github.ref_name }})" \
-            --notes "Branche **${{ github.ref_name }}**. Showroom : menu → **Showroom — clones Apple + tier Awesome** (sans PIN). J-3 : PIN **1503**. PC/Mac + iOS **17.2**."
+            --notes "Branche **${{ github.ref_name }}**. Showroom : menu → **Showroom** (sans PIN) — clones Apple zerocode117 + 21 Sopheamen. J-3 : PIN **1503**. PC/Mac + iOS **17.2**."
         env:
           GH_TOKEN: ${{ github.token }}
 

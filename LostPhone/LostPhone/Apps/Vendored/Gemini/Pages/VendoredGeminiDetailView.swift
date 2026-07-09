@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MarkdownUI // for decode the content with symbol to readable text
 
 struct VendoredGeminiDetailView: View {
     // state and param from home view
@@ -48,13 +47,7 @@ struct VendoredGeminiDetailView: View {
                         if isLoading {
                             VendoredGeminiLoadingView()
                         }else {
-                            Markdown(displayedText)
-                                .markdownTextStyle(\.code) {
-                                    FontFamilyVariant(.monospaced)
-                                    FontSize(.em(1))
-                                    ForegroundColor(.purple)
-                                    BackgroundColor(.purple.opacity(0.25))
-                                }
+                            Text(displayedText)
                                 .font(.subheadline)
                                 .foregroundStyle(.black)
                                 .multilineTextAlignment(.leading)

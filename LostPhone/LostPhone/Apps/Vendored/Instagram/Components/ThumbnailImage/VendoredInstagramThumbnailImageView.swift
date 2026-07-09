@@ -26,7 +26,7 @@ struct VendoredInstagramThumbnailImageView: View {
                     .fill(Color.vendoredInstagramVendoredInstagramPrimary)
                     .frame(width: width, height: height)
                     .onAppear {
-                        generateThumbnail(from: videoURL) { image in
+                        vendoredInstagramGenerateThumbnail(from: videoURL) { image in
                             self.thumbnailImage = image
                         }
                     }

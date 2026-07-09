@@ -7,7 +7,7 @@
 import AVFoundation
 import UIKit
 
-func generateThumbnail(from videoURL: URL, at time: TimeInterval = 1.0, completion: @escaping (UIImage?) -> Void) {
+func vendoredInstagramGenerateThumbnail(from videoURL: URL, at time: TimeInterval = 1.0, completion: @escaping (UIImage?) -> Void) {
     DispatchQueue.global().async {
         let asset = AVAsset(url: videoURL)
         let assetImageGenerator = AVAssetImageGenerator(asset: asset)

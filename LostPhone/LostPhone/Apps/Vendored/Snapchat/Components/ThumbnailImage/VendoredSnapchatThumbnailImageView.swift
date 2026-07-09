@@ -26,7 +26,7 @@ struct VendoredSnapchatThumbnailImageView: View {
                     .fill(Color.vendoredSnapchatVendoredSnapchatPrimary)
                     .frame(width: width, height: height)
                     .onAppear {
-                        generateThumbnail(from: videoURL) { image in
+                        vendoredSnapchatGenerateThumbnail(from: videoURL) { image in
                             self.thumbnailImage = image
                         }
                     }

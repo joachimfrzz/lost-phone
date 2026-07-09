@@ -44,7 +44,7 @@ struct VendoredThreadsCloseAndOptionView:View {
             }label: {
                 ZStack {
                     Circle()
-                        .fill(Color.grayColor)
+                        .fill(Color.vendoredThreadsGray)
                         .frame(width: 40, height: 40)
                     Image(systemName: "xmark")
                         .fontWeight(.semibold)

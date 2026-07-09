@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAudibleView: View {
     var body: some View {
-        LpspAudibleShowroomRoot()
+        LpspAudibleShowroomRoot(store: LpspAudibleStore())
     }
 }
 
@@ -323,157 +323,637 @@ fileprivate struct LpspAudibleFlowLayout: Layout {
 }
 
 
+// MARK: - Showroom data & store
+
+private enum LpspAudibleShowroomTab: String, CaseIterable, Identifiable {
+    case home, library, discover, profile
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .library: "Library"
+        case .discover: "Discover"
+        case .profile: "Profile"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .library: "books.vertical.fill"
+        case .discover: "magnifyingglass"
+        case .profile: "person.crop.circle.fill"
+        }
+    }
+}
+
+private struct LpspAudibleBook: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let author: String
+    let narrator: String
+    let remaining: String
+    let progress: Double
+    let artworkColors: [Color]
+}
+
+private struct LpspAudibleChapter: Identifiable, Equatable {
+    let id: Int
+    let title: String
+    let duration: String
+    var state: LpspAudibleChapterListSheet.LpspAudibleChapterState
+}
+
+private enum LpspAudibleShowroomData {
+    static let songOfAchilles = LpspAudibleBook(
+        id: "achilles",
+        title: "The Song of Achilles",
+        author: "Madeline Miller",
+        narrator: "Frazer Douglas",
+        remaining: "8 hrs 14 min left",
+        progress: 0.34,
+        artworkColors: [
+            Color(red: 0.72, green: 0.28, blue: 0.18),
+            Color(red: 0.42, green: 0.12, blue: 0.10),
+        ]
+    )
+
+    static let library: [LpspAudibleBook] = [
+        songOfAchilles,
+        LpspAudibleBook(
+            id: "circe",
+            title: "Circe",
+            author: "Madeline Miller",
+            narrator: "Perdita Weeks",
+            remaining: "5 hrs 42 min left",
+            progress: 0.18,
+            artworkColors: [
+                Color(red: 0.18, green: 0.42, blue: 0.62),
+                Color(red: 0.08, green: 0.22, blue: 0.38),
+            ]
+        ),
+        LpspAudibleBook(
+            id: "project-hail-mary",
+            title: "Project Hail Mary",
+            author: "Andy Weir",
+            narrator: "Ray Porter",
+            remaining: "12 hrs 8 min left",
+            progress: 0.52,
+            artworkColors: [
+                Color(red: 0.22, green: 0.58, blue: 0.48),
+                Color(red: 0.10, green: 0.28, blue: 0.32),
+            ]
+        ),
+    ]
+
+    static let discoverCategories = ["Bestsellers", "New releases", "Editors' picks", "Sci-Fi & Fantasy"]
+
+    static func chapters(for bookID: String) -> [LpspAudibleChapter] {
+        switch bookID {
+        case "achilles":
+            return [
+                LpspAudibleChapter(id: 1, title: "My Father and Achilles", duration: "42:18", state: .finished),
+                LpspAudibleChapter(id: 2, title: "The Golden Prince", duration: "38:04", state: .playing),
+                LpspAudibleChapter(id: 3, title: "The Kings of Sparta", duration: "44:12", state: .upcoming),
+                LpspAudibleChapter(id: 4, title: "The Sea", duration: "36:55", state: .upcoming),
+            ]
+        default:
+            return [
+                LpspAudibleChapter(id: 1, title: "Chapter 1", duration: "32:10", state: .playing),
+                LpspAudibleChapter(id: 2, title: "Chapter 2", duration: "28:44", state: .upcoming),
+            ]
+        }
+    }
+}
+
+@MainActor
+fileprivate final class LpspAudibleStore: ObservableObject {
+    @Published var selectedTab: LpspAudibleShowroomTab = .home
+    @Published var currentBook: LpspAudibleBook = LpspAudibleShowroomData.songOfAchilles
+    @Published var books: [LpspAudibleBook] = LpspAudibleShowroomData.library
+    @Published var progress: Double = 0.34
+    @Published var isPlaying = true
+    @Published var speed = 1.5
+    @Published var showSpeedSheet = false
+    @Published var showChaptersSheet = false
+    @Published var isBookmarked = false
+    @Published var searchQuery = ""
+
+    var chapters: [LpspAudibleChapter] {
+        LpspAudibleShowroomData.chapters(for: currentBook.id)
+    }
+
+    var chapterRows: [(n: Int, title: String, dur: String, state: LpspAudibleChapterListSheet.LpspAudibleChapterState)] {
+        chapters.map { ($0.id, $0.title, $0.duration, $0.state) }
+    }
+
+    func togglePlay() {
+        isPlaying.toggle()
+    }
+
+    func skipBack() {
+        progress = max(0, progress - 0.01)
+    }
+
+    func skipForward() {
+        progress = min(1, progress + 0.01)
+    }
+
+    func setSpeed(_ value: Double) {
+        speed = value
+    }
+
+    func toggleBookmark() {
+        isBookmarked.toggle()
+    }
+
+    func playBook(_ book: LpspAudibleBook) {
+        currentBook = book
+        progress = book.progress
+        isPlaying = true
+        selectedTab = .home
+    }
+
+    func openChapters() {
+        showChaptersSheet = true
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspAudibleShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspAudibleSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspAudibleMusicLibraryTabScreen()
-                .tabItem { Label("Library", systemImage: "books.vertical.fill") }
-                .tag(1)
-            LpspAudibleMusicHomeTabScreen()
-                .tabItem { Label("Discover", systemImage: "magnifyingglass") }
-                .tag(2)
-            LpspAudibleMusicHomeTabScreen()
-                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
-                .tag(3)
-        }
-        .tint(LpspAudibleTokens.audErrorRed)
-        .preferredColorScheme(.dark)
-    }
-}
+    @ObservedObject var store: LpspAudibleStore
 
-
-private struct LpspAudibleGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspAudibleTokens.audErrorRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAudibleTokens.audErrorRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private enum LpspAudibleDemoTracks {
-    struct Item: Identifiable {
-        let id = UUID()
-        let title: String
-        let artist: String
-        let isPlaying: Bool
-    }
-    static let items: [Item] = [
-        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
-        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
-        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
-    ]
-}
-private struct LpspAudibleMusicHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Bonsoir").font(.system(size: 28, weight: .bold)).padding(.horizontal)
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        ForEach(0..<4, id: \.self) { i in
-                            RoundedRectangle(cornerRadius: 8).fill(LpspAudibleTokens.audErrorRed.opacity(0.15 + Double(i) * 0.05))
-                                .frame(height: 100)
-                                .overlay(alignment: .bottomLeading) {
-                                    Text("Playlist \(i + 1)").font(.subheadline.bold()).padding(8)
-                                }
-                        }
-                    }
-                    .padding(.horizontal)
-                    Text("Récemment joué").font(.headline).padding(.horizontal)
-
-                    ForEach(0..<4, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
-                            .frame(height: 56)
-                            .padding(.horizontal)
-                    }
-
-                }
-            }
-            .background(LpspAudibleTokens.audCanvas.ignoresSafeArea())
-            .navigationTitle("")
-        }
-    }
-}
-
-private struct LpspAudibleMusicSearchTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack {
-                HStack {
-                    Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                    Text("Artistes, titres ou podcasts").foregroundStyle(.secondary)
-                    Spacer()
-                }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 8).fill(Color(.systemGray6)))
-                .padding()
-                Spacer()
-            }
-            .navigationTitle("Rechercher")
-        }
-    }
-}
-
-private struct LpspAudibleMusicLibraryTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Titres likés", "Playlists", "Albums", "Artistes"], id: \.self) { item in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(LpspAudibleTokens.audErrorRed.opacity(0.2)).frame(width: 48, height: 48)
-                    Text(item).font(.body)
-                }
-            }
-            .navigationTitle("Bibliothèque")
-        }
-    }
-}
-
-
-
-private struct LpspAudibleSpectrHomeTabScreen: View {
     var body: some View {
         VStack(spacing: 0) {
-        HStack {
-            Text("Now Playing").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 6)
-        ScrollView {
-            VStack(spacing: 16) {
-            Text("The Song of Achilles").font(.system(size: 26.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("By Madeline Miller").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Narrated by Frazer Douglas").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("30").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("30").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("8 hrs 14 min left").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("1.5×").font(.system(size: 15.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspAudibleSpectrHomeTabScreen(store: store)
+                case .library:
+                    LpspAudibleLibraryTabScreen(store: store)
+                case .discover:
+                    LpspAudibleDiscoverTabScreen(store: store)
+                case .profile:
+                    LpspAudibleProfileTabScreen()
+                }
             }
-            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspAudibleMiniPlayerBar(store: store)
+            LpspAudibleLabeledTabBar(store: store)
         }
-                Text("The Song of Achilles").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Madeline Miller").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        .background(LpspAudibleTokens.audCanvas.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+        .sheet(isPresented: $store.showSpeedSheet) {
+            LpspAudibleSpeedDialSheet(speed: Binding(
+                get: { store.speed },
+                set: { store.setSpeed($0) }
+            ))
         }
-        .background(Color(red: 0.102, green: 0.102, blue: 0.102).ignoresSafeArea())
+        .sheet(isPresented: $store.showChaptersSheet) {
+            LpspAudibleChapterListSheet(chapters: store.chapterRows)
+        }
     }
 }
 
+private struct LpspAudibleLabeledTabBar: View {
+    @ObservedObject var store: LpspAudibleStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspAudibleShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 20, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspAudibleFonts.audTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspAudibleTokens.audOrange
+                            : LpspAudibleTokens.audTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspAudibleTokens.audCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspAudibleTokens.audDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspAudibleSpectrTopBar: View {
+    var body: some View {
+        HStack {
+            Image(systemName: "chevron.down")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+
+            Spacer()
+
+            Text("Now Playing")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+
+            Spacer()
+
+            Image(systemName: "ellipsis")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+        }
+        .padding(.horizontal, 14)
+        .padding(.top, 8)
+        .padding(.bottom, 6)
+    }
+}
+
+private struct LpspAudibleShowroomCoverRing: View {
+    let colors: [Color]
+    let progress: Double
+    var size: CGFloat = 226
+    var ring: CGFloat = 4
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(LpspAudibleTokens.audDivider, lineWidth: ring)
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    LpspAudibleTokens.audOrange,
+                    style: StrokeStyle(lineWidth: ring, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+            RoundedRectangle(cornerRadius: 10)
+                .fill(
+                    LinearGradient(
+                        colors: colors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: size - ring * 6, height: size - ring * 6)
+                .overlay(alignment: .leading) {
+                    Rectangle()
+                        .fill(Color.black.opacity(0.18))
+                        .frame(width: 10)
+                }
+                .shadow(color: .black.opacity(0.5), radius: 36, y: 14)
+        }
+        .frame(width: size, height: size)
+    }
+}
+
+private struct LpspAudibleSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspAudibleStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspAudibleSpectrTopBar()
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 24) {
+                    LpspAudibleShowroomCoverRing(
+                        colors: store.currentBook.artworkColors,
+                        progress: store.progress
+                    )
+                    .padding(.top, 8)
+
+                    VStack(spacing: 6) {
+                        Text(store.currentBook.title)
+                            .font(LpspAudibleFonts.audBookTitle.weight(.bold))
+                            .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                            .multilineTextAlignment(.center)
+                        Text("By \(store.currentBook.author)")
+                            .font(LpspAudibleFonts.audAuthor)
+                            .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                        Text("Narrated by \(store.currentBook.narrator)")
+                            .font(LpspAudibleFonts.audNarrator.weight(.semibold))
+                            .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                    }
+                    .padding(.horizontal, 24)
+
+                    HStack(spacing: 36) {
+                        LpspAudibleSkipButton(dir: .back) { store.skipBack() }
+                        LpspAudibleAudiblePlayButton(isPlaying: store.isPlaying) { store.togglePlay() }
+                        LpspAudibleSkipButton(dir: .forward) { store.skipForward() }
+                    }
+
+                    Text(store.currentBook.remaining)
+                        .font(LpspAudibleFonts.audMeta)
+                        .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                        .monospacedDigit()
+
+                    HStack(spacing: 24) {
+                        Button { store.showSpeedSheet = true } label: {
+                            Text(String(format: "%.1g×", store.speed))
+                                .font(LpspAudibleFonts.audSpeed.weight(.bold))
+                                .foregroundStyle(LpspAudibleTokens.audOrange)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 14)
+                                .background(Capsule().fill(LpspAudibleTokens.audSurface2))
+                        }
+                        .buttonStyle(.plain)
+
+                        Image(systemName: "moon.zzz")
+                            .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                        Button(action: { store.toggleBookmark() }) {
+                            Image(systemName: store.isBookmarked ? "bookmark.fill" : "bookmark")
+                                .foregroundStyle(
+                                    store.isBookmarked
+                                        ? LpspAudibleTokens.audOrange
+                                        : LpspAudibleTokens.audTextSecondary
+                                )
+                        }
+                        .buttonStyle(.plain)
+                        Button(action: { store.openChapters() }) {
+                            Image(systemName: "list.bullet")
+                                .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                        }
+                        .buttonStyle(.plain)
+                        Image(systemName: "car.fill")
+                            .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                    }
+                    .font(.system(size: 22))
+                }
+                .padding(.bottom, 16)
+            }
+        }
+    }
+}
+
+private struct LpspAudibleMiniPlayerBar: View {
+    @ObservedObject var store: LpspAudibleStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Rectangle()
+                        .fill(LpspAudibleTokens.audDivider)
+                        .frame(height: 2)
+                    Rectangle()
+                        .fill(LpspAudibleTokens.audOrange)
+                        .frame(width: geo.size.width * store.progress, height: 2)
+                }
+            }
+            .frame(height: 2)
+
+            HStack(spacing: 12) {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(
+                        LinearGradient(
+                            colors: store.currentBook.artworkColors,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 40, height: 40)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(store.currentBook.title)
+                        .font(LpspAudibleFonts.audMiniTitle.weight(.bold))
+                        .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                        .lineLimit(1)
+                    Text(store.currentBook.author)
+                        .font(LpspAudibleFonts.audTab)
+                        .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                Button(action: { store.skipBack() }) {
+                    Image(systemName: "gobackward.30")
+                        .font(.system(size: 20))
+                        .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                }
+                .buttonStyle(.plain)
+
+                Button(action: { store.togglePlay() }) {
+                    Image(systemName: store.isPlaying ? "pause.fill" : "play.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(LpspAudibleTokens.audSurface1)
+        }
+    }
+}
+
+private struct LpspAudibleLibraryTabScreen: View {
+    @ObservedObject var store: LpspAudibleStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Library")
+                    .font(LpspAudibleFonts.audSection.weight(.bold))
+                    .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                Text("Continue listening")
+                    .font(LpspAudibleFonts.audCardTitle.weight(.semibold))
+                    .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                    .padding(.horizontal, 16)
+
+                ForEach(store.books) { book in
+                    Button {
+                        store.playBook(book)
+                    } label: {
+                        LpspAudibleShowroomContinueRow(
+                            book: book,
+                            isCurrent: store.currentBook.id == book.id && store.isPlaying
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspAudibleShowroomContinueRow: View {
+    let book: LpspAudibleBook
+    let isCurrent: Bool
+
+    var body: some View {
+        HStack(spacing: 14) {
+            LpspAudibleShowroomCoverRing(
+                colors: book.artworkColors,
+                progress: book.progress,
+                size: 72,
+                ring: 3
+            )
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(book.title)
+                    .font(LpspAudibleFonts.audCardTitle)
+                    .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                    .lineLimit(1)
+                Text(book.author)
+                    .font(LpspAudibleFonts.audNarrator)
+                    .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                    .lineLimit(1)
+                Text(book.remaining)
+                    .font(LpspAudibleFonts.audMeta)
+                    .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+            }
+
+            Spacer()
+
+            Image(systemName: isCurrent ? "pause.fill" : "play.fill")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(LpspAudibleTokens.audCanvas)
+                .frame(width: 56, height: 56)
+                .background(Circle().fill(LpspAudibleTokens.audOrange))
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(LpspAudibleTokens.audSurface1)
+        )
+    }
+}
+
+private struct LpspAudibleDiscoverTabScreen: View {
+    @ObservedObject var store: LpspAudibleStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 10) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                    TextField("Titles, authors, or genres", text: $store.searchQuery)
+                        .font(LpspAudibleFonts.audBody)
+                        .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                        .tint(LpspAudibleTokens.audOrange)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(LpspAudibleTokens.audSurface1)
+                )
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                Text("Discover")
+                    .font(LpspAudibleFonts.audSection.weight(.bold))
+                    .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                    .padding(.horizontal, 16)
+
+                ForEach(LpspAudibleShowroomData.discoverCategories, id: \.self) { category in
+                    Button {
+                        store.searchQuery = category
+                    } label: {
+                        HStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(LpspAudibleTokens.audSurface2)
+                                .frame(width: 56, height: 56)
+                                .overlay {
+                                    Image(systemName: "headphones")
+                                        .foregroundStyle(LpspAudibleTokens.audOrange)
+                                }
+                            Text(category)
+                                .font(LpspAudibleFonts.audCardTitle)
+                                .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(LpspAudibleTokens.audTextTertiary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if !store.searchQuery.isEmpty {
+                    Text("Results")
+                        .font(LpspAudibleFonts.audCardTitle.weight(.semibold))
+                        .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+
+                    ForEach(filteredBooks) { book in
+                        Button {
+                            store.playBook(book)
+                        } label: {
+                            LpspAudibleShowroomContinueRow(
+                                book: book,
+                                isCurrent: store.currentBook.id == book.id && store.isPlaying
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 16)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+
+    private var filteredBooks: [LpspAudibleBook] {
+        store.books.filter {
+            $0.title.localizedCaseInsensitiveContains(store.searchQuery)
+                || $0.author.localizedCaseInsensitiveContains(store.searchQuery)
+        }
+    }
+}
+
+private struct LpspAudibleProfileTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
+                Circle()
+                    .fill(LpspAudibleTokens.audSurface2)
+                    .frame(width: 88, height: 88)
+                    .overlay {
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 36))
+                            .foregroundStyle(LpspAudibleTokens.audOrange)
+                    }
+
+                Text("Your Audible")
+                    .font(LpspAudibleFonts.audSection.weight(.bold))
+                    .foregroundStyle(LpspAudibleTokens.audTextPrimary)
+
+                Text("Premium · 1 credit available")
+                    .font(LpspAudibleFonts.audMeta)
+                    .foregroundStyle(LpspAudibleTokens.audTextSecondary)
+
+                Text("Member since 2022")
+                    .font(LpspAudibleFonts.audMeta)
+                    .foregroundStyle(LpspAudibleTokens.audTextTertiary)
+            }
+            .padding(.vertical, 32)
+        }
+    }
+}
 

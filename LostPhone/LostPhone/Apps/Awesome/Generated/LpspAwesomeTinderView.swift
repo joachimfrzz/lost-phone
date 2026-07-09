@@ -1,11 +1,12 @@
 import SwiftUI
+import UIKit
 
 // Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/tinder
 // Meliwat/awesome-ios-design-md/dating/tinder/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTinderView: View {
     var body: some View {
-        LpspTinderShowroomRoot()
+        LpspTinderShowroomRoot(store: LpspTinderStore())
     }
 }
 
@@ -367,178 +368,579 @@ fileprivate struct LpspTinderTinderChatBubble: View {
 
 
 
+// MARK: - Showroom data & store
+
+private enum LpspTinderShowroomTab: String, CaseIterable, Identifiable {
+    case discover, topPicks, messages, profile
+
+    var id: String { rawValue }
+
+    var icon: String {
+        switch self {
+        case .discover: "flame.fill"
+        case .topPicks: "star.fill"
+        case .messages: "bubble.left.fill"
+        case .profile: "person.fill"
+        }
+    }
+}
+
+private struct LpspTinderProfile: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let age: Int
+    let distance: String
+    let occupation: String
+    let gradient: [Color]
+    let triggersMatch: Bool
+}
+
+private enum LpspTinderShowroomData {
+    static let maya = LpspTinderProfile(
+        id: "maya",
+        name: "Maya",
+        age: 27,
+        distance: "3 mi away",
+        occupation: "Designer",
+        gradient: [
+            Color(red: 0.55, green: 0.35, blue: 0.45),
+            Color(red: 0.25, green: 0.18, blue: 0.35),
+        ],
+        triggersMatch: true
+    )
+
+    static let deck: [LpspTinderProfile] = [
+        maya,
+        LpspTinderProfile(
+            id: "jordan",
+            name: "Jordan",
+            age: 29,
+            distance: "5 mi away",
+            occupation: "Photographer",
+            gradient: [
+                Color(red: 0.22, green: 0.42, blue: 0.62),
+                Color(red: 0.12, green: 0.22, blue: 0.38),
+            ],
+            triggersMatch: false
+        ),
+        LpspTinderProfile(
+            id: "lena",
+            name: "Lena",
+            age: 26,
+            distance: "2 mi away",
+            occupation: "Architect",
+            gradient: [
+                Color(red: 0.72, green: 0.48, blue: 0.32),
+                Color(red: 0.42, green: 0.28, blue: 0.22),
+            ],
+            triggersMatch: false
+        ),
+    ]
+
+    static let topPicks = ["Sofia", "Noah", "Emma"]
+
+    static let messages: [(name: String, preview: String, time: String)] = [
+        ("Maya", "Hey! Coffee this week?", "2h"),
+        ("Jordan", "Loved your travel pics", "1d"),
+    ]
+
+    static let chatThread: [(text: String, outgoing: Bool)] = [
+        ("Hey! Coffee this week?", false),
+        ("Absolutely — Thursday works for me", true),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspTinderStore: ObservableObject {
+    @Published var selectedTab: LpspTinderShowroomTab = .discover
+    @Published var deck: [LpspTinderProfile] = LpspTinderShowroomData.deck
+    @Published var history: [LpspTinderProfile] = []
+    @Published var showMatch = false
+    @Published var matchedProfile: LpspTinderProfile?
+    @Published var cardOffset = CGSize.zero
+    @Published var messageText = ""
+
+    var currentProfile: LpspTinderProfile? { deck.first }
+
+    func advanceDeck(removing current: LpspTinderProfile) {
+        history.append(current)
+        deck = Array(deck.dropFirst())
+        cardOffset = .zero
+    }
+
+    func rewind() {
+        guard let last = history.popLast() else { return }
+        deck.insert(last, at: 0)
+        cardOffset = .zero
+    }
+
+    func nope() {
+        guard let current = currentProfile else { return }
+        withAnimation(.easeOut(duration: 0.35)) {
+            cardOffset = CGSize(width: -500, height: 0)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            self.advanceDeck(removing: current)
+        }
+    }
+
+    func like() {
+        guard let current = currentProfile else { return }
+        withAnimation(.easeOut(duration: 0.35)) {
+            cardOffset = CGSize(width: 500, height: 0)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            if current.triggersMatch {
+                self.matchedProfile = current
+                self.showMatch = true
+            }
+            self.advanceDeck(removing: current)
+        }
+    }
+
+    func superLike() {
+        guard let current = currentProfile else { return }
+        withAnimation(.easeOut(duration: 0.35)) {
+            cardOffset = CGSize(width: 0, height: -600)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            self.advanceDeck(removing: current)
+        }
+    }
+
+    func boost() {
+        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+    }
+
+    func dismissMatch() {
+        showMatch = false
+        matchedProfile = nil
+    }
+
+    func updateDrag(_ translation: CGSize) {
+        cardOffset = translation
+    }
+
+    func endDrag(_ translation: CGSize) {
+        let threshold: CGFloat = 120
+        if translation.width > threshold {
+            like()
+        } else if translation.width < -threshold {
+            nope()
+        } else if translation.height < -threshold {
+            superLike()
+        } else {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                cardOffset = .zero
+            }
+        }
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspTinderShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspTinderStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspTinderSpectrHomeTabScreen()
-                .tabItem { Label("Découvrir", systemImage: "flame.fill") }
-                .tag(0)
-            LpspTinderDatingTopPicksTabScreen()
-                .tabItem { Label("Top Picks", systemImage: "star.fill") }
-                .tag(1)
-            LpspTinderDatingMessagesTabScreen()
-                .tabItem { Label("Messages", systemImage: "bubble.left.fill") }
-                .tag(2)
-            LpspTinderDatingProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle") }
-                .tag(3)
+        ZStack {
+            LpspTinderTokens.tdrDarkCanvas.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                Group {
+                    switch store.selectedTab {
+                    case .discover:
+                        LpspTinderDiscoverTabScreen(store: store)
+                    case .topPicks:
+                        LpspTinderTopPicksTabScreen()
+                    case .messages:
+                        LpspTinderMessagesTabScreen(store: store)
+                    case .profile:
+                        LpspTinderProfileTabScreen()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                LpspTinderIconTabBar(store: store)
+            }
         }
-        .tint(LpspTinderTokens.tdrNopeRed)
-        
+        .preferredColorScheme(.dark)
+        .fullScreenCover(isPresented: $store.showMatch) {
+            if let match = store.matchedProfile {
+                LpspTinderShowroomMatchScreen(name: match.name, onDismiss: { store.dismissMatch() })
+            }
+        }
     }
 }
 
+private struct LpspTinderIconTabBar: View {
+    @ObservedObject var store: LpspTinderStore
 
-private struct LpspTinderGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTinderTokens.tdrNopeRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTinderTokens.tdrNopeRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        HStack {
+            ForEach(LpspTinderShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    Group {
+                        if tab == .discover && store.selectedTab == tab {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 28, weight: .semibold))
+                                .foregroundStyle(LpspTinderGradients.tdrBrand)
+                        } else {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 28, weight: .regular))
+                                .foregroundStyle(
+                                    store.selectedTab == tab
+                                        ? Color.white
+                                        : LpspTinderTokens.tdrTextTertiary
+                                )
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .background(LpspTinderTokens.tdrDarkCanvas)
+    }
+}
+
+private struct LpspTinderDiscoverTabScreen: View {
+    @ObservedObject var store: LpspTinderStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspTinderSpectrTopNav()
+
+            ZStack {
+                if let profile = store.currentProfile {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(LpspTinderTokens.tdrDarkSurface2)
+                        .padding(.horizontal, 8)
+                        .padding(.top, 8)
+                        .padding(.bottom, 72)
+
+                    VStack(spacing: 0) {
+                        LpspTinderShowroomSwipeCard(
+                            profile: profile,
+                            offset: store.cardOffset,
+                            onDragChanged: { store.updateDrag($0) },
+                            onDragEnded: { store.endDrag($0) }
+                        )
+                        .padding(.horizontal, 12)
+                        .padding(.top, 4)
+
+                        LpspTinderTinderActionBar(
+                            onRewind: { store.rewind() },
+                            onNope: { store.nope() },
+                            onSuper: { store.superLike() },
+                            onLike: { store.like() },
+                            onBoost: { store.boost() }
+                        )
+                        .padding(.top, 8)
+                        .padding(.bottom, 12)
+                    }
+                } else {
+                    VStack(spacing: 16) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 48))
+                            .foregroundStyle(LpspTinderGradients.tdrBrand)
+                        Text("No more profiles nearby")
+                            .font(LpspTinderFonts.tdrBody)
+                            .foregroundStyle(LpspTinderTokens.tdrTextSecondary)
+                        Button("Rewind") { store.rewind() }
+                            .font(LpspTinderFonts.tdrButton)
+                            .foregroundStyle(LpspTinderTokens.tdrRewindGold)
                     }
                 }
             }
-            .navigationTitle(title)
+            .frame(maxHeight: .infinity)
         }
     }
 }
 
-
-private struct LpspTinderDemoChatBubble: View {
-    let text: String
-    var outgoing: Bool
+private struct LpspTinderSpectrTopNav: View {
     var body: some View {
         HStack {
-            if outgoing { Spacer(minLength: 40) }
-            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspTinderTokens.tdrNopeRed.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 40) }
-        }.padding(.horizontal)
+            Image(systemName: "flame.fill")
+                .font(.system(size: 24, weight: .semibold))
+                .foregroundStyle(LpspTinderGradients.tdrBrand)
+
+            Spacer()
+
+            Image(systemName: "slider.horizontal.3")
+                .font(.system(size: 22))
+                .foregroundStyle(Color.white)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 48)
     }
 }
 
-private struct LpspTinderDatingDiscoverTabScreen: View {
+private struct LpspTinderShowroomSwipeCard: View {
+    let profile: LpspTinderProfile
+    let offset: CGSize
+    let onDragChanged: (CGSize) -> Void
+    let onDragEnded: (CGSize) -> Void
+
+    private var rotation: Double { Double(offset.width) / 12 }
+    private var likeOpacity: Double { min(1.0, max(0, Double(offset.width) / 160)) }
+    private var nopeOpacity: Double {
+        let drag = min(1.0, max(0, Double(-offset.width) / 160))
+        return drag > 0 ? drag : (profile.id == "maya" ? 0.35 : 0)
+    }
+    private var superOpacity: Double { min(1.0, max(0, Double(-offset.height) / 160)) }
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            LinearGradient(
+                colors: profile.gradient,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            LinearGradient(
+                colors: [.clear, Color.black.opacity(0.75)],
+                startPoint: .center,
+                endPoint: .bottom
+            )
+
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 0) {
+                        Text("\(profile.name),")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(.white)
+                        Text(" \(profile.age)")
+                            .font(.system(size: 24, weight: .regular))
+                            .foregroundStyle(.white)
+                    }
+
+                    Text("📍 \(profile.distance) · \(profile.occupation)")
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundStyle(.white.opacity(0.95))
+                }
+
+                Spacer()
+
+                Text("i")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 28, height: 28)
+                    .background(Circle().fill(Color.white.opacity(0.2)))
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
+
+            LpspTinderTinderStamp(text: "LIKE", color: LpspTinderTokens.tdrLikeStampGreen, rotation: -15)
+                .opacity(likeOpacity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(32)
+
+            LpspTinderTinderStamp(text: "NOPE", color: LpspTinderTokens.tdrNopeRed, rotation: 15)
+                .opacity(nopeOpacity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .padding(32)
+
+            LpspTinderTinderStamp(text: "SUPER LIKE", color: LpspTinderTokens.tdrSuperLikeBlue, rotation: 0)
+                .opacity(superOpacity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(.top, 64)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 480)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: .black.opacity(0.25), radius: 16, y: 4)
+        .rotationEffect(.degrees(rotation))
+        .offset(offset)
+        .gesture(
+            DragGesture()
+                .onChanged { onDragChanged($0.translation) }
+                .onEnded { onDragEnded($0.translation) }
+        )
+    }
+}
+
+private struct LpspTinderShowroomMatchScreen: View {
+    let name: String
+    let onDismiss: () -> Void
+
     var body: some View {
         ZStack {
-            Color(.systemBackground).ignoresSafeArea()
-            LpspTinderTinderSwipeCard(
-                name: "Alex",
-                age: 28,
-                distance: "5 km",
-                occupation: "Designer",
-                photoURLs: []
-            )
-        }
-    }
-}
+            LpspTinderGradients.tdrBrand.ignoresSafeArea()
 
-private struct LpspTinderDatingMessagesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                ScrollView { LazyVStack(spacing: 8) { 
-                    LpspTinderTinderChatBubble(text: "Salut ! On se voit ce week-end ?", sender: .them)
-                    LpspTinderTinderChatBubble(text: "Avec plaisir 😊", sender: .me)
- } .padding(.vertical) }
-                HStack {
-                    TextField("Message", text: .constant(""))
-                        .padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-                }.padding(8)
-            }
-            .navigationTitle("Messages")
-        }
-    }
-}
+            VStack(spacing: 24) {
+                Text("It's a Match!")
+                    .font(.system(size: 48, weight: .bold))
+                    .foregroundStyle(.white)
 
-private struct LpspTinderDatingTopPicksTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView { LpspTinderDemoSwipeCard(accent: LpspTinderTokens.tdrNopeRed).padding() }
-            .navigationTitle("Top Picks")
-        }
-    }
-}
+                Text("You and \(name) liked each other")
+                    .font(LpspTinderFonts.tdrBody)
+                    .foregroundStyle(.white.opacity(0.85))
 
-private struct LpspTinderDatingProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspTinderTokens.tdrNopeRed.gradient).frame(width: 88, height: 88)
-                Text("Alex, 28").font(.title2.bold())
-                Text("Paris · Design · Voyage").foregroundStyle(.secondary)
-            }
-            .navigationTitle("Profil")
-        }
-    }
-}
-
-private struct LpspTinderDatingTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("découv") || low.contains("discover") || low.contains("flame") || low.contains("swipe") { LpspTinderDatingDiscoverTabScreen() }
-        else if low.contains("message") || low.contains("chat") { LpspTinderDatingMessagesTabScreen() }
-        else if low.contains("star") || low.contains("top") { LpspTinderDatingTopPicksTabScreen() }
-        else { LpspTinderDatingProfileTabScreen() }
-    }
-}
-
-private struct LpspTinderDemoSwipeCard: View {
-    let accent: Color
-    var body: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(LinearGradient(colors: [accent.opacity(0.3), .black.opacity(0.8)], startPoint: .top, endPoint: .bottom))
-            .frame(width: 320, height: 480)
-            .overlay(alignment: .bottomLeading) {
-                VStack(alignment: .leading) {
-                    Text("Alex, 28").font(.title.bold()).foregroundStyle(.white)
-                    Text("Paris · Photo · Voyage").foregroundStyle(.white.opacity(0.9))
+                HStack(spacing: 20) {
+                    matchAvatar(colors: [LpspTinderTokens.tdrSuperLikeBlue, LpspTinderTokens.tdrBoostPurple])
+                    matchAvatar(colors: [Color(red: 0.55, green: 0.35, blue: 0.45), Color(red: 0.25, green: 0.18, blue: 0.35)])
                 }
-                .padding(20)
+
+                VStack(spacing: 12) {
+                    Button(action: onDismiss) {
+                        Text("Send Message")
+                            .font(LpspTinderFonts.tdrButton.weight(.semibold))
+                            .foregroundStyle(LpspTinderTokens.tdrPink)
+                            .padding(.vertical, 14)
+                            .frame(maxWidth: .infinity)
+                            .background(Capsule().fill(Color.white))
+                    }
+                    Button(action: onDismiss) {
+                        Text("Keep Playing")
+                            .font(LpspTinderFonts.tdrButton.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 14)
+                            .frame(maxWidth: .infinity)
+                            .overlay(Capsule().stroke(.white, lineWidth: 2))
+                    }
+                }
+                .padding(.horizontal, 24)
             }
+            .padding()
+        }
+        .sensoryFeedback(.success, trigger: true)
+    }
+
+    private func matchAvatar(colors: [Color]) -> some View {
+        Circle()
+            .fill(LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing))
+            .frame(width: 120, height: 120)
+            .overlay(Circle().stroke(.white, lineWidth: 3))
     }
 }
 
+private struct LpspTinderTopPicksTabScreen: View {
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(LpspTinderShowroomData.topPicks, id: \.self) { name in
+                    ZStack(alignment: .bottomLeading) {
+                        LinearGradient(
+                            colors: [
+                                LpspTinderTokens.tdrPink.opacity(0.5),
+                                LpspTinderTokens.tdrOrange.opacity(0.8),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        Text(name)
+                            .font(LpspTinderFonts.tdrProfileName.weight(.bold))
+                            .foregroundStyle(.white)
+                            .padding(12)
+                    }
+                    .frame(height: 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(alignment: .topTrailing) {
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(LpspTinderTokens.tdrSuperLikeBlue)
+                            .padding(10)
+                    }
+                }
+            }
+            .padding(16)
+        }
+    }
+}
 
-private struct LpspTinderSpectrHomeTabScreen: View {
+private struct LpspTinderMessagesTabScreen: View {
+    @ObservedObject var store: LpspTinderStore
+
     var body: some View {
         VStack(spacing: 0) {
-        HStack {
+            List {
+                Section {
+                    ForEach(LpspTinderShowroomData.messages.indices, id: \.self) { index in
+                        let item = LpspTinderShowroomData.messages[index]
+                        HStack(spacing: 12) {
+                            Circle()
+                                .fill(LpspTinderGradients.tdrBrand)
+                                .frame(width: 48, height: 48)
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Text(item.name)
+                                        .font(LpspTinderFonts.tdrBody.weight(.semibold))
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    Text(item.time)
+                                        .font(LpspTinderFonts.tdrChatTimestamp)
+                                        .foregroundStyle(LpspTinderTokens.tdrTextTertiary)
+                                }
+                                Text(item.preview)
+                                    .font(LpspTinderFonts.tdrChat)
+                                    .foregroundStyle(LpspTinderTokens.tdrTextSecondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .listRowBackground(LpspTinderTokens.tdrDarkSurface1)
+                    }
+                }
 
-        } .padding(.horizontal, 16).frame(height: 48)
-        ZStack {
-            ZStack(alignment: .bottomLeading) {
-                LinearGradient(colors: [Color(red:0.55,green:0.35,blue:0.45), Color(red:0.25,green:0.18,blue:0.35)], startPoint: .top, endPoint: .bottom).frame(maxWidth: .infinity, maxHeight: .infinity)
-                Text("NOPE").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                LinearGradient(colors: [.clear, .black.opacity(0.75)], startPoint: .center, endPoint: .bottom).frame(height: 180)
-                HStack(alignment: .bottom) {
-                            Text("Maya,").font(.system(size: 24.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                            Text("27").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("📍 3 mi away · Designer").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("i").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                } .padding(16)
-            } .frame(maxWidth: .infinity).frame(height: 480).clipShape(RoundedRectangle(cornerRadius: 12))
-            HStack(spacing: 18) {
-                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
-                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
-                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
-                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
-                Circle().fill(.white).frame(width: 56, height: 56).shadow(color: .black.opacity(0.15), radius: 4)
-            } .padding(.bottom, 8)
-        } .padding(.horizontal, 12)
+                Section("Maya") {
+                    ForEach(LpspTinderShowroomData.chatThread.indices, id: \.self) { index in
+                        let bubble = LpspTinderShowroomData.chatThread[index]
+                        LpspTinderTinderChatBubble(
+                            text: bubble.text,
+                            sender: bubble.outgoing ? .me : .them
+                        )
+                        .listRowBackground(LpspTinderTokens.tdrDarkCanvas)
+                        .listRowInsets(EdgeInsets())
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(LpspTinderTokens.tdrDarkCanvas)
+
+            HStack {
+                TextField("Message", text: $store.messageText)
+                    .font(LpspTinderFonts.tdrChat)
+                    .foregroundStyle(.white)
+                    .padding(10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(LpspTinderTokens.tdrDarkSurface2)
+                    )
+            }
+            .padding(8)
+            .background(LpspTinderTokens.tdrDarkSurface1)
         }
-        .background(Color(red: 0.071, green: 0.071, blue: 0.071).ignoresSafeArea())
+    }
+}
+
+private struct LpspTinderProfileTabScreen: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Circle()
+                .fill(LpspTinderGradients.tdrBrand)
+                .frame(width: 96, height: 96)
+                .overlay {
+                    Text("You")
+                        .font(LpspTinderFonts.tdrProfileName.weight(.bold))
+                        .foregroundStyle(.white)
+                }
+
+            Text("Complete your profile")
+                .font(LpspTinderFonts.tdrSection.weight(.semibold))
+                .foregroundStyle(.white)
+
+            Text("Add photos and prompts to get more matches")
+                .font(LpspTinderFonts.tdrBody)
+                .foregroundStyle(LpspTinderTokens.tdrTextSecondary)
+                .multilineTextAlignment(.center)
+
+            LpspTinderTinderBrandPillButton(title: "Edit Profile", action: {})
+                .padding(.horizontal, 32)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

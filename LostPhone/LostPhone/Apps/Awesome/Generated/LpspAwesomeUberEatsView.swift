@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeUberEatsView: View {
     var body: some View {
-        LpspUberEatsShowroomRoot()
+        LpspUberEatsShowroomRoot(store: LpspUberEatsStore())
     }
 }
 
@@ -15,15 +15,15 @@ private enum LpspUberEatsFonts {
     static let ueTitleLarge       = Font.system(size: 28, weight: .regular)
     static let ueSectionHeader    = Font.system(size: 22, weight: .regular)
     static let ueSubsection       = Font.system(size: 20, weight: .regular)
-    static let ueRestaurantName   = Font.system(size: 17, weight: .regular)
-    static let ueMenuItemTitle    = Font.system(size: 16, weight: .regular)
+    static let ueRestaurantName   = Font.system(size: 17, weight: .bold)
+    static let ueMenuItemTitle    = Font.system(size: 16, weight: .medium)
     static let ueBody             = Font.system(size: 15, weight: .regular)
     static let uePrice            = Font.system(size: 16, weight: .regular)
     static let ueMeta             = Font.system(size: 14, weight: .regular)
     static let uePill             = Font.system(size: 14, weight: .regular)
     static let ueCaption          = Font.system(size: 13, weight: .regular)
     static let ueLabelUpper       = Font.system(size: 11, weight: .regular)
-    static let ueButton           = Font.system(size: 16, weight: .regular)
+    static let ueButton           = Font.system(size: 16, weight: .bold)
     static let ueTab              = Font.system(size: 10, weight: .regular)
     static let ueCartBadge        = Font.system(size: 12, weight: .regular)
     static func ue(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
@@ -288,150 +288,859 @@ fileprivate struct LpspUberEatsUEProgressStepper: View {
 
 
 
+// MARK: - Données & état (showroom Lost Phone)
+
+fileprivate struct LpspUberEatsShowroomMenuItem: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let description: String
+    let priceCents: Int
+}
+
+fileprivate struct LpspUberEatsShowroomRestaurant: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let cuisine: String
+    let eta: String
+    let rating: Double
+    let deliveryFee: String
+    let freeDelivery: Bool
+    let categoryID: String
+    let accent: Color
+    let symbol: String
+    let menu: [LpspUberEatsShowroomMenuItem]
+}
+
+fileprivate struct LpspUberEatsShowroomOrder: Identifiable, Hashable {
+    let id: String
+    let restaurantName: String
+    let itemsSummary: String
+    let totalLabel: String
+    let dateLabel: String
+    let status: LpspUberEatsOrderStatus
+    let etaLabel: String?
+}
+
+fileprivate enum LpspUberEatsOrderStatus: Hashable {
+    case preparing, pickedUp, onTheWay, delivered
+}
+
+private enum LpspUberEatsTab: CaseIterable {
+    case home, browse, search, cart, account
+
+    var label: String {
+        switch self {
+        case .home: "Home"
+        case .browse: "Browse"
+        case .search: "Search"
+        case .cart: "Cart"
+        case .account: "Account"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .browse: "square.grid.2x2.fill"
+        case .search: "magnifyingglass"
+        case .cart: "cart.fill"
+        case .account: "person.crop.circle.fill"
+        }
+    }
+}
+
+@MainActor
+fileprivate final class LpspUberEatsStore: ObservableObject {
+    @Published var selectedTab: LpspUberEatsTab = .home
+    @Published var selectedCategoryID = "featured"
+    @Published var searchQuery = ""
+    @Published var basket: [String: Int]
+    @Published var favouriteIDs: Set<String> = ["sunrise-diner"]
+    @Published var selectedRestaurantID: String?
+    @Published var showBasketSheet = false
+    @Published var activeOrder: LpspUberEatsShowroomOrder?
+    @Published var pastOrders: [LpspUberEatsShowroomOrder]
+
+    let deliveryLabel = "Deliver to · Home"
+    let addressStory = "17 rue de la Roquette"
+    let restaurants: [LpspUberEatsShowroomRestaurant]
+    let categories: [(id: String, label: String)]
+
+    init() {
+        self.restaurants = LpspUberEatsShowroomData.restaurants
+        self.categories = LpspUberEatsShowroomData.categories
+        self.pastOrders = LpspUberEatsShowroomData.pastOrders
+        self.basket = LpspUberEatsShowroomData.spectrSeedBasket
+    }
+
+    var filteredRestaurants: [LpspUberEatsShowroomRestaurant] {
+        let categoryFiltered = restaurants.filter {
+            selectedCategoryID == "featured" || $0.categoryID == selectedCategoryID
+        }
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !query.isEmpty else { return categoryFiltered }
+        return categoryFiltered.filter {
+            $0.name.lowercased().contains(query)
+                || $0.cuisine.lowercased().contains(query)
+                || $0.menu.contains { $0.name.lowercased().contains(query) }
+        }
+    }
+
+    var basketItemCount: Int {
+        basket.values.reduce(0, +)
+    }
+
+    var basketTotalCents: Int {
+        basket.reduce(0) { partial, entry in
+            guard let item = item(id: entry.key) else { return partial }
+            return partial + item.priceCents * entry.value
+        }
+    }
+
+    var basketTotalLabel: String {
+        Self.formatUSD(basketTotalCents)
+    }
+
+    var selectedRestaurant: LpspUberEatsShowroomRestaurant? {
+        guard let selectedRestaurantID else { return nil }
+        return restaurants.first { $0.id == selectedRestaurantID }
+    }
+
+    func item(id: String) -> LpspUberEatsShowroomMenuItem? {
+        restaurants.flatMap(\.menu).first { $0.id == id }
+    }
+
+    func restaurant(containingItemID itemID: String) -> LpspUberEatsShowroomRestaurant? {
+        restaurants.first { $0.menu.contains { $0.id == itemID } }
+    }
+
+    func quantity(for itemID: String) -> Int {
+        basket[itemID, default: 0]
+    }
+
+    func addToBasket(itemID: String) {
+        basket[itemID, default: 0] += 1
+    }
+
+    func removeFromBasket(itemID: String) {
+        guard let current = basket[itemID], current > 0 else { return }
+        if current == 1 { basket.removeValue(forKey: itemID) }
+        else { basket[itemID] = current - 1 }
+    }
+
+    func toggleFavourite(_ restaurantID: String) {
+        if favouriteIDs.contains(restaurantID) { favouriteIDs.remove(restaurantID) }
+        else { favouriteIDs.insert(restaurantID) }
+    }
+
+    func openRestaurant(_ id: String) {
+        selectedRestaurantID = id
+    }
+
+    func placeOrder() {
+        guard basketItemCount > 0 else { return }
+        let restaurant = selectedRestaurant
+            ?? basket.keys.compactMap { self.restaurant(containingItemID: $0) }.first
+            ?? restaurants.first
+        guard let restaurant else { return }
+        let summary = basket.compactMap { id, qty -> String? in
+            guard let item = item(id: id), qty > 0 else { return nil }
+            return qty > 1 ? "\(item.name) ×\(qty)" : item.name
+        }.joined(separator: ", ")
+        activeOrder = LpspUberEatsShowroomOrder(
+            id: "active-\(UUID().uuidString)",
+            restaurantName: restaurant.name,
+            itemsSummary: summary.isEmpty ? "Order" : summary,
+            totalLabel: basketTotalLabel,
+            dateLabel: "Today",
+            status: .preparing,
+            etaLabel: restaurant.eta
+        )
+        basket.removeAll()
+        showBasketSheet = false
+        selectedTab = .cart
+    }
+
+    func advanceActiveOrder() {
+        guard var order = activeOrder else { return }
+        switch order.status {
+        case .preparing:
+            order = LpspUberEatsShowroomOrder(
+                id: order.id, restaurantName: order.restaurantName, itemsSummary: order.itemsSummary,
+                totalLabel: order.totalLabel, dateLabel: order.dateLabel, status: .pickedUp, etaLabel: "18 min"
+            )
+        case .pickedUp:
+            order = LpspUberEatsShowroomOrder(
+                id: order.id, restaurantName: order.restaurantName, itemsSummary: order.itemsSummary,
+                totalLabel: order.totalLabel, dateLabel: order.dateLabel, status: .onTheWay, etaLabel: "12 min"
+            )
+        case .onTheWay:
+            order = LpspUberEatsShowroomOrder(
+                id: order.id, restaurantName: order.restaurantName, itemsSummary: order.itemsSummary,
+                totalLabel: order.totalLabel, dateLabel: order.dateLabel, status: .delivered, etaLabel: nil
+            )
+            pastOrders.insert(order, at: 0)
+            activeOrder = nil
+            return
+        case .delivered:
+            activeOrder = nil
+            return
+        }
+        activeOrder = order
+    }
+
+    static func formatUSD(_ cents: Int) -> String {
+        String(format: "$%.2f", Double(cents) / 100.0)
+    }
+
+    static func formatEuro(_ cents: Int) -> String {
+        String(format: "%.2f €", Double(cents) / 100.0).replacingOccurrences(of: ".", with: ",")
+    }
+}
+
+private enum LpspUberEatsShowroomData {
+    static let categories: [(id: String, label: String)] = [
+        ("featured", "Featured"),
+        ("pizza", "Pizza"),
+        ("sushi", "Sushi"),
+        ("burgers", "Burgers"),
+        ("healthy", "Healthy"),
+    ]
+
+    static let spectrSeedBasket: [String: Int] = [
+        "sd-breakfast": 1,
+        "sd-toast": 1,
+        "sd-juice": 1,
+    ]
+
+    static let restaurants: [LpspUberEatsShowroomRestaurant] = [
+        .init(
+            id: "sunrise-diner",
+            name: "Sunrise Diner",
+            cuisine: "American",
+            eta: "25 min",
+            rating: 4.8,
+            deliveryFee: "$0 Delivery Fee",
+            freeDelivery: true,
+            categoryID: "featured",
+            accent: .orange,
+            symbol: "sun.max.fill",
+            menu: [
+                .init(id: "sd-breakfast", name: "Classic Breakfast", description: "Eggs, bacon, hash browns", priceCents: 950),
+                .init(id: "sd-toast", name: "Avocado Toast", description: "Sourdough, chili flakes", priceCents: 1250),
+                .init(id: "sd-juice", name: "Fresh Orange Juice", description: "16 oz, no pulp", priceCents: 640),
+            ]
+        ),
+        .init(
+            id: "green-bowl",
+            name: "Green Bowl Kitchen",
+            cuisine: "Healthy",
+            eta: "30 min",
+            rating: 4.7,
+            deliveryFee: "$1.49 Delivery Fee",
+            freeDelivery: false,
+            categoryID: "healthy",
+            accent: .green,
+            symbol: "leaf.fill",
+            menu: [
+                .init(id: "gb-bowl", name: "Buddha Bowl", description: "Quinoa, kale, tahini", priceCents: 1490),
+                .init(id: "gb-smoothie", name: "Green Smoothie", description: "Spinach, mango, ginger", priceCents: 890),
+            ]
+        ),
+        .init(
+            id: "monop",
+            name: "Monop' Daily",
+            cuisine: "Grocery · Bastille",
+            eta: "20 min",
+            rating: 4.5,
+            deliveryFee: "€1,99 delivery",
+            freeDelivery: false,
+            categoryID: "featured",
+            accent: .blue,
+            symbol: "cart.fill",
+            menu: [
+                .init(id: "m1", name: "Nuggets poulet Bonduelle", description: "450 g — les ronds", priceCents: 450),
+                .init(id: "m2", name: "Compote pomme-fraise", description: "4 pots — sans pulpe", priceCents: 320),
+                .init(id: "m3", name: "Céréales Chocapic", description: "Note Hugo", priceCents: 390),
+            ]
+        ),
+        .init(
+            id: "pizza-julien",
+            name: "Pizza Julien",
+            cuisine: "Pizza · Italien",
+            eta: "22 min",
+            rating: 4.7,
+            deliveryFee: "€1,49 delivery",
+            freeDelivery: false,
+            categoryID: "pizza",
+            accent: .red,
+            symbol: "takeoutbag.and.cup.and.straw.fill",
+            menu: [
+                .init(id: "p1", name: "Margherita", description: "Tomate, mozzarella, basilic", priceCents: 1150),
+                .init(id: "p2", name: "Regina", description: "Jambon, champignons", priceCents: 1350),
+            ]
+        ),
+    ]
+
+    static let pastOrders: [LpspUberEatsShowroomOrder] = [
+        .init(id: "o1", restaurantName: "Pizza Julien", itemsSummary: "Margherita", totalLabel: "€13,50", dateLabel: "2 juin", status: .delivered, etaLabel: nil),
+    ]
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspUberEatsShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspUberEatsStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspUberEatsSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspUberEatsFoodTabScreen(title: "Browse", tabIndex: 1)
-                .tabItem { Label("Browse", systemImage: "square.grid.2x2.fill") }
-                .tag(1)
-            LpspUberEatsFoodTabScreen(title: "Search", tabIndex: 2)
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(2)
-            LpspUberEatsFoodTabScreen(title: "Cart", tabIndex: 3)
-                .tabItem { Label("Cart", systemImage: "cart.fill") }
-                .tag(3)
-            LpspUberEatsFoodTabScreen(title: "Account", tabIndex: 4)
-                .tabItem { Label("Account", systemImage: "person.crop.circle.fill") }
-                .tag(4)
+        ZStack(alignment: .bottom) {
+            VStack(spacing: 0) {
+                Group {
+                    switch store.selectedTab {
+                    case .home: LpspUberEatsHomeScreen(store: store)
+                    case .browse: LpspUberEatsBrowseScreen(store: store)
+                    case .search: LpspUberEatsSearchScreen(store: store)
+                    case .cart: LpspUberEatsCartScreen(store: store)
+                    case .account: LpspUberEatsAccountScreen(store: store)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                LpspUberEatsTabBar(store: store)
+            }
+
+            if store.basketItemCount > 0, store.selectedTab != .cart {
+                LpspUberEatsUEStickyCartBar(
+                    count: store.basketItemCount,
+                    total: store.basketTotalLabel,
+                    onView: { store.showBasketSheet = true }
+                )
+                .padding(.bottom, 56)
+            }
         }
-        .tint(LpspUberEatsTokens.ueErrorRed)
-        
+        .background(LpspUberEatsTokens.ueCanvas.ignoresSafeArea())
+        .sheet(isPresented: $store.showBasketSheet) {
+            LpspUberEatsBasketSheet(store: store)
+        }
+        .sheet(item: Binding(
+            get: { store.selectedRestaurant.map { LpspUberEatsRestaurantSheetID(id: $0.id) } },
+            set: { store.selectedRestaurantID = $0?.id }
+        )) { wrapper in
+            if let restaurant = store.restaurants.first(where: { $0.id == wrapper.id }) {
+                LpspUberEatsRestaurantSheet(store: store, restaurant: restaurant)
+            }
+        }
     }
 }
 
+private struct LpspUberEatsRestaurantSheetID: Identifiable {
+    let id: String
+}
 
-private struct LpspUberEatsGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
+fileprivate struct LpspUberEatsFoodImage: View {
+    let accent: Color
+    let symbol: String
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: [accent.opacity(0.65), accent.opacity(0.3)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            Image(systemName: symbol)
+                .font(.system(size: 36, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.9))
+        }
+    }
+}
+
+private struct LpspUberEatsShowroomRestaurantCard: View {
+    let restaurant: LpspUberEatsShowroomRestaurant
+    let isSaved: Bool
+    let onTap: () -> Void
+    let onSave: () -> Void
+    @Environment(\.colorScheme) private var scheme
+    @State private var pressed = false
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 8) {
+                ZStack(alignment: .topLeading) {
+                    LpspUberEatsFoodImage(accent: restaurant.accent, symbol: restaurant.symbol)
+                        .aspectRatio(16/9, contentMode: .fill)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 180)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .scaleEffect(pressed ? 0.98 : 1)
+
+                    if restaurant.freeDelivery {
+                        Text("$0 Delivery Fee")
+                            .font(LpspUberEatsFonts.ueCaption.weight(.bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8).padding(.vertical, 4)
+                            .background(Capsule().fill(LpspUberEatsTokens.ueGreen))
+                            .padding(10)
+                    }
+
+                    HStack {
+                        Spacer()
+                        Button(action: onSave) {
+                            Image(systemName: isSaved ? "heart.fill" : "heart")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(.black)
+                                .frame(width: 36, height: 36)
+                                .background(Circle().fill(.white.opacity(0.9)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(10)
+                }
+
+                Text(restaurant.name)
+                    .font(LpspUberEatsFonts.ueRestaurantName)
+                    .foregroundStyle(LpspUberEatsTokens.ueText(scheme))
+
+                HStack(spacing: 6) {
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 12))
+                        .foregroundStyle(LpspUberEatsTokens.ueText(scheme))
+                    Text(String(format: "%.1f", restaurant.rating))
+                        .font(LpspUberEatsFonts.ueMeta)
+                        .foregroundStyle(LpspUberEatsTokens.ueText(scheme))
+                    Text("· \(restaurant.eta) ·")
+                        .font(LpspUberEatsFonts.ueMeta)
+                        .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                    Text(restaurant.deliveryFee)
+                        .font(LpspUberEatsFonts.ueMeta)
+                        .foregroundStyle(restaurant.freeDelivery ? LpspUberEatsTokens.ueGreen : LpspUberEatsTokens.ueTextSecondary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .onLongPressGesture(minimumDuration: 0, pressing: { p in
+            withAnimation(.easeOut(duration: 0.15)) { pressed = p }
+        }, perform: {})
+    }
+}
+
+private struct LpspUberEatsTabBar: View {
+    @ObservedObject var store: LpspUberEatsStore
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspUberEatsTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { store.selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                            if tab == .cart, store.basketItemCount > 0 {
+                                Text("\(store.basketItemCount)")
+                                    .font(LpspUberEatsFonts.ueCartBadge)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 2)
+                                    .background(Capsule().fill(LpspUberEatsTokens.ueGreen))
+                                    .offset(x: 10, y: -6)
+                            }
+                        }
+                        Text(tab.label)
+                            .font(LpspUberEatsFonts.ueTab.weight(.medium))
+                    }
+                    .foregroundStyle(store.selectedTab == tab ? LpspUberEatsTokens.ueTextPrimary : LpspUberEatsTokens.ueTextTertiary)
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(.ultraThinMaterial)
+        .overlay(alignment: .top) {
+            Rectangle().fill(LpspUberEatsTokens.ueDivider).frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspUberEatsCategoryPills: View {
+    let categories: [(id: String, label: String)]
+    @Binding var selectedID: String
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(categories, id: \.id) { cat in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) { selectedID = cat.id }
+                    } label: {
+                        Text(cat.label)
+                            .font(.system(size: 14, weight: selectedID == cat.id ? .semibold : .regular))
+                            .foregroundStyle(selectedID == cat.id ? LpspUberEatsTokens.ueTextPrimary : LpspUberEatsTokens.ueTextSecondary)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(
+                                Capsule().fill(selectedID == cat.id ? LpspUberEatsTokens.ueSurface2 : LpspUberEatsTokens.ueSurface)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+}
+
+private struct LpspUberEatsHomeScreen: View {
+    @ObservedObject var store: LpspUberEatsStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    HStack(spacing: 4) {
+                        Text(store.deliveryLabel)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(LpspUberEatsTokens.ueTextPrimary)
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                    }
+                    Spacer()
+                    Circle()
+                        .fill(LpspUberEatsTokens.ueSurface2)
+                        .frame(width: 32, height: 32)
+                        .overlay(Image(systemName: "person.fill").font(.system(size: 14)))
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                Button { store.selectedTab = .search } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                        Text("Search Uber Eats")
+                            .font(LpspUberEatsFonts.ueBody)
+                            .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 12)
+                    .background(LpspUberEatsTokens.ueSurface, in: RoundedRectangle(cornerRadius: 12))
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 16)
+
+                LpspUberEatsCategoryPills(categories: store.categories, selectedID: $store.selectedCategoryID)
+
+                ForEach(store.filteredRestaurants) { restaurant in
+                    LpspUberEatsShowroomRestaurantCard(
+                        restaurant: restaurant,
+                        isSaved: store.favouriteIDs.contains(restaurant.id),
+                        onTap: { store.openRestaurant(restaurant.id) },
+                        onSave: { store.toggleFavourite(restaurant.id) }
+                    )
+                    .padding(.horizontal, 16)
+                }
+            }
+            .padding(.bottom, store.basketItemCount > 0 ? 120 : 24)
+        }
+        .background(LpspUberEatsTokens.ueCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspUberEatsBrowseScreen: View {
+    @ObservedObject var store: LpspUberEatsStore
+
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspUberEatsTokens.ueErrorRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspUberEatsTokens.ueErrorRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(store.categories.filter { $0.id != "featured" }, id: \.id) { cat in
+                        Button {
+                            store.selectedCategoryID = cat.id
+                            store.selectedTab = .home
+                        } label: {
+                            VStack(spacing: 8) {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(LpspUberEatsTokens.ueGreenTint)
+                                    .frame(height: 88)
+                                    .overlay(
+                                        Text(cat.label)
+                                            .font(.system(size: 18, weight: .bold))
+                                            .foregroundStyle(LpspUberEatsTokens.ueTextPrimary)
+                                    )
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(16)
+            }
+            .background(LpspUberEatsTokens.ueCanvas.ignoresSafeArea())
+            .navigationTitle("Browse")
+        }
+    }
+}
+
+private struct LpspUberEatsSearchScreen: View {
+    @ObservedObject var store: LpspUberEatsStore
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                HStack(spacing: 10) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                    TextField("Search Uber Eats", text: $store.searchQuery)
+                        .font(LpspUberEatsFonts.ueBody)
+                }
+                .padding(12)
+                .background(LpspUberEatsTokens.ueSurface, in: RoundedRectangle(cornerRadius: 12))
+                .padding(16)
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(store.filteredRestaurants) { restaurant in
+                            LpspUberEatsShowroomRestaurantCard(
+                                restaurant: restaurant,
+                                isSaved: store.favouriteIDs.contains(restaurant.id),
+                                onTap: { store.openRestaurant(restaurant.id) },
+                                onSave: { store.toggleFavourite(restaurant.id) }
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+            }
+            .background(LpspUberEatsTokens.ueCanvas.ignoresSafeArea())
+            .navigationTitle("Search")
+        }
+    }
+}
+
+private struct LpspUberEatsCartScreen: View {
+    @ObservedObject var store: LpspUberEatsStore
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let order = store.activeOrder {
+                    LpspUberEatsUEOrderTrackingView(
+                        route: [
+                            CLLocationCoordinate2D(latitude: 48.855, longitude: 2.372),
+                            CLLocationCoordinate2D(latitude: 48.858, longitude: 2.378),
+                            CLLocationCoordinate2D(latitude: 48.861, longitude: 2.385),
+                        ],
+                        etaText: order.etaLabel.map { "Arriving in \($0)" } ?? "Delivered"
+                    )
+                    .overlay(alignment: .bottom) {
+                        Button { store.advanceActiveOrder() } label: {
+                            Text(order.status == .onTheWay ? "Mark delivered" : "Update status")
+                                .font(LpspUberEatsFonts.ueButton)
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 48)
+                                .background(RoundedRectangle(cornerRadius: 12).fill(LpspUberEatsTokens.ueGreen))
+                                .padding(16)
+                        }
+                    }
+                } else if store.basketItemCount == 0 {
+                    ContentUnavailableView("Cart empty", systemImage: "cart", description: Text("Add items from a restaurant"))
+                } else {
+                    List {
+                        ForEach(store.basket.sorted(by: { $0.key < $1.key }), id: \.key) { itemID, qty in
+                            if let item = store.item(id: itemID), qty > 0 {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(item.name).font(LpspUberEatsFonts.ueMenuItemTitle)
+                                        Text(store.restaurant(containingItemID: itemID)?.name ?? "")
+                                            .font(LpspUberEatsFonts.ueMeta)
+                                            .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                                    }
+                                    Spacer()
+                                    Text("×\(qty)")
+                                    Button { store.removeFromBasket(itemID: itemID) } label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        LpspUberEatsUEPrimaryButton(title: "Checkout", trailing: store.basketTotalLabel) {
+                            store.placeOrder()
+                        }
+                        .padding()
                     }
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle("Cart")
         }
     }
 }
 
+private struct LpspUberEatsAccountScreen: View {
+    @ObservedObject var store: LpspUberEatsStore
 
-private struct LpspUberEatsDemoRestaurant { let name: String; let meta: String; let rating: Double; let fee: String; let badge: String?; let promo: Bool }
-private enum LpspUberEatsDemoRestaurants {
-    static let items: [LpspUberEatsDemoRestaurant] = [
-        .init(name: "Sushi Shop", meta: "Japonais · 25 min", rating: 4.8, fee: "€1,99", badge: "Promo", promo: true),
-        .init(name: "Pizza Roma", meta: "Italien · 20 min", rating: 4.6, fee: "€0,99", badge: nil, promo: false),
-    ]
-}
-private struct LpspUberEatsDemoMenuItem { let title: String; let sub: String; let price: String }
-private enum LpspUberEatsDemoMenu {
-    static let items: [LpspUberEatsDemoMenuItem] = [
-        .init(title: "Poke saumon", sub: "Riz, avocat", price: "€13,50"),
-    ]
-}
-
-private struct LpspUberEatsFoodHomeTabScreen: View {
     var body: some View {
         NavigationStack {
-            ScrollView { VStack(spacing: 16) { 
-                    ForEach(LpspUberEatsDemoRestaurants.items, id: \.name) { r in
-                        LpspUberEatsUERestaurantCard(name: r.name, rating: String(format: "%.1f", r.rating), eta: r.meta, fee: r.fee, photo: Image(systemName: "fork.knife"))
-                            .padding(.horizontal)
+            List {
+                Section("Delivery") {
+                    Label(store.deliveryLabel, systemImage: "house.fill")
+                    Label(store.addressStory, systemImage: "mappin.and.ellipse")
+                }
+                Section("Orders") {
+                    ForEach(store.pastOrders) { order in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(order.restaurantName).font(LpspUberEatsFonts.ueMenuItemTitle)
+                            Text("\(order.dateLabel) · \(order.totalLabel)")
+                                .font(LpspUberEatsFonts.ueMeta)
+                                .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                        }
                     }
- } .padding(.vertical) }
-            .background(LpspUberEatsTokens.ueCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-            .safeAreaInset(edge: .bottom) { LpspUberEatsUEStickyCartBar(count: 2, total: "€24,50", onView: {}) }
+                }
+                Section {
+                    Label("Payments", systemImage: "creditcard")
+                    Label("Help", systemImage: "questionmark.circle")
+                }
+            }
+            .navigationTitle("Account")
         }
     }
 }
 
-private struct LpspUberEatsFoodSearchTabScreen: View {
-    var body: some View { NavigationStack { ScrollView { VStack { 
-                    ForEach(LpspUberEatsDemoMenu.items, id: \.title) { item in
-                        LpspUberEatsUEMenuItemRow(name: item.title, desc: item.sub, price: item.price, photo: Image(systemName: "fork.knife"), onAdd: {}).padding(.horizontal)
+private struct LpspUberEatsRestaurantSheet: View {
+    @ObservedObject var store: LpspUberEatsStore
+    let restaurant: LpspUberEatsShowroomRestaurant
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    LpspUberEatsFoodImage(accent: restaurant.accent, symbol: restaurant.symbol)
+                        .frame(height: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(16)
+
+                    Text(restaurant.name)
+                        .font(LpspUberEatsFonts.ueRestaurantHeader)
+                        .padding(.horizontal, 16)
+
+                    HStack(spacing: 6) {
+                        Image(systemName: "star.fill").font(.system(size: 12))
+                        Text(String(format: "%.1f", restaurant.rating))
+                        Text("· \(restaurant.eta) · \(restaurant.deliveryFee)")
                     }
- } } .navigationTitle("Rechercher") } }
-}
+                    .font(LpspUberEatsFonts.ueMeta)
+                    .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
 
-private struct LpspUberEatsFoodOrdersTabScreen: View {
-    var body: some View { NavigationStack { LpspUberEatsUEOrderTrackingView(
-                route: [
-                    CLLocationCoordinate2D(latitude: 48.86, longitude: 2.35),
-                    CLLocationCoordinate2D(latitude: 48.87, longitude: 2.36),
-                ],
-                etaText: "Arrivée dans 12 min"
-            ) .navigationTitle("Commandes") } }
-}
-
-private struct LpspUberEatsFoodAccountTabScreen: View {
-    var body: some View { NavigationStack { List { Label("Adresses", systemImage: "mappin"); Label("Paiements", systemImage: "creditcard") } .navigationTitle("Compte") } }
-}
-
-private struct LpspUberEatsFoodTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if tabIndex == 0 || low.contains("home") || low.contains("accueil") { LpspUberEatsFoodHomeTabScreen() }
-        else if low.contains("recherch") || low.contains("search") { LpspUberEatsFoodSearchTabScreen() }
-        else if low.contains("command") || low.contains("order") || low.contains("activity") { LpspUberEatsFoodOrdersTabScreen() }
-        else { LpspUberEatsFoodAccountTabScreen() }
-    }
-}
-
-
-private struct LpspUberEatsSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            Text("Deliver to · Home").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-        Text("Search Uber Eats").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            Text("Featured").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            Text("Pizza").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            Text("Sushi").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            Text("Burgers").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            Text("Healthy").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-        ScrollView {
-            VStack(spacing: 12) {
-                    Text("$0 Delivery Fee").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Sunrise Diner").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                    Text("4.8").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                    Text("· 25 min ·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                    Text("$0 Delivery Fee").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Green Bowl Kitchen").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                    Text("4.7").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                    Text("· 30 min · $1.49 Delivery Fee").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
+                    ForEach(restaurant.menu) { item in
+                        LpspUberEatsShowroomMenuRow(
+                            item: item,
+                            restaurant: restaurant,
+                            quantity: store.quantity(for: item.id),
+                            onAdd: { store.addToBasket(itemID: item.id) }
+                        )
+                        .padding(.horizontal, 16)
+                    }
+                }
+                .padding(.bottom, store.basketItemCount > 0 ? 80 : 24)
+            }
+            .background(LpspUberEatsTokens.ueCanvas.ignoresSafeArea())
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Fermer") { dismiss() }
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                if store.basketItemCount > 0 {
+                    LpspUberEatsUEStickyCartBar(
+                        count: store.basketItemCount,
+                        total: store.basketTotalLabel,
+                        onView: { dismiss(); store.showBasketSheet = true }
+                    )
+                }
             }
         }
-            Text("3").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            Text("View cart").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            Text("$28.40").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 
+private struct LpspUberEatsShowroomMenuRow: View {
+    let item: LpspUberEatsShowroomMenuItem
+    let restaurant: LpspUberEatsShowroomRestaurant
+    let quantity: Int
+    let onAdd: () -> Void
+
+    var priceLabel: String {
+        restaurant.id == "sunrise-diner" || restaurant.id == "green-bowl"
+            ? LpspUberEatsStore.formatUSD(item.priceCents)
+            : LpspUberEatsStore.formatEuro(item.priceCents)
+    }
+
+    var body: some View {
+        LpspUberEatsUEMenuItemRow(
+            name: item.name,
+            desc: item.description,
+            price: priceLabel,
+            photo: Image(systemName: restaurant.symbol),
+            onAdd: onAdd
+        )
+        .overlay(alignment: .topTrailing) {
+            if quantity > 0 {
+                LpspUberEatsCartCountBadge(count: quantity)
+                    .padding(.trailing, 8)
+                    .padding(.top, 8)
+            }
+        }
+    }
+}
+
+private struct LpspUberEatsBasketSheet: View {
+    @ObservedObject var store: LpspUberEatsStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(store.basket.sorted(by: { $0.key < $1.key }), id: \.key) { itemID, qty in
+                    if let item = store.item(id: itemID), qty > 0 {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(item.name).font(LpspUberEatsFonts.ueMenuItemTitle)
+                                Text(store.restaurant(containingItemID: itemID)?.name ?? "")
+                                    .font(LpspUberEatsFonts.ueMeta)
+                                    .foregroundStyle(LpspUberEatsTokens.ueTextSecondary)
+                            }
+                            Spacer()
+                            Text("×\(qty)")
+                        }
+                    }
+                }
+            }
+            .navigationTitle("View cart")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Fermer") { dismiss() }
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                LpspUberEatsUEPrimaryButton(title: "Checkout", trailing: store.basketTotalLabel) {
+                    store.placeOrder()
+                    dismiss()
+                }
+                .padding()
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+}
 

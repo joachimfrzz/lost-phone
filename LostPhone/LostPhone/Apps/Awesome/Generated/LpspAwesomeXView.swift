@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeXView: View {
     var body: some View {
-        LpspXShowroomRoot()
+        LpspXShowroomRoot(store: LpspXStore())
     }
 }
 
@@ -308,236 +308,652 @@ fileprivate extension View {
 
 
 
-// MARK: - Écrans showroom
+// MARK: - Données & état (showroom Spectr)
 
-private struct LpspXShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspXSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspXExploreTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspXCommunitiesTabScreen()
-                .tabItem { Label("Communities", systemImage: "person.3.fill") }
-                .tag(2)
-            LpspXSocialTabScreen(title: "Notifications")
-                .tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .tag(3)
-            LpspXSocialTabScreen(title: "Messages")
-                .tabItem { Label("Messages", systemImage: "envelope.fill") }
-                .tag(4)
-        }
-        .tint(LpspXTokens.xErrorRed)
-        
-    }
-}
+private enum LpspXShowroomTab: String, CaseIterable, Identifiable {
+    case home
+    case search
+    case communities
+    case notifications
+    case messages
 
+    var id: String { rawValue }
 
-private struct LpspXGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspXTokens.xErrorRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspXTokens.xErrorRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
+    var icon: String {
+        switch self {
+        case .home: return "house.fill"
+        case .search: return "magnifyingglass"
+        case .communities: return "person.3.fill"
+        case .notifications: return "bell.fill"
+        case .messages: return "envelope.fill"
         }
     }
 }
 
-
-private struct LpspXDemoStory: Identifiable {
-    let id = UUID()
-    let name: String
-    let unread: Bool
+fileprivate struct LpspXPost: Identifiable, Equatable {
+    let id: String
+    let displayName: String
+    let handle: String
+    let timestamp: String
+    let isVerified: Bool
+    let avatarGradient: [Color]
+    let postText: String
+    let hashtag: String?
+    let hasMedia: Bool
+    var replyCount: Int
+    var repostCount: Int
+    var likeCount: Int
+    var viewCount: Int
+    var isLiked: Bool
+    var isReposted: Bool
 }
 
-private enum LpspXDemoStories {
-    static let items: [LpspXDemoStory] = [
-        .init(name: "Votre story", unread: false),
-        .init(name: "Alex", unread: true),
-        .init(name: "Léa", unread: true),
+private enum LpspXShowroomData {
+    static let featuredID = "nova-shipit"
+
+    static let posts: [LpspXPost] = [
+        .init(
+            id: featuredID,
+            displayName: "Nova Palmer",
+            handle: "novapalmer",
+            timestamp: "2h",
+            isVerified: true,
+            avatarGradient: [
+                Color(red: 1.0, green: 0.84, blue: 0.6),
+                Color(red: 1.0, green: 0.89, blue: 0.58),
+            ],
+            postText: "Just shipped a new feature. Feedback welcome.",
+            hashtag: "#shipit",
+            hasMedia: true,
+            replyCount: 24,
+            repostCount: 148,
+            likeCount: 1_200,
+            viewCount: 24_000,
+            isLiked: true,
+            isReposted: true
+        ),
+        .init(
+            id: "harborwave-synth",
+            displayName: "harborwave",
+            handle: "harborwave",
+            timestamp: "4h",
+            isVerified: false,
+            avatarGradient: [
+                Color(red: 0.22, green: 0.48, blue: 0.92),
+                Color(red: 0.10, green: 0.22, blue: 0.55),
+            ],
+            postText: "New synth loop dropping tonight. Who wants the stems?",
+            hashtag: "#music",
+            hasMedia: false,
+            replyCount: 8,
+            repostCount: 31,
+            likeCount: 412,
+            viewCount: 6_200,
+            isLiked: false,
+            isReposted: false
+        ),
+        .init(
+            id: "kellen-ranked",
+            displayName: "kellen_v",
+            handle: "kellen_v",
+            timestamp: "6h",
+            isVerified: false,
+            avatarGradient: [
+                Color(red: 0.88, green: 0.42, blue: 0.18),
+                Color(red: 0.55, green: 0.18, blue: 0.12),
+            ],
+            postText: "Ranked grind continues. Patch notes look spicy.",
+            hashtag: nil,
+            hasMedia: false,
+            replyCount: 15,
+            repostCount: 22,
+            likeCount: 890,
+            viewCount: 11_400,
+            isLiked: false,
+            isReposted: false
+        ),
+    ]
+
+    static let trending = [
+        ("Technology", "#shipit", "12.4K posts"),
+        ("Music", "harborwave live", "3.1K posts"),
+        ("Sports", "Opening night", "28K posts"),
+    ]
+
+    static let communities = ["Design Systems", "Indie Dev", "SwiftUI", "Film Photo"]
+
+    static let notifications: [(title: String, detail: String, time: String)] = [
+        ("Nova Palmer liked your post", "Just shipped a new feature…", "1h"),
+        ("harborwave reposted you", "New synth loop dropping tonight", "3h"),
+        ("kellen_v followed you", "", "5h"),
+    ]
+
+    static let messages: [(name: String, preview: String, time: String, unread: Bool)] = [
+        ("Nova Palmer", "Feedback welcome on the ship", "2h", true),
+        ("pixelgremlin", "sent a GIF", "1d", false),
     ]
 }
 
-private struct LpspXFeedTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
+@MainActor
+fileprivate final class LpspXStore: ObservableObject {
+    @Published var selectedTab: LpspXShowroomTab = .home
+    @Published var feedFilter = 0
+    @Published var posts: [LpspXPost]
+    @Published var showComposeSheet = false
+    @Published var composeText = ""
 
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 14) {
-                            ForEach(LpspXDemoStories.items) { s in
-                                VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspXTokens.xErrorRed, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspXTokens.xErrorRed.opacity(0.2)).frame(width: 58, height: 58))
-                                    Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 10)
-                    }
+    init() {
+        posts = LpspXShowroomData.posts
+    }
 
+    var filteredPosts: [LpspXPost] {
+        guard feedFilter == 1 else { return posts }
+        return posts.filter { ["novapalmer", "harborwave"].contains($0.handle) }
+    }
 
-                    ForEach(0..<3, id: \.self) { i in
-                        LpspXGenericFeedCard(index: i, accent: LpspXTokens.xErrorRed)
-                    }
+    func toggleLike(postID: String) {
+        guard let index = posts.firstIndex(where: { $0.id == postID }) else { return }
+        var post = posts[index]
+        post.isLiked.toggle()
+        post.likeCount += post.isLiked ? 1 : -1
+        posts[index] = post
+    }
 
-                }
-            }
-            .background(LpspXTokens.xCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-            .navigationBarTitleDisplayMode(.inline)
-        }
+    func toggleRepost(postID: String) {
+        guard let index = posts.firstIndex(where: { $0.id == postID }) else { return }
+        var post = posts[index]
+        post.isReposted.toggle()
+        post.repostCount += post.isReposted ? 1 : -1
+        posts[index] = post
+    }
+
+    func openCompose() {
+        showComposeSheet = true
+    }
+
+    func publishPost() {
+        let trimmed = composeText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        posts.insert(
+            LpspXPost(
+                id: "user-\(posts.count + 1)",
+                displayName: "you",
+                handle: "you",
+                timestamp: "now",
+                isVerified: false,
+                avatarGradient: [LpspXTokens.xBlue, LpspXTokens.xBluePressed],
+                postText: trimmed,
+                hashtag: nil,
+                hasMedia: false,
+                replyCount: 0,
+                repostCount: 0,
+                likeCount: 0,
+                viewCount: 0,
+                isLiked: false,
+                isReposted: false
+            ),
+            at: 0
+        )
+        composeText = ""
+        showComposeSheet = false
+        selectedTab = .home
     }
 }
 
-private struct LpspXExploreTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 2) {
-                    ForEach(0..<15, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspXTokens.xErrorRed.opacity(0.08 + Double(i) * 0.04))
-                            .aspectRatio(1, contentMode: .fit)
-                    }
-                }
-            }
-            .navigationTitle("Explorer")
-        }
-    }
-}
+// MARK: - Écrans showroom
 
-private struct LpspXReelsTabScreen: View {
+private struct LpspXShowroomRoot: View {
+    @ObservedObject var store: LpspXStore
+
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Spacer()
-                Image(systemName: "play.rectangle.fill").font(.system(size: 64)).foregroundStyle(.white.opacity(0.85))
-                Text("Reels").font(.title2.bold()).foregroundStyle(.white)
-                Spacer()
+            LpspXTokens.xCanvas.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                Group {
+                    switch store.selectedTab {
+                    case .home:
+                        LpspXHomeFeedScreen(store: store)
+                    case .search:
+                        LpspXSearchTabScreen()
+                    case .communities:
+                        LpspXCommunitiesTabScreen()
+                    case .notifications:
+                        LpspXNotificationsTabScreen()
+                    case .messages:
+                        LpspXMessagesTabScreen()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                LpspXIconTabBar(store: store)
+            }
+        }
+        .preferredColorScheme(.dark)
+        .sheet(isPresented: $store.showComposeSheet) {
+            LpspXComposeSheet(store: store)
+        }
+    }
+}
+
+private struct LpspXIconTabBar: View {
+    @ObservedObject var store: LpspXStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspXShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    Image(systemName: tab.icon)
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundStyle(
+                            store.selectedTab == tab
+                                ? LpspXTokens.xTextPrimaryDark
+                                : LpspXTokens.xTextSecondaryDark
+                        )
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspXTokens.xDivider)
+                .frame(height: 1)
+        }
+        .background(LpspXTokens.xCanvas)
+    }
+}
+
+private struct LpspXHomeFeedScreen: View {
+    @ObservedObject var store: LpspXStore
+
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            VStack(spacing: 0) {
+                LpspXTopNavBar()
+                LpspXXFeedFilter(selection: $store.feedFilter)
+
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(store.filteredPosts) { post in
+                            LpspXShowroomPostRow(
+                                post: post,
+                                onLike: { store.toggleLike(postID: post.id) },
+                                onRepost: { store.toggleRepost(postID: post.id) }
+                            )
+                        }
+                    }
+                }
+            }
+
+            LpspXXPostFAB {
+                store.openCompose()
             }
         }
     }
 }
 
-private struct LpspXProfileTabScreen: View {
+private struct LpspXTopNavBar: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    Circle().fill(LpspXTokens.xErrorRed.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("lost.phone").font(.system(size: 20, weight: .bold))
-                    Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)
-                    HStack(spacing: 32) {
-                        VStack { Text("128").font(.headline); Text("Publications").font(.caption) }
-                        VStack { Text("1,2 k").font(.headline); Text("Abonnés").font(.caption) }
-                        VStack { Text("340").font(.headline); Text("Abonnements").font(.caption) }
+        HStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [LpspXTokens.xBlue, LpspXTokens.xBluePressed],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 30, height: 30)
+
+            Spacer()
+
+            Text("𝕏")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+
+            Spacer()
+
+            Text("✦")
+                .font(.system(size: 18))
+                .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 44)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(LpspXTokens.xDivider)
+                .frame(height: 1)
+        }
+    }
+}
+
+private struct LpspXShowroomPostRow: View {
+    let post: LpspXPost
+    let onLike: () -> Void
+    let onRepost: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: 12) {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: post.avatarGradient,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 32, height: 32)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 4) {
+                        Text(post.displayName)
+                            .font(LpspXFonts.xDisplayName.weight(.semibold))
+                            .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+                            .lineLimit(1)
+
+                        if post.isVerified {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.system(size: 16))
+                                .foregroundStyle(LpspXTokens.xBlue)
+                        }
+
+                        Text("@\(post.handle)")
+                            .font(LpspXFonts.xHandle)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+                            .lineLimit(1)
+
+                        Text("·")
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+
+                        Text(post.timestamp)
+                            .font(LpspXFonts.xHandle)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+
+                        Spacer()
+
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 18))
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
                     }
+
+                    postBodyText
+
+                    if post.hasMedia {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        LpspXTokens.xSurface2,
+                                        LpspXTokens.xSurface1,
+                                        LpspXTokens.xCanvas,
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 180)
+                            .padding(.top, 8)
+                    }
+
+                    HStack(spacing: 0) {
+                        LpspXInteractiveActionIcon(
+                            systemName: "bubble.left",
+                            count: post.replyCount,
+                            color: LpspXTokens.xTextSecondaryDark,
+                            action: {}
+                        )
+                        Spacer()
+                        LpspXInteractiveActionIcon(
+                            systemName: "arrow.2.squarepath",
+                            count: post.repostCount,
+                            color: post.isReposted ? LpspXTokens.xRepostGreen : LpspXTokens.xTextSecondaryDark,
+                            action: onRepost
+                        )
+                        Spacer()
+                        LpspXInteractiveActionIcon(
+                            systemName: post.isLiked ? "heart.fill" : "heart",
+                            count: post.likeCount,
+                            color: post.isLiked ? LpspXTokens.xLikePink : LpspXTokens.xTextSecondaryDark,
+                            action: onLike
+                        )
+                        Spacer()
+                        LpspXInteractiveActionIcon(
+                            systemName: "chart.bar",
+                            count: post.viewCount,
+                            color: LpspXTokens.xTextSecondaryDark,
+                            action: {}
+                        )
+                        Spacer()
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 18))
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+                            .frame(minWidth: 44, minHeight: 44)
+                    }
+                    .padding(.top, 8)
                 }
-                .padding()
             }
-            .navigationTitle("Profil")
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+
+            Rectangle()
+                .fill(LpspXTokens.xDivider)
+                .frame(height: 1)
+        }
+        .background(LpspXTokens.xCanvas)
+    }
+
+    private var postBodyText: some View {
+        Group {
+            if let hashtag = post.hashtag {
+                (Text(post.postText + " ")
+                    .font(LpspXFonts.xPostBody)
+                    .foregroundColor(LpspXTokens.xTextPrimaryDark)
+                 + Text(hashtag)
+                    .font(LpspXFonts.xPostBody.weight(.semibold))
+                    .foregroundColor(LpspXTokens.xBlue))
+            } else {
+                Text(post.postText)
+                    .font(LpspXFonts.xPostBody)
+                    .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+            }
+        }
+        .lineSpacing(4)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+private struct LpspXInteractiveActionIcon: View {
+    let systemName: String
+    let count: Int
+    let color: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Image(systemName: systemName)
+                    .font(.system(size: 18.75, weight: .regular))
+                    .foregroundStyle(color)
+                if count > 0 {
+                    Text(formatted(count))
+                        .font(LpspXFonts.xActionCount)
+                        .foregroundStyle(color)
+                }
+            }
+            .frame(minWidth: 44, minHeight: 44, alignment: .leading)
+        }
+        .buttonStyle(LpspXXPressableStyle(pressedScale: 0.92))
+        .sensoryFeedback(.impact(weight: .light), trigger: count)
+    }
+
+    private func formatted(_ n: Int) -> String {
+        switch n {
+        case 1_000_000...:
+            return String(format: "%.1fM", Double(n) / 1_000_000).replacingOccurrences(of: ".0", with: "")
+        case 1_000...:
+            return String(format: "%.1fK", Double(n) / 1_000).replacingOccurrences(of: ".0", with: "")
+        default:
+            return "\(n)"
+        }
+    }
+}
+
+private struct LpspXSearchTabScreen: View {
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(LpspXShowroomData.trending, id: \.1) { category, topic, meta in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(category)
+                            .font(LpspXFonts.xTrendingMeta)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+                        Text(topic)
+                            .font(LpspXFonts.xTrendingTopic.weight(.semibold))
+                            .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+                        Text(meta)
+                            .font(LpspXFonts.xTrendingMeta)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+
+                    Rectangle()
+                        .fill(LpspXTokens.xDivider)
+                        .frame(height: 1)
+                }
+            }
         }
     }
 }
 
 private struct LpspXCommunitiesTabScreen: View {
     var body: some View {
+        List {
+            ForEach(LpspXShowroomData.communities, id: \.self) { name in
+                HStack(spacing: 12) {
+                    Circle()
+                        .fill(LpspXTokens.xSurface2)
+                        .frame(width: 40, height: 40)
+                        .overlay {
+                            Image(systemName: "person.3.fill")
+                                .foregroundStyle(LpspXTokens.xBlue)
+                        }
+                    Text(name)
+                        .font(LpspXFonts.xSectionHeader.weight(.semibold))
+                        .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+                }
+                .listRowBackground(LpspXTokens.xCanvas)
+            }
+        }
+        .scrollContentBackground(.hidden)
+    }
+}
+
+private struct LpspXNotificationsTabScreen: View {
+    var body: some View {
+        List {
+            ForEach(LpspXShowroomData.notifications, id: \.title) { item in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(item.title)
+                        .font(LpspXFonts.xDisplayName.weight(.semibold))
+                        .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+                    if !item.detail.isEmpty {
+                        Text(item.detail)
+                            .font(LpspXFonts.xPostBody)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+                    }
+                    Text(item.time)
+                        .font(LpspXFonts.xTrendingMeta)
+                        .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+                }
+                .listRowBackground(LpspXTokens.xCanvas)
+            }
+        }
+        .scrollContentBackground(.hidden)
+    }
+}
+
+private struct LpspXMessagesTabScreen: View {
+    var body: some View {
+        List {
+            ForEach(LpspXShowroomData.messages, id: \.name) { message in
+                HStack(spacing: 12) {
+                    Circle()
+                        .fill(LpspXTokens.xSurface2)
+                        .frame(width: 40, height: 40)
+                        .overlay {
+                            Text(String(message.name.prefix(1)))
+                                .font(LpspXFonts.xButton.weight(.bold))
+                                .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+                        }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(message.name)
+                            .font(LpspXFonts.xDisplayName.weight(.semibold))
+                            .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+                        Text(message.preview)
+                            .font(LpspXFonts.xDMBody)
+                            .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    if message.unread {
+                        Circle()
+                            .fill(LpspXTokens.xBlue)
+                            .frame(width: 8, height: 8)
+                    }
+
+                    Text(message.time)
+                        .font(LpspXFonts.xDMTimestamp)
+                        .foregroundStyle(LpspXTokens.xTextSecondaryDark)
+                }
+                .listRowBackground(LpspXTokens.xCanvas)
+            }
+        }
+        .scrollContentBackground(.hidden)
+    }
+}
+
+private struct LpspXComposeSheet: View {
+    @ObservedObject var store: LpspXStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
         NavigationStack {
-            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
-        }
-    }
-}
+            VStack(alignment: .leading, spacing: 16) {
+                TextField("What's happening?", text: $store.composeText, axis: .vertical)
+                    .font(LpspXFonts.xPostBody)
+                    .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+                    .lineLimit(4...8)
 
-private struct LpspXCreateTabScreen: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspXTokens.xErrorRed)
-            Text("Nouvelle publication").font(.title2.bold())
-            Text("Photo, reel ou story").foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(LpspXTokens.xCanvas.ignoresSafeArea())
-    }
-}
-
-private struct LpspXSocialTabScreen: View {
-    let title: String
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("créer") || low.contains("create") { LpspXCreateTabScreen() }
-        else if low.contains("explor") || low.contains("search") { LpspXExploreTabScreen() }
-        else if low.contains("reel") { LpspXReelsTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspXProfileTabScreen() }
-        else { LpspXFeedTabScreen() }
-    }
-}
-
-private struct LpspXGenericFeedCard: View {
-    let index: Int
-    let accent: Color
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Circle().fill(accent.opacity(0.2)).frame(width: 32, height: 32)
-                Text("utilisateur_\(index)").font(.system(size: 14, weight: .semibold))
                 Spacer()
             }
-            .padding(.horizontal, 12)
-            RoundedRectangle(cornerRadius: 0).fill(accent.opacity(0.12)).frame(height: 280)
-            HStack(spacing: 16) {
-                Image(systemName: "heart"); Image(systemName: "bubble.right"); Spacer(); Image(systemName: "bookmark")
-            }
-            .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
-        }
-    }
-}
-
-
-private struct LpspXSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Text("𝕏").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-            Text("✦").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-        } .padding(.horizontal, 16).frame(height: 44)
-            Text("For you").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-            Text("Following").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-            VStack(alignment: .leading, spacing: 0) {
-                Circle().fill(LinearGradient(colors: [Color(red:1,green:0.84,blue:0.6), Color(red:1,green:0.89,blue:0.58)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 30, height: 30)
-                        Text("Nova Palmer").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                        Text("@novapalmer").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                        Text("·").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                        Text("2h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                        Text("⋯").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                        Text("#shipit").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("24").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("148").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("1.2K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("24K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
+            .padding(16)
+            .background(LpspXTokens.xCanvas.ignoresSafeArea())
+            .navigationTitle("Post")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                        .foregroundStyle(LpspXTokens.xTextPrimaryDark)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Post") { store.publishPost() }
+                        .font(LpspXFonts.xButton.weight(.semibold))
+                        .foregroundStyle(LpspXTokens.xBlue)
+                        .disabled(store.composeText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
             }
         }
-        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }

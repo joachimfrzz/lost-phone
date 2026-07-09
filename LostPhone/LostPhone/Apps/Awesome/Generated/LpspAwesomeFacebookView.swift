@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeFacebookView: View {
     var body: some View {
-        LpspFacebookShowroomRoot()
+        LpspFacebookShowroomRoot(store: LpspFacebookStore())
     }
 }
 
@@ -341,239 +341,432 @@ fileprivate extension View {
 
 
 
+// MARK: - Showroom data & store
+
+private enum LpspFacebookShowroomTab: String, CaseIterable, Identifiable {
+    case home, video, marketplace, alerts, menu
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .video: "Video"
+        case .marketplace: "Market"
+        case .alerts: "Alerts"
+        case .menu: "Menu"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: "house.fill"
+        case .video: "play.rectangle.fill"
+        case .marketplace: "cart.fill"
+        case .alerts: "bell.fill"
+        case .menu: "line.3.horizontal"
+        }
+    }
+}
+
+private struct LpspFacebookFeedPost: Identifiable, Equatable {
+    let id: String
+    let displayName: String
+    let timestamp: String
+    let postText: String
+    let hasMedia: Bool
+    let reactionSummary: String
+    var commentCount: Int
+    var userReaction: LpspFacebookFBReaction?
+}
+
+private enum LpspFacebookShowroomData {
+    static let featuredPost = LpspFacebookFeedPost(
+        id: "sarah",
+        displayName: "Sarah Johnson",
+        timestamp: "2h ·",
+        postText: "Golden hour on the walk home. Can't believe we almost didn't go outside today.",
+        hasMedia: true,
+        reactionSummary: "You, Maya and 1.2K others",
+        commentCount: 84,
+        userReaction: .like
+    )
+
+    static let marketplaceItems = [
+        ("Vintage camera", "$120 · 2 mi"),
+        ("Standing desk", "$180 · 5 mi"),
+    ]
+
+    static let menuItems = ["Groups", "Events", "Saved", "Settings"]
+}
+
+@MainActor
+fileprivate final class LpspFacebookStore: ObservableObject {
+    @Published var selectedTab: LpspFacebookShowroomTab = .home
+    @Published var posts: [LpspFacebookFeedPost] = [LpspFacebookShowroomData.featuredPost]
+    @Published var showReactionsForPostId: String?
+    @Published var alertCount = 9
+
+    func setReaction(_ postId: String, reaction: LpspFacebookFBReaction?) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.userReaction = reaction
+            return copy
+        }
+        showReactionsForPostId = nil
+    }
+
+    func toggleLike(_ postId: String) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.userReaction = copy.userReaction == nil ? .like : nil
+            return copy
+        }
+    }
+
+    func incrementComments(_ postId: String) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.commentCount += 1
+            return copy
+        }
+    }
+
+    func openReactions(_ postId: String) {
+        showReactionsForPostId = postId
+    }
+
+    func dismissReactions() {
+        showReactionsForPostId = nil
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspFacebookShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspFacebookSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspFacebookSocialTabScreen(title: "Video")
-                .tabItem { Label("Video", systemImage: "play.rectangle.fill") }
-                .tag(1)
-            LpspFacebookSocialTabScreen(title: "Marketplace")
-                .tabItem { Label("Marketplace", systemImage: "cart.fill") }
-                .tag(2)
-            LpspFacebookSocialTabScreen(title: "Notifications")
-                .tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .tag(3)
-            LpspFacebookSocialTabScreen(title: "Menu")
-                .tabItem { Label("Menu", systemImage: "line.3.horizontal") }
-                .tag(4)
-        }
-        .tint(LpspFacebookTokens.fbCareYellow)
-        
-    }
-}
+    @ObservedObject var store: LpspFacebookStore
 
-
-private struct LpspFacebookGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspFacebookTokens.fbCareYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspFacebookTokens.fbCareYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspFacebookShowroomTab.allCases) { tab in
+                LpspFacebookShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
                     }
-                }
+                    .tag(tab)
+                    .badge(tab == .alerts ? store.alertCount : 0)
             }
-            .navigationTitle(title)
+        }
+        .tint(LpspFacebookTokens.fbBlue)
+        .preferredColorScheme(.light)
+    }
+}
+
+private struct LpspFacebookShowroomTabScreen: View {
+    @ObservedObject var store: LpspFacebookStore
+    let tab: LpspFacebookShowroomTab
+
+    var body: some View {
+        Group {
+            switch tab {
+            case .home:
+                LpspFacebookHomeTabScreen(store: store)
+            case .video:
+                LpspFacebookVideoTabScreen()
+            case .marketplace:
+                LpspFacebookMarketplaceTabScreen()
+            case .alerts:
+                LpspFacebookAlertsTabScreen()
+            case .menu:
+                LpspFacebookMenuTabScreen()
+            }
         }
     }
 }
 
+private struct LpspFacebookHomeTabScreen: View {
+    @ObservedObject var store: LpspFacebookStore
 
-private struct LpspFacebookDemoStory: Identifiable {
-    let id = UUID()
-    let name: String
-    let unread: Bool
-}
-
-private enum LpspFacebookDemoStories {
-    static let items: [LpspFacebookDemoStory] = [
-        .init(name: "Votre story", unread: false),
-        .init(name: "Alex", unread: true),
-        .init(name: "Léa", unread: true),
-    ]
-}
-
-private struct LpspFacebookFeedTabScreen: View {
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
+            LpspFacebookSpectrTopNav()
+
             ScrollView {
-                VStack(spacing: 0) {
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 14) {
-                            ForEach(LpspFacebookDemoStories.items) { s in
-                                VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspFacebookTokens.fbCareYellow, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspFacebookTokens.fbCareYellow.opacity(0.2)).frame(width: 58, height: 58))
-                                    Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 10)
-                    }
-
-
-                    ForEach(0..<3, id: \.self) { i in
-                        LpspFacebookGenericFeedCard(index: i, accent: LpspFacebookTokens.fbCareYellow)
-                    }
-
-                }
-            }
-            .background(LpspFacebookTokens.fbCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-
-private struct LpspFacebookExploreTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 2) {
-                    ForEach(0..<15, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspFacebookTokens.fbCareYellow.opacity(0.08 + Double(i) * 0.04))
-                            .aspectRatio(1, contentMode: .fit)
+                LazyVStack(spacing: 8) {
+                    ForEach(store.posts) { post in
+                        LpspFacebookShowroomPostCard(
+                            post: post,
+                            showReactions: store.showReactionsForPostId == post.id,
+                            onLike: { store.toggleLike(post.id) },
+                            onLongPressLike: { store.openReactions(post.id) },
+                            onSelectReaction: { store.setReaction(post.id, reaction: $0) },
+                            onDismissReactions: { store.dismissReactions() },
+                            onComment: { store.incrementComments(post.id) }
+                        )
                     }
                 }
-            }
-            .navigationTitle("Explorer")
-        }
-    }
-}
-
-private struct LpspFacebookReelsTabScreen: View {
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Spacer()
-                Image(systemName: "play.rectangle.fill").font(.system(size: 64)).foregroundStyle(.white.opacity(0.85))
-                Text("Reels").font(.title2.bold()).foregroundStyle(.white)
-                Spacer()
+                .padding(.vertical, 8)
             }
         }
-    }
-}
-
-private struct LpspFacebookProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    Circle().fill(LpspFacebookTokens.fbCareYellow.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("lost.phone").font(.system(size: 20, weight: .bold))
-                    Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)
-                    HStack(spacing: 32) {
-                        VStack { Text("128").font(.headline); Text("Publications").font(.caption) }
-                        VStack { Text("1,2 k").font(.headline); Text("Abonnés").font(.caption) }
-                        VStack { Text("340").font(.headline); Text("Abonnements").font(.caption) }
-                    }
-                }
-                .padding()
-            }
-            .navigationTitle("Profil")
-        }
-    }
-}
-
-private struct LpspFacebookCommunitiesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
-        }
-    }
-}
-
-private struct LpspFacebookCreateTabScreen: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspFacebookTokens.fbCareYellow)
-            Text("Nouvelle publication").font(.title2.bold())
-            Text("Photo, reel ou story").foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(LpspFacebookTokens.fbCanvas.ignoresSafeArea())
     }
 }
 
-private struct LpspFacebookSocialTabScreen: View {
-    let title: String
+private struct LpspFacebookSpectrTopNav: View {
     var body: some View {
-        let low = title.lowercased()
-        if low.contains("créer") || low.contains("create") { LpspFacebookCreateTabScreen() }
-        else if low.contains("explor") || low.contains("search") { LpspFacebookExploreTabScreen() }
-        else if low.contains("reel") { LpspFacebookReelsTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspFacebookProfileTabScreen() }
-        else { LpspFacebookFeedTabScreen() }
+        HStack(spacing: 8) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(LpspFacebookTokens.fbBlue)
+                    .frame(width: 36, height: 36)
+                Text("f")
+                    .font(LpspFacebookFonts.fbFLogo)
+                    .foregroundStyle(.white)
+                    .offset(y: -1)
+            }
+
+            Text("facebook")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(LpspFacebookTokens.fbTextPrimaryLight)
+
+            Spacer()
+
+            LpspFacebookFBCircleIconButton(system: "magnifyingglass")
+            LpspFacebookFBCircleIconButton(system: "ellipsis.message.fill")
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 56)
+        .background(LpspFacebookTokens.fbCard)
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(LpspFacebookTokens.fbDivider).frame(height: 1)
+        }
     }
 }
 
-private struct LpspFacebookGenericFeedCard: View {
-    let index: Int
-    let accent: Color
+private struct LpspFacebookShowroomPostCard: View {
+    let post: LpspFacebookFeedPost
+    let showReactions: Bool
+    let onLike: () -> Void
+    let onLongPressLike: () -> Void
+    let onSelectReaction: (LpspFacebookFBReaction) -> Void
+    let onDismissReactions: () -> Void
+    let onComment: () -> Void
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Circle().fill(accent.opacity(0.2)).frame(width: 32, height: 32)
-                Text("utilisateur_\(index)").font(.system(size: 14, weight: .semibold))
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(red: 1, green: 0.84, blue: 0.6), Color(red: 1, green: 0.89, blue: 0.58)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 40, height: 40)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(post.displayName)
+                        .font(LpspFacebookFonts.fbDisplayName)
+                        .foregroundStyle(LpspFacebookTokens.fbTextPrimaryLight)
+                    HStack(spacing: 4) {
+                        Text(post.timestamp)
+                            .font(LpspFacebookFonts.fbTimestamp)
+                            .foregroundStyle(LpspFacebookTokens.fbTextSecondaryLight)
+                        Text("🌍")
+                            .font(.system(size: 12))
+                    }
+                }
+
                 Spacer()
+
+                Text("⋯")
+                    .font(.system(size: 20))
+                    .foregroundStyle(LpspFacebookTokens.fbTextSecondaryLight)
+            }
+            .padding(12)
+
+            Text(post.postText)
+                .font(LpspFacebookFonts.fbPostBody)
+                .foregroundStyle(LpspFacebookTokens.fbTextPrimaryLight)
+                .padding(.horizontal, 12)
+                .padding(.bottom, 12)
+
+            if post.hasMedia {
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.95, green: 0.72, blue: 0.38),
+                        Color(red: 0.88, green: 0.45, blue: 0.22),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .frame(maxWidth: .infinity)
+                .frame(height: 220)
+            }
+
+            HStack(spacing: 6) {
+                HStack(spacing: -4) {
+                    reactionBubble("👍", color: LpspFacebookTokens.fbLikeBlue)
+                    reactionBubble("❤", color: LpspFacebookTokens.fbLovePink)
+                    reactionBubble("😂", color: LpspFacebookTokens.fbHahaYellow)
+                }
+                Text(post.reactionSummary)
+                    .font(LpspFacebookFonts.fbReactionCount)
+                    .foregroundStyle(LpspFacebookTokens.fbTextSecondaryLight)
+                Spacer()
+                Text("\(post.commentCount) comments")
+                    .font(LpspFacebookFonts.fbReactionCount)
+                    .foregroundStyle(LpspFacebookTokens.fbTextSecondaryLight)
             }
             .padding(.horizontal, 12)
-            RoundedRectangle(cornerRadius: 0).fill(accent.opacity(0.12)).frame(height: 280)
-            HStack(spacing: 16) {
-                Image(systemName: "heart"); Image(systemName: "bubble.right"); Spacer(); Image(systemName: "bookmark")
+            .padding(.vertical, 8)
+
+            Divider().background(LpspFacebookTokens.fbDivider)
+
+            HStack(spacing: 0) {
+                LpspFacebookFBActionButton(
+                    icon: post.userReaction?.symbol ?? "hand.thumbsup",
+                    label: post.userReaction?.label ?? "Like",
+                    color: post.userReaction?.color ?? LpspFacebookTokens.fbTextSecondaryLight,
+                    onTap: onLike,
+                    onLongPress: onLongPressLike
+                )
+                LpspFacebookFBActionButton(
+                    icon: "bubble.left",
+                    label: "Comment",
+                    color: LpspFacebookTokens.fbTextSecondaryLight,
+                    onTap: onComment,
+                    onLongPress: {}
+                )
+                LpspFacebookFBActionButton(
+                    icon: "arrowshape.turn.up.right",
+                    label: "Share",
+                    color: LpspFacebookTokens.fbTextSecondaryLight,
+                    onTap: {},
+                    onLongPress: {}
+                )
             }
-            .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
+            .padding(.vertical, 4)
+
+            if showReactions {
+                LpspFacebookShowroomReactionsBar(onSelect: onSelectReaction, onDismiss: onDismissReactions)
+                    .padding(.bottom, 8)
+            }
+        }
+        .background(LpspFacebookTokens.fbCard)
+        .cornerRadius(8)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+    }
+
+    private func reactionBubble(_ emoji: String, color: Color) -> some View {
+        ZStack {
+            Circle().fill(color).frame(width: 18, height: 18)
+            Text(emoji).font(.system(size: 9))
         }
     }
 }
 
+private struct LpspFacebookShowroomReactionsBar: View {
+    let onSelect: (LpspFacebookFBReaction) -> Void
+    let onDismiss: () -> Void
 
-private struct LpspFacebookSpectrHomeTabScreen: View {
     var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Text("f").font(.system(size: 22.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-            Text("facebook").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-        } .padding(.horizontal, 16).frame(height: 44)
-        ScrollView {
-            VStack(spacing: 12) {
-                    Circle().fill(LinearGradient(colors: [Color(red:1,green:0.84,blue:0.6), Color(red:1,green:0.89,blue:0.58)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 30, height: 30)
-                        Text("Sarah Johnson").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                            Text("🌍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                    Text("⋯").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                Text("Golden hour on the walk home. Can't believe we almost didn't go outside today.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                        Text("👍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                        Text("❤").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                        Text("😂").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                    Text("You, Maya and 1.2K others").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                    Text("84 comments").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                    Text("Like").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                    Text("Comment").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
-                    Text("Share").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.020, green: 0.020, blue: 0.020))
+        HStack(spacing: 4) {
+            ForEach(LpspFacebookFBReaction.allCases) { reaction in
+                Button {
+                    onSelect(reaction)
+                } label: {
+                    Image(systemName: reaction.symbol)
+                        .font(.system(size: 28))
+                        .foregroundStyle(reaction.color)
+                        .frame(width: 48, height: 48)
+                }
             }
+            Button("Close", action: onDismiss)
+                .font(LpspFacebookFonts.fbTimestamp)
+                .foregroundStyle(LpspFacebookTokens.fbTextSecondaryLight)
         }
-        }
-        .background(Color(red: 0.941, green: 0.949, blue: 0.961).ignoresSafeArea())
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(
+            Capsule().fill(LpspFacebookTokens.fbCard)
+                .shadow(color: .black.opacity(0.2), radius: 16, y: 4)
+        )
+        .padding(.horizontal, 12)
     }
 }
 
+private struct LpspFacebookVideoTabScreen: View {
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            VStack(spacing: 16) {
+                Image(systemName: "play.rectangle.fill")
+                    .font(.system(size: 64))
+                    .foregroundStyle(.white.opacity(0.9))
+                Text("Video")
+                    .font(LpspFacebookFonts.fbScreenTitle)
+                    .foregroundStyle(.white)
+            }
+        }
+    }
+}
+
+private struct LpspFacebookMarketplaceTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(LpspFacebookShowroomData.marketplaceItems, id: \.0) { title, price in
+                    HStack(spacing: 12) {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(LpspFacebookTokens.fbBlueLight)
+                            .frame(width: 56, height: 56)
+                            .overlay {
+                                Image(systemName: "cart.fill")
+                                    .foregroundStyle(LpspFacebookTokens.fbBlue)
+                            }
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(title)
+                                .font(LpspFacebookFonts.fbDisplayName)
+                            Text(price)
+                                .font(LpspFacebookFonts.fbTimestamp)
+                                .foregroundStyle(LpspFacebookTokens.fbTextSecondaryLight)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Marketplace")
+        }
+    }
+}
+
+private struct LpspFacebookAlertsTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                Label("Sarah Johnson reacted to your photo", systemImage: "hand.thumbsup.fill")
+                Label("3 new friend requests", systemImage: "person.2.fill")
+                Label("Marketplace item saved", systemImage: "bookmark.fill")
+            }
+            .navigationTitle("Alerts")
+        }
+    }
+}
+
+private struct LpspFacebookMenuTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(LpspFacebookShowroomData.menuItems, id: \.self) { item in
+                Text(item)
+                    .font(LpspFacebookFonts.fbPostBody)
+            }
+            .navigationTitle("Menu")
+        }
+    }
+}
 

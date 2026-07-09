@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeThreadsView: View {
     var body: some View {
-        LpspThreadsShowroomRoot()
+        LpspThreadsShowroomRoot(store: LpspThreadsStore())
     }
 }
 
@@ -331,239 +331,584 @@ fileprivate struct LpspThreadsThreadsComposer: View {
 
 
 
-// MARK: - Écrans showroom
+// MARK: - Showroom data & store
 
-private struct LpspThreadsShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspThreadsSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspThreadsExploreTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspThreadsSocialTabScreen(title: "Compose")
-                .tabItem { Label("Compose", systemImage: "plus.square") }
-                .tag(2)
-            LpspThreadsSocialTabScreen(title: "Activity")
-                .tabItem { Label("Activity", systemImage: "heart.fill") }
-                .tag(3)
-            LpspThreadsProfileTabScreen()
-                .tabItem { Label("Profil", systemImage: "person.circle") }
-                .tag(4)
-        }
-        .tint(LpspThreadsTokens.threadsLikeCoral)
-        
-    }
-}
+private enum LpspThreadsShowroomTab: String, CaseIterable, Identifiable {
+    case home, search, compose, activity, profile
 
+    var id: String { rawValue }
 
-private struct LpspThreadsGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspThreadsTokens.threadsLikeCoral.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspThreadsTokens.threadsLikeCoral))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .search: "magnifyingglass"
+        case .compose: "plus.square"
+        case .activity: "heart"
+        case .profile: "person"
         }
     }
 }
 
-
-private struct LpspThreadsDemoStory: Identifiable {
-    let id = UUID()
-    let name: String
-    let unread: Bool
+private struct LpspThreadsPost: Identifiable, Equatable {
+    let id: String
+    let displayName: String
+    let handle: String
+    let timestamp: String
+    let isVerified: Bool
+    let postText: String
+    let hasMedia: Bool
+    let avatarGradient: [Color]
+    var likeCount: Int
+    var commentCount: Int
+    var repostCount: Int
+    var isLiked: Bool
+    var isReposted: Bool
+    var isReply: Bool
 }
 
-private enum LpspThreadsDemoStories {
-    static let items: [LpspThreadsDemoStory] = [
-        .init(name: "Votre story", unread: false),
-        .init(name: "Alex", unread: true),
-        .init(name: "Léa", unread: true),
+private struct LpspThreadsThread: Identifiable, Equatable {
+    let id: String
+    var main: LpspThreadsPost
+    var replies: [LpspThreadsPost]
+}
+
+private enum LpspThreadsShowroomData {
+    static let mayaGradient: [Color] = [
+        Color(red: 1.0, green: 0.55, blue: 0.2),
+        Color(red: 0.95, green: 0.35, blue: 0.55),
+    ]
+
+    static let jordanGradient: [Color] = [
+        Color(red: 0.25, green: 0.55, blue: 0.95),
+        Color(red: 0.15, green: 0.35, blue: 0.75),
+    ]
+
+    static let featuredThread = LpspThreadsThread(
+        id: "maya-run",
+        main: LpspThreadsPost(
+            id: "maya",
+            displayName: "maya_c",
+            handle: "maya_c",
+            timestamp: "2h",
+            isVerified: true,
+            postText: "Ran 5 miles before sunrise. The city felt like a secret.",
+            hasMedia: true,
+            avatarGradient: mayaGradient,
+            likeCount: 247,
+            commentCount: 18,
+            repostCount: 12,
+            isLiked: true,
+            isReposted: false,
+            isReply: false
+        ),
+        replies: [
+            LpspThreadsPost(
+                id: "jordan",
+                displayName: "jordanp",
+                handle: "jordanp",
+                timestamp: "1h",
+                isVerified: false,
+                postText: "Same trail? I've been running that loop all month — it's unreal at 5am.",
+                hasMedia: false,
+                avatarGradient: jordanGradient,
+                likeCount: 42,
+                commentCount: 3,
+                repostCount: 0,
+                isLiked: false,
+                isReposted: false,
+                isReply: true
+            ),
+        ]
+    )
+
+    static let searchSuggestions = ["morning runs", "city trails", "sunrise photos", "maya_c"]
+
+    static let activityItems: [(title: String, detail: String, time: String)] = [
+        ("jordanp replied to your thread", "Same trail? I've been running…", "1h"),
+        ("maya_c liked your post", "Golden hour walk thread", "3h"),
+        ("alex_r started following you", "", "5h"),
     ]
 }
 
-private struct LpspThreadsFeedTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
+@MainActor
+fileprivate final class LpspThreadsStore: ObservableObject {
+    @Published var selectedTab: LpspThreadsShowroomTab = .home
+    @Published var threads: [LpspThreadsThread] = [LpspThreadsShowroomData.featuredThread]
+    @Published var showComposeSheet = false
+    @Published var activityFilter = "All"
+    @Published var isFollowingProfile = false
+    @Published var searchQuery = ""
 
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 14) {
-                            ForEach(LpspThreadsDemoStories.items) { s in
-                                VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspThreadsTokens.threadsLikeCoral, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspThreadsTokens.threadsLikeCoral.opacity(0.2)).frame(width: 58, height: 58))
-                                    Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 12).padding(.vertical, 10)
-                    }
-
-
-                    ForEach(0..<3, id: \.self) { i in
-                        LpspThreadsGenericFeedCard(index: i, accent: LpspThreadsTokens.threadsLikeCoral)
-                    }
-
-                }
+    func toggleLike(postID: String) {
+        threads = threads.map { thread in
+            var copy = thread
+            if copy.main.id == postID {
+                copy.main = mutateLike(copy.main)
+                return copy
             }
-            .background(LpspThreadsTokens.threadsCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
-            .navigationBarTitleDisplayMode(.inline)
+            copy.replies = copy.replies.map { reply in
+                guard reply.id == postID else { return reply }
+                return mutateLike(reply)
+            }
+            return copy
         }
+    }
+
+    func toggleRepost(postID: String) {
+        threads = threads.map { thread in
+            var copy = thread
+            if copy.main.id == postID {
+                copy.main = mutateRepost(copy.main)
+                return copy
+            }
+            copy.replies = copy.replies.map { reply in
+                guard reply.id == postID else { return reply }
+                return mutateRepost(reply)
+            }
+            return copy
+        }
+    }
+
+    func incrementComment(postID: String) {
+        threads = threads.map { thread in
+            var copy = thread
+            if copy.main.id == postID {
+                copy.main.commentCount += 1
+                return copy
+            }
+            copy.replies = copy.replies.map { reply in
+                guard reply.id == postID else { return reply }
+                var r = reply
+                r.commentCount += 1
+                return r
+            }
+            return copy
+        }
+    }
+
+    func openCompose() {
+        showComposeSheet = true
+    }
+
+    func toggleFollowProfile() {
+        isFollowingProfile.toggle()
+    }
+
+    private func mutateLike(_ post: LpspThreadsPost) -> LpspThreadsPost {
+        var copy = post
+        copy.isLiked.toggle()
+        copy.likeCount += copy.isLiked ? 1 : -1
+        return copy
+    }
+
+    private func mutateRepost(_ post: LpspThreadsPost) -> LpspThreadsPost {
+        var copy = post
+        copy.isReposted.toggle()
+        copy.repostCount += copy.isReposted ? 1 : -1
+        return copy
     }
 }
 
-private struct LpspThreadsExploreTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 2) {
-                    ForEach(0..<15, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspThreadsTokens.threadsLikeCoral.opacity(0.08 + Double(i) * 0.04))
-                            .aspectRatio(1, contentMode: .fit)
-                    }
-                }
-            }
-            .navigationTitle("Explorer")
-        }
-    }
-}
+// MARK: - Écrans showroom
 
-private struct LpspThreadsReelsTabScreen: View {
+private struct LpspThreadsShowroomRoot: View {
+    @ObservedObject var store: LpspThreadsStore
+
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Spacer()
-                Image(systemName: "play.rectangle.fill").font(.system(size: 64)).foregroundStyle(.white.opacity(0.85))
-                Text("Reels").font(.title2.bold()).foregroundStyle(.white)
-                Spacer()
+            LpspThreadsTokens.threadsCanvas.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                Group {
+                    switch store.selectedTab {
+                    case .home:
+                        LpspThreadsHomeTabScreen(store: store)
+                    case .search:
+                        LpspThreadsSearchTabScreen(store: store)
+                    case .compose:
+                        LpspThreadsHomeTabScreen(store: store)
+                    case .activity:
+                        LpspThreadsActivityTabScreen(store: store)
+                    case .profile:
+                        LpspThreadsProfileTabScreen(store: store)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                LpspThreadsIconTabBar(store: store)
             }
+        }
+        .preferredColorScheme(.dark)
+        .sheet(isPresented: $store.showComposeSheet) {
+            LpspThreadsThreadsComposer()
+        }
+    }
+}
+
+private struct LpspThreadsIconTabBar: View {
+    @ObservedObject var store: LpspThreadsStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspThreadsShowroomTab.allCases) { tab in
+                Button {
+                    if tab == .compose {
+                        store.openCompose()
+                    } else {
+                        store.selectedTab = tab
+                    }
+                } label: {
+                    Image(systemName: tab.icon)
+                        .font(.system(size: 26, weight: .regular))
+                        .foregroundStyle(
+                            store.selectedTab == tab && tab != .compose
+                                ? LpspThreadsTokens.threadsTextPrimaryDark
+                                : LpspThreadsTokens.threadsTextSecondary
+                        )
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspThreadsTokens.threadsDivider)
+                .frame(height: 1)
+        }
+        .background(LpspThreadsTokens.threadsCanvas)
+    }
+}
+
+private struct LpspThreadsHomeTabScreen: View {
+    @ObservedObject var store: LpspThreadsStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspThreadsSpectrTopNav()
+
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(store.threads) { thread in
+                        LpspThreadsShowroomThreadBlock(
+                            thread: thread,
+                            onLike: { store.toggleLike(postID: $0) },
+                            onRepost: { store.toggleRepost(postID: $0) },
+                            onComment: { store.incrementComment(postID: $0) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct LpspThreadsSpectrTopNav: View {
+    var body: some View {
+        HStack {
+            Text("@")
+                .font(.system(size: 28, weight: .bold))
+                .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 44)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(LpspThreadsTokens.threadsDivider)
+                .frame(height: 1)
+        }
+    }
+}
+
+private struct LpspThreadsShowroomThreadBlock: View {
+    let thread: LpspThreadsThread
+    let onLike: (String) -> Void
+    let onRepost: (String) -> Void
+    let onComment: (String) -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspThreadsShowroomPostRow(
+                post: thread.main,
+                showThreadLine: !thread.replies.isEmpty,
+                threadPreviewGradient: thread.replies.first?.avatarGradient,
+                onLike: { onLike(thread.main.id) },
+                onRepost: { onRepost(thread.main.id) },
+                onComment: { onComment(thread.main.id) }
+            )
+
+            ForEach(thread.replies) { reply in
+                LpspThreadsShowroomPostRow(
+                    post: reply,
+                    showThreadLine: false,
+                    threadPreviewGradient: nil,
+                    onLike: { onLike(reply.id) },
+                    onRepost: { onRepost(reply.id) },
+                    onComment: { onComment(reply.id) }
+                )
+            }
+
+            Divider().background(LpspThreadsTokens.threadsDivider)
+        }
+    }
+}
+
+private struct LpspThreadsShowroomPostRow: View {
+    let post: LpspThreadsPost
+    let showThreadLine: Bool
+    let threadPreviewGradient: [Color]?
+    let onLike: () -> Void
+    let onRepost: () -> Void
+    let onComment: () -> Void
+
+    private var avatarSize: CGFloat { post.isReply ? 28 : 36 }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(spacing: 0) {
+                LpspThreadsAvatarView(gradient: post.avatarGradient, size: avatarSize)
+
+                if showThreadLine {
+                    Rectangle()
+                        .fill(LpspThreadsTokens.threadsLine)
+                        .frame(width: 1)
+                        .frame(minHeight: 24)
+                        .padding(.top, 4)
+
+                    if let preview = threadPreviewGradient {
+                        LpspThreadsAvatarView(gradient: preview, size: 28)
+                            .padding(.top, 4)
+                    }
+                }
+            }
+            .frame(width: 36, alignment: .leading)
+
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 4) {
+                    Text(post.displayName)
+                        .font(post.isReply ? LpspThreadsFonts.threadsHandle : LpspThreadsFonts.threadsDisplayName)
+                        .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                        .lineLimit(1)
+
+                    if post.isVerified {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 12))
+                            .foregroundStyle(LpspThreadsTokens.threadsIGVerified)
+                    }
+
+                    if !post.isReply {
+                        Text("@\(post.handle)")
+                            .font(LpspThreadsFonts.threadsHandle)
+                            .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                            .lineLimit(1)
+                    }
+
+                    Text("·")
+                        .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+
+                    Text(post.timestamp)
+                        .font(LpspThreadsFonts.threadsHandle)
+                        .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+
+                    Spacer()
+
+                    Button { } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 18))
+                            .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                    }
+                }
+
+                Text(post.postText)
+                    .font(post.isReply ? LpspThreadsFonts.threadsQuotedBody : LpspThreadsFonts.threadsPostBody)
+                    .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                    .lineSpacing(6)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if post.hasMedia {
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.18, green: 0.22, blue: 0.32),
+                            Color(red: 0.35, green: 0.28, blue: 0.42),
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 180)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .padding(.top, 4)
+                }
+
+                HStack(spacing: post.isReply ? 18 : 20) {
+                    LpspThreadsActionBtn(
+                        icon: post.isLiked ? "heart.fill" : "heart",
+                        count: post.likeCount,
+                        tint: post.isLiked ? LpspThreadsTokens.threadsLikeCoral : LpspThreadsTokens.threadsTextSecondary,
+                        action: onLike
+                    )
+                    LpspThreadsActionBtn(
+                        icon: "bubble.left",
+                        count: post.commentCount,
+                        tint: LpspThreadsTokens.threadsTextSecondary,
+                        action: onComment
+                    )
+                    LpspThreadsActionBtn(
+                        icon: post.isReposted ? "arrow.2.squarepath.circle.fill" : "arrow.2.squarepath",
+                        count: post.repostCount > 0 ? post.repostCount : nil,
+                        tint: LpspThreadsTokens.threadsTextSecondary,
+                        action: onRepost
+                    )
+                    LpspThreadsActionBtn(
+                        icon: "paperplane",
+                        count: nil,
+                        tint: LpspThreadsTokens.threadsTextSecondary,
+                        action: {}
+                    )
+                    Spacer()
+                }
+                .padding(.top, post.isReply ? 8 : 4)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, post.isReply ? 0 : 16)
+        .padding(.bottom, 12)
+    }
+}
+
+private struct LpspThreadsAvatarView: View {
+    let gradient: [Color]
+    let size: CGFloat
+
+    var body: some View {
+        Circle()
+            .fill(LinearGradient(colors: gradient, startPoint: .topLeading, endPoint: .bottomTrailing))
+            .frame(width: size, height: size)
+    }
+}
+
+private struct LpspThreadsSearchTabScreen: View {
+    @ObservedObject var store: LpspThreadsStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                TextField("Search", text: $store.searchQuery)
+                    .font(LpspThreadsFonts.threadsPostBody)
+                    .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                    .tint(LpspThreadsTokens.threadsTextPrimaryDark)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(LpspThreadsTokens.threadsSurface2)
+            )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+
+            List {
+                Section("Trending") {
+                    ForEach(LpspThreadsShowroomData.searchSuggestions, id: \.self) { term in
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                            Text(term)
+                                .font(LpspThreadsFonts.threadsPostBody)
+                                .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                        }
+                        .listRowBackground(LpspThreadsTokens.threadsCanvas)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(LpspThreadsTokens.threadsCanvas)
+        }
+    }
+}
+
+private struct LpspThreadsActivityTabScreen: View {
+    @ObservedObject var store: LpspThreadsStore
+
+    var body: some View {
+        VStack(spacing: 12) {
+            LpspThreadsActivityFilterRow(selected: $store.activityFilter)
+
+            List {
+                ForEach(LpspThreadsShowroomData.activityItems.indices, id: \.self) { index in
+                    let item = LpspThreadsShowroomData.activityItems[index]
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(item.title)
+                            .font(LpspThreadsFonts.threadsDisplayName)
+                            .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+                        if !item.detail.isEmpty {
+                            Text(item.detail)
+                                .font(LpspThreadsFonts.threadsHandle)
+                                .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+                        }
+                        Text(item.time)
+                            .font(LpspThreadsFonts.threadsHandle)
+                            .foregroundStyle(LpspThreadsTokens.threadsTextTertiaryDark)
+                    }
+                    .padding(.vertical, 4)
+                    .listRowBackground(LpspThreadsTokens.threadsCanvas)
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(LpspThreadsTokens.threadsCanvas)
         }
     }
 }
 
 private struct LpspThreadsProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    Circle().fill(LpspThreadsTokens.threadsLikeCoral.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("lost.phone").font(.system(size: 20, weight: .bold))
-                    Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)
-                    HStack(spacing: 32) {
-                        VStack { Text("128").font(.headline); Text("Publications").font(.caption) }
-                        VStack { Text("1,2 k").font(.headline); Text("Abonnés").font(.caption) }
-                        VStack { Text("340").font(.headline); Text("Abonnements").font(.caption) }
-                    }
-                }
-                .padding()
-            }
-            .navigationTitle("Profil")
-        }
-    }
-}
+    @ObservedObject var store: LpspThreadsStore
 
-private struct LpspThreadsCommunitiesTabScreen: View {
     var body: some View {
-        NavigationStack {
-            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
-        }
-    }
-}
-
-private struct LpspThreadsCreateTabScreen: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspThreadsTokens.threadsLikeCoral)
-            Text("Nouvelle publication").font(.title2.bold())
-            Text("Photo, reel ou story").foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(LpspThreadsTokens.threadsCanvas.ignoresSafeArea())
-    }
-}
-
-private struct LpspThreadsSocialTabScreen: View {
-    let title: String
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("créer") || low.contains("create") { LpspThreadsCreateTabScreen() }
-        else if low.contains("explor") || low.contains("search") { LpspThreadsExploreTabScreen() }
-        else if low.contains("reel") { LpspThreadsReelsTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspThreadsProfileTabScreen() }
-        else { LpspThreadsFeedTabScreen() }
-    }
-}
-
-private struct LpspThreadsGenericFeedCard: View {
-    let index: Int
-    let accent: Color
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Circle().fill(accent.opacity(0.2)).frame(width: 32, height: 32)
-                Text("utilisateur_\(index)").font(.system(size: 14, weight: .semibold))
-                Spacer()
-            }
-            .padding(.horizontal, 12)
-            RoundedRectangle(cornerRadius: 0).fill(accent.opacity(0.12)).frame(height: 280)
-            HStack(spacing: 16) {
-                Image(systemName: "heart"); Image(systemName: "bubble.right"); Spacer(); Image(systemName: "bookmark")
-            }
-            .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
-        }
-    }
-}
-
-
-private struct LpspThreadsSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Text("@").font(.system(size: 28.0, weight: .bold)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-        } .padding(.horizontal, 16).frame(height: 44)
         ScrollView {
-            VStack(spacing: 12) {
-                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-                        Text("maya_c").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                        Text("2h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                    Text("Ran 5 miles before sunrise. The city felt like a secret.").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                            Text("247").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                            Text("18").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                            Text("12").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-                        Text("jordanp").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                        Text("1h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                    Text("Same trail? I've been running that loop all month — it's unreal at 5am.").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                            Text("42").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
-                            Text("3").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.961, green: 0.961, blue: 0.961))
+            VStack(spacing: 16) {
+                LpspThreadsAvatarView(
+                    gradient: [
+                        Color(red: 0.55, green: 0.35, blue: 0.95),
+                        Color(red: 0.25, green: 0.55, blue: 0.95),
+                    ],
+                    size: 88
+                )
+
+                Text("you")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+
+                Text("Product designer · Brooklyn")
+                    .font(LpspThreadsFonts.threadsProfileBio)
+                    .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
+
+                LpspThreadsThreadsFollowPill(isFollowing: $store.isFollowingProfile) {
+                    store.toggleFollowProfile()
+                }
+
+                HStack(spacing: 32) {
+                    profileStat("24", "threads")
+                    profileStat("1.8K", "followers")
+                    profileStat("412", "following")
+                }
+                .padding(.top, 8)
             }
+            .padding()
         }
+    }
+
+    private func profileStat(_ value: String, _ label: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(LpspThreadsTokens.threadsTextPrimaryDark)
+            Text(label)
+                .font(LpspThreadsFonts.threadsHandle)
+                .foregroundStyle(LpspThreadsTokens.threadsTextSecondary)
         }
-        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
-        .preferredColorScheme(.dark)
     }
 }
 

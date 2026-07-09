@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeRevolutView: View {
     var body: some View {
-        LpspRevolutShowroomRoot()
+        LpspRevolutShowroomRoot(store: LpspRevolutStore())
     }
 }
 
@@ -203,7 +203,8 @@ fileprivate struct LpspRevolutSpendDonut: View {
 }
 
 fileprivate struct LpspRevolutMetalCardHero: View {
-    @State private var flipped = false
+    @Binding var flipped: Bool
+    var frozen = false
     @State private var sheen: CGFloat = -1
 
     var body: some View {
@@ -213,7 +214,6 @@ fileprivate struct LpspRevolutMetalCardHero: View {
                     LinearGradient(colors: [Color(white: 0.18), Color(white: 0.07)],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
-            // diagonal sheen band
             RoundedRectangle(cornerRadius: 16)
                 .fill(
                     LinearGradient(colors: [.clear, Color.white.opacity(0.18), .clear],
@@ -222,19 +222,41 @@ fileprivate struct LpspRevolutMetalCardHero: View {
                 .offset(x: sheen * 260)
                 .mask(RoundedRectangle(cornerRadius: 16))
 
+            if frozen {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.black.opacity(0.45))
+                VStack(spacing: 8) {
+                    Image(systemName: "snowflake")
+                        .font(.system(size: 28, weight: .semibold))
+                    Text("Card frozen")
+                        .font(LpspRevolutFonts.revMeta)
+                }
+                .foregroundStyle(.white.opacity(0.9))
+            }
+
             VStack(alignment: .leading) {
                 Text("Revolut").font(LpspRevolutFonts.revSubsection).foregroundStyle(.white.opacity(0.9))
                 Spacer()
-                Text(flipped ? "CVV 042" : "•••• 4821")
-                    .font(LpspRevolutFonts.revAmount).monospacedDigit().foregroundStyle(.white)
+                HStack {
+                    Text(flipped ? "CVV 042" : "•••• 4821")
+                        .font(LpspRevolutFonts.revAmount).monospacedDigit().foregroundStyle(.white)
+                    Spacer()
+                    if !flipped {
+                        Image(systemName: "wave.3.right")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.75))
+                    }
+                }
             }
             .padding(20)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .opacity(frozen ? 0.35 : 1)
         }
         .aspectRatio(1.586, contentMode: .fit)
         .rotation3DEffect(.degrees(flipped ? 180 : 0), axis: (x: 0, y: 1, z: 0))
         .shadow(color: .black.opacity(0.5), radius: 24, y: 8)
         .onTapGesture {
+            guard !frozen else { return }
             withAnimation(.easeInOut(duration: 0.45)) { flipped.toggle() }
         }
         .sensoryFeedback(.impact(weight: .medium), trigger: flipped)
@@ -269,178 +291,622 @@ fileprivate struct LpspRevolutBalanceReveal: ViewModifier {
 
 // Segmented thumb — matchedGeometryEffect on a gradient capsule, 0.22s ease
 
-// MARK: - Écrans showroom
+// MARK: - Showroom data & store
 
-private struct LpspRevolutShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspRevolutSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspRevolutFinanceHomeTabScreen()
-                .tabItem { Label("Invest", systemImage: "chart.line.uptrend.xyaxis") }
-                .tag(1)
-            LpspRevolutFinanceHomeTabScreen()
-                .tabItem { Label("Crypto", systemImage: "bitcoinsign.circle.fill") }
-                .tag(2)
-            LpspRevolutFinanceHomeTabScreen()
-                .tabItem { Label("Lifestyle", systemImage: "sparkles") }
-                .tag(3)
-            LpspRevolutFinanceCardsTabScreen()
-                .tabItem { Label("Cards", systemImage: "creditcard.fill") }
-                .tag(4)
+private enum LpspRevolutShowroomTab: String, CaseIterable, Identifiable {
+    case home, invest, crypto, lifestyle, cards
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .invest: "Invest"
+        case .crypto: "Crypto"
+        case .lifestyle: "Lifestyle"
+        case .cards: "Cards"
         }
-        .tint(LpspRevolutTokens.revBrand)
-        
     }
-}
 
-
-private struct LpspRevolutGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspRevolutTokens.revBrand.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspRevolutTokens.revBrand))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
+    var systemImage: String {
+        switch self {
+        case .home: "house.fill"
+        case .invest: "chart.line.uptrend.xyaxis"
+        case .crypto: "bitcoinsign.circle.fill"
+        case .lifestyle: "sparkles"
+        case .cards: "creditcard.fill"
         }
     }
 }
 
+private enum LpspRevolutQuickAction: String, Identifiable {
+    case add, exchange, send, more
 
-private struct LpspRevolutFinanceHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Solde total").font(.subheadline).foregroundStyle(.secondary)
-                        Text("2 847,50 €").font(.system(size: 36, weight: .bold))
-                    }
-                    .padding(.horizontal)
+    var id: String { rawValue }
 
-                    LpspRevolutMetalCardHero()
-                        .padding(.horizontal)
-
-                    Text("Transactions").font(.headline).padding(.horizontal)
-
-                    ForEach(LpspRevolutDemoTx.items) { tx in
-                        LpspRevolutTransactionRow(
-                            merchant: tx.title,
-                            meta: tx.date,
-                            amount: tx.amount,
-                            incoming: tx.incoming,
-                            logo: Image(systemName: tx.icon)
-                        )
-                    }
-
-                }
-                .padding(.vertical)
-            }
-            .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
+    var title: String {
+        switch self {
+        case .add: "Add money"
+        case .exchange: "Exchange"
+        case .send: "Send"
+        case .more: "More"
         }
     }
-}
 
-private struct LpspRevolutFinanceCardsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    LpspRevolutMetalCardHero()
-                    Text("Gérez vos cartes").font(.headline)
-                }
-                .padding(.vertical)
-            }
-            .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
-            .navigationTitle("Cartes")
+    var label: String {
+        switch self {
+        case .add: "Add"
+        case .exchange: "Exchange"
+        case .send: "Send"
+        case .more: "More"
         }
     }
+
+    var systemImage: String {
+        switch self {
+        case .add: "plus"
+        case .exchange: "arrow.left.arrow.right"
+        case .send: "paperplane.fill"
+        case .more: "ellipsis"
+        }
+    }
+
+    var isPrimary: Bool { self == .add }
 }
 
-private struct LpspRevolutDemoTx: Identifiable {
-    let id = UUID()
-    let title: String
-    let date: String
+private struct LpspRevolutCurrencyAccount: Identifiable, Equatable {
+    let id: String
+    let flag: String
+    let code: String
+    let name: String
+    let balance: String
+}
+
+private struct LpspRevolutTransaction: Identifiable, Equatable {
+    let id: String
+    let merchant: String
+    let meta: String
     let amount: String
     let incoming: Bool
     let icon: String
-    static let items: [LpspRevolutDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
+}
+
+private struct LpspRevolutCryptoHolding: Identifiable {
+    let id: String
+    let symbol: String
+    let name: String
+    let value: String
+    let change: String
+    let positive: Bool
+}
+
+private enum LpspRevolutShowroomData {
+    static let userName = "Alex Mercer"
+    static let totalBalance = "£12,480.65"
+    static let spendTotal = "£2,840"
+    static let spendProgress = 0.65
+
+    static let accounts: [LpspRevolutCurrencyAccount] = [
+        .init(id: "GBP", flag: "🇬🇧", code: "GBP", name: "British Pound", balance: "£8,240.10"),
+        .init(id: "EUR", flag: "🇪🇺", code: "EUR", name: "Euro", balance: "€3,180.55"),
+        .init(id: "USD", flag: "🇺🇸", code: "USD", name: "US Dollar", balance: "$1,060.00"),
+    ]
+
+    static let transactions: [LpspRevolutTransaction] = [
+        .init(id: "tx1", merchant: "Starbucks", meta: "Today · Food & Drink", amount: "-£4.20", incoming: false, icon: "cup.and.saucer.fill"),
+        .init(id: "tx2", merchant: "Salary", meta: "Yesterday · Incoming", amount: "+£2,400.00", incoming: true, icon: "arrow.down.circle.fill"),
+        .init(id: "tx3", merchant: "TfL", meta: "Mon · Transport", amount: "-£6.40", incoming: false, icon: "tram.fill"),
+    ]
+
+    static let cryptoHoldings: [LpspRevolutCryptoHolding] = [
+        .init(id: "btc", symbol: "BTC", name: "Bitcoin", value: "£4,820.00", change: "+2.4%", positive: true),
+        .init(id: "eth", symbol: "ETH", name: "Ethereum", value: "£1,240.50", change: "-0.8%", positive: false),
+    ]
+
+    static let lifestylePerks = [
+        ("Lounge access", "2 visits left this month"),
+        ("Cashback", "£18.40 earned in June"),
+        ("Stays", "15% off boutique hotels"),
     ]
 }
 
+@MainActor
+fileprivate final class LpspRevolutStore: ObservableObject {
+    @Published var selectedTab: LpspRevolutShowroomTab = .home
+    @Published var balanceHidden = false
+    @Published var selectedAccountId = "GBP"
+    @Published var cardFlipped = false
+    @Published var cardFrozen = false
+    @Published var activeQuickAction: LpspRevolutQuickAction?
+    @Published var accounts = LpspRevolutShowroomData.accounts
+    @Published var transactions = LpspRevolutShowroomData.transactions
+    @Published var addAmount = "£100"
 
-private struct LpspRevolutSpectrHomeTabScreen: View {
+    func toggleBalanceHidden() {
+        balanceHidden.toggle()
+    }
+
+    func selectAccount(_ id: String) {
+        selectedAccountId = id
+    }
+
+    func toggleCardFrozen() {
+        cardFrozen.toggle()
+        if cardFrozen { cardFlipped = false }
+    }
+
+    func openQuickAction(_ action: LpspRevolutQuickAction) {
+        activeQuickAction = action
+    }
+
+    func dismissQuickAction() {
+        activeQuickAction = nil
+    }
+
+    func addMoney() {
+        let tx = LpspRevolutTransaction(
+            id: "topup-\(transactions.count + 1)",
+            merchant: "Top up",
+            meta: "Just now · Added",
+            amount: addAmount,
+            incoming: true,
+            icon: "plus.circle.fill"
+        )
+        transactions.insert(tx, at: 0)
+        activeQuickAction = nil
+    }
+
+    func sendPayment() {
+        let tx = LpspRevolutTransaction(
+            id: "send-\(transactions.count + 1)",
+            merchant: "Jamie Cole",
+            meta: "Just now · Sent",
+            amount: "-£25.00",
+            incoming: false,
+            icon: "paperplane.fill"
+        )
+        transactions.insert(tx, at: 0)
+        activeQuickAction = nil
+    }
+
+    func exchangeCurrency() {
+        accounts = accounts.map { account in
+            guard account.id == "GBP" else { return account }
+            return LpspRevolutCurrencyAccount(
+                id: account.id,
+                flag: account.flag,
+                code: account.code,
+                name: account.name,
+                balance: "£8,190.10"
+            )
+        }
+        accounts = accounts.map { account in
+            guard account.id == "EUR" else { return account }
+            return LpspRevolutCurrencyAccount(
+                id: account.id,
+                flag: account.flag,
+                code: account.code,
+                name: account.name,
+                balance: "€3,230.55"
+            )
+        }
+        selectedAccountId = "EUR"
+        activeQuickAction = nil
+    }
+}
+
+// MARK: - Écrans showroom
+
+private struct LpspRevolutShowroomRoot: View {
+    @ObservedObject var store: LpspRevolutStore
+
+    var body: some View {
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspRevolutShowroomTab.allCases) { tab in
+                LpspRevolutShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
+                    }
+                    .tag(tab)
+            }
+        }
+        .tint(LpspRevolutTokens.revBrand)
+        .preferredColorScheme(.dark)
+        .sheet(item: $store.activeQuickAction) { action in
+            LpspRevolutQuickActionSheet(store: store, action: action)
+        }
+    }
+}
+
+private struct LpspRevolutShowroomTabScreen: View {
+    @ObservedObject var store: LpspRevolutStore
+    let tab: LpspRevolutShowroomTab
+
+    var body: some View {
+        Group {
+            switch tab {
+            case .home:
+                LpspRevolutHomeTabScreen(store: store)
+            case .invest:
+                LpspRevolutInvestTabScreen(store: store)
+            case .crypto:
+                LpspRevolutCryptoTabScreen()
+            case .lifestyle:
+                LpspRevolutLifestyleTabScreen()
+            case .cards:
+                LpspRevolutCardsTabScreen(store: store)
+            }
+        }
+    }
+}
+
+private struct LpspRevolutHomeTabScreen: View {
+    @ObservedObject var store: LpspRevolutStore
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-            Text("Alex Mercer").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 16).frame(height: 44)
-        VStack(spacing: 4) {
-            Text("Total balance").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.604, green: 0.604, blue: 0.667))
-            Text("£12,480.65").font(.system(size: 36, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .frame(maxWidth: .infinity).padding(.horizontal, 20).padding(.top, 8)
-        HStack(spacing: 0) {
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Add").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Exchange").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
-                Text("Send").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(maxWidth: .infinity)
-            VStack(spacing: 6) {
-                Circle().fill(Color(red: 0.357, green: 0.420, blue: 1.000)).frame(width: 52, height: 52)
-                Text("More").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .frame(maxWidth: .infinity)
-        } .padding(.horizontal, 8).padding(.vertical, 16)
-            RoundedRectangle(cornerRadius: 16).fill(LinearGradient(colors: [Color(red: 0.357, green: 0.420, blue: 1.000), Color(red: 0.612, green: 0.420, blue: 1.000)], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(height: 120).padding(.horizontal, 16)
-        VStack(spacing: 8) {
-            HStack(spacing: 12) {
-                Text("🇬🇧").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("GBP").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("British Pound").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("£8,240.10").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
-            HStack(spacing: 12) {
-                Text("🇪🇺").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("EUR").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Euro").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("€3,180.55").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
-            HStack(spacing: 12) {
-                Text("🇺🇸").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("USD").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("US Dollar").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("$1,060.00").font(.system(size: 20.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(14).background(Color(red: 0.086, green: 0.086, blue: 0.122)).clipShape(RoundedRectangle(cornerRadius: 16))
-        } .padding(.horizontal, 16).padding(.top, 8)
+                LpspRevolutTopBar(userName: LpspRevolutShowroomData.userName)
+
+                Button {
+                    store.toggleBalanceHidden()
+                } label: {
+                    VStack(spacing: 4) {
+                        Text("Total balance")
+                            .font(LpspRevolutFonts.revLabelUpper.weight(.bold))
+                            .foregroundStyle(LpspRevolutTokens.revTextSecondary)
+                        Text(LpspRevolutShowroomData.totalBalance)
+                            .font(LpspRevolutFonts.revBalance.weight(.bold))
+                            .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                            .modifier(LpspRevolutBalanceReveal(hidden: store.balanceHidden))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                }
+                .buttonStyle(.plain)
+
+                LpspRevolutQuickActionRow { action in
+                    store.openQuickAction(action)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 16)
+
+                LpspRevolutMetalCardHero(flipped: $store.cardFlipped, frozen: store.cardFrozen)
+                    .padding(.horizontal, 16)
+
+                VStack(spacing: 8) {
+                    ForEach(store.accounts) { account in
+                        Button {
+                            store.selectAccount(account.id)
+                        } label: {
+                            LpspRevolutCurrencyTile(
+                                flag: account.flag,
+                                code: account.code,
+                                name: account.name,
+                                balance: account.balance
+                            )
+                            .overlay {
+                                if store.selectedAccountId == account.id {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .strokeBorder(LpspRevolutGradients.revBrand, lineWidth: 2)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .padding(.bottom, 24)
             }
         }
-        .background(Color(red: 0.039, green: 0.039, blue: 0.059).ignoresSafeArea())
+        .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspRevolutTopBar: View {
+    let userName: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Circle()
+                .fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .frame(width: 48, height: 48)
+
+            Text(userName)
+                .font(LpspRevolutFonts.revBody.weight(.semibold))
+                .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+
+            Spacer()
+
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                .frame(width: 36, height: 36)
+
+            Image(systemName: "bell")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                .frame(width: 36, height: 36)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 44)
+    }
+}
+
+private struct LpspRevolutQuickActionRow: View {
+    let onAction: (LpspRevolutQuickAction) -> Void
+
+    private let actions: [LpspRevolutQuickAction] = [.add, .exchange, .send, .more]
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(actions) { action in
+                Button {
+                    onAction(action)
+                } label: {
+                    VStack(spacing: 6) {
+                        Group {
+                            if action.isPrimary {
+                                Circle()
+                                    .fill(LpspRevolutGradients.revBrand)
+                            } else {
+                                Circle()
+                                    .fill(LpspRevolutTokens.revSurface2)
+                            }
+                        }
+                        .frame(width: 52, height: 52)
+                        .overlay {
+                            Image(systemName: action.systemImage)
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(.white)
+                        }
+                        Text(action.label)
+                            .font(LpspRevolutFonts.revCaption)
+                            .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
+private struct LpspRevolutQuickActionSheet: View {
+    @ObservedObject var store: LpspRevolutStore
+    let action: LpspRevolutQuickAction
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                switch action {
+                case .add:
+                    Text("Add money to your account")
+                        .font(LpspRevolutFonts.revBody)
+                        .foregroundStyle(LpspRevolutTokens.revTextSecondary)
+                    Text(store.addAmount)
+                        .font(LpspRevolutFonts.revTitleLarge.weight(.bold))
+                        .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                    LpspRevolutRevPrimaryButton(title: "Confirm top up") {
+                        store.addMoney()
+                        dismiss()
+                    }
+                    .padding(.horizontal, 16)
+                case .exchange:
+                    Text("Convert £50.00 to EUR")
+                        .font(LpspRevolutFonts.revBody)
+                        .foregroundStyle(LpspRevolutTokens.revTextSecondary)
+                    LpspRevolutRevPrimaryButton(title: "Exchange now") {
+                        store.exchangeCurrency()
+                        dismiss()
+                    }
+                    .padding(.horizontal, 16)
+                case .send:
+                    Text("Send to Jamie Cole")
+                        .font(LpspRevolutFonts.revBody)
+                        .foregroundStyle(LpspRevolutTokens.revTextSecondary)
+                    LpspRevolutRevPrimaryButton(title: "Send £25.00") {
+                        store.sendPayment()
+                        dismiss()
+                    }
+                    .padding(.horizontal, 16)
+                case .more:
+                    VStack(spacing: 12) {
+                        LpspRevolutRevSecondaryButton(title: "Request money") { dismiss() }
+                        LpspRevolutRevSecondaryButton(title: "Split bill") { dismiss() }
+                        LpspRevolutRevSecondaryButton(title: "View statements") { dismiss() }
+                    }
+                    .padding(.horizontal, 16)
+                }
+                Spacer()
+            }
+            .padding(.top, 24)
+            .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
+            .navigationTitle(action.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        store.dismissQuickAction()
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspRevolutInvestTabScreen: View {
+    @ObservedObject var store: LpspRevolutStore
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    LpspRevolutSpendDonut(
+                        total: LpspRevolutShowroomData.spendTotal,
+                        progress: LpspRevolutShowroomData.spendProgress
+                    )
+
+                    Text("Recent activity")
+                        .font(LpspRevolutFonts.revSection)
+                        .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                        .padding(.horizontal, 16)
+
+                    VStack(spacing: 0) {
+                        ForEach(store.transactions) { tx in
+                            LpspRevolutTransactionRow(
+                                merchant: tx.merchant,
+                                meta: tx.meta,
+                                amount: tx.amount,
+                                incoming: tx.incoming,
+                                logo: Image(systemName: tx.icon)
+                            )
+                        }
+                    }
+                }
+                .padding(.vertical)
+            }
+            .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
+            .navigationTitle("Invest")
+        }
+    }
+}
+
+private struct LpspRevolutCryptoTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 12) {
+                    ForEach(LpspRevolutShowroomData.cryptoHoldings) { holding in
+                        HStack(spacing: 12) {
+                            Circle()
+                                .fill(LpspRevolutTokens.revBrandTint)
+                                .frame(width: 44, height: 44)
+                                .overlay {
+                                    Text(holding.symbol.prefix(1))
+                                        .font(LpspRevolutFonts.revMerchant.weight(.bold))
+                                        .foregroundStyle(LpspRevolutTokens.revCrypto)
+                                }
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(holding.name)
+                                    .font(LpspRevolutFonts.revMerchant)
+                                    .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                                Text(holding.symbol)
+                                    .font(LpspRevolutFonts.revMeta)
+                                    .foregroundStyle(LpspRevolutTokens.revTextSecondary)
+                            }
+                            Spacer()
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text(holding.value)
+                                    .font(LpspRevolutFonts.revAmount)
+                                    .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                                Text(holding.change)
+                                    .font(LpspRevolutFonts.revMeta)
+                                    .foregroundStyle(holding.positive ? LpspRevolutTokens.revIncome : LpspRevolutTokens.revSpend)
+                            }
+                        }
+                        .padding(16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(LpspRevolutTokens.revSurface1)
+                        )
+                    }
+                }
+                .padding(16)
+            }
+            .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
+            .navigationTitle("Crypto")
+        }
+    }
+}
+
+private struct LpspRevolutLifestyleTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 12) {
+                    ForEach(LpspRevolutShowroomData.lifestylePerks, id: \.0) { title, subtitle in
+                        HStack(spacing: 12) {
+                            Circle()
+                                .fill(LpspRevolutGradients.revBrand)
+                                .frame(width: 44, height: 44)
+                                .overlay {
+                                    Image(systemName: "sparkles")
+                                        .foregroundStyle(.white)
+                                }
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(title)
+                                    .font(LpspRevolutFonts.revMerchant)
+                                    .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                                Text(subtitle)
+                                    .font(LpspRevolutFonts.revMeta)
+                                    .foregroundStyle(LpspRevolutTokens.revTextSecondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(LpspRevolutTokens.revTextTertiary)
+                        }
+                        .padding(16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(LpspRevolutTokens.revSurface1)
+                        )
+                    }
+                }
+                .padding(16)
+            }
+            .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
+            .navigationTitle("Lifestyle")
+        }
+    }
+}
+
+private struct LpspRevolutCardsTabScreen: View {
+    @ObservedObject var store: LpspRevolutStore
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    LpspRevolutMetalCardHero(flipped: $store.cardFlipped, frozen: store.cardFrozen)
+                        .padding(.horizontal, 16)
+
+                    Toggle(isOn: Binding(
+                        get: { store.cardFrozen },
+                        set: { _ in store.toggleCardFrozen() }
+                    )) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Freeze card")
+                                .font(LpspRevolutFonts.revMerchant)
+                                .foregroundStyle(LpspRevolutTokens.revTextPrimary)
+                            Text("Temporarily disable payments")
+                                .font(LpspRevolutFonts.revMeta)
+                                .foregroundStyle(LpspRevolutTokens.revTextSecondary)
+                        }
+                    }
+                    .tint(LpspRevolutTokens.revBrand)
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(LpspRevolutTokens.revSurface1)
+                    )
+                    .padding(.horizontal, 16)
+
+                    Text("Tap the card to reveal CVV")
+                        .font(LpspRevolutFonts.revMeta)
+                        .foregroundStyle(LpspRevolutTokens.revTextSecondary)
+                }
+                .padding(.vertical, 24)
+            }
+            .background(LpspRevolutTokens.revCanvas.ignoresSafeArea())
+            .navigationTitle("Cards")
+        }
+    }
+}
 

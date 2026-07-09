@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeRedditView: View {
     var body: some View {
-        LpspRedditShowroomRoot()
+        LpspRedditShowroomRoot(store: LpspRedditStore())
     }
 }
 
@@ -392,280 +392,550 @@ fileprivate struct LpspRedditRDSubredditContext {
 
 // Pass via .environment or as an init parameter to LpspRedditRDPostCard / LpspRedditRDSubredditBanner
 
+
+// MARK: - Showroom data & store
+
+private enum LpspRedditShowroomTab: String, CaseIterable, Identifiable {
+    case home, popular, create, chat, inbox
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .popular: "Popular"
+        case .create: "Create"
+        case .chat: "Chat"
+        case .inbox: "Inbox"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: "house.fill"
+        case .popular: "globe"
+        case .create: "plus"
+        case .chat: "bubble.left.and.bubble.right.fill"
+        case .inbox: "bell.fill"
+        }
+    }
+}
+
+private struct LpspRedditFeedPost: Identifiable {
+    let id: String
+    let subreddit: String
+    let subredditInitial: String
+    let subredditAccent: Color
+    let timestamp: String
+    let title: String
+    let flairs: [LpspRedditRDFlair]
+    let baseKarma: Int
+    let karmaLabel: String
+    let commentCount: Int
+    let commentLabel: String
+    let hasMedia: Bool
+    var voteState: LpspRedditRDVoteColumn.VoteState = .none
+    var saved = false
+    var joined = false
+}
+
+private enum LpspRedditShowroomData {
+    static let profileInitials = ("MS", "AV")
+
+    static var feedPosts: [LpspRedditFeedPost] {
+        [
+            .init(
+                id: "crow",
+                subreddit: "dataisbeautiful",
+                subredditInitial: "d",
+                subredditAccent: LpspRedditTokens.rdSubredditDefault,
+                timestamp: "3h",
+                title: "Why crow populations dropped in North American cities over the last 30 years",
+                flairs: [.oc],
+                baseKarma: 4200,
+                karmaLabel: "4.2k",
+                commentCount: 342,
+                commentLabel: "342",
+                hasMedia: true,
+                voteState: .up
+            ),
+            .init(
+                id: "skill",
+                subreddit: "AskReddit",
+                subredditInitial: "a",
+                subredditAccent: Color(red: 0.961, green: 0.541, blue: 0.259),
+                timestamp: "5h",
+                title: "What's a skill you picked up that you thought would be useless, but completely changed your life?",
+                flairs: [],
+                baseKarma: 892,
+                karmaLabel: "892",
+                commentCount: 1200,
+                commentLabel: "1.2k",
+                hasMedia: false
+            ),
+        ]
+    }
+
+    static let popularSubs = ["r/technology", "r/worldnews", "r/gaming", "r/design"]
+    static let inboxItems = [
+        ("Comment reply", "u/kellenvoss replied to your comment", "2m"),
+        ("Trending post", "r/dataisbeautiful is trending near you", "1h"),
+    ]
+    static let chatThreads = [
+        ("Jamie Cole", "Did you see the crow chart?", "now"),
+        ("Design Daily", "Weekly roundup is live", "3h"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspRedditStore: ObservableObject {
+    @Published var selectedTab: LpspRedditShowroomTab = .home
+    @Published var searchQuery = ""
+    @Published var posts = LpspRedditShowroomData.feedPosts
+    @Published var showCreateSheet = false
+    @Published var newPostTitle = ""
+
+    func setVote(_ postId: String, state: LpspRedditRDVoteColumn.VoteState) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.voteState = state
+            return copy
+        }
+    }
+
+    func toggleSave(_ postId: String) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.saved.toggle()
+            return copy
+        }
+    }
+
+    func toggleJoin(_ postId: String) {
+        posts = posts.map { post in
+            guard post.id == postId else { return post }
+            var copy = post
+            copy.joined.toggle()
+            return copy
+        }
+    }
+
+    func publishPost() {
+        let title = newPostTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else { return }
+        let post = LpspRedditFeedPost(
+            id: "new-\(posts.count + 1)",
+            subreddit: "showroom",
+            subredditInitial: "s",
+            subredditAccent: LpspRedditTokens.rdBrandRed,
+            timestamp: "now",
+            title: title,
+            flairs: [],
+            baseKarma: 1,
+            karmaLabel: "1",
+            commentCount: 0,
+            commentLabel: "0",
+            hasMedia: false
+        )
+        posts.insert(post, at: 0)
+        newPostTitle = ""
+        showCreateSheet = false
+        selectedTab = .home
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspRedditShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspRedditStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspRedditSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspRedditCommunitiesTabScreen()
-                .tabItem { Label("Communities", systemImage: "person.3.fill") }
-                .tag(1)
-            LpspRedditCreateTabScreen()
-                .tabItem { Label("Create", systemImage: "plus.circle.fill") }
-                .tag(2)
-            LpspRedditSocialTabScreen(title: "Chat")
-                .tabItem { Label("Chat", systemImage: "bubble.left.and.bubble.right.fill") }
-                .tag(3)
-            LpspRedditSocialTabScreen(title: "Inbox")
-                .tabItem { Label("Inbox", systemImage: "bell.fill") }
-                .tag(4)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspRedditShowroomTab.allCases) { tab in
+                LpspRedditShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        if tab == .create {
+                            Label(tab.title, systemImage: "plus.circle.fill")
+                        } else {
+                            Label(tab.title, systemImage: tab.systemImage)
+                        }
+                    }
+                    .tag(tab)
+            }
         }
         .tint(LpspRedditTokens.rdBrandRed)
-        
-    }
-}
-
-
-private struct LpspRedditGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspRedditTokens.rdBrandRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspRedditTokens.rdBrandRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
+        .preferredColorScheme(.light)
+        .sheet(isPresented: $store.showCreateSheet) {
+            LpspRedditCreateSheet(store: store)
+        }
+        .onChange(of: store.selectedTab) { _, tab in
+            if tab == .create {
+                store.showCreateSheet = true
+                store.selectedTab = .home
             }
-            .navigationTitle(title)
         }
     }
 }
 
+private struct LpspRedditShowroomTabScreen: View {
+    @ObservedObject var store: LpspRedditStore
+    let tab: LpspRedditShowroomTab
 
-private struct LpspRedditDemoPostItem: Identifiable {
-    let id = UUID()
-    let sub: String
-    let title: String
-    let body: String?
-    let time: String
-    let comments: Int
-    let karma: Int
-}
-
-private enum LpspRedditDemoPosts {
-    static let items: [LpspRedditDemoPostItem] = [
-        .init(sub: "paris", title: "Meilleur café du 11e ?", body: "Je cherche vos recommandations…", time: "2 h", comments: 48, karma: 128),
-        .init(sub: "swiftui", title: "Spectr + SwiftUI", body: nil, time: "5 h", comments: 22, karma: 89),
-    ]
-}
-
-private struct LpspRedditDemoStory: Identifiable {
-    let id = UUID()
-    let name: String
-    let unread: Bool
-}
-
-private enum LpspRedditDemoStories {
-    static let items: [LpspRedditDemoStory] = [
-        .init(name: "Votre story", unread: false),
-        .init(name: "Alex", unread: true),
-        .init(name: "Léa", unread: true),
-    ]
-}
-
-private struct LpspRedditFeedTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
+        Group {
+            switch tab {
+            case .home, .popular:
+                LpspRedditHomeTabScreen(store: store, title: tab == .popular ? "Popular" : "Home")
+            case .create:
+                LpspRedditHomeTabScreen(store: store, title: "Home")
+            case .chat:
+                LpspRedditChatTabScreen()
+            case .inbox:
+                LpspRedditInboxTabScreen()
+            }
+        }
+    }
+}
 
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 14) {
-                            ForEach(LpspRedditDemoStories.items) { s in
-                                VStack(spacing: 4) {
-                                    Circle().strokeBorder(LpspRedditTokens.rdBrandRed, lineWidth: 2).frame(width: 66, height: 66)
-                                        .overlay(Circle().fill(LpspRedditTokens.rdBrandRed.opacity(0.2)).frame(width: 58, height: 58))
-                                    Text(s.name).font(.system(size: 11)).lineLimit(1).frame(width: 72)
+private struct LpspRedditHomeTabScreen: View {
+    @ObservedObject var store: LpspRedditStore
+    let title: String
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspRedditTopNav(searchQuery: $store.searchQuery)
+
+            ScrollView {
+                LazyVStack(spacing: 10) {
+                    if title == "Popular" {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(LpspRedditShowroomData.popularSubs, id: \.self) { sub in
+                                    Text(sub)
+                                        .font(LpspRedditFonts.rdFlairPill)
+                                        .foregroundStyle(LpspRedditTokens.rdTextPrimary)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Capsule().fill(LpspRedditTokens.rdSurface2Light))
                                 }
                             }
+                            .padding(.horizontal, 16)
                         }
-                        .padding(.horizontal, 12).padding(.vertical, 10)
+                        .padding(.bottom, 4)
                     }
 
-
-                    ForEach(LpspRedditDemoPosts.items) { post in
-                        LpspRedditRDPostCard(
-                            subredditName: post.sub,
-                            subredditAvatar: nil,
-                            subredditAccent: LpspRedditTokens.rdBrandRed,
-                            timestamp: post.time,
-                            commentCount: post.comments,
-                            title: post.title,
-                            postText: post.body,
-                            flairs: [],
-                            mediaUri: nil,
-                            baseKarma: post.karma
+                    ForEach(store.posts) { post in
+                        LpspRedditSpectrPostCard(
+                            post: post,
+                            voteState: Binding(
+                                get: {
+                                    store.posts.first(where: { $0.id == post.id })?.voteState ?? .none
+                                },
+                                set: { store.setVote(post.id, state: $0) }
+                            ),
+                            saved: store.posts.first(where: { $0.id == post.id })?.saved ?? false,
+                            joined: store.posts.first(where: { $0.id == post.id })?.joined ?? false,
+                            onSave: { store.toggleSave(post.id) },
+                            onJoin: { store.toggleJoin(post.id) }
                         )
                     }
-
                 }
-            }
-            .background(LpspRedditTokens.rdCanvasLight.ignoresSafeArea())
-            .navigationTitle("Accueil")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-
-private struct LpspRedditExploreTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: cols, spacing: 2) {
-                    ForEach(0..<15, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(LpspRedditTokens.rdBrandRed.opacity(0.08 + Double(i) * 0.04))
-                            .aspectRatio(1, contentMode: .fit)
-                    }
-                }
-            }
-            .navigationTitle("Explorer")
-        }
-    }
-}
-
-private struct LpspRedditReelsTabScreen: View {
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack {
-                Spacer()
-                Image(systemName: "play.rectangle.fill").font(.system(size: 64)).foregroundStyle(.white.opacity(0.85))
-                Text("Reels").font(.title2.bold()).foregroundStyle(.white)
-                Spacer()
+                .padding(.vertical, 8)
             }
         }
-    }
-}
-
-private struct LpspRedditProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    Circle().fill(LpspRedditTokens.rdBrandRed.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("lost.phone").font(.system(size: 20, weight: .bold))
-                    Text("Paris · Showroom").font(.subheadline).foregroundStyle(.secondary)
-                    HStack(spacing: 32) {
-                        VStack { Text("128").font(.headline); Text("Publications").font(.caption) }
-                        VStack { Text("1,2 k").font(.headline); Text("Abonnés").font(.caption) }
-                        VStack { Text("340").font(.headline); Text("Abonnements").font(.caption) }
-                    }
-                }
-                .padding()
-            }
-            .navigationTitle("Profil")
-        }
-    }
-}
-
-private struct LpspRedditCommunitiesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["r/swiftui", "r/paris", "r/design"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
-        }
-    }
-}
-
-private struct LpspRedditCreateTabScreen: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "plus.app.fill").font(.system(size: 56)).foregroundStyle(LpspRedditTokens.rdBrandRed)
-            Text("Nouvelle publication").font(.title2.bold())
-            Text("Photo, reel ou story").foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(LpspRedditTokens.rdCanvasLight.ignoresSafeArea())
     }
 }
 
-private struct LpspRedditSocialTabScreen: View {
-    let title: String
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("créer") || low.contains("create") { LpspRedditCreateTabScreen() }
-        else if low.contains("explor") || low.contains("search") { LpspRedditExploreTabScreen() }
-        else if low.contains("reel") { LpspRedditReelsTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspRedditProfileTabScreen() }
-        else { LpspRedditFeedTabScreen() }
-    }
-}
+private struct LpspRedditTopNav: View {
+    @Binding var searchQuery: String
 
-private struct LpspRedditGenericFeedCard: View {
-    let index: Int
-    let accent: Color
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Circle().fill(accent.opacity(0.2)).frame(width: 32, height: 32)
-                Text("utilisateur_\(index)").font(.system(size: 14, weight: .semibold))
-                Spacer()
+        HStack(spacing: 12) {
+            LpspRedditAvatar(initials: LpspRedditShowroomData.profileInitials.0)
+
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                TextField("Search Reddit", text: $searchQuery)
+                    .font(LpspRedditFonts.rdBody)
             }
             .padding(.horizontal, 12)
-            RoundedRectangle(cornerRadius: 0).fill(accent.opacity(0.12)).frame(height: 280)
-            HStack(spacing: 16) {
-                Image(systemName: "heart"); Image(systemName: "bubble.right"); Spacer(); Image(systemName: "bookmark")
-            }
-            .font(.system(size: 22)).padding(.horizontal, 12).padding(.bottom, 12)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(LpspRedditTokens.rdCardLight)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24)
+                            .strokeBorder(LpspRedditTokens.rdDividerLight, lineWidth: 1)
+                    )
+            )
+
+            LpspRedditAvatar(initials: LpspRedditShowroomData.profileInitials.1)
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(LpspRedditTokens.rdCanvasLight)
     }
 }
 
+private struct LpspRedditAvatar: View {
+    let initials: String
 
-private struct LpspRedditSpectrHomeTabScreen: View {
     var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Text("MS").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                Text("Search Reddit").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-            Text("AV").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-        } .padding(.horizontal, 16).frame(height: 44)
-        ScrollView {
-            VStack(spacing: 12) {
-                    Text("4.2k").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                VStack(alignment: .leading, spacing: 0) {
-                        Text("d").font(.system(size: 8.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                        Text("r/dataisbeautiful").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                        Text("3h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                    Text("OC").font(.system(size: 10.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                    Text("Why crow populations dropped in North American cities over the last 30 years").font(.system(size: 14.5, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                    HStack(spacing: 18) {
-                            Text("342").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                            Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                            Text("Save").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                    } .padding(.bottom, 8)
-                }
-                    Text("892").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                VStack(alignment: .leading, spacing: 0) {
-                        Text("a").font(.system(size: 8.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                        Text("r/AskReddit").font(.system(size: 11.5, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                        Text("5h").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                    Text("What's a skill you picked up that you thought would be useless, but completely changed your life?").font(.system(size: 14.5, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                    HStack(spacing: 18) {
-                            Text("1.2k").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                            Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                            Text("Save").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.106))
-                    } .padding(.bottom, 8)
-                }
+        Circle()
+            .fill(LpspRedditTokens.rdSurface2Light)
+            .frame(width: 32, height: 32)
+            .overlay {
+                Text(initials)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(LpspRedditTokens.rdTextPrimary)
             }
-        }
-        }
-        .background(Color(red: 0.965, green: 0.969, blue: 0.973).ignoresSafeArea())
     }
 }
 
+private struct LpspRedditSpectrPostCard: View {
+    let post: LpspRedditFeedPost
+    @Binding var voteState: LpspRedditRDVoteColumn.VoteState
+    let saved: Bool
+    let joined: Bool
+    let onSave: () -> Void
+    let onJoin: () -> Void
+
+    private var displayedKarmaLabel: String {
+        switch voteState {
+        case .up:
+            return post.baseKarma >= 1000 ? String(format: "%.1fk", Double(post.baseKarma + 1) / 1000.0) : "\(post.baseKarma + 1)"
+        case .down:
+            return post.baseKarma >= 1000 ? String(format: "%.1fk", Double(post.baseKarma - 1) / 1000.0) : "\(post.baseKarma - 1)"
+        case .none:
+            return post.karmaLabel
+        }
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 0) {
+            VStack(spacing: 4) {
+                Button {
+                    voteState = voteState == .up ? .none : .up
+                } label: {
+                    Image(systemName: voteState == .up ? "arrow.up.square.fill" : "arrow.up")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(voteState == .up ? LpspRedditTokens.rdUpvote : LpspRedditTokens.rdVoteInactive)
+                }
+
+                Text(displayedKarmaLabel)
+                    .font(LpspRedditFonts.rdKarma)
+                    .foregroundStyle(voteState == .up ? LpspRedditTokens.rdUpvote : LpspRedditTokens.rdTextPrimary)
+
+                Button {
+                    voteState = voteState == .down ? .none : .down
+                } label: {
+                    Image(systemName: voteState == .down ? "arrow.down.square.fill" : "arrow.down")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(voteState == .down ? LpspRedditTokens.rdDownvote : LpspRedditTokens.rdVoteInactive)
+                }
+            }
+            .frame(width: 44)
+            .padding(.top, 12)
+            .padding(.leading, 4)
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(post.subredditAccent)
+                        .frame(width: 20, height: 20)
+                        .overlay {
+                            Text(post.subredditInitial)
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+                    Text("r/\(post.subreddit)")
+                        .font(LpspRedditFonts.rdSubredditPill)
+                        .foregroundStyle(LpspRedditTokens.rdTextPrimary)
+                    Text("•")
+                        .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                    Text(post.timestamp)
+                        .font(LpspRedditFonts.rdMetadata)
+                        .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                    Spacer()
+                    if joined {
+                        Text("Joined")
+                            .font(LpspRedditFonts.rdButton)
+                            .foregroundStyle(post.subredditAccent)
+                    } else {
+                        Button("Join", action: onJoin)
+                            .font(LpspRedditFonts.rdButton)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 4)
+                            .background(Capsule().fill(post.subredditAccent))
+                    }
+                }
+
+                if !post.flairs.isEmpty {
+                    HStack(spacing: 6) {
+                        ForEach(post.flairs) { flair in
+                            LpspRedditRDFlairPillView(flair: flair)
+                        }
+                    }
+                }
+
+                Text(post.title)
+                    .font(LpspRedditFonts.rdPostTitle)
+                    .foregroundStyle(LpspRedditTokens.rdTextPrimary)
+                    .lineLimit(4)
+
+                if post.hasMedia {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.18, green: 0.22, blue: 0.28),
+                                    Color(red: 0.32, green: 0.36, blue: 0.42),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(height: 180)
+                        .overlay {
+                            Text("🐦‍⬛")
+                                .font(.system(size: 56))
+                        }
+                }
+
+                HStack(spacing: 18) {
+                    Label(post.commentLabel, systemImage: "text.bubble")
+                    Label("Share", systemImage: "square.and.arrow.up")
+                    Button(action: onSave) {
+                        Label(saved ? "Saved" : "Save", systemImage: saved ? "bookmark.fill" : "bookmark")
+                    }
+                    Spacer()
+                    Image(systemName: "ellipsis")
+                }
+                .font(LpspRedditFonts.rdMetadata)
+                .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+            }
+            .padding(12)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(LpspRedditTokens.rdCardLight)
+        )
+        .padding(.horizontal, 12)
+    }
+}
+
+private struct LpspRedditChatTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(LpspRedditShowroomData.chatThreads, id: \.0) { name, preview, time in
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(LpspRedditTokens.rdBrandRed.opacity(0.15))
+                            .frame(width: 44, height: 44)
+                            .overlay {
+                                Image(systemName: "bubble.left.and.bubble.right.fill")
+                                    .foregroundStyle(LpspRedditTokens.rdBrandRed)
+                            }
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(name)
+                                .font(LpspRedditFonts.rdUsername)
+                            Text(preview)
+                                .font(LpspRedditFonts.rdMetadata)
+                                .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                                .lineLimit(1)
+                        }
+                        Spacer()
+                        Text(time)
+                            .font(LpspRedditFonts.rdMetadata)
+                            .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                    }
+                }
+            }
+            .navigationTitle("Chat")
+        }
+    }
+}
+
+private struct LpspRedditInboxTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(LpspRedditShowroomData.inboxItems, id: \.0) { title, body, time in
+                    HStack(alignment: .top, spacing: 12) {
+                        Circle()
+                            .fill(LpspRedditTokens.rdBrandRed)
+                            .frame(width: 10, height: 10)
+                            .padding(.top, 6)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(title)
+                                .font(LpspRedditFonts.rdUsername)
+                            Text(body)
+                                .font(LpspRedditFonts.rdMetadata)
+                                .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                        }
+                        Spacer()
+                        Text(time)
+                            .font(LpspRedditFonts.rdMetadata)
+                            .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+                    }
+                }
+            }
+            .navigationTitle("Inbox")
+        }
+    }
+}
+
+private struct LpspRedditCreateSheet: View {
+    @ObservedObject var store: LpspRedditStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                TextField("Title", text: $store.newPostTitle, axis: .vertical)
+                    .font(LpspRedditFonts.rdPostTitle)
+                    .lineLimit(3...6)
+
+                Text("r/showroom")
+                    .font(LpspRedditFonts.rdSubredditPill)
+                    .foregroundStyle(LpspRedditTokens.rdTextSecondary)
+
+                Button {
+                    store.publishPost()
+                    dismiss()
+                } label: {
+                    Text("Post")
+                        .font(LpspRedditFonts.rdButton)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(RoundedRectangle(cornerRadius: 24).fill(LpspRedditTokens.rdBrandRed))
+                }
+                .disabled(store.newPostTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+                Spacer()
+            }
+            .padding(20)
+            .background(LpspRedditTokens.rdCanvasLight.ignoresSafeArea())
+            .navigationTitle("Create post")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        store.showCreateSheet = false
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
 

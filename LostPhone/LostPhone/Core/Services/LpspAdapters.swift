@@ -130,6 +130,14 @@ enum LpspAdapters {
         threads(from: payload, key: "conversations")
     }
 
+    static func telegram(from payload: AnyCodable?) -> [LpspConversation] {
+        threads(from: payload, key: "conversations")
+    }
+
+    static func messenger(from payload: AnyCodable?) -> [LpspConversation] {
+        threads(from: payload, key: "conversations")
+    }
+
     static func notes(from payload: AnyCodable?) -> [LpspNote] {
         let items = payload?.arrayValue ?? payload?["contenu"]?.arrayValue ?? []
         return items.enumerated().compactMap { index, raw in
@@ -327,7 +335,7 @@ enum LpspAdapters {
         )
     }
 
-    private static func isThreadUnread(rawMessages: [AnyCodable]) -> Bool {
+    static func isThreadUnread(rawMessages: [AnyCodable]) -> Bool {
         for raw in rawMessages.reversed() {
             guard let object = raw.objectValue else { continue }
             let sender = (object["de"] ?? object["expediteur"] ?? object["from"])?.stringValue ?? ""
@@ -369,5 +377,99 @@ enum LpspAdapters {
             return raw
         }
         return nil
+    }
+
+    /// Heure affichée dans les bulles WhatsApp (format Spectr : `HH:mm`).
+    static func formatWhatsAppBubbleTime(_ message: LpspMessage) -> String {
+        formatWhatsAppBubbleTime(raw: message.dateRaw, date: message.date)
+    }
+
+    static func formatWhatsAppBubbleTime(raw: String?, date: Date?) -> String {
+        if let date {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm"
+            return formatter.string(from: date)
+        }
+        guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {
+            return ""
+        }
+        if raw.range(of: #"^\d{1,2}:\d{2}$"#, options: .regularExpression) != nil {
+            return raw
+        }
+        let parts = raw.split(separator: " ")
+        if let last = parts.last, last.contains(":") {
+            return String(last)
+        }
+        return raw
+    }
+
+    /// Heure affichée dans les bulles Signal (format Spectr : `9:38 AM`).
+    static func formatSignalBubbleTime(_ message: LpspMessage) -> String {
+        formatSignalBubbleTime(raw: message.dateRaw, date: message.date)
+    }
+
+    static func formatSignalBubbleTime(raw: String?, date: Date?) -> String {
+        if let date {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "h:mm a"
+            return formatter.string(from: date)
+        }
+        guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {
+            return ""
+        }
+        if let parsed = parseISO(raw) {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "h:mm a"
+            return formatter.string(from: parsed)
+        }
+        if raw.range(of: #"^\d{1,2}:\d{2}\s*(AM|PM)$"#, options: .regularExpression) != nil {
+            return raw
+        }
+        let parts = raw.split(separator: " ")
+        if parts.count >= 2, let last = parts.last, last == "AM" || last == "PM" {
+            return parts.suffix(2).joined(separator: " ")
+        }
+        if let last = parts.last, last.contains(":") {
+            return String(last)
+        }
+        return raw
+    }
+
+    /// Horodatage des posts Instagram (format Spectr : `JUNE 12`).
+    static func formatInstagramPostTime(_ post: LpspInstagramPost) -> String {
+        formatInstagramPostTime(raw: post.date, date: post.dateParsed)
+    }
+
+    static func formatInstagramPostTime(raw: String?, date: Date?) -> String {
+        if let date {
+            if Calendar.current.isDateInToday(date) { return "TODAY" }
+            if Calendar.current.isDateInYesterday(date) { return "YESTERDAY" }
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMMM d"
+            formatter.locale = Locale(identifier: "en_US")
+            return formatter.string(from: date).uppercased()
+        }
+        guard let raw, !raw.isEmpty else { return "" }
+        if let parsed = parseDayOnly(raw) {
+            return formatInstagramPostTime(raw: nil, date: parsed)
+        }
+        return raw.uppercased()
+    }
+
+    /// Date courte pour l'historique Uber (`15 Jun · 12:54`).
+    static func formatUberRideDate(_ ride: LpspRide) -> String {
+        if let date = ride.date {
+            let day = date.formatted(.dateTime.day().month(.abbreviated))
+            let time = date.formatted(date: .omitted, time: .shortened)
+            return "\(day) · \(time)"
+        }
+        return ride.dateRaw
+    }
+
+    private static func parseDayOnly(_ raw: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter.date(from: raw)
     }
 }

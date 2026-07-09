@@ -4,8 +4,15 @@ import SwiftUI
 // Meliwat/awesome-ios-design-md/messaging/whatsapp/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeWhatsAppView: View {
+    var conversations: [LpspConversation]?
+
     var body: some View {
-        LpspWhatsAppShowroomRoot()
+        let storyThreads = conversations?.isEmpty == false ? conversations : nil
+        let threads = storyThreads ?? LpspWhatsAppShowroomData.conversations
+        LpspWhatsAppShowroomRoot(
+            store: LpspWhatsAppStore(conversations: threads),
+            isStoryMode: storyThreads != nil
+        )
     }
 }
 
@@ -45,6 +52,163 @@ private enum LpspWhatsAppTokens {
     // MARK: - Semantic
     static let waReadBlue      = Color(red: 0.325, green: 0.741, blue: 0.922) // #53BDEB
     static let waErrorRed      = Color(red: 0.945, green: 0.361, blue: 0.427) // #F15C6D
+}
+
+// MARK: - Données & état (showroom + histoire LPSP)
+
+@MainActor
+fileprivate final class LpspWhatsAppStore: ObservableObject {
+    @Published private(set) var threads: [LpspConversation]
+    @Published var messagesByThread: [String: [LpspWhatsAppSpectrMessage]]
+
+    init(conversations: [LpspConversation]) {
+        self.threads = conversations
+        self.messagesByThread = Dictionary(
+            uniqueKeysWithValues: conversations.map { ($0.id, LpspWhatsAppStore.makeDisplayMessages(for: $0)) }
+        )
+    }
+
+    func thread(id: String) -> LpspConversation? {
+        threads.first { $0.id == id }
+    }
+
+    func markAsRead(threadId: String) {
+        guard let index = threads.firstIndex(where: { $0.id == threadId }),
+              threads[index].isUnread else { return }
+        let old = threads[index]
+        threads[index] = LpspConversation(
+            id: old.id,
+            contactName: old.contactName,
+            messages: old.messages,
+            isUnread: false
+        )
+    }
+
+    func send(text: String, threadId: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        let time = formatter.string(from: Date())
+        messagesByThread[threadId, default: []].append(
+            .init(kind: .outgoing(text: trimmed, time: time, readState: .delivered))
+        )
+        if let index = threads.firstIndex(where: { $0.id == threadId }) {
+            let old = threads[index]
+            let newMessage = LpspMessage(
+                id: "sent-\(UUID().uuidString)",
+                text: trimmed,
+                isUser: true,
+                date: Date(),
+                dateRaw: time
+            )
+            let updated = LpspConversation(
+                id: old.id,
+                contactName: old.contactName,
+                messages: old.messages + [newMessage],
+                isUnread: false
+            )
+            threads[index] = updated
+        }
+    }
+
+    private static func makeDisplayMessages(for conversation: LpspConversation) -> [LpspWhatsAppSpectrMessage] {
+        if conversation.id == LpspWhatsAppShowroomData.mayaThreadId {
+            return LpspWhatsAppSpectrMayaThread.seed
+        }
+        return conversation.messages.map { message in
+            let time = LpspAdapters.formatWhatsAppBubbleTime(message)
+            if message.isUser {
+                return LpspWhatsAppSpectrMessage(
+                    kind: .outgoing(text: message.text, time: time, readState: .read)
+                )
+            }
+            return LpspWhatsAppSpectrMessage(
+                kind: .incoming(text: message.text, time: time)
+            )
+        }
+    }
+}
+
+private enum LpspWhatsAppShowroomData {
+    static let mayaThreadId = "wa-maya-rivera"
+
+    static var conversations: [LpspConversation] {
+        [
+            LpspConversation(
+                id: mayaThreadId,
+                contactName: "Maya Rivera",
+                messages: mayaPlainMessages,
+                isUnread: false
+            ),
+            LpspConversation(
+                id: "wa-nadia",
+                contactName: "Nadia Kerrouche",
+                messages: [
+                    LpspMessage(id: "n1", text: "T'as vu le message de hier ?", isUser: false, date: nil, dateRaw: "J-1 22:15"),
+                    LpspMessage(id: "n2", text: "Oui, j'y réponds demain", isUser: true, date: nil, dateRaw: "J-1 22:18"),
+                    LpspMessage(id: "n3", text: "T'es où ??", isUser: false, date: nil, dateRaw: "J 14:28"),
+                ],
+                isUnread: true
+            ),
+            LpspConversation(
+                id: "wa-hugo",
+                contactName: "Hugo 💙",
+                messages: [
+                    LpspMessage(id: "h1", text: "Papa tu me manques, vivement samedi 💙", isUser: false, date: nil, dateRaw: "Hier"),
+                ],
+                isUnread: false
+            ),
+            LpspConversation(
+                id: "wa-vincent",
+                contactName: "Vincent M.",
+                messages: [
+                    LpspMessage(id: "v1", text: "T'as vu le coffrage ? C'est du sérieux.", isUser: false, date: nil, dateRaw: "Lun."),
+                ],
+                isUnread: false
+            ),
+        ]
+    }
+
+    private static var mayaPlainMessages: [LpspMessage] {
+        [
+            LpspMessage(id: "m1", text: "Morning! Did the mockups get sent over last night?", isUser: false, date: nil, dateRaw: "10:21"),
+            LpspMessage(id: "m2", text: "Yep, the review file dropped in your inbox around 11pm. Look at the last two screens first.", isUser: true, date: nil, dateRaw: "10:24"),
+            LpspMessage(id: "m3", text: "Amazing, pulling it up now 🎉", isUser: false, date: nil, dateRaw: "10:25"),
+            LpspMessage(id: "m4", text: "This is gorgeous. Calling in 2", isUser: false, date: nil, dateRaw: "10:29"),
+        ]
+    }
+}
+
+private enum LpspWhatsAppContactStyle {
+    static func initials(for name: String) -> String {
+        let cleaned = name.filter { $0.isLetter || $0.isWhitespace }
+        let parts = cleaned.split(separator: " ")
+        if parts.count >= 2 {
+            return String(parts[0].prefix(1) + parts[1].prefix(1)).uppercased()
+        }
+        return String(cleaned.prefix(2)).uppercased()
+    }
+
+    static func gradient(for name: String) -> [Color] {
+        if name.contains("Maya") {
+            return [Color(red: 0.431, green: 0.784, blue: 0.710), LpspWhatsAppTokens.waMidTeal]
+        }
+        if name.contains("Hugo") {
+            return [Color(red: 0.45, green: 0.62, blue: 0.95), Color(red: 0.28, green: 0.42, blue: 0.82)]
+        }
+        return [LpspWhatsAppTokens.waMidTeal, LpspWhatsAppTokens.waTeal]
+    }
+
+    static func subtitle(for name: String) -> String {
+        if name.contains("Maya") { return "online" }
+        if name.contains("Nadia") { return "last seen today at 14:28" }
+        return "last seen recently"
+    }
+
+    static func isOnline(_ name: String) -> Bool {
+        name.contains("Maya")
+    }
 }
 
 private enum LpspWhatsAppFonts {
@@ -98,61 +262,17 @@ fileprivate struct LpspWhatsAppWAOutgoingBubble: View {
     enum ReadState { case sent, delivered, read }
 
     var body: some View {
-        HStack {
-            Spacer(minLength: UIScreen.main.bounds.width * 0.2)
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(text)
-                    .font(LpspWhatsAppFonts.waBubbleBody)
-                    .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
-                HStack(spacing: 3) {
-                    Text(timestamp)
-                        .font(LpspWhatsAppFonts.waTimestampBubble)
-                        .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
-                    tickView
-                }
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
-            .background(
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 12,
-                    bottomLeadingRadius: 12,
-                    bottomTrailingRadius: 0,
-                    topTrailingRadius: 12
-                )
-                .fill(LpspWhatsAppTokens.waOutgoingLight)
-            )
-        }
-        .padding(.trailing, 8)
-    }
-
-    @ViewBuilder
-    private var tickView: some View {
-        switch readState {
-        case .sent:
-            Image(systemName: "checkmark")
-                .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
-        case .delivered:
-            HStack(spacing: -4) {
-                Image(systemName: "checkmark")
-                Image(systemName: "checkmark")
-            }
-            .font(.system(size: 12, weight: .bold))
-            .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
-        case .read:
-            HStack(spacing: -4) {
-                Image(systemName: "checkmark")
-                Image(systemName: "checkmark")
-            }
-            .font(.system(size: 12, weight: .bold))
-            .foregroundStyle(LpspWhatsAppTokens.waReadBlue)
-        }
+        LpspWhatsAppSpectrTextBubble(
+            text: text,
+            time: timestamp,
+            outgoing: true,
+            readState: readState
+        )
     }
 }
 
-fileprivate struct LpspWhatsAppWAChatListRow: View {
-    let avatar: Image
+fileprivate struct LpspWhatsAppWAChatListRow<Avatar: View>: View {
+    let avatar: Avatar
     let name: String
     let preview: String
     let timestamp: String
@@ -168,8 +288,6 @@ fileprivate struct LpspWhatsAppWAChatListRow: View {
                         .frame(width: 54, height: 54)
                 }
                 avatar
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
                     .frame(width: 48, height: 48)
                     .clipShape(Circle())
             }
@@ -342,26 +460,10 @@ fileprivate struct LpspWhatsAppWAEncryptionBanner: View {
 
 fileprivate struct LpspWhatsAppWAIncomingBubble: View {
     let text: String
+    var timestamp: String = ""
+
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(text).font(LpspWhatsAppFonts.waBubbleBody).foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
-            .background(
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 12,
-                    bottomLeadingRadius: 0,
-                    bottomTrailingRadius: 12,
-                    topTrailingRadius: 12
-                )
-                .fill(Color.white)
-                .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
-            )
-            Spacer(minLength: UIScreen.main.bounds.width * 0.2)
-        }
-        .padding(.leading, 8)
+        LpspWhatsAppSpectrTextBubble(text: text, time: timestamp, outgoing: false)
     }
 }
 
@@ -374,28 +476,62 @@ fileprivate struct LpspWhatsAppWADoodleWallpaper: View {
 
 // MARK: - Écrans showroom
 
-private struct LpspWhatsAppShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspWhatsAppSpectrHomeTabScreen()
-                .tabItem { Label("Updates", systemImage: "circle.dashed") }
-                .tag(0)
-            LpspWhatsAppCallsTabScreen()
-                .tabItem { Label("Calls", systemImage: "phone.fill") }
-                .tag(1)
-            LpspWhatsAppCommunitiesTabScreen()
-                .tabItem { Label("Communities", systemImage: "person.3.fill") }
-                .tag(2)
-            LpspWhatsAppChatsTabScreen()
-                .tabItem { Label("Chats", systemImage: "message.fill") }
-                .tag(3)
-            LpspWhatsAppSettingsTabScreen()
-                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
-                .tag(4)
+private enum LpspWhatsAppTab: Int, CaseIterable {
+    case updates, calls, communities, chats, settings
+
+    var label: String {
+        switch self {
+        case .updates: "Updates"
+        case .calls: "Calls"
+        case .communities: "Communities"
+        case .chats: "Chats"
+        case .settings: "Settings"
         }
-        .tint(LpspWhatsAppTokens.waErrorRed)
-        .preferredColorScheme(.dark)
+    }
+
+    var icon: String {
+        switch self {
+        case .updates: "circle.dashed"
+        case .calls: "phone.fill"
+        case .communities: "person.3.fill"
+        case .chats: "message.fill"
+        case .settings: "gearshape.fill"
+        }
+    }
+}
+
+private enum LpspWhatsAppChatRoute: Hashable {
+    case thread(String)
+}
+
+private struct LpspWhatsAppShowroomRoot: View {
+    @ObservedObject var store: LpspWhatsAppStore
+    var isStoryMode = false
+    @State private var selectedTab: LpspWhatsAppTab = .chats
+    @State private var chatsPath = NavigationPath()
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                switch selectedTab {
+                case .updates:
+                    LpspWhatsAppUpdatesTabScreen(contacts: store.threads.map(\.contactName))
+                case .calls:
+                    LpspWhatsAppCallsTabScreen(store: store)
+                case .communities:
+                    LpspWhatsAppCommunitiesTabScreen(isStoryMode: isStoryMode)
+                case .chats:
+                    LpspWhatsAppChatsTabScreen(store: store, path: $chatsPath)
+                case .settings:
+                    LpspWhatsAppSettingsTabScreen()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspWhatsAppSpectrTabBar(selectedTab: $selectedTab)
+        }
+        .background(LpspWhatsAppTokens.waCanvasLight.ignoresSafeArea())
+        .preferredColorScheme(.light)
     }
 }
 
@@ -423,71 +559,184 @@ private struct LpspWhatsAppGenericTabScreen: View {
 }
 
 
-private struct LpspWhatsAppDemoChat: Identifiable {
-    let id = UUID()
+private struct LpspWhatsAppDemoChat: Identifiable, Hashable {
+    let id: String
     let name: String
     let preview: String
     let time: String
     let unread: Int
     let hasRing: Bool
-}
+    let initials: String
+    let isOnline: Bool
 
-private enum LpspWhatsAppDemoChats {
-    static let chats: [LpspWhatsAppDemoChat] = [
-        .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24", unread: 2, hasRing: true),
-        .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier", unread: 0, hasRing: false),
-        .init(name: "Famille", preview: "Photo: vacances", time: "Lun.", unread: 5, hasRing: true),
-    ]
-}
-
-private struct LpspWhatsAppChatsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List {
-
-                ForEach(LpspWhatsAppDemoChats.chats) { chat in
-                    NavigationLink {
-                        LpspWhatsAppChatDetailScreen(chat: chat)
-                    } label: {
-                        LpspWhatsAppWAChatListRow(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, hasStatusRing: chat.hasRing)
-                    }
-                }
-
-            }
-            .listStyle(.plain)
-            .navigationTitle("Chats")
+    var avatarGradient: [Color] {
+        switch id {
+        case LpspWhatsAppDemoChats.mayaRiveraId:
+            [Color(red: 0.431, green: 0.784, blue: 0.710), LpspWhatsAppTokens.waMidTeal]
+        default:
+            [LpspWhatsAppTokens.waMidTeal, LpspWhatsAppTokens.waTeal]
         }
     }
 }
 
+private enum LpspWhatsAppDemoChats {
+    static let mayaRiveraId = "maya-rivera"
 
-private struct LpspWhatsAppChatDetailScreen: View {
-    let chat: LpspWhatsAppDemoChat
+    static let chats: [LpspWhatsAppDemoChat] = [
+        .init(
+            id: mayaRiveraId,
+            name: "Maya Rivera",
+            preview: "This is gorgeous. Calling in 2",
+            time: "10:29",
+            unread: 0,
+            hasRing: false,
+            initials: "MR",
+            isOnline: true
+        ),
+        .init(id: "alex-martin", name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24", unread: 2, hasRing: true, initials: "AM", isOnline: false),
+        .init(id: "lea-dupont", name: "Léa Dupont", preview: "Merci pour hier", time: "Hier", unread: 0, hasRing: false, initials: "LD", isOnline: false),
+        .init(id: "famille", name: "Famille", preview: "Photo: vacances", time: "Lun.", unread: 5, hasRing: true, initials: "FA", isOnline: false),
+    ]
+
+    static func chat(id: String) -> LpspWhatsAppDemoChat? {
+        chats.first { $0.id == id }
+    }
+}
+
+private struct LpspWhatsAppChatsTabScreen: View {
+    @ObservedObject var store: LpspWhatsAppStore
+    @Binding var path: NavigationPath
+
     var body: some View {
-        LpspWhatsAppWAChatScreen()
-            .navigationTitle(chat.name)
-            .navigationBarTitleDisplayMode(.inline)
+        NavigationStack(path: $path) {
+            List {
+                ForEach(store.threads) { thread in
+                    Button {
+                        path.append(LpspWhatsAppChatRoute.thread(thread.id))
+                    } label: {
+                        LpspWhatsAppWAChatListRow(
+                            avatar: LpspWhatsAppDemoAvatar(
+                                initials: LpspWhatsAppContactStyle.initials(for: thread.contactName),
+                                gradient: LpspWhatsAppContactStyle.gradient(for: thread.contactName)
+                            ),
+                            name: thread.contactName,
+                            preview: thread.preview,
+                            timestamp: LpspAdapters.formatShortDate(thread.lastDate, fallback: thread.lastDateRaw),
+                            unreadCount: thread.isUnread ? 1 : 0,
+                            hasStatusRing: false
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Chats")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { } label: {
+                        Image(systemName: "square.and.pencil")
+                            .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                    }
+                    .disabled(true)
+                }
+            }
+            .navigationDestination(for: LpspWhatsAppChatRoute.self) { route in
+                switch route {
+                case .thread(let id):
+                    LpspWhatsAppChatScreen(store: store, threadId: id, onBack: { path.removeLast() })
+                }
+            }
+        }
+    }
+}
+
+private struct LpspWhatsAppDemoAvatar: View {
+    let initials: String
+    let gradient: [Color]
+
+    var body: some View {
+        Circle()
+            .fill(LinearGradient(colors: gradient, startPoint: .topLeading, endPoint: .bottomTrailing))
+            .overlay(Text(initials).font(.system(size: 13, weight: .semibold)).foregroundStyle(.white))
     }
 }
 
 
 private struct LpspWhatsAppCallsTabScreen: View {
+    @ObservedObject var store: LpspWhatsAppStore
+    @State private var activeContact: String?
+
     var body: some View {
         NavigationStack {
-            List(LpspWhatsAppDemoChats.chats) { chat in
-                HStack {
-                    Circle().fill(LpspWhatsAppTokens.waErrorRed.opacity(0.15)).frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspWhatsAppTokens.waErrorRed))
-                    VStack(alignment: .leading) {
-                        Text(chat.name).font(.system(size: 17, weight: .semibold))
-                        Text("Appel vocal · Hier").font(.subheadline).foregroundStyle(.secondary)
+            List(store.threads) { thread in
+                Button {
+                    activeContact = thread.contactName
+                } label: {
+                    HStack(spacing: 12) {
+                        LpspWhatsAppDemoAvatar(
+                            initials: LpspWhatsAppContactStyle.initials(for: thread.contactName),
+                            gradient: LpspWhatsAppContactStyle.gradient(for: thread.contactName)
+                        )
+                        .frame(width: 40, height: 40)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(thread.contactName).font(.system(size: 17, weight: .semibold))
+                                .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
+                            Text("Appel vocal · \(LpspAdapters.formatShortDate(thread.lastDate, fallback: thread.lastDateRaw))")
+                                .font(.system(size: 14))
+                                .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                        }
+                        Spacer()
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
                     }
-                    Spacer()
-                    Image(systemName: "info.circle").foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .listStyle(.plain)
+            .navigationTitle("Calls")
+            .sheet(isPresented: Binding(
+                get: { activeContact != nil },
+                set: { if !$0 { activeContact = nil } }
+            )) {
+                if let name = activeContact {
+                    LpspWhatsAppCallSheet(contactName: name)
                 }
             }
-            .navigationTitle("Appels")
         }
+    }
+}
+
+private struct LpspWhatsAppCallSheet: View {
+    let contactName: String
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            LpspWhatsAppDemoAvatar(
+                initials: LpspWhatsAppContactStyle.initials(for: contactName),
+                gradient: LpspWhatsAppContactStyle.gradient(for: contactName)
+            )
+            .frame(width: 96, height: 96)
+            Text(contactName).font(.system(size: 24, weight: .semibold))
+            Text("Appel vocal…").foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+            Spacer()
+            HStack(spacing: 48) {
+                Button { dismiss() } label: {
+                    Image(systemName: "phone.down.fill")
+                        .font(.system(size: 28))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(Circle().fill(LpspWhatsAppTokens.waErrorRed))
+                }
+                .buttonStyle(LpspWhatsAppWAPressableStyle())
+            }
+            .padding(.bottom, 40)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(LpspWhatsAppTokens.waTeal.ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 
@@ -495,58 +744,182 @@ private struct LpspWhatsAppMessagingTabScreen: View {
     let title: String
     var body: some View {
         let low = title.lowercased()
-        if low.contains("update") { LpspWhatsAppUpdatesTabScreen() }
+        if low.contains("update") { LpspWhatsAppUpdatesTabScreen(contacts: []) }
         else if low.contains("setting") || low.contains("réglage") { LpspWhatsAppSettingsTabScreen() }
         else if low.contains("communit") { LpspWhatsAppCommunitiesTabScreen() }
         else if low.contains("contact") { LpspWhatsAppContactsTabScreen() }
-        else { LpspWhatsAppChatsTabScreen() }
+        else { LpspWhatsAppChatsTabScreen(store: LpspWhatsAppStore(conversations: []), path: .constant(NavigationPath())) }
     }
 }
 
 private struct LpspWhatsAppUpdatesTabScreen: View {
+    let contacts: [String]
+
     var body: some View {
         NavigationStack {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 14) {
-                    ForEach(LpspWhatsAppDemoStories.items) { s in
-                        VStack(spacing: 4) {
-                            Circle().strokeBorder(LpspWhatsAppTokens.waErrorRed, lineWidth: 2).frame(width: 66, height: 66)
-                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 14) {
+                            LpspWhatsAppStatusCircle(label: "My status", isAdd: true)
+                            ForEach(contacts.prefix(6), id: \.self) { name in
+                                LpspWhatsAppStatusCircle(label: name, isAdd: false)
+                            }
                         }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
                     }
+                    Text("Recent updates")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                        .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 12).padding(.vertical, 10)
             }
             .navigationTitle("Updates")
         }
     }
 }
 
-private struct LpspWhatsAppDemoStoryItem: Identifiable { let id = UUID(); let name: String }
-private enum LpspWhatsAppDemoStories {
-    static let items: [LpspWhatsAppDemoStoryItem] = [
-        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
-    ]
+private struct LpspWhatsAppStatusCircle: View {
+    let label: String
+    let isAdd: Bool
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Circle()
+                .strokeBorder(isAdd ? LpspWhatsAppTokens.waTextTertiary : LpspWhatsAppTokens.waGreen, lineWidth: 2)
+                .frame(width: 66, height: 66)
+                .overlay(
+                    Circle()
+                        .fill(LpspWhatsAppTokens.waSurface1Light)
+                        .frame(width: 58, height: 58)
+                        .overlay(
+                            Image(systemName: isAdd ? "plus" : "person.fill")
+                                .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+                        )
+                )
+            Text(label)
+                .font(.system(size: 11))
+                .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
+                .lineLimit(1)
+                .frame(width: 72)
+        }
+    }
 }
 
 private struct LpspWhatsAppSettingsTabScreen: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
-                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
+                Section("Account") {
+                    NavigationLink { LpspWhatsAppSettingsDetailScreen(title: "Profile") } label: {
+                        Label("Profile", systemImage: "person.circle")
+                    }
+                    NavigationLink { LpspWhatsAppSettingsDetailScreen(title: "Privacy") } label: {
+                        Label("Privacy", systemImage: "lock")
+                    }
+                }
+                Section("App") {
+                    NavigationLink { LpspWhatsAppSettingsDetailScreen(title: "Notifications") } label: {
+                        Label("Notifications", systemImage: "bell")
+                    }
+                    NavigationLink { LpspWhatsAppSettingsDetailScreen(title: "Storage") } label: {
+                        Label("Storage and data", systemImage: "internaldrive")
+                    }
+                }
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("Settings")
         }
     }
 }
 
+private struct LpspWhatsAppSettingsDetailScreen: View {
+    let title: String
+    @Environment(\.deviceOwner) private var owner
+
+    var body: some View {
+        List {
+            if title == "Privacy" {
+                Toggle("Read receipts", isOn: .constant(true))
+                Toggle("Profile photo", isOn: .constant(true))
+                Toggle("Last seen", isOn: .constant(true))
+            } else if title == "Notifications" {
+                Toggle("Message notifications", isOn: .constant(true))
+                Toggle("Reaction notifications", isOn: .constant(true))
+                Toggle("Show previews", isOn: .constant(false))
+            } else if title == "Storage" {
+                HStack {
+                    Text("Network usage")
+                    Spacer()
+                    Text("142 MB").foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                }
+                HStack {
+                    Text("Manage storage")
+                    Spacer()
+                    Text("1.2 GB").foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                }
+            } else {
+                HStack {
+                    Text("Name")
+                    Spacer()
+                    Text(owner.name).foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                }
+                HStack {
+                    Text("About")
+                    Spacer()
+                    Text("Available").foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                }
+            }
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 private struct LpspWhatsAppCommunitiesTabScreen: View {
+    var isStoryMode = false
+
     var body: some View {
         NavigationStack {
-            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
+            Group {
+                if isStoryMode {
+                    ContentUnavailableView(
+                        "No communities",
+                        systemImage: "person.3",
+                        description: Text("Communities you join will appear here.")
+                    )
+                } else {
+                    List {
+                        NavigationLink { LpspWhatsAppCommunityDetailScreen(name: "Design Guild") } label: {
+                            Label("Design Guild", systemImage: "person.3")
+                        }
+                        NavigationLink { LpspWhatsAppCommunityDetailScreen(name: "Famille") } label: {
+                            Label("Famille", systemImage: "person.3")
+                        }
+                    }
+                    .listStyle(.insetGrouped)
+                }
+            }
             .navigationTitle("Communities")
         }
+    }
+}
+
+private struct LpspWhatsAppCommunityDetailScreen: View {
+    let name: String
+
+    var body: some View {
+        List {
+            Section("Announcements") {
+                Text("Demo day Friday — bring a laptop.")
+            }
+            Section("Groups") {
+                Text("general")
+                Text("design-crit")
+            }
+        }
+        .navigationTitle(name)
     }
 }
 
@@ -593,8 +966,487 @@ private struct LpspWhatsAppDemoComposeBar: View {
 }
 
 
-private struct LpspWhatsAppSpectrHomeTabScreen: View {
-    var body: some View { LpspWhatsAppWAChatScreen() }
+// MARK: - Spectr chat (https://www.spectr.to/gallery/whatsapp)
+
+fileprivate struct LpspWhatsAppSpectrMessage: Identifiable {
+    enum Kind {
+        case incoming(text: String, time: String)
+        case outgoing(text: String, time: String, readState: LpspWhatsAppWAOutgoingBubble.ReadState)
+        case voice(time: String, duration: String, readState: LpspWhatsAppWAOutgoingBubble.ReadState)
+    }
+
+    let id = UUID()
+    let kind: Kind
+}
+
+fileprivate enum LpspWhatsAppSpectrMayaThread {
+    static let seed: [LpspWhatsAppSpectrMessage] = [
+        .init(kind: .incoming(text: "Morning! Did the mockups get sent over last night?", time: "10:21")),
+        .init(kind: .outgoing(text: "Yep, the review file dropped in your inbox around 11pm. Look at the last two screens first.", time: "10:24", readState: .read)),
+        .init(kind: .incoming(text: "Amazing, pulling it up now 🎉", time: "10:25")),
+        .init(kind: .voice(time: "10:27", duration: "0:23", readState: .read)),
+        .init(kind: .incoming(text: "This is gorgeous. Calling in 2", time: "10:29")),
+    ]
+}
+
+/// Conversation interactive — rendu Spectr, données showroom ou histoire LPSP.
+private struct LpspWhatsAppChatScreen: View {
+    @ObservedObject var store: LpspWhatsAppStore
+    let threadId: String
+    let onBack: () -> Void
+
+    @State private var draft = ""
+    @State private var showVideoCall = false
+    @State private var showVoiceCall = false
+    @FocusState private var inputFocused: Bool
+
+    private var thread: LpspConversation? { store.thread(id: threadId) }
+    private var contactName: String { thread?.contactName ?? "" }
+    private var messages: [LpspWhatsAppSpectrMessage] { store.messagesByThread[threadId] ?? [] }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspWhatsAppSpectrChatNav(
+                contactName: contactName,
+                onBack: onBack,
+                onVideo: { showVideoCall = true },
+                onPhone: { showVoiceCall = true }
+            )
+            LpspWhatsAppSpectrChatBody(messages: messages)
+            LpspWhatsAppSpectrInputBar(
+                text: $draft,
+                isFocused: $inputFocused,
+                onSend: sendMessage
+            )
+        }
+        .background(LpspWhatsAppTokens.waWallpaperLight.ignoresSafeArea())
+        .navigationBarHidden(true)
+        .onAppear { store.markAsRead(threadId: threadId) }
+        .sheet(isPresented: $showVideoCall) {
+            LpspWhatsAppCallSheet(contactName: contactName)
+        }
+        .sheet(isPresented: $showVoiceCall) {
+            LpspWhatsAppCallSheet(contactName: contactName)
+        }
+    }
+
+    private func sendMessage() {
+        store.send(text: draft, threadId: threadId)
+        draft = ""
+        inputFocused = false
+    }
+}
+
+private struct LpspWhatsAppSpectrInputBarStatic: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            HStack(spacing: 10) {
+                Image(systemName: "face.smiling")
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+                Text("Message")
+                    .font(.system(size: 16))
+                    .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+                Spacer(minLength: 0)
+                Image(systemName: "paperclip")
+                    .font(.system(size: 20))
+                    .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+                    .rotationEffect(.degrees(-45))
+                Image(systemName: "camera.fill")
+                    .font(.system(size: 20))
+                    .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+            }
+            .padding(.vertical, 7)
+            .padding(.horizontal, 14)
+            .background(Capsule().fill(Color.white))
+            Circle()
+                .fill(LpspWhatsAppTokens.waGreen)
+                .frame(width: 34, height: 34)
+                .overlay(
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.white)
+                )
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(LpspWhatsAppTokens.waSurface1Light)
+    }
+}
+
+private struct LpspWhatsAppSpectrChatNav: View {
+    let contactName: String
+    let onBack: () -> Void
+    let onVideo: () -> Void
+    let onPhone: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Button(action: onBack) {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(LpspWhatsAppTokens.waGreen)
+            }
+            .buttonStyle(LpspWhatsAppWAPressableStyle())
+
+            Button(action: onBack) {
+                HStack(spacing: 10) {
+                    LpspWhatsAppDemoAvatar(
+                        initials: LpspWhatsAppContactStyle.initials(for: contactName),
+                        gradient: LpspWhatsAppContactStyle.gradient(for: contactName)
+                    )
+                    .frame(width: 32, height: 32)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(contactName)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
+                        Text(LpspWhatsAppContactStyle.subtitle(for: contactName))
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(
+                                LpspWhatsAppContactStyle.isOnline(contactName)
+                                    ? LpspWhatsAppTokens.waMidTeal
+                                    : LpspWhatsAppTokens.waTextSecondary
+                            )
+                    }
+                }
+            }
+            .buttonStyle(LpspWhatsAppWAPressableStyle(pressedScale: 0.98))
+
+            Spacer()
+            HStack(spacing: 16) {
+                Button(action: onVideo) {
+                    Image(systemName: "video.fill")
+                }
+                Button(action: onPhone) {
+                    Image(systemName: "phone.fill")
+                }
+            }
+            .font(.system(size: 18))
+            .foregroundStyle(LpspWhatsAppTokens.waMidTeal)
+            .buttonStyle(LpspWhatsAppWAPressableStyle())
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 56)
+        .background(LpspWhatsAppTokens.waCanvasLight)
+    }
+}
+
+private struct LpspWhatsAppSpectrChatBody: View {
+    let messages: [LpspWhatsAppSpectrMessage]
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 3) {
+                    LpspWhatsAppSpectrE2EBanner()
+                    ForEach(messages) { message in
+                        switch message.kind {
+                        case .incoming(let text, let time):
+                            LpspWhatsAppSpectrTextBubble(text: text, time: time, outgoing: false)
+                                .id(message.id)
+                        case .outgoing(let text, let time, let readState):
+                            LpspWhatsAppSpectrTextBubble(text: text, time: time, outgoing: true, readState: readState)
+                                .id(message.id)
+                        case .voice(let time, let duration, let readState):
+                            LpspWhatsAppSpectrVoiceBubble(time: time, duration: duration, readState: readState)
+                                .id(message.id)
+                        }
+                    }
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 8)
+            }
+            .background(LpspWhatsAppTokens.waWallpaperLight)
+            .onAppear {
+                if let last = messages.last {
+                    proxy.scrollTo(last.id, anchor: .bottom)
+                }
+            }
+            .onChange(of: messages.count) { _, _ in
+                if let last = messages.last {
+                    withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
+                }
+            }
+        }
+    }
+}
+
+private struct LpspWhatsAppSpectrE2EBanner: View {
+    var body: some View {
+        Text("Messages and calls are end-to-end encrypted.")
+            .font(.system(size: 10.5, weight: .medium))
+            .foregroundStyle(Color(red: 0.329, green: 0.388, blue: 0.427))
+            .multilineTextAlignment(.center)
+            .lineSpacing(2)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .frame(maxWidth: 240)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color(red: 1.0, green: 0.961, blue: 0.769))
+                    .shadow(color: .black.opacity(0.04), radius: 0.5, y: 1)
+            )
+            .padding(.bottom, 8)
+    }
+}
+
+private struct LpspWhatsAppSpectrTextBubble: View {
+    let text: String
+    let time: String
+    let outgoing: Bool
+    var readState: LpspWhatsAppWAOutgoingBubble.ReadState?
+
+    private var bubbleShape: UnevenRoundedRectangle {
+        if outgoing {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 8,
+                bottomLeadingRadius: 8,
+                bottomTrailingRadius: 2,
+                topTrailingRadius: 8
+            )
+        } else {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 8,
+                bottomLeadingRadius: 2,
+                bottomTrailingRadius: 8,
+                topTrailingRadius: 8
+            )
+        }
+    }
+
+    private var metaTrailingPadding: CGFloat {
+        guard !time.isEmpty || (outgoing && readState != nil) else { return 10 }
+        let timeWidth = CGFloat(max(time.count, 4)) * 5.5
+        let ticks: CGFloat = (outgoing && readState != nil) ? 16 : 0
+        return timeWidth + ticks + 14
+    }
+
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            if outgoing { Spacer(minLength: UIScreen.main.bounds.width * 0.22) }
+
+            Text(verbatim: text)
+                .font(.system(size: 13))
+                .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
+                .lineSpacing(2)
+                .multilineTextAlignment(outgoing ? .trailing : .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 6)
+                .padding(.leading, 10)
+                .padding(.trailing, metaTrailingPadding)
+                .padding(.bottom, 18)
+                .background(
+                    bubbleShape
+                        .fill(outgoing ? LpspWhatsAppTokens.waOutgoingLight : LpspWhatsAppTokens.waIncomingLight)
+                        .shadow(color: .black.opacity(0.08), radius: 0.5, y: 1)
+                )
+                .overlay(alignment: .bottomTrailing) {
+                    HStack(spacing: 3) {
+                        if !time.isEmpty {
+                            Text(time)
+                                .font(.system(size: 10.5, weight: .regular))
+                                .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                        }
+                        if outgoing, let readState {
+                            LpspWhatsAppSpectrReadTicks(state: readState)
+                        }
+                    }
+                    .padding(.trailing, 10)
+                    .padding(.bottom, 4)
+                }
+                .frame(maxWidth: UIScreen.main.bounds.width * 0.78, alignment: outgoing ? .trailing : .leading)
+
+            if !outgoing { Spacer(minLength: UIScreen.main.bounds.width * 0.22) }
+        }
+    }
+}
+
+private struct LpspWhatsAppSpectrReadTicks: View {
+    let state: LpspWhatsAppWAOutgoingBubble.ReadState
+
+    var body: some View {
+        HStack(spacing: -4) {
+            Image(systemName: "checkmark")
+            Image(systemName: "checkmark")
+        }
+        .font(.system(size: 9, weight: .bold))
+        .foregroundStyle(state == .read ? LpspWhatsAppTokens.waReadBlue : LpspWhatsAppTokens.waTextTertiary)
+    }
+}
+
+private struct LpspWhatsAppSpectrVoiceBubble: View {
+    let time: String
+    let duration: String
+    let readState: LpspWhatsAppWAOutgoingBubble.ReadState
+
+    @State private var isPlaying = false
+
+    private let playedHeights: [CGFloat] = [0.30, 0.50, 0.70, 0.45, 0.85, 0.65, 0.40, 0.75, 0.55, 0.90, 0.60, 0.35, 0.70, 0.50, 0.80]
+    private let unplayedHeights: [CGFloat] = [0.40, 0.60, 0.30, 0.75, 0.45, 0.65, 0.35, 0.55, 0.70, 0.40, 0.60, 0.30, 0.50, 0.65, 0.45]
+
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            Spacer(minLength: UIScreen.main.bounds.width * 0.22)
+            HStack(spacing: 8) {
+                Button { isPlaying.toggle() } label: {
+                    Circle()
+                        .fill(LpspWhatsAppTokens.waGreen)
+                        .frame(width: 28, height: 28)
+                        .overlay(
+                            Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(.white)
+                                .offset(x: isPlaying ? 0 : 1)
+                        )
+                }
+                .buttonStyle(LpspWhatsAppWAPressableStyle(pressedScale: 0.92))
+                HStack(spacing: 1.5) {
+                    ForEach(Array(playedHeights.enumerated()), id: \.offset) { _, h in
+                        Capsule()
+                            .fill(LpspWhatsAppTokens.waGreen)
+                            .frame(width: 2, height: max(4, h * 22))
+                    }
+                    ForEach(Array(unplayedHeights.enumerated()), id: \.offset) { _, h in
+                        Capsule()
+                            .fill(LpspWhatsAppTokens.waTextTertiary.opacity(isPlaying ? 0.75 : 0.55))
+                            .frame(width: 2, height: max(4, h * 22))
+                    }
+                }
+                .frame(height: 22)
+                Text(duration)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 18)
+            .padding(.horizontal, 10)
+            .background(
+                UnevenRoundedRectangle(
+                    topLeadingRadius: 8,
+                    bottomLeadingRadius: 8,
+                    bottomTrailingRadius: 2,
+                    topTrailingRadius: 8
+                )
+                .fill(LpspWhatsAppTokens.waOutgoingLight)
+                .shadow(color: .black.opacity(0.08), radius: 0.5, y: 1)
+            )
+            .overlay(alignment: .bottomTrailing) {
+                HStack(spacing: 3) {
+                    Text(time)
+                        .font(.system(size: 10.5, weight: .regular))
+                        .foregroundStyle(LpspWhatsAppTokens.waTextSecondary)
+                    LpspWhatsAppSpectrReadTicks(state: readState)
+                }
+                .padding(.trailing, 10)
+                .padding(.bottom, 4)
+            }
+            .frame(maxWidth: UIScreen.main.bounds.width * 0.78, alignment: .trailing)
+        }
+    }
+}
+
+private struct LpspWhatsAppSpectrInputBar: View {
+    @Binding var text: String
+    var isFocused: FocusState<Bool>.Binding
+    let onSend: () -> Void
+
+    var body: some View {
+        HStack(spacing: 8) {
+            HStack(spacing: 10) {
+                Button { } label: {
+                    Image(systemName: "face.smiling")
+                        .font(.system(size: 22))
+                        .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+                }
+                .buttonStyle(LpspWhatsAppWAPressableStyle())
+
+                ZStack(alignment: .leading) {
+                    if text.isEmpty {
+                        Text("Message")
+                            .font(.system(size: 16))
+                            .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+                    }
+                    TextField("", text: $text, axis: .vertical)
+                        .font(.system(size: 16))
+                        .foregroundStyle(LpspWhatsAppTokens.waTextPrimary)
+                        .lineLimit(1...5)
+                        .focused(isFocused)
+                }
+
+                Button { } label: {
+                    Image(systemName: "paperclip")
+                        .font(.system(size: 20))
+                        .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+                        .rotationEffect(.degrees(-45))
+                }
+                .buttonStyle(LpspWhatsAppWAPressableStyle())
+
+                Button { } label: {
+                    Image(systemName: "camera.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(LpspWhatsAppTokens.waTextTertiary)
+                }
+                .buttonStyle(LpspWhatsAppWAPressableStyle())
+            }
+            .padding(.vertical, 7)
+            .padding(.horizontal, 14)
+            .background(Capsule().fill(Color.white))
+
+            Button {
+                if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    isFocused.wrappedValue = false
+                } else {
+                    onSend()
+                }
+            } label: {
+                Circle()
+                    .fill(LpspWhatsAppTokens.waGreen)
+                    .frame(width: 34, height: 34)
+                    .overlay(
+                        Image(systemName: text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "mic.fill" : "paperplane.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.white)
+                    )
+            }
+            .buttonStyle(LpspWhatsAppWAPressableStyle(pressedScale: 0.92))
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(LpspWhatsAppTokens.waSurface1Light)
+    }
+}
+
+private struct LpspWhatsAppSpectrTabBar: View {
+    @Binding var selectedTab: LpspWhatsAppTab
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspWhatsAppTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 22))
+                        Text(tab.label)
+                            .font(.system(size: 10, weight: .medium))
+                    }
+                    .foregroundStyle(selectedTab == tab ? LpspWhatsAppTokens.waGreen : LpspWhatsAppTokens.waTextTertiary)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(LpspWhatsAppWAPressableStyle(pressedScale: 0.95))
+            }
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 2)
+        .background(LpspWhatsAppTokens.waSurface1Light)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspWhatsAppTokens.waDividerLight)
+                .frame(height: 0.5)
+        }
+    }
 }
 
 

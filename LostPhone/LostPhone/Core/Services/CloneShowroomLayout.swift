@@ -26,8 +26,8 @@ enum CloneShowroomLayout {
         "Wallet",
     ]
 
-    /// Pages 3+ — apps tierces Awesome (Étape 2).
-    static let gridAppsTier: [String] = AwesomeShowroomCatalog.tierApps
+    /// Pages 3+ — 18 apps tierces Sopheamen Patreon (bundle 21 zip).
+    static let gridAppsTier: [String] = SopheamenShowroomCatalog.tierApps
 
     /// Dock — `ContentView.dockApps` (gelé).
     static let dockApps: [String] = [

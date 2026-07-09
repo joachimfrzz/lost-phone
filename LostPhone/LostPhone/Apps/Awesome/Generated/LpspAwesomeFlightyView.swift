@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeFlightyView: View {
     var body: some View {
-        LpspFlightyShowroomRoot()
+        LpspFlightyShowroomRoot(store: LpspFlightyStore())
     }
 }
 
@@ -236,153 +236,402 @@ fileprivate struct LpspFlightyFltPressableStyle: ButtonStyle {
 
 
 
+// MARK: - Showroom data & store
+
+private enum LpspFlightyShowroomTab: String, CaseIterable, Identifiable {
+    case flights, search, airport, profile
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .flights: "Flights"
+        case .search: "Search"
+        case .airport: "Airport"
+        case .profile: "Profile"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .flights: "airplane"
+        case .search: "magnifyingglass"
+        case .airport: "building.columns.fill"
+        case .profile: "person.fill"
+        }
+    }
+}
+
+private struct LpspFlightyFlight: Identifiable, Equatable {
+    let id: String
+    let airline: String
+    let flightNo: String
+    let originCode: String
+    let destCode: String
+    let depTime: String
+    let arrTime: String
+    let depGate: String
+    let arrGate: String
+    let meta: String
+    let delayMinutes: Int
+    let progress: CGFloat
+    let originPoint: CGPoint
+    let destPoint: CGPoint
+}
+
+private enum LpspFlightyShowroomData {
+    static let activeFlight = LpspFlightyFlight(
+        id: "ua-482",
+        airline: "United",
+        flightNo: "UA 482",
+        originCode: "SFO",
+        destCode: "JFK",
+        depTime: "7:45 AM",
+        arrTime: "4:34 PM",
+        depGate: "Gate B24 · Term 2",
+        arrGate: "Gate 7 · Term 4",
+        meta: "5h 42m · 2,586 mi · Nonstop · 62% complete",
+        delayMinutes: 22,
+        progress: 0.62,
+        originPoint: CGPoint(x: 0.16, y: 0.64),
+        destPoint: CGPoint(x: 0.82, y: 0.38)
+    )
+
+    static let airportName = "San Francisco International"
+    static let airportCode = "SFO"
+    static let onTimePercent = 94
+}
+
+@MainActor
+fileprivate final class LpspFlightyStore: ObservableObject {
+    @Published var selectedTab: LpspFlightyShowroomTab = .flights
+    @Published var flight: LpspFlightyFlight = LpspFlightyShowroomData.activeFlight
+    @Published var searchQuery = ""
+    @Published var searchResultMessage = ""
+    @Published var lastActionMessage = ""
+
+    func searchFlight() {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        if query.isEmpty {
+            searchResultMessage = "Enter a flight number"
+            return
+        }
+        if query.uppercased().contains("482") || query.uppercased().contains("UA") {
+            searchResultMessage = "Found \(flight.airline) · \(flight.flightNo)"
+            selectedTab = .flights
+        } else {
+            searchResultMessage = "No flight found for \"\(query)\""
+        }
+        lastActionMessage = searchResultMessage
+    }
+
+    func refreshFlight() {
+        lastActionMessage = "Updated \(flight.flightNo)"
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspFlightyShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspFlightySpectrHomeTabScreen()
-                .tabItem { Label("Flights", systemImage: "airplane") }
-                .tag(0)
-            LpspFlightyTravelTabScreen(title: "Search", tabIndex: 1)
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspFlightyTravelTabScreen(title: "Airport", tabIndex: 2)
-                .tabItem { Label("Airport", systemImage: "building.2.fill") }
-                .tag(2)
-            LpspFlightyTravelTabScreen(title: "Profile", tabIndex: 3)
-                .tabItem { Label("Profile", systemImage: "person.fill") }
-                .tag(3)
-        }
-        .tint(LpspFlightyTokens.fltTextPrimary)
-        
-    }
-}
+    @ObservedObject var store: LpspFlightyStore
 
-
-private struct LpspFlightyGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspFlightyTokens.fltTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspFlightyTokens.fltTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .flights:
+                    LpspFlightySpectrHomeTabScreen(store: store)
+                case .search:
+                    LpspFlightySearchTabScreen(store: store)
+                case .airport:
+                    LpspFlightyAirportTabScreen(store: store)
+                case .profile:
+                    LpspFlightyProfileTabScreen()
                 }
             }
-            .navigationTitle(title)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspFlightyLabeledTabBar(store: store)
         }
+        .background(LpspFlightyTokens.fltCanvas.ignoresSafeArea())
+        .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspFlightyLabeledTabBar: View {
+    @ObservedObject var store: LpspFlightyStore
 
-private struct LpspFlightyTravelExploreTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ForEach(0..<6, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LpspFlightyTokens.fltTextPrimary.opacity(0.1 + Double(i) * 0.05))
-                            .frame(height: 180)
-                            .overlay(alignment: .bottomLeading) {
-                                Text("Logement \(i + 1)").font(.headline).padding(8)
-                            }
+        HStack {
+            ForEach(LpspFlightyShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspFlightyFonts.fltTab.weight(store.selectedTab == tab ? .bold : .semibold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspFlightyTokens.fltBlue
+                            : LpspFlightyTokens.fltTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
                 }
-                .padding()
+                .buttonStyle(.plain)
             }
-            .background(LpspFlightyTokens.fltCanvas.ignoresSafeArea())
-            .navigationTitle("Explore")
         }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspFlightyTokens.fltCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspFlightyTokens.fltDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
     }
 }
 
-private struct LpspFlightyTravelTripsTabScreen: View {
+private struct LpspFlightyShowroomMapView: View {
+    let flight: LpspFlightyFlight
+
     var body: some View {
-        NavigationStack {
-            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
-                Label(trip, systemImage: "airplane")
+        GeometryReader { geo in
+            ZStack {
+                LpspFlightyTokens.fltMapLand
+
+                RoundedRectangle(cornerRadius: 40)
+                    .fill(LpspFlightyTokens.fltMapGraticule)
+                    .frame(width: geo.size.width * 0.56, height: geo.size.height * 0.28)
+                    .offset(x: -geo.size.width * 0.12, y: geo.size.height * 0.08)
+
+                RoundedRectangle(cornerRadius: 30)
+                    .fill(LpspFlightyTokens.fltSurface2)
+                    .frame(width: geo.size.width * 0.44, height: geo.size.height * 0.22)
+                    .offset(x: geo.size.width * 0.18, y: -geo.size.height * 0.06)
+
+                LinearGradient(
+                    colors: [Color.clear, LpspFlightyTokens.fltCanvas.opacity(0.35)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+
+                LpspFlightyLiveFlightMap(
+                    origin: flight.originPoint,
+                    destination: flight.destPoint,
+                    livePosition: flight.progress
+                )
+
+                LpspFlightyMapPinLabel(code: flight.originCode)
+                    .position(
+                        x: flight.originPoint.x * geo.size.width,
+                        y: flight.originPoint.y * geo.size.height
+                    )
+                LpspFlightyMapPinLabel(code: flight.destCode, isDestination: true)
+                    .position(
+                        x: flight.destPoint.x * geo.size.width,
+                        y: flight.destPoint.y * geo.size.height
+                    )
             }
-            .navigationTitle("Trips")
         }
     }
 }
 
-private struct LpspFlightyTravelInboxTabScreen: View {
+private struct LpspFlightyMapPinLabel: View {
+    let code: String
+    var isDestination: Bool = false
+
     var body: some View {
-        NavigationStack {
-            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
-                Label(msg, systemImage: "message")
+        VStack(spacing: 4) {
+            Circle()
+                .fill(isDestination ? LpspFlightyTokens.fltBlue : LpspFlightyTokens.fltOnTime)
+                .frame(width: 10, height: 10)
+                .overlay(
+                    Circle()
+                        .stroke(Color.white.opacity(0.8), lineWidth: 2)
+                )
+            Text(code)
+                .font(LpspFlightyFonts.fltStatus)
+                .foregroundStyle(LpspFlightyTokens.fltTextPrimary)
+        }
+    }
+}
+
+private struct LpspFlightyShowroomFlightSheet: View {
+    let flight: LpspFlightyFlight
+    let onRefresh: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Capsule()
+                .fill(LpspFlightyTokens.fltTextTertiary)
+                .frame(width: 36, height: 4)
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+
+            LpspFlightyFlightCard(
+                airline: flight.airline,
+                flightNo: flight.flightNo,
+                originCode: flight.originCode,
+                destCode: flight.destCode,
+                depTime: flight.depTime,
+                arrTime: flight.arrTime,
+                depGate: flight.depGate,
+                arrGate: flight.arrGate,
+                meta: flight.meta,
+                status: .delayed(flight.delayMinutes)
+            )
+            .padding(.horizontal, 16)
+            .padding(.bottom, 8)
+
+            Button(action: onRefresh) {
+                Text("Refresh")
+                    .font(LpspFlightyFonts.fltMeta.weight(.semibold))
+                    .foregroundStyle(LpspFlightyTokens.fltBlue)
             }
-            .navigationTitle("Inbox")
+            .buttonStyle(.plain)
+            .padding(.bottom, 12)
         }
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(LpspFlightyTokens.fltSurface1)
+                .ignoresSafeArea(edges: .bottom)
+        )
     }
 }
-
-private struct LpspFlightyTravelProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspFlightyTokens.fltTextPrimary.gradient).frame(width: 72, height: 72)
-                Text("lost.phone").font(.title2.bold())
-            }
-            .navigationTitle("Profile")
-        }
-    }
-}
-
-private struct LpspFlightyTravelWishlistsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
-            .navigationTitle("Wishlists")
-        }
-    }
-}
-
-private struct LpspFlightyTravelTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("wishlist") || low.contains("favori") { LpspFlightyTravelWishlistsTabScreen() }
-        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspFlightyTravelExploreTabScreen() }
-        else if low.contains("trip") || low.contains("voyage") { LpspFlightyTravelTripsTabScreen() }
-        else if low.contains("inbox") || low.contains("message") { LpspFlightyTravelInboxTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspFlightyTravelProfileTabScreen() }
-        else if tabIndex == 0 { LpspFlightyTravelExploreTabScreen() }
-        else { LpspFlightyTravelTripsTabScreen() }
-    }
-}
-
 
 private struct LpspFlightySpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspFlightyStore
+
     var body: some View {
         ZStack(alignment: .bottom) {
-        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
-        VStack(spacing: 0) {
-                Text("United · UA 482").font(.system(size: 17.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("DELAYED 22m").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("SFO").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("JFK").font(.system(size: 24.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("7:45 AM").font(.system(size: 32.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Gate B24 · Term 2").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("4:34 PM").font(.system(size: 32.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Gate 7 · Term 4").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("5h 42m · 2,586 mi · Nonstop · 62% complete").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .background(Color(red: 0.043, green: 0.043, blue: 0.059)).clipShape(RoundedRectangle(cornerRadius: 16))
+            LpspFlightyShowroomMapView(flight: store.flight)
+                .ignoresSafeArea()
+
+            LpspFlightyShowroomFlightSheet(flight: store.flight) {
+                store.refreshFlight()
+            }
         }
-        .background(Color(red: 0.043, green: 0.043, blue: 0.059).ignoresSafeArea())
-        .preferredColorScheme(.dark)
+    }
+}
+
+private struct LpspFlightySearchTabScreen: View {
+    @ObservedObject var store: LpspFlightyStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Search")
+                    .font(LpspFlightyFonts.fltSection)
+                    .foregroundStyle(LpspFlightyTokens.fltTextPrimary)
+                    .padding(.top, 8)
+
+                HStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspFlightyTokens.fltTextSecondary)
+                    TextField("Flight number", text: $store.searchQuery)
+                        .font(LpspFlightyFonts.fltBody)
+                        .foregroundStyle(LpspFlightyTokens.fltTextPrimary)
+                        .textInputAutocapitalization(.characters)
+                }
+                .padding(.horizontal, 14)
+                .frame(height: 48)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(LpspFlightyTokens.fltSurface2)
+                )
+
+                LpspFlightyFltPrimaryButton(title: "Search flights") {
+                    store.searchFlight()
+                }
+
+                if !store.searchResultMessage.isEmpty {
+                    Text(store.searchResultMessage)
+                        .font(LpspFlightyFonts.fltMeta)
+                        .foregroundStyle(LpspFlightyTokens.fltTextSecondary)
+                }
+
+                Text("Try UA 482")
+                    .font(LpspFlightyFonts.fltMeta)
+                    .foregroundStyle(LpspFlightyTokens.fltTextTertiary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspFlightyAirportTabScreen: View {
+    @ObservedObject var store: LpspFlightyStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Airport")
+                    .font(LpspFlightyFonts.fltSection)
+                    .foregroundStyle(LpspFlightyTokens.fltTextPrimary)
+                    .padding(.top, 8)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(LpspFlightyShowroomData.airportCode)
+                        .font(LpspFlightyFonts.fltRouteCode)
+                        .foregroundStyle(LpspFlightyTokens.fltTextPrimary)
+                    Text(LpspFlightyShowroomData.airportName)
+                        .font(LpspFlightyFonts.fltBody)
+                        .foregroundStyle(LpspFlightyTokens.fltTextSecondary)
+
+                    Divider().overlay(LpspFlightyTokens.fltDivider)
+
+                    Text("Your departure")
+                        .font(LpspFlightyFonts.fltMeta.weight(.semibold))
+                        .foregroundStyle(LpspFlightyTokens.fltTextSecondary)
+                    Text(store.flight.depGate)
+                        .font(LpspFlightyFonts.fltGate)
+                        .foregroundStyle(LpspFlightyTokens.fltTextPrimary)
+                    Text(store.flight.depTime)
+                        .font(LpspFlightyFonts.fltTimeHero)
+                        .foregroundStyle(LpspFlightyTokens.fltTextPrimary)
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(LpspFlightyTokens.fltSurface1)
+                )
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspFlightyProfileTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
+                Text("Profile")
+                    .font(LpspFlightyFonts.fltSection)
+                    .foregroundStyle(LpspFlightyTokens.fltTextPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 8)
+
+                LpspFlightyOnTimeRing(percent: LpspFlightyShowroomData.onTimePercent)
+
+                Text("Your flights arrive on time \(LpspFlightyShowroomData.onTimePercent)% of the time")
+                    .font(LpspFlightyFonts.fltBody)
+                    .foregroundStyle(LpspFlightyTokens.fltTextSecondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
     }
 }
 

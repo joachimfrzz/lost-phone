@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeBookingView: View {
     var body: some View {
-        LpspBookingShowroomRoot()
+        LpspBookingShowroomRoot(store: LpspBookingStore())
     }
 }
 
@@ -63,9 +63,10 @@ fileprivate struct LpspBookingReviewScoreBadge: View {
 
     private var word: String {
         switch score {
-        case 9...:   "Fabulous"
-        case 8..<9:  "Very good"
-        case 7..<8:  "Good"
+        case 9...:   "Superb"
+        case 8..<9:  "Fabulous"
+        case 7..<8:  "Very good"
+        case 6..<7:  "Good"
         default:     "Pleasant"
         }
     }
@@ -262,184 +263,582 @@ fileprivate struct LpspBookingPricePin: View {
 
 
 
+// MARK: - Showroom data & store
+
+private enum LpspBookingShowroomTab: String, CaseIterable, Identifiable {
+    case search, saved, bookings, profile, help
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .search: "Search"
+        case .saved: "Saved"
+        case .bookings: "Bookings"
+        case .profile: "Profile"
+        case .help: "Help"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .search: "magnifyingglass"
+        case .saved: "heart.fill"
+        case .bookings: "suitcase.fill"
+        case .profile: "person.fill"
+        case .help: "questionmark.circle.fill"
+        }
+    }
+}
+
+private struct LpspBookingProperty: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let area: String
+    let distance: String
+    let policy: String
+    let score: Double
+    let reviews: Int
+    let originalPrice: String?
+    let price: String
+    let scarcity: String?
+    let photoColors: [Color]
+    var isSaved: Bool
+}
+
+private enum LpspBookingShowroomData {
+    static let destination = "Lisbon, Portugal"
+    static let shortDestination = "Lisbon"
+    static let dates = "Fri 12 Jul — Sun 14 Jul"
+    static let guests = "2 adults · 0 children · 1 room"
+    static let appBarSubtitle = "Fri 12 Jul — Sun 14 Jul · 2 adults"
+
+    static let properties: [LpspBookingProperty] = [
+        LpspBookingProperty(
+            id: "grand-plaza",
+            name: "Grand Plaza Hotel",
+            area: "City centre",
+            distance: "· 0.5 km from centre",
+            policy: "Free cancellation",
+            score: 8.9,
+            reviews: 1284,
+            originalPrice: "$240",
+            price: "$198",
+            scarcity: "Only 2 rooms left",
+            photoColors: [
+                Color(red: 0.22, green: 0.42, blue: 0.72),
+                Color(red: 0.12, green: 0.28, blue: 0.52),
+            ],
+            isSaved: false
+        ),
+        LpspBookingProperty(
+            id: "riverside",
+            name: "Riverside Boutique Inn",
+            area: "Alfama",
+            distance: "· 1.2 km from centre",
+            policy: "Breakfast included",
+            score: 9.2,
+            reviews: 642,
+            originalPrice: nil,
+            price: "$164",
+            scarcity: nil,
+            photoColors: [
+                Color(red: 0.82, green: 0.48, blue: 0.28),
+                Color(red: 0.52, green: 0.28, blue: 0.18),
+            ],
+            isSaved: false
+        ),
+    ]
+
+    static let filters = ["Popular filters", "Free cancellation", "Breakfast included", "Hotels"]
+}
+
+@MainActor
+fileprivate final class LpspBookingStore: ObservableObject {
+    @Published var selectedTab: LpspBookingShowroomTab = .search
+    @Published var properties: [LpspBookingProperty] = LpspBookingShowroomData.properties
+    @Published var selectedFilter = LpspBookingShowroomData.filters[0]
+    @Published var selectedPropertyID: String?
+    @Published var showReserveSheet = false
+    @Published var bookedPropertyIDs: [String] = []
+    @Published var lastActionMessage = ""
+
+    var savedProperties: [LpspBookingProperty] {
+        properties.filter(\.isSaved)
+    }
+
+    func search() {
+        lastActionMessage = "Showing stays in \(LpspBookingShowroomData.shortDestination)"
+        selectedTab = .search
+    }
+
+    func setFilter(_ filter: String) {
+        selectedFilter = filter
+    }
+
+    func toggleSave(_ propertyID: String) {
+        guard let index = properties.firstIndex(where: { $0.id == propertyID }) else { return }
+        properties[index].isSaved.toggle()
+        lastActionMessage = properties[index].isSaved ? "Saved \(properties[index].name)" : "Removed save"
+    }
+
+    func selectProperty(_ property: LpspBookingProperty) {
+        selectedPropertyID = property.id
+        showReserveSheet = true
+    }
+
+    func reserveSelectedProperty() {
+        guard let id = selectedPropertyID,
+              let property = properties.first(where: { $0.id == id }) else { return }
+        if !bookedPropertyIDs.contains(id) {
+            bookedPropertyIDs.append(id)
+        }
+        showReserveSheet = false
+        lastActionMessage = "Reserved \(property.name)"
+        selectedTab = .bookings
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspBookingShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspBookingSpectrHomeTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(0)
-            LpspBookingTravelTabScreen(title: "Saved", tabIndex: 1)
-                .tabItem { Label("Saved", systemImage: "heart") }
-                .tag(1)
-            LpspBookingTravelTabScreen(title: "Bookings", tabIndex: 2)
-                .tabItem { Label("Bookings", systemImage: "suitcase") }
-                .tag(2)
-            LpspBookingTravelTabScreen(title: "Profile", tabIndex: 3)
-                .tabItem { Label("Profile", systemImage: "person") }
-                .tag(3)
-            LpspBookingTravelTabScreen(title: "Help", tabIndex: 4)
-                .tabItem { Label("Help", systemImage: "questionmark.circle") }
-                .tag(4)
-        }
-        .tint(LpspBookingTokens.bkYellow)
-        
-    }
-}
+    @ObservedObject var store: LpspBookingStore
 
-
-private struct LpspBookingGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspBookingTokens.bkYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspBookingTokens.bkYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .search:
+                    LpspBookingSpectrHomeTabScreen(store: store)
+                case .saved:
+                    LpspBookingSavedTabScreen(store: store)
+                case .bookings:
+                    LpspBookingBookingsTabScreen(store: store)
+                case .profile:
+                    LpspBookingProfileTabScreen()
+                case .help:
+                    LpspBookingHelpTabScreen()
                 }
             }
-            .navigationTitle(title)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspBookingLabeledTabBar(store: store)
+        }
+        .background(LpspBookingTokens.bkCanvas.ignoresSafeArea())
+        .sheet(isPresented: $store.showReserveSheet) {
+            if let id = store.selectedPropertyID,
+               let property = store.properties.first(where: { $0.id == id }) {
+                LpspBookingReserveSheet(store: store, property: property)
+            }
         }
     }
 }
 
+private struct LpspBookingLabeledTabBar: View {
+    @ObservedObject var store: LpspBookingStore
 
-private struct LpspBookingTravelExploreTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ForEach(0..<6, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LpspBookingTokens.bkYellow.opacity(0.1 + Double(i) * 0.05))
-                            .frame(height: 180)
-                            .overlay(alignment: .bottomLeading) {
-                                Text("Logement \(i + 1)").font(.headline).padding(8)
-                            }
+        HStack {
+            ForEach(LpspBookingShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspBookingFonts.bkTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspBookingTokens.bkCTA
+                            : LpspBookingTokens.bkTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
                 }
-                .padding()
+                .buttonStyle(.plain)
             }
-            .background(LpspBookingTokens.bkCanvas.ignoresSafeArea())
-            .navigationTitle("Explore")
         }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspBookingTokens.bkCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspBookingTokens.bkDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
     }
 }
 
-private struct LpspBookingTravelTripsTabScreen: View {
+private struct LpspBookingSpectrAppBar: View {
     var body: some View {
-        NavigationStack {
-            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
-                Label(trip, systemImage: "airplane")
+        HStack(spacing: 12) {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(LpspBookingShowroomData.shortDestination)
+                    .font(LpspBookingFonts.bkScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                Text(LpspBookingShowroomData.appBarSubtitle)
+                    .font(LpspBookingFonts.bkCaption)
+                    .foregroundStyle(LpspBookingTokens.bkTextSecondary)
             }
-            .navigationTitle("Trips")
+
+            Spacer()
         }
+        .padding(.horizontal, 16)
+        .frame(height: 56)
+        .background(LpspBookingTokens.bkCanvas)
     }
 }
 
-private struct LpspBookingTravelInboxTabScreen: View {
+private struct LpspBookingShowroomSearchForm: View {
+    @ObservedObject var store: LpspBookingStore
+
     var body: some View {
-        NavigationStack {
-            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
-                Label(msg, systemImage: "message")
+        VStack(spacing: 0) {
+            LpspBookingSearchFormCard.LpspBookingFormRow(
+                system: "mappin.and.ellipse",
+                text: LpspBookingShowroomData.destination
+            )
+            Divider().overlay(LpspBookingTokens.bkDivider)
+            LpspBookingSearchFormCard.LpspBookingFormRow(
+                system: "calendar",
+                text: LpspBookingShowroomData.dates
+            )
+            Divider().overlay(LpspBookingTokens.bkDivider)
+            LpspBookingSearchFormCard.LpspBookingFormRow(
+                system: "person",
+                text: LpspBookingShowroomData.guests
+            )
+            LpspBookingBookingCTA(label: "Search") {
+                store.search()
             }
-            .navigationTitle("Inbox")
+            .padding(.top, 12)
         }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(LpspBookingTokens.bkCanvas)
+                .shadow(color: LpspBookingTokens.bkTextPrimary.opacity(0.08), radius: 6, y: 2)
+        )
     }
 }
 
-private struct LpspBookingTravelProfileTabScreen: View {
+private struct LpspBookingShowroomPropertyCard: View {
+    let property: LpspBookingProperty
+    let onTap: () -> Void
+    let onSave: () -> Void
+
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspBookingTokens.bkYellow.gradient).frame(width: 72, height: 72)
-                Text("lost.phone").font(.title2.bold())
+        Button(action: onTap) {
+            HStack(alignment: .top, spacing: 12) {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(
+                        LinearGradient(
+                            colors: property.photoColors,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 120, height: 120)
+                    .overlay(alignment: .topTrailing) {
+                        Button(action: onSave) {
+                            Image(systemName: property.isSaved ? "heart.fill" : "heart")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(property.isSaved ? LpspBookingTokens.bkDeal : .white)
+                                .padding(8)
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(property.name)
+                        .font(LpspBookingFonts.bkPropName.weight(.semibold))
+                        .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                        .lineLimit(2)
+                    HStack(spacing: 6) {
+                        Text(property.area)
+                            .font(LpspBookingFonts.bkMeta)
+                            .foregroundStyle(LpspBookingTokens.bkCTA)
+                        Text(property.distance)
+                            .font(LpspBookingFonts.bkMeta)
+                            .foregroundStyle(LpspBookingTokens.bkTextSecondary)
+                    }
+                    Text(property.policy)
+                        .font(LpspBookingFonts.bkMeta.weight(.semibold))
+                        .foregroundStyle(LpspBookingTokens.bkSuccess)
+                    LpspBookingReviewScoreBadge(score: property.score, reviews: property.reviews)
+
+                    Spacer(minLength: 4)
+
+                    VStack(alignment: .trailing, spacing: 1) {
+                        if let originalPrice = property.originalPrice {
+                            Text(originalPrice)
+                                .font(LpspBookingFonts.bkMeta)
+                                .strikethrough()
+                                .foregroundStyle(LpspBookingTokens.bkTextTertiary)
+                        }
+                        Text(property.price)
+                            .font(LpspBookingFonts.bkPrice.weight(.bold))
+                            .monospacedDigit()
+                            .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                        Text("Includes taxes and fees")
+                            .font(LpspBookingFonts.bkCaption)
+                            .foregroundStyle(LpspBookingTokens.bkTextSecondary)
+                        if let scarcity = property.scarcity {
+                            Text(scarcity)
+                                .font(LpspBookingFonts.bkTag.weight(.semibold))
+                                .foregroundStyle(LpspBookingTokens.bkDeal)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
             }
-            .navigationTitle("Profile")
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(LpspBookingTokens.bkCanvas)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(LpspBookingTokens.bkDivider, lineWidth: 1)
+                    )
+            )
         }
+        .buttonStyle(.plain)
     }
 }
-
-private struct LpspBookingTravelWishlistsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
-            .navigationTitle("Wishlists")
-        }
-    }
-}
-
-private struct LpspBookingTravelTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("wishlist") || low.contains("favori") { LpspBookingTravelWishlistsTabScreen() }
-        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspBookingTravelExploreTabScreen() }
-        else if low.contains("trip") || low.contains("voyage") { LpspBookingTravelTripsTabScreen() }
-        else if low.contains("inbox") || low.contains("message") { LpspBookingTravelInboxTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspBookingTravelProfileTabScreen() }
-        else if tabIndex == 0 { LpspBookingTravelExploreTabScreen() }
-        else { LpspBookingTravelTripsTabScreen() }
-    }
-}
-
 
 private struct LpspBookingSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspBookingStore
+
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-        VStack(spacing: 0) {
-            HStack {
-                    Text("Lisbon").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("Fri 12 Jul — Sun 14 Jul · 2 adults").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-            } .padding(.horizontal, 16).frame(height: 48)
-        }
-        ScrollView {
             VStack(spacing: 16) {
-                    Text("Lisbon, Portugal").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("Fri 12 Jul — Sun 14 Jul").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("2 adults · 0 children · 1 room").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                Text("Search").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("Genius").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("You're a Genius level 1 member").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                Text("10% off").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("Grand Plaza Hotel").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("City centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("· 0.5 km from centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("Free cancellation").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("8.9").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("Fabulous").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("· 1,284 reviews").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("$240").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("$198").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("Includes taxes and fees").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("Only 2 rooms left").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("Riverside Boutique Inn").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("Alfama").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("· 1.2 km from centre").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                    Text("Breakfast included").font(.system(size: 12.0, weight: .semibold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("9.2").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("Superb").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("· 642 reviews").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("$164").font(.system(size: 17.0, weight: .bold)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
-                        Text("Includes taxes and fees").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.102, green: 0.102, blue: 0.102))
+                LpspBookingSpectrAppBar()
+
+                LpspBookingShowroomSearchForm(store: store)
+                    .padding(.horizontal, 16)
+
+                LpspBookingGeniusBanner()
+                    .padding(.horizontal, 16)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(LpspBookingShowroomData.filters, id: \.self) { filter in
+                            LpspBookingFilterChip(
+                                label: filter,
+                                isSelected: store.selectedFilter == filter
+                            ) {
+                                store.setFilter(filter)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+
+                ForEach(filteredProperties) { property in
+                    LpspBookingShowroomPropertyCard(
+                        property: property,
+                        onTap: { store.selectProperty(property) },
+                        onSave: { store.toggleSave(property.id) }
+                    )
+                    .padding(.horizontal, 16)
+                }
             }
-            .padding(.vertical, 8)
+            .padding(.bottom, 16)
         }
-            }
+    }
+
+    private var filteredProperties: [LpspBookingProperty] {
+        switch store.selectedFilter {
+        case "Free cancellation":
+            return store.properties.filter { $0.policy == "Free cancellation" }
+        case "Breakfast included":
+            return store.properties.filter { $0.policy == "Breakfast included" }
+        default:
+            return store.properties
         }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
 
+private struct LpspBookingSavedTabScreen: View {
+    @ObservedObject var store: LpspBookingStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Saved")
+                    .font(LpspBookingFonts.bkScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                if store.savedProperties.isEmpty {
+                    Text("Save places you like by tapping the heart icon.")
+                        .font(LpspBookingFonts.bkBody)
+                        .foregroundStyle(LpspBookingTokens.bkTextSecondary)
+                        .padding(.horizontal, 16)
+                } else {
+                    ForEach(store.savedProperties) { property in
+                        LpspBookingShowroomPropertyCard(
+                            property: property,
+                            onTap: { store.selectProperty(property) },
+                            onSave: { store.toggleSave(property.id) }
+                        )
+                        .padding(.horizontal, 16)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspBookingBookingsTabScreen: View {
+    @ObservedObject var store: LpspBookingStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Bookings")
+                    .font(LpspBookingFonts.bkScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                if store.bookedPropertyIDs.isEmpty {
+                    Text("Your upcoming trips will appear here.")
+                        .font(LpspBookingFonts.bkBody)
+                        .foregroundStyle(LpspBookingTokens.bkTextSecondary)
+                        .padding(.horizontal, 16)
+                } else {
+                    ForEach(store.bookedPropertyIDs, id: \.self) { id in
+                        if let property = store.properties.first(where: { $0.id == id }) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(property.name)
+                                    .font(LpspBookingFonts.bkPropName.weight(.semibold))
+                                    .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                                Text("\(LpspBookingShowroomData.shortDestination) · \(LpspBookingShowroomData.dates)")
+                                    .font(LpspBookingFonts.bkMeta)
+                                    .foregroundStyle(LpspBookingTokens.bkTextSecondary)
+                                Text(property.price)
+                                    .font(LpspBookingFonts.bkPrice.weight(.bold))
+                                    .foregroundStyle(LpspBookingTokens.bkCTA)
+                            }
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(LpspBookingTokens.bkSurface)
+                            )
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspBookingProfileTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                Circle()
+                    .fill(LpspBookingTokens.bkBlue)
+                    .frame(width: 72, height: 72)
+                    .overlay(
+                        Text("G1")
+                            .font(LpspBookingFonts.bkSection.weight(.bold))
+                            .foregroundStyle(.white)
+                    )
+
+                Text("Genius Level 1")
+                    .font(LpspBookingFonts.bkScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+
+                Text("Enjoy 10% off select stays")
+                    .font(LpspBookingFonts.bkBody)
+                    .foregroundStyle(LpspBookingTokens.bkTextSecondary)
+            }
+            .padding(.vertical, 32)
+        }
+    }
+}
+
+private struct LpspBookingHelpTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Help")
+                    .font(LpspBookingFonts.bkScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                ForEach(["Manage booking", "Contact property", "Cancellation policy"], id: \.self) { item in
+                    HStack {
+                        Text(item)
+                            .font(LpspBookingFonts.bkBody)
+                            .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(LpspBookingTokens.bkTextTertiary)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspBookingReserveSheet: View {
+    @ObservedObject var store: LpspBookingStore
+    let property: LpspBookingProperty
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(property.name)
+                    .font(LpspBookingFonts.bkPropName.weight(.bold))
+                    .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+
+                Text("\(LpspBookingShowroomData.dates) · \(LpspBookingShowroomData.guests)")
+                    .font(LpspBookingFonts.bkMeta)
+                    .foregroundStyle(LpspBookingTokens.bkTextSecondary)
+
+                Text(property.price)
+                    .font(LpspBookingFonts.bkPrice.weight(.bold))
+                    .foregroundStyle(LpspBookingTokens.bkTextPrimary)
+
+                LpspBookingBookingCTA(label: "Reserve") {
+                    store.reserveSelectedProperty()
+                    dismiss()
+                }
+
+                Spacer()
+            }
+            .padding(16)
+            .background(LpspBookingTokens.bkCanvas)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
 

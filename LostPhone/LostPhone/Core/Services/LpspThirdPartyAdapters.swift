@@ -33,6 +33,27 @@ extension LpspAdapters {
         .sorted { ($0.date ?? .distantPast) > ($1.date ?? .distantPast) }
     }
 
+    static func uberAccount(from payload: AnyCodable?) -> LpspUberAccount? {
+        guard let root = contentObject(payload),
+              let account = root["compte"]?.objectValue else { return nil }
+        let places = (account["adresses_enregistrees"]?.arrayValue ?? []).enumerated().map { i, raw in
+            let o = raw.objectValue ?? [:]
+            return LpspMapPlace(
+                id: "uber-place-\(i)",
+                label: o["label"]?.stringValue ?? "",
+                address: o["adresse"]?.stringValue ?? ""
+            )
+        }
+        return LpspUberAccount(
+            name: account["nom"]?.stringValue ?? "",
+            email: account["email"]?.stringValue ?? "",
+            phone: account["telephone"]?.stringValue ?? "",
+            passengerRating: account["note_passager"]?.doubleValue ?? 0,
+            paymentMethod: account["moyen_paiement"]?.stringValue ?? "",
+            savedPlaces: places
+        )
+    }
+
     // MARK: - Banque
 
     static func banque(from payload: AnyCodable?) -> LpspBankData? {
@@ -210,20 +231,79 @@ extension LpspAdapters {
         let root = payload?.objectValue ?? contentObject(payload)
         guard let root else { return nil }
         let profil = root["profil"]?.objectValue ?? [:]
+        let username = profil["pseudo"]?.stringValue ?? "compte"
         let posts = (root["feed"]?.arrayValue ?? []).enumerated().map { i, raw in
             let o = raw.objectValue ?? [:]
+            let dateRaw = o["date"]?.stringValue ?? ""
             return LpspInstagramPost(
                 id: "post-\(i)",
+                author: o["auteur"]?.stringValue ?? username,
                 caption: o["caption"]?.stringValue ?? "",
-                date: o["date"]?.stringValue ?? "",
+                date: dateRaw,
+                dateParsed: parseDay(dateRaw),
                 likes: o["likes"]?.intValue ?? 0
             )
         }
+        .sorted { ($0.dateParsed ?? .distantPast) > ($1.dateParsed ?? .distantPast) }
         return LpspInstagramProfile(
-            username: profil["pseudo"]?.stringValue ?? "compte",
+            username: username,
             bio: profil["bio"]?.stringValue ?? "",
             posts: posts
         )
+    }
+
+    static func instagramDM(from payload: AnyCodable?) -> [LpspConversation] {
+        let root = payload?.objectValue ?? contentObject(payload)
+        guard let root,
+              let threads = root["dm_threads"]?.arrayValue else { return [] }
+        let owner = (root["profil"]?.objectValue?["pseudo"]?.stringValue ?? "mathieu").lowercased()
+        return threads.enumerated().compactMap { index, thread in
+            guard let object = thread.objectValue else { return nil }
+            let contact = object["contact_display_name"]?.stringValue
+                ?? object["contact"]?.stringValue
+                ?? "Inconnu"
+            let rawMessages = object["messages"]?.arrayValue ?? []
+            let messages = rawMessages.enumerated().map { messageIndex, raw in
+                parseInstagramMessage(raw, index: messageIndex, ownerUsername: owner)
+            }
+            let unread = isThreadUnread(rawMessages: rawMessages)
+            return LpspConversation(
+                id: "ig-dm-\(index)",
+                contactName: contact,
+                messages: messages,
+                isUnread: unread
+            )
+        }
+    }
+
+    private static func parseInstagramMessage(
+        _ raw: AnyCodable,
+        index: Int,
+        ownerUsername: String
+    ) -> LpspMessage {
+        let object = raw.objectValue ?? [:]
+        let sender = (object["de"] ?? object["expediteur"] ?? object["from"])?.stringValue ?? ""
+        let text = (object["texte"] ?? object["contenu"] ?? object["body"] ?? object["message"])?.stringValue ?? ""
+        let lower = sender.lowercased()
+        let isUser = lower == ownerUsername
+            || lower.contains("mathieu")
+            || ["moi", "me", "m"].contains(lower)
+        let iso = object["date"]?.stringValue
+        return LpspMessage(
+            id: object["id"]?.stringValue ?? "ig-msg-\(index)",
+            text: text,
+            isUser: isUser,
+            date: parseISO(iso),
+            dateRaw: iso
+        )
+    }
+
+    private static func parseDay(_ raw: String) -> Date? {
+        guard !raw.isEmpty else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter.date(from: raw)
     }
 
     // MARK: - Spotify
@@ -238,7 +318,9 @@ extension LpspAdapters {
                 return LpspSpotifyTrack(
                     id: "pl-\(pi)-\(ti)",
                     title: t["titre"]?.stringValue ?? "",
-                    artist: t["artiste"]?.stringValue ?? ""
+                    artist: t["artiste"]?.stringValue ?? "",
+                    playedAtRaw: nil,
+                    playedAt: nil
                 )
             }
             return LpspSpotifyPlaylist(
@@ -248,12 +330,16 @@ extension LpspAdapters {
                 tracks: tracks
             )
         }
-        let recent = (root["ecoutes_recentes"]?.arrayValue ?? []).enumerated().map { i, raw in
+        let recent = (root["historique_ecoute_recent"]?.arrayValue
+            ?? root["ecoutes_recentes"]?.arrayValue ?? []).enumerated().map { i, raw in
             let o = raw.objectValue ?? [:]
+            let dateRaw = o["date"]?.stringValue ?? o["date_ecoute"]?.stringValue
             return LpspSpotifyTrack(
                 id: "recent-\(i)",
                 title: o["titre"]?.stringValue ?? o["nom"]?.stringValue ?? "",
-                artist: o["artiste"]?.stringValue ?? ""
+                artist: o["artiste"]?.stringValue ?? "",
+                playedAtRaw: dateRaw,
+                playedAt: parseISO(dateRaw)
             )
         }
         return LpspSpotifyData(

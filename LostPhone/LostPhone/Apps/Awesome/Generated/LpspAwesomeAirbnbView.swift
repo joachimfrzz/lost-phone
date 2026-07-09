@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeAirbnbView: View {
     var body: some View {
-        LpspAirbnbShowroomRoot()
+        LpspAirbnbShowroomRoot(store: LpspAirbnbStore())
     }
 }
 
@@ -341,171 +341,643 @@ fileprivate struct LpspAirbnbMapPriceBubble: View {
 
 
 
+// MARK: - Showroom data & store
+
+private enum LpspAirbnbShowroomTab: String, CaseIterable, Identifiable {
+    case explore, wishlists, trips, inbox, profile
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .explore: "Explore"
+        case .wishlists: "Wishlists"
+        case .trips: "Trips"
+        case .inbox: "Inbox"
+        case .profile: "Profile"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .explore: "magnifyingglass"
+        case .wishlists: "heart.fill"
+        case .trips: "paperplane.fill"
+        case .inbox: "message.fill"
+        case .profile: "person.crop.circle.fill"
+        }
+    }
+}
+
+private struct LpspAirbnbStay: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let host: String
+    let dates: String
+    let pricePerNight: Int
+    let totalPrice: Int
+    let rating: Double
+    let reviewCount: Int
+    let photoCount: Int
+    let categories: [String]
+    let photoColors: [Color]
+    var isSaved: Bool
+}
+
+private enum LpspAirbnbShowroomData {
+    static let searchTop = "Where to?"
+    static let searchSub = "Anywhere · Any week · Add guests"
+
+    static let categories: [(icon: String, label: String)] = [
+        ("house.fill", "Cabins"),
+        ("mountain.2.fill", "Amazing views"),
+        ("leaf.fill", "Tropical"),
+        ("water.waves", "Beachfront"),
+        ("paintpalette.fill", "Design"),
+        ("building.columns.fill", "Mansions"),
+    ]
+
+    static let stays: [LpspAirbnbStay] = [
+        LpspAirbnbStay(
+            id: "reykjavik",
+            title: "Private room in Reykjavík",
+            host: "Hosted by Sigrún · Superhost",
+            dates: "Oct 12 – 17",
+            pricePerNight: 214,
+            totalPrice: 1070,
+            rating: 4.92,
+            reviewCount: 324,
+            photoCount: 5,
+            categories: ["Cabins"],
+            photoColors: [
+                Color(red: 0.42, green: 0.62, blue: 0.82),
+                Color(red: 0.28, green: 0.48, blue: 0.72),
+            ],
+            isSaved: true
+        ),
+        LpspAirbnbStay(
+            id: "joshua-tree",
+            title: "Dome in Joshua Tree",
+            host: "Hosted by Marion · 3 yrs hosting",
+            dates: "Nov 3 – 8",
+            pricePerNight: 326,
+            totalPrice: 1630,
+            rating: 4.87,
+            reviewCount: 1284,
+            photoCount: 4,
+            categories: ["Amazing views", "Design"],
+            photoColors: [
+                Color(red: 0.82, green: 0.58, blue: 0.32),
+                Color(red: 0.52, green: 0.32, blue: 0.18),
+            ],
+            isSaved: false
+        ),
+    ]
+
+    static let inboxMessages = [
+        ("Sigrún", "Your check-in details for Reykjavík"),
+        ("Airbnb", "Reminder: review your stay"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspAirbnbStore: ObservableObject {
+    @Published var selectedTab: LpspAirbnbShowroomTab = .explore
+    @Published var selectedCategoryIndex = 0
+    @Published var stays: [LpspAirbnbStay] = LpspAirbnbShowroomData.stays
+    @Published var selectedStayID: String?
+    @Published var showReserveSheet = false
+    @Published var bookedStayIDs: [String] = []
+    @Published var lastActionMessage = ""
+
+    var savedStays: [LpspAirbnbStay] {
+        stays.filter(\.isSaved)
+    }
+
+    func openSearch() {
+        lastActionMessage = "Search opened"
+        selectedTab = .explore
+    }
+
+    func openFilters() {
+        lastActionMessage = "Filters opened"
+    }
+
+    func selectCategory(_ index: Int) {
+        selectedCategoryIndex = index
+    }
+
+    func toggleSave(_ stayID: String) {
+        guard let index = stays.firstIndex(where: { $0.id == stayID }) else { return }
+        var updated = stays[index]
+        updated.isSaved.toggle()
+        stays[index] = updated
+        lastActionMessage = updated.isSaved ? "Saved \(updated.title)" : "Removed save"
+    }
+
+    func selectStay(_ stay: LpspAirbnbStay) {
+        selectedStayID = stay.id
+        showReserveSheet = true
+    }
+
+    func reserveSelectedStay() {
+        guard let id = selectedStayID,
+              let stay = stays.first(where: { $0.id == id }) else { return }
+        if !bookedStayIDs.contains(id) {
+            bookedStayIDs.append(id)
+        }
+        showReserveSheet = false
+        lastActionMessage = "Reserved \(stay.title)"
+        selectedTab = .trips
+    }
+
+    func filteredStays() -> [LpspAirbnbStay] {
+        let label = LpspAirbnbShowroomData.categories[selectedCategoryIndex].label
+        if label == "Cabins" { return stays }
+        return stays.filter { $0.categories.contains(label) }
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspAirbnbShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspAirbnbStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspAirbnbSpectrHomeTabScreen()
-                .tabItem { Label("Explore", systemImage: "magnifyingglass") }
-                .tag(0)
-            LpspAirbnbTravelTabScreen(title: "Wishlists", tabIndex: 1)
-                .tabItem { Label("Wishlists", systemImage: "heart") }
-                .tag(1)
-            LpspAirbnbTravelTabScreen(title: "Trips", tabIndex: 2)
-                .tabItem { Label("Trips", systemImage: "airplane") }
-                .tag(2)
-            LpspAirbnbTravelTabScreen(title: "Inbox", tabIndex: 3)
-                .tabItem { Label("Inbox", systemImage: "message") }
-                .tag(3)
-            LpspAirbnbTravelTabScreen(title: "Profile", tabIndex: 4)
-                .tabItem { Label("Profile", systemImage: "person.circle") }
-                .tag(4)
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .explore:
+                    LpspAirbnbSpectrHomeTabScreen(store: store)
+                case .wishlists:
+                    LpspAirbnbWishlistsTabScreen(store: store)
+                case .trips:
+                    LpspAirbnbTripsTabScreen(store: store)
+                case .inbox:
+                    LpspAirbnbInboxTabScreen()
+                case .profile:
+                    LpspAirbnbProfileTabScreen()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspAirbnbLabeledTabBar(store: store)
         }
-        .tint(LpspAirbnbTokens.airbnbCoral)
-        
+        .background(LpspAirbnbTokens.airbnbDarkCanvas.ignoresSafeArea())
+        .sheet(isPresented: $store.showReserveSheet) {
+            if let id = store.selectedStayID,
+               let stay = store.stays.first(where: { $0.id == id }) {
+                LpspAirbnbReserveSheet(store: store, stay: stay)
+            }
+        }
     }
 }
 
+private struct LpspAirbnbLabeledTabBar: View {
+    @ObservedObject var store: LpspAirbnbStore
 
-private struct LpspAirbnbGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspAirbnbTokens.airbnbCoral.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspAirbnbTokens.airbnbCoral))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        HStack {
+            ForEach(LpspAirbnbShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspAirbnbFonts.airbnbTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspAirbnbTokens.airbnbCoral
+                            : LpspAirbnbTokens.airbnbDarkTextSec
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspAirbnbTokens.airbnbDarkCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(Color(red: 0.173, green: 0.173, blue: 0.180))
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspAirbnbShowroomSearchPill: View {
+    @ObservedObject var store: LpspAirbnbStore
+
+    var body: some View {
+        Button {
+            store.openSearch()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(LpspAirbnbShowroomData.searchTop)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                    Text(LpspAirbnbShowroomData.searchSub)
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
+                }
+                Spacer()
+                Button {
+                    store.openFilters()
+                } label: {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                        .padding(10)
+                        .overlay(
+                            Circle()
+                                .stroke(Color(red: 0.173, green: 0.173, blue: 0.180), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 20)
+            .frame(height: 56)
+            .background(
+                Capsule()
+                    .fill(Color(red: 0.165, green: 0.165, blue: 0.165))
+                    .shadow(color: .black.opacity(0.25), radius: 12, y: 4)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspAirbnbShowroomCategoryBar: View {
+    @ObservedObject var store: LpspAirbnbStore
+    @Namespace private var underlineNS
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 32) {
+                ForEach(Array(LpspAirbnbShowroomData.categories.enumerated()), id: \.offset) { idx, cat in
+                    let isSelected = store.selectedCategoryIndex == idx
+                    VStack(spacing: 8) {
+                        Image(systemName: cat.icon)
+                            .font(.system(size: 24))
+                            .foregroundStyle(isSelected ? LpspAirbnbTokens.airbnbDarkText : LpspAirbnbTokens.airbnbDarkTextSec)
+                        Text(cat.label)
+                            .font(LpspAirbnbFonts.airbnbChip)
+                            .foregroundStyle(isSelected ? LpspAirbnbTokens.airbnbDarkText : LpspAirbnbTokens.airbnbDarkTextSec)
+                        if isSelected {
+                            Rectangle()
+                                .fill(LpspAirbnbTokens.airbnbDarkText)
+                                .frame(height: 2)
+                                .matchedGeometryEffect(id: "underline", in: underlineNS)
+                        } else {
+                            Rectangle()
+                                .fill(Color.clear)
+                                .frame(height: 2)
+                        }
+                    }
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+                            store.selectCategory(idx)
+                        }
                     }
                 }
             }
-            .navigationTitle(title)
+            .padding(.horizontal, 16)
+        }
+        .frame(height: 72)
+    }
+}
+
+private struct LpspAirbnbShowroomRatingRow: View {
+    let rating: Double
+    let reviewCount: Int
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "star.fill")
+                .font(.system(size: 12))
+                .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+            Text(String(format: "%.2f", rating))
+                .font(LpspAirbnbFonts.airbnbRatingNum)
+                .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+            Text(" · \(reviewCount.formatted())")
+                .font(LpspAirbnbFonts.airbnbMeta)
+                .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
         }
     }
 }
 
+private struct LpspAirbnbShowroomStayCard: View {
+    let stay: LpspAirbnbStay
+    let isSaved: Bool
+    let onTap: () -> Void
+    let onSave: () -> Void
+    @State private var currentPhoto = 0
 
-private struct LpspAirbnbTravelExploreTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ForEach(0..<6, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(LpspAirbnbTokens.airbnbCoral.opacity(0.1 + Double(i) * 0.05))
-                            .frame(height: 180)
-                            .overlay(alignment: .bottomLeading) {
-                                Text("Logement \(i + 1)").font(.headline).padding(8)
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack(alignment: .topTrailing) {
+                    LinearGradient(
+                        colors: stay.photoColors,
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .aspectRatio(4/3, contentMode: .fit)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(alignment: .bottom) {
+                        HStack(spacing: 5) {
+                            ForEach(0..<stay.photoCount, id: \.self) { idx in
+                                Circle()
+                                    .fill(idx == currentPhoto ? Color.white : Color.white.opacity(0.45))
+                                    .frame(width: 6, height: 6)
                             }
+                        }
+                        .padding(.bottom, 10)
                     }
+
+                    Button(action: onSave) {
+                        Image(systemName: isSaved ? "heart.fill" : "heart")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(isSaved ? LpspAirbnbTokens.airbnbCoral : .white)
+                            .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
+                            .frame(width: 32, height: 32)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(12)
                 }
-                .padding()
+
+                LpspAirbnbShowroomRatingRow(rating: stay.rating, reviewCount: stay.reviewCount)
+                    .padding(.top, 8)
+
+                Text(stay.title)
+                    .font(LpspAirbnbFonts.airbnbCardTitle)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                    .lineLimit(1)
+                    .padding(.top, 2)
+
+                Text(stay.host)
+                    .font(LpspAirbnbFonts.airbnbMeta)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
+                    .lineLimit(1)
+                    .padding(.top, 2)
+
+                Text(stay.dates)
+                    .font(LpspAirbnbFonts.airbnbMeta)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
+                    .padding(.top, 6)
+
+                HStack(spacing: 4) {
+                    Text("$\(stay.pricePerNight)")
+                        .font(LpspAirbnbFonts.airbnbPriceInline.weight(.semibold))
+                        .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                    Text("night")
+                        .font(LpspAirbnbFonts.airbnbPriceInline)
+                        .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                }
+                .padding(.top, 4)
             }
-            .background(LpspAirbnbTokens.airbnbCanvas.ignoresSafeArea())
-            .navigationTitle("Explore")
         }
+        .buttonStyle(.plain)
     }
 }
-
-private struct LpspAirbnbTravelTripsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Paris · 12–15 juil.", "Lisbonne · 3–7 août"], id: \.self) { trip in
-                Label(trip, systemImage: "airplane")
-            }
-            .navigationTitle("Trips")
-        }
-    }
-}
-
-private struct LpspAirbnbTravelInboxTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Message hôte · Paris", "Rappel check-in"], id: \.self) { msg in
-                Label(msg, systemImage: "message")
-            }
-            .navigationTitle("Inbox")
-        }
-    }
-}
-
-private struct LpspAirbnbTravelProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspAirbnbTokens.airbnbCoral.gradient).frame(width: 72, height: 72)
-                Text("lost.phone").font(.title2.bold())
-            }
-            .navigationTitle("Profile")
-        }
-    }
-}
-
-private struct LpspAirbnbTravelWishlistsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Paris loft", "Bretagne bord de mer"], id: \.self) { Label($0, systemImage: "heart") }
-            .navigationTitle("Wishlists")
-        }
-    }
-}
-
-private struct LpspAirbnbTravelTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("wishlist") || low.contains("favori") { LpspAirbnbTravelWishlistsTabScreen() }
-        else if low.contains("explor") || low.contains("search") || low.contains("recherch") { LpspAirbnbTravelExploreTabScreen() }
-        else if low.contains("trip") || low.contains("voyage") { LpspAirbnbTravelTripsTabScreen() }
-        else if low.contains("inbox") || low.contains("message") { LpspAirbnbTravelInboxTabScreen() }
-        else if low.contains("profil") || low.contains("profile") { LpspAirbnbTravelProfileTabScreen() }
-        else if tabIndex == 0 { LpspAirbnbTravelExploreTabScreen() }
-        else { LpspAirbnbTravelTripsTabScreen() }
-    }
-}
-
 
 private struct LpspAirbnbSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspAirbnbStore
+
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-        VStack(spacing: 0) {
-            HStack(spacing: 10) {
-                    Text("Where to?").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Anywhere · Any week · Add guests").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .padding(.horizontal, 14).padding(.vertical, 12).background(Color(red: 0.165, green: 0.165, blue: 0.165)).clipShape(RoundedRectangle(cornerRadius: 28))
-        } .padding(.horizontal, 16).padding(.top, 8)
-                Text("Cabins").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Amazing views").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Tropical").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Beachfront").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Design").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Mansions").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("4.92").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("· 324").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Private room in Reykjavík").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Hosted by Sigrún · Superhost").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Oct 12 – 17").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("$214").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("night").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("4.87").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("· 1,284").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Dome in Joshua Tree").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Hosted by Marion · 3 yrs hosting").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Nov 3 – 8").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("$326").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("night").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            VStack(spacing: 16) {
+                LpspAirbnbShowroomSearchPill(store: store)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                LpspAirbnbShowroomCategoryBar(store: store)
+
+                ForEach(store.filteredStays()) { stay in
+                    LpspAirbnbShowroomStayCard(
+                        stay: stay,
+                        isSaved: stay.isSaved,
+                        onTap: { store.selectStay(stay) },
+                        onSave: { store.toggleSave(stay.id) }
+                    )
+                    .padding(.horizontal, 16)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspAirbnbWishlistsTabScreen: View {
+    @ObservedObject var store: LpspAirbnbStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Wishlists")
+                    .font(LpspAirbnbFonts.airbnbSection.weight(.bold))
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                if store.savedStays.isEmpty {
+                    Text("Save places you like by tapping the heart icon.")
+                        .font(LpspAirbnbFonts.airbnbBody)
+                        .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
+                        .padding(.horizontal, 16)
+                } else {
+                    ForEach(store.savedStays) { stay in
+                        LpspAirbnbShowroomStayCard(
+                            stay: stay,
+                            isSaved: stay.isSaved,
+                            onTap: { store.selectStay(stay) },
+                            onSave: { store.toggleSave(stay.id) }
+                        )
+                        .padding(.horizontal, 16)
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspAirbnbTripsTabScreen: View {
+    @ObservedObject var store: LpspAirbnbStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Trips")
+                    .font(LpspAirbnbFonts.airbnbSection.weight(.bold))
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                if store.bookedStayIDs.isEmpty {
+                    Text("Your upcoming trips will appear here.")
+                        .font(LpspAirbnbFonts.airbnbBody)
+                        .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
+                        .padding(.horizontal, 16)
+                } else {
+                    ForEach(store.bookedStayIDs, id: \.self) { id in
+                        if let stay = store.stays.first(where: { $0.id == id }) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(stay.title)
+                                    .font(LpspAirbnbFonts.airbnbCardTitle.weight(.semibold))
+                                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                                Text(stay.dates)
+                                    .font(LpspAirbnbFonts.airbnbMeta)
+                                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
+                                Text("$\(stay.totalPrice) total")
+                                    .font(LpspAirbnbFonts.airbnbPriceInline.weight(.bold))
+                                    .foregroundStyle(LpspAirbnbTokens.airbnbCoral)
+                            }
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(LpspAirbnbTokens.airbnbDarkSurface)
+                            )
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspAirbnbInboxTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Inbox")
+                    .font(LpspAirbnbFonts.airbnbSection.weight(.bold))
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+
+                ForEach(LpspAirbnbShowroomData.inboxMessages, id: \.0) { sender, preview in
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(LpspAirbnbTokens.airbnbCoral.opacity(0.25))
+                            .frame(width: 44, height: 44)
+                            .overlay(
+                                Text(String(sender.prefix(1)))
+                                    .font(LpspAirbnbFonts.airbnbBody.weight(.semibold))
+                                    .foregroundStyle(LpspAirbnbTokens.airbnbCoral)
+                            )
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(sender)
+                                .font(LpspAirbnbFonts.airbnbBody.weight(.semibold))
+                                .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+                            Text(preview)
+                                .font(LpspAirbnbFonts.airbnbMeta)
+                                .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
+                                .lineLimit(1)
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspAirbnbProfileTabScreen: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 16) {
+                Circle()
+                    .fill(LpspAirbnbTokens.airbnbCoral.gradient)
+                    .frame(width: 72, height: 72)
+                    .overlay(
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 32))
+                            .foregroundStyle(.white)
+                    )
+
+                Text("Guest")
+                    .font(LpspAirbnbFonts.airbnbSection.weight(.bold))
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkText)
+
+                Text("Show profile")
+                    .font(LpspAirbnbFonts.airbnbBody)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbDarkTextSec)
+            }
+            .padding(.vertical, 32)
+        }
+    }
+}
+
+private struct LpspAirbnbReserveSheet: View {
+    @ObservedObject var store: LpspAirbnbStore
+    let stay: LpspAirbnbStay
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: stay.photoColors,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .aspectRatio(4/3, contentMode: .fit)
+
+                Text(stay.title)
+                    .font(LpspAirbnbFonts.airbnbCardTitle.weight(.bold))
+                    .foregroundStyle(LpspAirbnbTokens.airbnbInk)
+
+                Text(stay.host)
+                    .font(LpspAirbnbFonts.airbnbMeta)
+                    .foregroundStyle(LpspAirbnbTokens.airbnbFoggy)
+
+                LpspAirbnbRatingRow(rating: stay.rating, reviewCount: stay.reviewCount)
+
+                Spacer()
+
+                LpspAirbnbBookingFooter(
+                    totalPrice: stay.totalPrice,
+                    dateRange: stay.dates,
+                    onReserve: {
+                        store.reserveSelectedStay()
+                        dismiss()
+                    }
+                )
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .background(LpspAirbnbTokens.airbnbCanvas)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
             }
         }
-        .background(Color(red: 0.071, green: 0.071, blue: 0.071).ignoresSafeArea())
+        .presentationDetents([.large])
     }
 }
 

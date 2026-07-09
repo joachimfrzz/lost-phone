@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeShazamView: View {
     var body: some View {
-        LpspShazamShowroomRoot()
+        LpspShazamShowroomRoot(store: LpspShazamStore())
     }
 }
 
@@ -166,7 +166,7 @@ fileprivate struct LpspShazamShazamGlyph: Shape {
 }
 
 fileprivate struct LpspShazamShazamHome: View {
-    @State private var isListening = false
+    @ObservedObject var store: LpspShazamStore
 
     var body: some View {
         ZStack {
@@ -174,27 +174,45 @@ fileprivate struct LpspShazamShazamHome: View {
 
             VStack {
                 HStack {
-                    Image(systemName: "person.crop.circle").font(.system(size: 26))
+                    Button { store.showRecentSheet = true } label: {
+                        Image(systemName: "person.crop.circle").font(.system(size: 26))
+                    }
                     Spacer()
-                    Image(systemName: "music.note.list").font(.system(size: 26))
+                    Button { store.showRecentSheet = true } label: {
+                        Image(systemName: "music.note.list").font(.system(size: 26))
+                    }
                 }
                 .foregroundStyle(.white)
                 .padding(.horizontal, 20)
 
-                Spacer().frame(height: 40)
+                Spacer().frame(height: 24)
 
-                LpspShazamShazamButton(isListening: $isListening) {
-                    isListening.toggle()
+                if let match = store.matchedTrack {
+                    LpspShazamShazamResultCard(
+                        title: match.title,
+                        artist: match.artist,
+                        artwork: Image(systemName: "music.note")
+                    )
+                    .padding(.bottom, 16)
+                    .transition(.scale(scale: 0.9).combined(with: .opacity))
                 }
 
-                Text(isListening ? "Listening for music…" : "Tap to Shazam")
-                    .font(isListening ? LpspShazamFonts.shazamButton : LpspShazamFonts.shazamPrompt)
+                LpspShazamShazamButton(isListening: $store.isListening) {
+                    store.toggleListening()
+                }
+
+                Text(store.statusLabel)
+                    .font(store.isListening ? LpspShazamFonts.shazamButton : LpspShazamFonts.shazamPrompt)
                     .foregroundStyle(.white)
                     .padding(.top, 24)
 
                 Spacer()
             }
             .padding(.top, 8)
+            .animation(.spring(response: 0.35, dampingFraction: 0.82), value: store.matchedTrack?.title)
+        }
+        .sheet(isPresented: $store.showRecentSheet) {
+            LpspShazamRecentShazamsSheet(items: store.recentItems)
         }
     }
 }
@@ -295,113 +313,87 @@ fileprivate struct LpspShazamRecentShazamsSheet: View {
     }
 }
 
-fileprivate enum LpspShazamShazamState { case idle, listening, matched(track: String), noMatch }
+fileprivate enum LpspShazamShazamState { case idle, listening, matched, noMatch }
 
-@Observable fileprivate final class LpspShazamShazamModel {
-    var state: LpspShazamShazamState = .idle
-    func tap() {
+fileprivate struct LpspShazamTrack: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let artist: String
+    let timeAgo: String
+}
+
+@MainActor
+fileprivate final class LpspShazamStore: ObservableObject {
+    @Published var isListening = false
+    @Published var matchedTrack: LpspShazamTrack?
+    @Published var showRecentSheet = false
+    @Published var state: LpspShazamShazamState = .idle
+
+    let recentTracks: [LpspShazamTrack] = LpspShazamShowroomData.recentTracks
+    private var listenTask: Task<Void, Never>?
+
+    var statusLabel: String {
+        switch state {
+        case .listening: "Listening for music…"
+        case .matched: "Match found!"
+        case .noMatch: "No match — try again"
+        case .idle: matchedTrack == nil ? "Tap to Shazam" : "Tap to Shazam again"
+        }
+    }
+
+    var recentItems: [(title: String, artist: String, time: String, art: Image)] {
+        recentTracks.map { ($0.title, $0.artist, $0.timeAgo, Image(systemName: "music.note")) }
+    }
+
+    func toggleListening() {
+        if isListening {
+            stopListening()
+            return
+        }
+        matchedTrack = nil
+        isListening = true
         state = .listening
-        // start ShazamKit SHSession; on result:
-        // state = .matched(track:) → reveal card
-        // on failure: state = .noMatch → soft shake + error haptic
+
+        listenTask?.cancel()
+        listenTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_200_000_000)
+            guard !Task.isCancelled, isListening else { return }
+            isListening = false
+            matchedTrack = LpspShazamShowroomData.defaultMatch
+            state = .matched
+        }
+    }
+
+    func stopListening() {
+        listenTask?.cancel()
+        isListening = false
+        if matchedTrack == nil { state = .idle }
     }
 }
 
+private enum LpspShazamShowroomData {
+    static let defaultMatch = LpspShazamTrack(
+        id: "bad-habit",
+        title: "Bad Habit",
+        artist: "Steve Lacy",
+        timeAgo: "Just now"
+    )
 
+    static let recentTracks: [LpspShazamTrack] = [
+        defaultMatch,
+        .init(id: "as-it-was", title: "As It Was", artist: "Harry Styles", timeAgo: "Yesterday"),
+        .init(id: "midnight-city", title: "Midnight City", artist: "M83", timeAgo: "3 days ago"),
+        .init(id: "eventscult-after", title: "After Hours", artist: "The Weeknd", timeAgo: "EventsCult afterparty"),
+    ]
+}
 
 // MARK: - Écrans showroom
 
 private struct LpspShazamShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspShazamStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspShazamSpectrHomeTabScreen()
-                .tabItem { Label("Shazam", systemImage: "waveform.circle") }
-                .tag(0)
-        }
-        .tint(LpspShazamTokens.shazamErrorRed)
-        
+        LpspShazamShazamHome(store: store)
+            .preferredColorScheme(.dark)
     }
 }
-
-
-private struct LpspShazamGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspShazamTokens.shazamErrorRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspShazamTokens.shazamErrorRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-
-private struct LpspShazamShazamHomeTabScreen: View {
-    var body: some View { LpspShazamShazamHome() }
-}
-
-
-private struct LpspShazamShazamLibraryTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                LpspShazamShazamResultCard(title: "Blinding Lights", artist: "The Weeknd", artwork: Image(systemName: "music.note"))
-                    .padding()
-            }
-            .navigationTitle("Bibliothèque")
-        }
-    }
-}
-
-
-private struct LpspShazamShazamTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        if tabIndex == 0 || title.lowercased().contains("shazam") || title.lowercased().contains("accueil") { LpspShazamShazamHomeTabScreen() }
-        else { LpspShazamShazamLibraryTabScreen() }
-    }
-}
-
-
-private struct LpspShazamSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        Circle().fill(RadialGradient(colors: [Color(red: 0.000, green: 0.400, blue: 1.000).opacity(0.5), .clear], center: .center, startRadius: 20, endRadius: 180)).frame(width: 280, height: 280)
-        HStack(spacing: 12) {
-
-        } .padding(.horizontal, 16).frame(height: 44)
-            ZStack {
-                Circle().strokeBorder(.white.opacity(0.15), lineWidth: 3).frame(width: 200, height: 200)
-                Circle().strokeBorder(.white.opacity(0.15), lineWidth: 3).frame(width: 200, height: 200)
-                Circle().strokeBorder(.white.opacity(0.15), lineWidth: 3).frame(width: 200, height: 200)
-            }
-            Text("Listening for music…").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        VStack(spacing: 0) {
-            Text("Your Shazams").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Bad Habit").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Steve Lacy").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("2h ago").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("As It Was").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Harry Styles").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Yesterday").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .background(Color(red: 1.000, green: 1.000, blue: 1.000)).clipShape(RoundedRectangle(cornerRadius: 16))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
-    }
-}
-
-

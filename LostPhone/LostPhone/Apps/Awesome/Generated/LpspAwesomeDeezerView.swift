@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDeezerView: View {
     var body: some View {
-        LpspDeezerShowroomRoot()
+        LpspDeezerShowroomRoot(store: LpspDeezerStore())
     }
 }
 
@@ -313,147 +313,442 @@ fileprivate struct LpspDeezerDZTheme: ViewModifier {
 }
 fileprivate extension View { func dzTheme() -> some View { modifier(LpspDeezerDZTheme()) } }
 
+// MARK: - Showroom data & store
+
+private enum LpspDeezerShowroomTab: String, CaseIterable, Identifiable {
+    case home, search, music, profile
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .search: "Search"
+        case .music: "Music"
+        case .profile: "Profile"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .search: "magnifyingglass"
+        case .music: "music.note"
+        case .profile: "person.fill"
+        }
+    }
+}
+
+private struct LpspDeezerTrack: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let artist: String
+    let album: String
+}
+
+private enum LpspDeezerShowroomData {
+    static let flowTrack = LpspDeezerTrack(
+        id: "midnight-city",
+        title: "Midnight City",
+        artist: "M83",
+        album: "Hurry Up, We're Dreaming"
+    )
+
+    static let queue: [LpspDeezerTrack] = [
+        flowTrack,
+        LpspDeezerTrack(id: "wait", title: "Wait", artist: "M83", album: "Hurry Up, We're Dreaming"),
+        LpspDeezerTrack(id: "starlight", title: "Starlight", artist: "M83", album: "Saturday Night, Sunday Morning"),
+        LpspDeezerTrack(id: "outrun", title: "Outrun", artist: "Kavinsky", album: "OutRun"),
+    ]
+
+    static let searchSuggestions = ["Flow mixes", "Synthwave", "M83", "Chill electronic"]
+
+    static let playlists = ["Flow · Your Mix", "Chill Vibes", "Night Drive", "Discover Weekly"]
+}
+
+@MainActor
+fileprivate final class LpspDeezerStore: ObservableObject {
+    @Published var selectedTab: LpspDeezerShowroomTab = .home
+    @Published var currentTrack: LpspDeezerTrack = LpspDeezerShowroomData.flowTrack
+    @Published var tracks: [LpspDeezerTrack] = LpspDeezerShowroomData.queue
+    @Published var isPlaying = true
+    @Published var progress = 0.417
+    @Published var isLiked = false
+    @Published var searchQuery = ""
+    @Published var shuffleEnabled = false
+    @Published var repeatEnabled = false
+
+    var elapsedLabel: String { "1:48" }
+
+    var remainingLabel: String { "-2:31" }
+
+    func togglePlay() {
+        isPlaying.toggle()
+    }
+
+    func toggleLike() {
+        isLiked.toggle()
+    }
+
+    func seek(to value: Double) {
+        progress = min(1, max(0, value))
+    }
+
+    func toggleShuffle() {
+        shuffleEnabled.toggle()
+    }
+
+    func toggleRepeat() {
+        repeatEnabled.toggle()
+    }
+
+    func playTrack(_ track: LpspDeezerTrack) {
+        currentTrack = track
+        progress = 0.12
+        isPlaying = true
+        selectedTab = .home
+    }
+
+    func skipNext() {
+        guard let index = tracks.firstIndex(of: currentTrack) else { return }
+        currentTrack = tracks[(index + 1) % tracks.count]
+        progress = 0.12
+        isPlaying = true
+    }
+
+    func skipPrevious() {
+        guard let index = tracks.firstIndex(of: currentTrack) else { return }
+        currentTrack = tracks[(index - 1 + tracks.count) % tracks.count]
+        progress = 0.12
+        isPlaying = true
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspDeezerShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspDeezerStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspDeezerSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspDeezerMusicSearchTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspDeezerMusicHomeTabScreen()
-                .tabItem { Label("Music", systemImage: "music.note.list") }
-                .tag(2)
-            LpspDeezerMusicHomeTabScreen()
-                .tabItem { Label("Profile", systemImage: "person.fill") }
-                .tag(3)
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspDeezerFlowNowPlayingScreen(store: store)
+                case .search:
+                    LpspDeezerSearchTabScreen(store: store)
+                case .music:
+                    LpspDeezerMusicTabScreen(store: store)
+                case .profile:
+                    LpspDeezerProfileTabScreen()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspDeezerLabeledTabBar(store: store)
         }
-        .tint(LpspDeezerTokens.dzTextPrimary)
+        .background(LpspDeezerTokens.dzCanvas.ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspDeezerLabeledTabBar: View {
+    @ObservedObject var store: LpspDeezerStore
 
-private struct LpspDeezerGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspDeezerTokens.dzTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDeezerTokens.dzTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        HStack {
+            ForEach(LpspDeezerShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 22, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspDeezerFonts.dzTabLabel.weight(store.selectedTab == tab ? .semibold : .regular))
                     }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspDeezerTokens.dzTextPrimary
+                            : LpspDeezerTokens.dzTextTertiary
+                    )
+                    .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(.plain)
             }
-            .navigationTitle(title)
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspDeezerTokens.dzCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspDeezerTokens.dzDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspDeezerFlowNowPlayingScreen: View {
+    @ObservedObject var store: LpspDeezerStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspDeezerSpectrTopBar()
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+                    LpspDeezerFlowArtwork(isPlaying: store.isPlaying)
+                        .padding(.horizontal, 16)
+
+                    VStack(spacing: 16) {
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(store.currentTrack.title)
+                                    .font(.system(size: 24, weight: .semibold))
+                                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+
+                                Text("\(store.currentTrack.artist) · \(store.currentTrack.album)")
+                                    .font(LpspDeezerFonts.dzNowArtist)
+                                    .foregroundStyle(LpspDeezerTokens.dzTextSecondary)
+                                    .lineLimit(2)
+                            }
+
+                            Spacer(minLength: 12)
+
+                            Button {
+                                store.toggleLike()
+                            } label: {
+                                Image(systemName: store.isLiked ? "heart.fill" : "heart")
+                                    .font(.system(size: 24))
+                                    .foregroundStyle(
+                                        store.isLiked
+                                            ? LpspDeezerTokens.dzPink
+                                            : LpspDeezerTokens.dzTextSecondary
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                        }
+
+                        LpspDeezerGradientScrubber(
+                            progress: $store.progress,
+                            elapsed: store.elapsedLabel,
+                            remaining: store.remainingLabel
+                        )
+
+                        LpspDeezerShowroomTransportRow(store: store)
+                    }
+                    .padding(.horizontal, 16)
+                }
+                .padding(.bottom, 16)
+            }
         }
     }
 }
 
-
-private enum LpspDeezerDemoTracks {
-    struct Item: Identifiable {
-        let id = UUID()
-        let title: String
-        let artist: String
-        let isPlaying: Bool
-    }
-    static let items: [Item] = [
-        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
-        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
-        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
-    ]
-}
-private struct LpspDeezerMusicHomeTabScreen: View {
+private struct LpspDeezerSpectrTopBar: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Bonsoir").font(.system(size: 28, weight: .bold)).padding(.horizontal)
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        ForEach(0..<4, id: \.self) { i in
-                            RoundedRectangle(cornerRadius: 8).fill(LpspDeezerTokens.dzTextPrimary.opacity(0.15 + Double(i) * 0.05))
-                                .frame(height: 100)
+        HStack {
+            Image(systemName: "chevron.down")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+
+            Spacer()
+
+            VStack(spacing: 2) {
+                Text("Flow · Your Mix")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(LpspDeezerTokens.dzTextSecondary)
+                Text("Made for you")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+            }
+
+            Spacer()
+
+            Image(systemName: "ellipsis")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+}
+
+private struct LpspDeezerShowroomTransportRow: View {
+    @ObservedObject var store: LpspDeezerStore
+
+    var body: some View {
+        HStack {
+            Button(action: { store.toggleShuffle() }) {
+                Image(systemName: "shuffle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(
+                        store.shuffleEnabled
+                            ? LpspDeezerTokens.dzPink
+                            : LpspDeezerTokens.dzTextTertiary
+                    )
+            }
+            .frame(maxWidth: .infinity)
+
+            Button(action: { store.skipPrevious() }) {
+                Image(systemName: "backward.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+            }
+            .frame(maxWidth: .infinity)
+
+            LpspDeezerPlayButton(isPlaying: $store.isPlaying)
+                .frame(maxWidth: .infinity)
+
+            Button(action: { store.skipNext() }) {
+                Image(systemName: "forward.fill")
+                    .font(.system(size: 24))
+                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+            }
+            .frame(maxWidth: .infinity)
+
+            Button(action: { store.toggleRepeat() }) {
+                Image(systemName: "repeat")
+                    .font(.system(size: 20))
+                    .foregroundStyle(
+                        store.repeatEnabled
+                            ? LpspDeezerTokens.dzPink
+                            : LpspDeezerTokens.dzTextTertiary
+                    )
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+}
+
+private struct LpspDeezerSearchTabScreen: View {
+    @ObservedObject var store: LpspDeezerStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 10) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(LpspDeezerTokens.dzTextSecondary)
+                TextField("Artists, tracks, podcasts", text: $store.searchQuery)
+                    .font(LpspDeezerFonts.dzBody)
+                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+                    .tint(LpspDeezerTokens.dzPink)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(LpspDeezerTokens.dzSurface1)
+            )
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+
+            List {
+                Section("Browse") {
+                    ForEach(LpspDeezerShowroomData.searchSuggestions, id: \.self) { term in
+                        Button {
+                            store.searchQuery = term
+                        } label: {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundStyle(LpspDeezerTokens.dzTextTertiary)
+                                Text(term)
+                                    .font(LpspDeezerFonts.dzRowTitle)
+                                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+                            }
+                        }
+                        .listRowBackground(LpspDeezerTokens.dzSurface1)
+                    }
+                }
+            }
+            .scrollContentBackground(.hidden)
+        }
+    }
+}
+
+private struct LpspDeezerMusicTabScreen: View {
+    @ObservedObject var store: LpspDeezerStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Your music")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+                    .padding(.horizontal, 16)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(LpspDeezerShowroomData.playlists, id: \.self) { playlist in
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(LpspDeezerGradients.dzArtwork)
+                                .frame(width: 140, height: 140)
                                 .overlay(alignment: .bottomLeading) {
-                                    Text("Playlist \(i + 1)").font(.subheadline.bold()).padding(8)
+                                    Text(playlist)
+                                        .font(LpspDeezerFonts.dzChip.weight(.semibold))
+                                        .foregroundStyle(.white)
+                                        .padding(10)
                                 }
                         }
                     }
-                    .padding(.horizontal)
-                    Text("Récemment joué").font(.headline).padding(.horizontal)
+                    .padding(.horizontal, 16)
+                }
 
-                    ForEach(0..<4, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
-                            .frame(height: 56)
-                            .padding(.horizontal)
+                Text("Queue")
+                    .font(LpspDeezerFonts.dzSection.weight(.semibold))
+                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+                    .padding(.horizontal, 16)
+
+                VStack(spacing: 0) {
+                    ForEach(store.tracks) { track in
+                        Button {
+                            store.playTrack(track)
+                        } label: {
+                            LpspDeezerSongRow(
+                                title: track.title,
+                                artist: track.artist,
+                                isPlaying: store.currentTrack.id == track.id && store.isPlaying
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 16)
+                    }
+                }
+            }
+            .padding(.vertical, 16)
+        }
+    }
+}
+
+private struct LpspDeezerProfileTabScreen: View {
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                Circle()
+                    .fill(LpspDeezerGradients.dzFlow)
+                    .frame(width: 96, height: 96)
+                    .overlay {
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 40))
+                            .foregroundStyle(.white)
                     }
 
-                }
+                Text("Your Deezer")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(LpspDeezerTokens.dzTextPrimary)
+
+                Text("Free · Upgrade to Deezer Premium")
+                    .font(LpspDeezerFonts.dzMeta)
+                    .foregroundStyle(LpspDeezerTokens.dzTextSecondary)
+
+                LpspDeezerPrimaryButton(title: "Go Premium") {}
+                    .padding(.horizontal, 32)
             }
-            .background(LpspDeezerTokens.dzCanvas.ignoresSafeArea())
-            .navigationTitle("")
+            .padding(.vertical, 32)
         }
-    }
-}
-
-private struct LpspDeezerMusicSearchTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack {
-                HStack {
-                    Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                    Text("Artistes, titres ou podcasts").foregroundStyle(.secondary)
-                    Spacer()
-                }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 8).fill(Color(.systemGray6)))
-                .padding()
-                Spacer()
-            }
-            .navigationTitle("Rechercher")
-        }
-    }
-}
-
-private struct LpspDeezerMusicLibraryTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Titres likés", "Playlists", "Albums", "Artistes"], id: \.self) { item in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(LpspDeezerTokens.dzTextPrimary.opacity(0.2)).frame(width: 48, height: 48)
-                    Text(item).font(.body)
-                }
-            }
-            .navigationTitle("Bibliothèque")
-        }
-    }
-}
-
-
-
-private struct LpspDeezerSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-                    Text("Flow · Your Mix").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Made for you").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("FLOW").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("Midnight City").font(.system(size: 24.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("M83 · Hurry Up, We're Dreaming").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("1:48").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                        Text("-2:31").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        }
-        .background(Color(red: 0.059, green: 0.051, blue: 0.075).ignoresSafeArea())
-        .preferredColorScheme(.dark)
     }
 }
 

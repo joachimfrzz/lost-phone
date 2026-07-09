@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeSoundCloudView: View {
     var body: some View {
-        LpspSoundCloudShowroomRoot()
+        LpspSoundCloudShowroomRoot(store: LpspSoundCloudStore())
     }
 }
 
@@ -189,10 +189,10 @@ fileprivate struct LpspSoundCloudSCPill: View {
     }
 }
 
-fileprivate struct LpspSoundCloudSCTrackRow: View {
+fileprivate struct LpspSoundCloudSCTrackRow<Artwork: View>: View {
     let title: String
     let uploader: String
-    let artwork: Image
+    let artwork: Artwork
     let samples: [CGFloat]
     let progress: Double
     let isPlaying: Bool
@@ -200,7 +200,6 @@ fileprivate struct LpspSoundCloudSCTrackRow: View {
     var body: some View {
         HStack(spacing: 12) {
             artwork
-                .resizable().aspectRatio(1, contentMode: .fill)
                 .frame(width: 56, height: 56)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
 
@@ -271,170 +270,599 @@ fileprivate struct LpspSoundCloudSCNowPlaying: View {
 
 
 
+// MARK: - Showroom data & store
+
+private enum LpspSoundCloudShowroomTab: String, CaseIterable, Identifiable {
+    case home, search, library, upload, you
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .search: "Search"
+        case .library: "Library"
+        case .upload: "Upload"
+        case .you: "You"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .home: "house.fill"
+        case .search: "magnifyingglass"
+        case .library: "play.square.stack"
+        case .upload: "plus.circle.fill"
+        case .you: "person.crop.circle"
+        }
+    }
+}
+
+private struct LpspSoundCloudTrack: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let artist: String
+    let playlist: String
+}
+
+private enum LpspSoundCloudShowroomData {
+    static let waveformSamples: [CGFloat] = [
+        0.32, 0.48, 0.72, 0.55, 0.88, 0.64, 0.41, 0.76, 0.92, 0.58,
+        0.35, 0.67, 0.84, 0.52, 0.73, 0.46, 0.91, 0.62, 0.38, 0.79,
+        0.56, 0.83, 0.44, 0.70, 0.95, 0.51, 0.68, 0.37, 0.86, 0.59,
+        0.74, 0.42, 0.81, 0.53, 0.69, 0.90, 0.47, 0.77, 0.61, 0.34,
+    ]
+
+    static let tracks: [LpspSoundCloudTrack] = [
+        .init(id: "smoke", title: "Smoke & Static", artist: "novaa", playlist: "Late Night Uploads"),
+        .init(id: "midnight", title: "Midnight Echo", artist: "kellan", playlist: "Late Night Uploads"),
+        .init(id: "neon", title: "Neon Drift", artist: "pixelwave", playlist: "Indie Discoveries"),
+    ]
+
+    static let librarySections = ["Liked tracks", "Playlists", "Albums", "Artists"]
+
+    static func waveformComments() -> [LpspSoundCloudWaveformComment] {
+        [
+            .init(position: 0.34, avatar: Image(systemName: "person.circle.fill"), text: "fire at this part"),
+            .init(position: 0.71, avatar: Image(systemName: "person.circle.fill"), text: "vibes"),
+        ]
+    }
+}
+
+@MainActor
+fileprivate final class LpspSoundCloudStore: ObservableObject {
+    @Published var selectedTab: LpspSoundCloudShowroomTab = .home
+    @Published var currentTrackId: String
+    @Published var isPlaying = true
+    @Published var progress = 0.58
+    @Published var liked = true
+    @Published var likeCount = 1200
+    @Published var repostCount = 340
+    @Published var commentCount = 88
+    @Published var searchQuery = ""
+    @Published var selectedLibrarySection = "Liked tracks"
+    @Published var tracks = LpspSoundCloudShowroomData.tracks
+
+    init(currentTrackId: String = "smoke") {
+        self.currentTrackId = currentTrackId
+    }
+
+    var currentTrack: LpspSoundCloudTrack {
+        tracks.first { $0.id == currentTrackId } ?? LpspSoundCloudShowroomData.tracks[0]
+    }
+
+    var elapsedLabel: String { "2:08" }
+
+    var remainingLabel: String { "-1:24" }
+
+    var likeCountLabel: String {
+        likeCount >= 1000 ? String(format: "%.1fK", Double(likeCount) / 1000.0) : "\(likeCount)"
+    }
+
+    var filteredTracks: [LpspSoundCloudTrack] {
+        guard !searchQuery.isEmpty else { return tracks }
+        return tracks.filter {
+            $0.title.localizedCaseInsensitiveContains(searchQuery)
+                || $0.artist.localizedCaseInsensitiveContains(searchQuery)
+        }
+    }
+
+    func togglePlay() {
+        isPlaying.toggle()
+    }
+
+    func toggleLike() {
+        liked.toggle()
+        likeCount += liked ? 1 : -1
+    }
+
+    func seek(to value: Double) {
+        progress = min(1, max(0, value))
+    }
+
+    func playTrack(_ id: String) {
+        currentTrackId = id
+        progress = 0.12
+        isPlaying = true
+        selectedTab = .home
+    }
+
+    func skipNext() {
+        guard let index = tracks.firstIndex(where: { $0.id == currentTrackId }) else { return }
+        let next = tracks[(index + 1) % tracks.count]
+        playTrack(next.id)
+    }
+
+    func skipPrevious() {
+        guard let index = tracks.firstIndex(where: { $0.id == currentTrackId }) else { return }
+        let previous = tracks[(index - 1 + tracks.count) % tracks.count]
+        playTrack(previous.id)
+    }
+
+    func selectLibrarySection(_ section: String) {
+        selectedLibrarySection = section
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspSoundCloudShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspSoundCloudStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspSoundCloudSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspSoundCloudMusicSearchTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspSoundCloudMusicLibraryTabScreen()
-                .tabItem { Label("Library", systemImage: "play.square.stack") }
-                .tag(2)
-            LpspSoundCloudMusicHomeTabScreen()
-                .tabItem { Label("Upload", systemImage: "arrow.up.circle.fill") }
-                .tag(3)
-            LpspSoundCloudMusicHomeTabScreen()
-                .tabItem { Label("You", systemImage: "person.crop.circle") }
-                .tag(4)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspSoundCloudShowroomTab.allCases) { tab in
+                LpspSoundCloudShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
+                    }
+                    .tag(tab)
+            }
         }
-        .tint(LpspSoundCloudTokens.scErrorRed)
-        .preferredColorScheme(.dark)
+        .tint(LpspSoundCloudTokens.scOrange)
+        .preferredColorScheme(.light)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            LpspSoundCloudMiniPlayerBar(store: store)
+        }
     }
 }
 
+private struct LpspSoundCloudShowroomTabScreen: View {
+    @ObservedObject var store: LpspSoundCloudStore
+    let tab: LpspSoundCloudShowroomTab
 
-private struct LpspSoundCloudGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspSoundCloudTokens.scErrorRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspSoundCloudTokens.scErrorRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        Group {
+            switch tab {
+            case .home:
+                LpspSoundCloudHomeTabScreen(store: store)
+            case .search:
+                LpspSoundCloudSearchTabScreen(store: store)
+            case .library:
+                LpspSoundCloudLibraryTabScreen(store: store)
+            case .upload:
+                LpspSoundCloudUploadTabScreen()
+            case .you:
+                LpspSoundCloudYouTabScreen(store: store)
+            }
+        }
+    }
+}
+
+private struct LpspSoundCloudHomeTabScreen: View {
+    @ObservedObject var store: LpspSoundCloudStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspSoundCloudPlayerNavHeader(
+                playlistLabel: "Playing from Playlist",
+                playlistName: store.currentTrack.playlist
+            )
+
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 16) {
+                    LpspSoundCloudAlbumArtwork()
+                        .padding(.horizontal, 24)
+
+                    Text(store.currentTrack.title)
+                        .font(LpspSoundCloudFonts.scNowPlaying.weight(.semibold))
+                        .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+
+                    Text(store.currentTrack.artist)
+                        .font(LpspSoundCloudFonts.scSubtitle)
+                        .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+
+                    LpspSoundCloudWaveformScrubber(
+                        samples: LpspSoundCloudShowroomData.waveformSamples,
+                        progress: store.progress,
+                        comments: LpspSoundCloudShowroomData.waveformComments(),
+                        onSeek: { store.seek(to: $0) }
+                    )
+                    .padding(.horizontal, 16)
+
+                    HStack {
+                        Text(store.elapsedLabel)
+                        Spacer()
+                        Text(store.remainingLabel)
                     }
+                    .font(LpspSoundCloudFonts.scSubtitle)
+                    .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+                    .padding(.horizontal, 16)
+
+                    LpspSoundCloudTransportRow(store: store)
+                        .padding(.horizontal, 14)
+
+                    LpspSoundCloudActionBar(store: store)
+                        .padding(.horizontal, 14)
+                }
+                .padding(.vertical, 8)
+                .padding(.bottom, 8)
+            }
+        }
+        .background(LpspSoundCloudTokens.scCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspSoundCloudPlayerNavHeader: View {
+    let playlistLabel: String
+    let playlistName: String
+
+    var body: some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(playlistLabel)
+                    .font(LpspSoundCloudFonts.scLabelUpper.weight(.bold))
+                    .foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+                Text(playlistName)
+                    .font(LpspSoundCloudFonts.scMeta.weight(.bold))
+                    .foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+            }
+            Spacer()
+            Text("⌄")
+                .font(.system(size: 20))
+                .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+        }
+        .padding(.horizontal, 14)
+        .padding(.top, 8)
+        .padding(.bottom, 6)
+    }
+}
+
+private struct LpspSoundCloudAlbumArtwork: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: 8)
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.3, green: 0.2, blue: 0.5),
+                        Color(red: 0.1, green: 0.1, blue: 0.2),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .aspectRatio(1, contentMode: .fit)
+            .shadow(color: .black.opacity(0.18), radius: 32, y: 12)
+    }
+}
+
+private struct LpspSoundCloudTransportRow: View {
+    @ObservedObject var store: LpspSoundCloudStore
+
+    var body: some View {
+        HStack(spacing: 28) {
+            Image(systemName: "shuffle")
+                .foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+            Button { store.skipPrevious() } label: {
+                Image(systemName: "backward.end.fill")
+                    .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+            }
+            LpspSoundCloudSCPlayButton(isPlaying: store.isPlaying, size: 64) {
+                store.togglePlay()
+            }
+            Button { store.skipNext() } label: {
+                Image(systemName: "forward.end.fill")
+                    .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+            }
+            Image(systemName: "repeat")
+                .foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+        }
+        .font(.system(size: 22))
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspSoundCloudActionBar: View {
+    @ObservedObject var store: LpspSoundCloudStore
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Button { store.toggleLike() } label: {
+                LpspSoundCloudActionItem(
+                    systemImage: store.liked ? "heart.fill" : "heart",
+                    label: store.likeCountLabel,
+                    highlighted: store.liked
+                )
+            }
+
+            LpspSoundCloudActionItem(systemImage: "arrow.2.squarepath", label: "\(store.repostCount)")
+            LpspSoundCloudActionItem(systemImage: "bubble.left", label: "\(store.commentCount)")
+            LpspSoundCloudActionItem(systemImage: "square.and.arrow.up", label: nil)
+            LpspSoundCloudActionItem(systemImage: "ellipsis", label: nil)
+        }
+        .frame(height: 44)
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspSoundCloudActionItem: View {
+    let systemImage: String
+    let label: String?
+    var highlighted = false
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Image(systemName: systemImage)
+                .font(.system(size: 18, weight: .semibold))
+            if let label {
+                Text(label)
+                    .font(LpspSoundCloudFonts.scMeta)
+            }
+        }
+        .foregroundStyle(highlighted ? LpspSoundCloudTokens.scOrange : LpspSoundCloudTokens.scTextPrimary)
+        .frame(maxWidth: .infinity)
+    }
+}
+
+private struct LpspSoundCloudMiniPlayerBar: View {
+    @ObservedObject var store: LpspSoundCloudStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Rectangle()
+                        .fill(LpspSoundCloudTokens.scDivider)
+                    Rectangle()
+                        .fill(LpspSoundCloudTokens.scOrange)
+                        .frame(width: geo.size.width * store.progress)
                 }
             }
-            .navigationTitle(title)
+            .frame(height: 2)
+
+            HStack(spacing: 12) {
+                LpspSoundCloudAlbumArtwork()
+                    .frame(width: 40, height: 40)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(store.currentTrack.title)
+                        .font(LpspSoundCloudFonts.scCardTitle.weight(.semibold))
+                        .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+                        .lineLimit(1)
+                    Text(store.currentTrack.artist)
+                        .font(LpspSoundCloudFonts.scTimestamp)
+                        .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                Button { store.togglePlay() } label: {
+                    Image(systemName: store.isPlaying ? "pause.fill" : "play.fill")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+                        .frame(width: 36, height: 36)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(LpspSoundCloudTokens.scCanvas)
         }
     }
 }
 
+private struct LpspSoundCloudSearchTabScreen: View {
+    @ObservedObject var store: LpspSoundCloudStore
 
-private enum LpspSoundCloudDemoTracks {
-    struct Item: Identifiable {
-        let id = UUID()
-        let title: String
-        let artist: String
-        let isPlaying: Bool
-    }
-    static let items: [Item] = [
-        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
-        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
-        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
-    ]
-}
-private struct LpspSoundCloudMusicHomeTabScreen: View {
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Bonsoir").font(.system(size: 28, weight: .bold)).padding(.horizontal)
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        ForEach(0..<4, id: \.self) { i in
-                            RoundedRectangle(cornerRadius: 8).fill(LpspSoundCloudTokens.scErrorRed.opacity(0.15 + Double(i) * 0.05))
-                                .frame(height: 100)
-                                .overlay(alignment: .bottomLeading) {
-                                    Text("Playlist \(i + 1)").font(.subheadline.bold()).padding(8)
-                                }
+            VStack(spacing: 0) {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+                    TextField("Artists, tracks, or podcasts", text: $store.searchQuery)
+                        .font(LpspSoundCloudFonts.scBody)
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(LpspSoundCloudTokens.scSurface)
+                )
+                .padding(16)
+
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(store.filteredTracks) { track in
+                            Button {
+                                store.playTrack(track.id)
+                            } label: {
+                                LpspSoundCloudSCTrackRow(
+                                    title: track.title,
+                                    uploader: track.artist,
+                                    artwork: LpspSoundCloudTrackArtwork(),
+                                    samples: LpspSoundCloudShowroomData.waveformSamples,
+                                    progress: store.currentTrackId == track.id ? store.progress : 0,
+                                    isPlaying: store.currentTrackId == track.id && store.isPlaying
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
-                    .padding(.horizontal)
-                    Text("Récemment joué").font(.headline).padding(.horizontal)
-
-                    ForEach(LpspSoundCloudDemoTracks.items) { track in
-                        LpspSoundCloudSCTrackRow(
-                            title: track.title,
-                            uploader: track.artist,
-                            artwork: Image(systemName: "music.note"),
-                            samples: [0.2, 0.5, 0.8, 0.4, 0.6],
-                            progress: track.isPlaying ? 0.42 : 0,
-                            isPlaying: track.isPlaying
-                        )
-                    }
-
                 }
             }
             .background(LpspSoundCloudTokens.scCanvas.ignoresSafeArea())
-            .navigationTitle("")
+            .navigationTitle("Search")
         }
     }
 }
 
-private struct LpspSoundCloudMusicSearchTabScreen: View {
+private struct LpspSoundCloudLibraryTabScreen: View {
+    @ObservedObject var store: LpspSoundCloudStore
+
     var body: some View {
         NavigationStack {
-            VStack {
-                HStack {
-                    Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                    Text("Artistes, titres ou podcasts").foregroundStyle(.secondary)
-                    Spacer()
+            List {
+                Section {
+                    ForEach(LpspSoundCloudShowroomData.librarySections, id: \.self) { section in
+                        Button {
+                            store.selectLibrarySection(section)
+                        } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(LpspSoundCloudTokens.scOrange.opacity(0.2))
+                                    .frame(width: 48, height: 48)
+                                    .overlay {
+                                        Image(systemName: "music.note")
+                                            .foregroundStyle(LpspSoundCloudTokens.scOrange)
+                                    }
+                                Text(section)
+                                    .font(LpspSoundCloudFonts.scBody)
+                                    .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+                                Spacer()
+                                if store.selectedLibrarySection == section {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(LpspSoundCloudTokens.scOrange)
+                                }
+                            }
+                        }
+                    }
                 }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 8).fill(Color(.systemGray6)))
-                .padding()
+
+                Section(store.selectedLibrarySection) {
+                    ForEach(store.tracks) { track in
+                        Button {
+                            store.playTrack(track.id)
+                        } label: {
+                            LpspSoundCloudSCTrackRow(
+                                title: track.title,
+                                uploader: track.artist,
+                                artwork: LpspSoundCloudTrackArtwork(),
+                                samples: LpspSoundCloudShowroomData.waveformSamples,
+                                progress: store.currentTrackId == track.id ? store.progress : 0,
+                                isPlaying: store.currentTrackId == track.id && store.isPlaying
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .listRowInsets(EdgeInsets())
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Library")
+        }
+    }
+}
+
+private struct LpspSoundCloudUploadTabScreen: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 24) {
+                Spacer()
+                Image(systemName: "arrow.up.circle.fill")
+                    .font(.system(size: 64))
+                    .foregroundStyle(LpspSoundCloudTokens.scOrange)
+                Text("Share your sound")
+                    .font(LpspSoundCloudFonts.scSection.weight(.semibold))
+                    .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+                Text("Upload tracks, set visibility, and reach listeners worldwide.")
+                    .font(LpspSoundCloudFonts.scBody)
+                    .foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+                LpspSoundCloudSCPill(title: "Choose file", style: .filled) {}
+                    .padding(.horizontal, 24)
                 Spacer()
             }
-            .navigationTitle("Rechercher")
+            .background(LpspSoundCloudTokens.scCanvas.ignoresSafeArea())
+            .navigationTitle("Upload")
         }
     }
 }
 
-private struct LpspSoundCloudMusicLibraryTabScreen: View {
+private struct LpspSoundCloudYouTabScreen: View {
+    @ObservedObject var store: LpspSoundCloudStore
+
     var body: some View {
         NavigationStack {
-            List(["Titres likés", "Playlists", "Albums", "Artistes"], id: \.self) { item in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(LpspSoundCloudTokens.scErrorRed.opacity(0.2)).frame(width: 48, height: 48)
-                    Text(item).font(.body)
+            ScrollView {
+                VStack(spacing: 20) {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [LpspSoundCloudTokens.scOrange, LpspSoundCloudTokens.scOrangeLight],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 84, height: 84)
+                        .overlay {
+                            Text("A")
+                                .font(.title.weight(.bold))
+                                .foregroundStyle(.white)
+                        }
+
+                    Text("Alex Mercer")
+                        .font(LpspSoundCloudFonts.scProfileName.weight(.semibold))
+                        .foregroundStyle(LpspSoundCloudTokens.scTextPrimary)
+
+                    Text("128 followers · 42 tracks")
+                        .font(LpspSoundCloudFonts.scMeta)
+                        .foregroundStyle(LpspSoundCloudTokens.scTextSecondary)
+
+                    LpspSoundCloudSCPill(title: "Edit profile", style: .outline) {}
+                        .padding(.horizontal, 24)
+
+                    VStack(spacing: 0) {
+                        ForEach(store.tracks) { track in
+                            Button {
+                                store.playTrack(track.id)
+                            } label: {
+                                LpspSoundCloudSCTrackRow(
+                                    title: track.title,
+                                    uploader: track.artist,
+                                    artwork: LpspSoundCloudTrackArtwork(),
+                                    samples: LpspSoundCloudShowroomData.waveformSamples,
+                                    progress: store.currentTrackId == track.id ? store.progress : 0,
+                                    isPlaying: store.currentTrackId == track.id && store.isPlaying
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
                 }
+                .padding(.vertical, 24)
             }
-            .navigationTitle("Bibliothèque")
+            .background(LpspSoundCloudTokens.scCanvas.ignoresSafeArea())
+            .navigationTitle("You")
         }
     }
 }
 
-
-
-private struct LpspSoundCloudSpectrHomeTabScreen: View {
+private struct LpspSoundCloudTrackArtwork: View {
     var body: some View {
-        VStack(spacing: 0) {
-        HStack {
-                Text("Playing from Playlist").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.600, green: 0.600, blue: 0.600))
-                Text("Late Night Uploads").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.600, green: 0.600, blue: 0.600))
-            Text("⌄").font(.system(size: 20.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-        } .padding(.horizontal, 14).padding(.top, 8).padding(.bottom, 6)
-        ScrollView {
-            VStack(spacing: 16) {
-            RoundedRectangle(cornerRadius: 8).fill(LinearGradient(colors: [Color(red:0.3,green:0.2,blue:0.5), Color(red:0.1,green:0.1,blue:0.2)], startPoint: .topLeading, endPoint: .bottomTrailing)).aspectRatio(1, contentMode: .fit).padding(.horizontal, 24)
-            Text("Smoke & Static").font(.system(size: 22.0, weight: .semibold)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-            Text("novaa").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-                Text("2:08").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-                Text("-1:24").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-            HStack(spacing: 16) {
-                    Text("1.2K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-                    Text("340").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-                    Text("88").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-            } .font(.system(size: 22)).padding(.horizontal, 14).frame(height: 44)
-            }
-            .padding(.vertical, 8)
-        }
-                Text("Smoke & Static").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-                Text("novaa").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.200, green: 0.200, blue: 0.200))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        RoundedRectangle(cornerRadius: 4)
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.3, green: 0.2, blue: 0.5),
+                        Color(red: 0.1, green: 0.1, blue: 0.2),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
     }
 }
-
 

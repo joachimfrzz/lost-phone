@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTwitchView: View {
     var body: some View {
-        LpspTwitchShowroomRoot()
+        LpspTwitchShowroomRoot(store: LpspTwitchStore())
     }
 }
 
@@ -133,29 +133,52 @@ fileprivate struct LpspTwitchTwitchLiveCard: View {
     let channel: String
     let game: String
     let viewers: String
-    let thumbnail: Image
-    let avatar: Image
+    let accent: Color
     let width: CGFloat
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topLeading) {
-                thumbnail
-                    .resizable()
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [accent.opacity(0.8), accent.opacity(0.35)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .aspectRatio(16/9, contentMode: .fill)
                     .frame(width: width, height: width * 9/16)
+                    .overlay(Image(systemName: "play.fill").font(.system(size: 28)).foregroundStyle(.white.opacity(0.5)))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
+
                 LpspTwitchTwitchLivePill().padding(8)
-                VStack { Spacer()
-                    HStack { LpspTwitchTwitchViewerPill(count: viewers); Spacer() }
-                }.padding(8)
+
+                VStack {
+                    Spacer()
+                    HStack {
+                        LpspTwitchTwitchViewerPill(count: viewers)
+                        Spacer()
+                    }
+                }
+                .padding(8)
             }
             HStack(alignment: .top, spacing: 8) {
-                avatar.resizable().frame(width: 32, height: 32).clipShape(Circle())
+                Circle()
+                    .fill(accent.opacity(0.6))
+                    .frame(width: 32, height: 32)
+                    .overlay(Text(String(channel.prefix(1)).uppercased()).font(.system(size: 12, weight: .bold)).foregroundStyle(.white))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(LpspTwitchFonts.twitchStreamTitle).foregroundStyle(LpspTwitchTokens.twitchTextPrimary).lineLimit(2)
-                    Text(channel).font(LpspTwitchFonts.twitchMeta).foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
-                    Text(game).font(LpspTwitchFonts.twitchCardSubtitle).foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                    Text(title)
+                        .font(LpspTwitchFonts.twitchStreamTitle.weight(.semibold))
+                        .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+                        .lineLimit(2)
+                    Text(channel)
+                        .font(LpspTwitchFonts.twitchMeta)
+                        .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                    Text(game)
+                        .font(LpspTwitchFonts.twitchCardSubtitle)
+                        .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
                 }
             }
         }
@@ -204,21 +227,46 @@ fileprivate struct LpspTwitchTwitchAvatarRing: View {
 fileprivate struct LpspTwitchTwitchTheaterChatOverlay: View {
     let messages: [LpspTwitchChatLine]
     @Binding var chatHidden: Bool
+    @Binding var composeText: String
+    let onSend: () -> Void
 
     var body: some View {
         if !chatHidden {
             VStack(spacing: 0) {
-                ScrollView { LazyVStack(spacing: 0) {
-                    ForEach(messages) { m in
-                        LpspTwitchTwitchChatRow(username: m.user, userColor: m.color,
-                                      message: m.text, mentioned: m.mentionsMe)
+                Text("STREAM CHAT")
+                    .font(LpspTwitchFonts.twitchLabelUpper.weight(.bold))
+                    .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 12)
+                    .padding(.top, 10)
+
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(messages) { m in
+                            LpspTwitchTwitchChatRow(
+                                username: m.user,
+                                userColor: m.color,
+                                message: m.text,
+                                mentioned: m.mentionsMe
+                            )
+                        }
                     }
-                }}
-                TextField("Send a message", text: .constant(""))
-                    .padding(12)
-                    .background(LpspTwitchTokens.twitchSurface2)
+                }
+
+                HStack(spacing: 8) {
+                    TextField("Send a message", text: $composeText)
+                        .font(LpspTwitchFonts.twitchChatMessage)
+                        .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+                        .onSubmit(onSend)
+                    Button(action: onSend) {
+                        Image(systemName: "paperplane.fill")
+                            .foregroundStyle(LpspTwitchTokens.twitchPurple)
+                    }
+                }
+                .padding(12)
+                .background(LpspTwitchTokens.twitchSurface2)
             }
-            .frame(width: 320)
+            .frame(width: min(320, UIScreen.main.bounds.width * 0.42))
             .background(.ultraThinMaterial)
             .background(LpspTwitchTokens.twitchCanvas.opacity(0.72))
             .transition(.move(edge: .trailing).combined(with: .opacity))
@@ -227,7 +275,7 @@ fileprivate struct LpspTwitchTwitchTheaterChatOverlay: View {
 }
 
 fileprivate struct LpspTwitchChatLine: Identifiable {
-    let id = UUID()
+    let id: String
     let user: String
     let text: String
     let color: Color
@@ -235,219 +283,577 @@ fileprivate struct LpspTwitchChatLine: Identifiable {
 }
 
 
+// MARK: - Données & état (showroom Spectr)
+
+private enum LpspTwitchShowroomTab: String, CaseIterable, Identifiable {
+    case following
+    case browse
+    case search
+    case notifications
+    case profile
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .following: return "Following"
+        case .browse: return "Browse"
+        case .search: return "Search"
+        case .notifications: return "Notifications"
+        case .profile: return "Profile"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .following: return "heart.fill"
+        case .browse: return "square.grid.2x2.fill"
+        case .search: return "magnifyingglass"
+        case .notifications: return "bell.fill"
+        case .profile: return "person.fill"
+        }
+    }
+}
+
+fileprivate struct LpspTwitchStream: Identifiable, Equatable {
+    let id: String
+    let channel: String
+    let title: String
+    let category: String
+    let viewers: String
+    let isLive: Bool
+    let accent: Color
+}
+
+fileprivate struct LpspTwitchChatMessage: Identifiable, Equatable {
+    let id: String
+    let username: String
+    let body: String
+    let color: Color
+    var mentionsMe: Bool = false
+}
+
+private enum LpspTwitchShowroomData {
+    static let featuredStreamID = "novaplays"
+
+    static let streams: [LpspTwitchStream] = [
+        .init(
+            id: "novaplays",
+            channel: "novaplays",
+            title: "Late-night hangout — ask me anything",
+            category: "Just Chatting",
+            viewers: "12.4K",
+            isLive: true,
+            accent: LpspTwitchTokens.twitchPurple
+        ),
+        .init(
+            id: "pixelgremlin",
+            channel: "pixelgremlin",
+            title: "Indie roguelike marathon",
+            category: "Roguelike",
+            viewers: "3.2K",
+            isLive: true,
+            accent: Color(red: 0.35, green: 0.72, blue: 0.55)
+        ),
+        .init(
+            id: "harborwave",
+            channel: "harborwave",
+            title: "Synthwave production stream",
+            category: "Music",
+            viewers: "1.8K",
+            isLive: true,
+            accent: Color(red: 0.22, green: 0.48, blue: 0.92)
+        ),
+        .init(
+            id: "kellen_v",
+            channel: "kellen_v",
+            title: "Ranked ladder grind",
+            category: "League of Legends",
+            viewers: "8.7K",
+            isLive: true,
+            accent: Color(red: 0.88, green: 0.42, blue: 0.18)
+        ),
+        .init(
+            id: "hana.r",
+            channel: "hana.r",
+            title: "Watercolor + chill",
+            category: "Art",
+            viewers: "942",
+            isLive: true,
+            accent: Color(red: 0.92, green: 0.45, blue: 0.62)
+        ),
+        .init(
+            id: "drift_",
+            channel: "drift_",
+            title: "IRL city walk",
+            category: "IRL",
+            viewers: "2.1K",
+            isLive: true,
+            accent: Color(red: 0.55, green: 0.62, blue: 0.78)
+        ),
+    ]
+
+    static let initialChat: [LpspTwitchChatMessage] = [
+        .init(id: "c1", username: "pixelgremlin", body: "yo novaplays you still awake??", color: Color(red: 0.35, green: 0.72, blue: 0.55)),
+        .init(id: "c2", username: "harborwave", body: "the vibes tonight are immaculate", color: Color(red: 0.22, green: 0.48, blue: 0.92)),
+        .init(id: "c3", username: "modbot", body: "Be kind in chat — mods are watching.", color: LpspTwitchTokens.twitchOnlineGreen),
+        .init(id: "c4", username: "kellen_v", body: "subbed with prime, worth it", color: Color(red: 0.88, green: 0.42, blue: 0.18)),
+        .init(id: "c5", username: "hana.r", body: "painting while listening, love this", color: Color(red: 0.92, green: 0.45, blue: 0.62)),
+        .init(id: "c6", username: "drift_", body: "walking home, tuned in on mobile", color: Color(red: 0.55, green: 0.62, blue: 0.78)),
+    ]
+
+    static let searchSuggestions = [
+        "Just Chatting",
+        "League of Legends",
+        "Music",
+        "Art",
+        "IRL",
+        "Roguelike",
+    ]
+
+    static let notifications: [(title: String, detail: String, time: String)] = [
+        ("novaplays is live", "Late-night hangout — ask me anything", "2m"),
+        ("kellen_v is live", "Ranked ladder grind", "18m"),
+        ("New follower", "pixelgremlin followed you", "1h"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspTwitchStore: ObservableObject {
+    @Published var selectedTab: LpspTwitchShowroomTab = .following
+    @Published var activeStreamID: String
+    @Published var chatMessages: [LpspTwitchChatMessage]
+    @Published var composeText = ""
+    @Published var isFollowingFeatured = false
+    @Published var chatHidden = false
+    @Published var searchQuery = ""
+
+    let streams = LpspTwitchShowroomData.streams
+
+    init() {
+        activeStreamID = LpspTwitchShowroomData.featuredStreamID
+        chatMessages = LpspTwitchShowroomData.initialChat
+    }
+
+    var activeStream: LpspTwitchStream {
+        streams.first { $0.id == activeStreamID } ?? streams[0]
+    }
+
+    var liveStreams: [LpspTwitchStream] {
+        streams.filter(\.isLive)
+    }
+
+    var chatLines: [LpspTwitchChatLine] {
+        chatMessages.map {
+            LpspTwitchChatLine(
+                id: $0.id,
+                user: $0.username,
+                text: $0.body,
+                color: $0.color,
+                mentionsMe: $0.mentionsMe
+            )
+        }
+    }
+
+    func selectStream(_ stream: LpspTwitchStream) {
+        activeStreamID = stream.id
+        selectedTab = .following
+    }
+
+    func sendChat() {
+        let trimmed = composeText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        chatMessages.append(
+            LpspTwitchChatMessage(
+                id: "user-\(chatMessages.count + 1)",
+                username: "you",
+                body: trimmed,
+                color: LpspTwitchTokens.twitchPurple
+            )
+        )
+        composeText = ""
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspTwitchShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspTwitchStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspTwitchSpectrHomeTabScreen()
-                .tabItem { Label("Following", systemImage: "heart.fill") }
-                .tag(0)
-            LpspTwitchVideoHomeTabScreen()
-                .tabItem { Label("Browse", systemImage: "play.square.stack.fill") }
-                .tag(1)
-            LpspTwitchVideoHomeTabScreen()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(2)
-            LpspTwitchVideoHomeTabScreen()
-                .tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .tag(3)
-            LpspTwitchProfilePickerTabScreen()
-                .tabItem { Label("Profile", systemImage: "person.crop.circle.fill") }
-                .tag(4)
+        TabView(selection: $store.selectedTab) {
+            ForEach(LpspTwitchShowroomTab.allCases) { tab in
+                LpspTwitchShowroomTabScreen(store: store, tab: tab)
+                    .tabItem {
+                        Label(tab.title, systemImage: tab.systemImage)
+                    }
+                    .tag(tab)
+            }
         }
-        .tint(LpspTwitchTokens.twitchLiveRed)
+        .tint(LpspTwitchTokens.twitchPurple)
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspTwitchShowroomTabScreen: View {
+    @ObservedObject var store: LpspTwitchStore
+    let tab: LpspTwitchShowroomTab
 
-private struct LpspTwitchGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTwitchTokens.twitchLiveRed.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTwitchTokens.twitchLiveRed))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+            Group {
+                switch tab {
+                case .following:
+                    LpspTwitchFollowingTabScreen(store: store)
+                case .browse:
+                    LpspTwitchBrowseTabScreen(store: store)
+                case .search:
+                    LpspTwitchSearchTabScreen(store: store)
+                case .notifications:
+                    LpspTwitchNotificationsTabScreen()
+                case .profile:
+                    LpspTwitchProfileTabScreen()
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle(tab == .following ? "" : tab.title)
+            .navigationBarTitleDisplayMode(tab == .following ? .inline : .large)
+            .background(LpspTwitchTokens.twitchCanvas.ignoresSafeArea())
         }
     }
 }
 
+private struct LpspTwitchFollowingTabScreen: View {
+    @ObservedObject var store: LpspTwitchStore
 
-private struct LpspTwitchDemoPosterURLs {
-    static let items: [URL] = [
-        URL(string: "https://picsum.photos/seed/nfx1/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx2/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx3/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx4/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx5/200/300")!,
-        URL(string: "https://picsum.photos/seed/nfx6/200/300")!,
-    ]
-}
-private struct LpspTwitchDemoProfile: Identifiable {
-    let id = UUID()
-    let name: String
-    let color: Color
-    let isKids: Bool
-}
-
-private enum LpspTwitchDemoProfiles {
-    static let items: [LpspTwitchDemoProfile] = [
-        .init(name: "Lost Phone", color: .red, isKids: false),
-        .init(name: "Enfants", color: .orange, isKids: true),
-    ]
-}
-
-private struct LpspTwitchVideoHomeTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    ZStack(alignment: .bottom) {
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color(red: 0.08, green: 0.08, blue: 0.08), Color.black],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .frame(height: 220)
-                            .overlay(alignment: .center) {
-                                Image(systemName: "play.circle.fill").font(.system(size: 56)).foregroundStyle(.white.opacity(0.9))
-                            }
-                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
-                            .frame(height: 80)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .padding(.horizontal, 12)
-                    Button("Lecture") {}.buttonStyle(.borderedProminent).tint(.red)
-                        .padding(.horizontal, 12)
-                    Text("Tendances").font(.system(size: 17, weight: .bold)).foregroundStyle(.white).padding(.horizontal, 12)
+        LpspTwitchPlayerScreen(store: store)
+    }
+}
 
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(0..<6, id: \.self) { i in
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.15, green: 0.15, blue: 0.15))
-                                    .frame(width: 110, height: 165)
+private struct LpspTwitchPlayerScreen: View {
+    @ObservedObject var store: LpspTwitchStore
+
+    private var stream: LpspTwitchStream { store.activeStream }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ZStack(alignment: .trailing) {
+                ZStack(alignment: .topLeading) {
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    stream.accent.opacity(0.45),
+                                    LpspTwitchTokens.twitchCanvas,
+                                    LpspTwitchTokens.twitchDeepBlack,
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 240)
+                        .overlay {
+                            Image(systemName: "play.circle.fill")
+                                .font(.system(size: 52))
+                                .foregroundStyle(LpspTwitchTokens.twitchTextPrimary.opacity(0.45))
+                        }
+
+                    if stream.isLive {
+                        LpspTwitchTwitchLivePill()
+                            .padding(12)
+                    }
+
+                    VStack {
+                        Spacer()
+                        HStack {
+                            LpspTwitchTwitchViewerPill(count: stream.viewers)
+                            Spacer()
+                        }
+                    }
+                    .padding(12)
+                }
+
+                LpspTwitchTwitchTheaterChatOverlay(
+                    messages: store.chatLines,
+                    chatHidden: $store.chatHidden,
+                    composeText: $store.composeText,
+                    onSend: { store.sendChat() }
+                )
+                .padding(.trailing, 8)
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 12) {
+                    Circle()
+                        .fill(stream.accent.opacity(0.55))
+                        .frame(width: 40, height: 40)
+                        .overlay {
+                            Text(String(stream.channel.prefix(1)).uppercased())
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(.white)
+                        }
+                        .overlay(
+                            Circle()
+                                .stroke(
+                                    stream.isLive ? LpspTwitchTokens.twitchLiveRed : LpspTwitchTokens.twitchPurple,
+                                    lineWidth: 2
+                                )
+                        )
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(stream.channel)
+                            .font(LpspTwitchFonts.twitchChannelName.weight(.bold))
+                            .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+                        Text(stream.title)
+                            .font(LpspTwitchFonts.twitchStreamTitle)
+                            .foregroundStyle(LpspTwitchTokens.twitchTextPrimary.opacity(0.9))
+                            .lineLimit(2)
+                        Text("\(stream.category) · \(stream.viewers) viewers")
+                            .font(LpspTwitchFonts.twitchMeta)
+                            .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    LpspTwitchTwitchFollowButton(isFollowing: $store.isFollowingFeatured)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 14)
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+}
+
+private struct LpspTwitchBrowseTabScreen: View {
+    @ObservedObject var store: LpspTwitchStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Live channels")
+                    .font(LpspTwitchFonts.twitchSectionHeader.weight(.semibold))
+                    .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+                    .padding(.horizontal, 16)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(store.liveStreams) { stream in
+                            Button {
+                                store.selectStream(stream)
+                            } label: {
+                                LpspTwitchTwitchLiveCard(
+                                    title: stream.title,
+                                    channel: stream.channel,
+                                    game: stream.category,
+                                    viewers: stream.viewers,
+                                    accent: stream.accent,
+                                    width: 220
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Recommended for you")
+                        .font(LpspTwitchFonts.twitchSectionHeader.weight(.semibold))
+                        .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+
+                    ForEach(store.liveStreams) { stream in
+                        Button {
+                            store.selectStream(stream)
+                        } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [stream.accent.opacity(0.75), stream.accent.opacity(0.3)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(width: 96, height: 54)
+                                    .overlay(alignment: .topLeading) {
+                                        if stream.isLive {
+                                            LpspTwitchTwitchLivePill()
+                                                .scaleEffect(0.85)
+                                                .padding(6)
+                                        }
+                                    }
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(stream.channel)
+                                        .font(LpspTwitchFonts.twitchChannelLabel.weight(.semibold))
+                                        .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+                                    Text(stream.title)
+                                        .font(LpspTwitchFonts.twitchCardSubtitle)
+                                        .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                                        .lineLimit(1)
+                                    Text("\(stream.category) · \(stream.viewers) viewers")
+                                        .font(LpspTwitchFonts.twitchCardSubtitle)
+                                        .foregroundStyle(LpspTwitchTokens.twitchTextTertiary)
+                                }
+                                Spacer()
                             }
                         }
-                        .padding(.horizontal, 12)
+                        .buttonStyle(.plain)
                     }
                 }
-                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
             }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("")
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .padding(.bottom, 24)
         }
     }
 }
 
-private struct LpspTwitchProfilePickerTabScreen: View {
-    var body: some View {
-        LpspTwitchDemoProfilePicker()
-    }
-}
+private struct LpspTwitchSearchTabScreen: View {
+    @ObservedObject var store: LpspTwitchStore
 
-private struct LpspTwitchVideoNewTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-
-                    Text("Nouveautés").font(.title2.bold()).foregroundStyle(.white).padding(.horizontal, 12)
+        List {
+            Section {
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                    TextField("Search channels, games, tags", text: $store.searchQuery)
+                        .textInputAutocapitalization(.never)
+                        .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
                 }
-                .padding(.vertical, 8)
             }
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("New & Hot")
-        }
-    }
-}
 
-private struct LpspTwitchVideoDownloadsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Stranger Things S4E1", "The Crown S6E2"], id: \.self) { title in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(Color.gray.opacity(0.3)).frame(width: 80, height: 120)
-                    VStack(alignment: .leading) {
-                        Text(title).font(.headline).foregroundStyle(.white)
-                        Text("Téléchargé").font(.caption).foregroundStyle(.secondary)
+            Section("Popular categories") {
+                ForEach(LpspTwitchShowroomData.searchSuggestions, id: \.self) { item in
+                    Button {
+                        store.searchQuery = item
+                    } label: {
+                        HStack {
+                            Text(item)
+                                .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(LpspTwitchTokens.twitchTextTertiary)
+                        }
                     }
                 }
             }
-            .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("Downloads")
-        }
-    }
-}
 
-private struct LpspTwitchDemoProfilePicker: View {
-    var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 32) {
-                Text("Qui regarde ?").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
-                ForEach(LpspTwitchDemoProfiles.items) { p in
-                    VStack(spacing: 8) {
-                        Circle().fill(p.color).frame(width: 72, height: 72)
-                        Text(p.name).foregroundStyle(.gray)
+            if !store.searchQuery.isEmpty {
+                Section("Channels") {
+                    ForEach(store.liveStreams.filter {
+                        $0.channel.localizedCaseInsensitiveContains(store.searchQuery)
+                            || $0.category.localizedCaseInsensitiveContains(store.searchQuery)
+                    }) { stream in
+                        Button {
+                            store.selectStream(stream)
+                        } label: {
+                            Text(stream.channel)
+                                .foregroundStyle(LpspTwitchTokens.twitchPurple)
+                        }
                     }
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(LpspTwitchTokens.twitchCanvas.ignoresSafeArea())
     }
 }
 
-
-private struct LpspTwitchSpectrHomeTabScreen: View {
+private struct LpspTwitchNotificationsTabScreen: View {
     var body: some View {
-        ZStack {
-        ZStack {
-            Text("LIVE").font(.system(size: 14))
-            Text("12.4K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-        } .background(Color.black)
-                Text("novaplays").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-                Text("Just Chatting · 12.4K").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-            Text("Follow").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+        List {
+            ForEach(LpspTwitchShowroomData.notifications, id: \.title) { note in
+                HStack(alignment: .top, spacing: 12) {
+                    Circle()
+                        .fill(LpspTwitchTokens.twitchPurple.opacity(0.28))
+                        .frame(width: 40, height: 40)
+                        .overlay {
+                            Image(systemName: "bell.fill")
+                                .font(.caption)
+                                .foregroundStyle(LpspTwitchTokens.twitchPurple)
+                        }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(note.title)
+                            .font(LpspTwitchFonts.twitchChannelLabel.weight(.semibold))
+                            .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+                        Text(note.detail)
+                            .font(LpspTwitchFonts.twitchCardSubtitle)
+                            .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+                    }
+
+                    Spacer()
+
+                    Text(note.time)
+                        .font(LpspTwitchFonts.twitchCardSubtitle)
+                        .foregroundStyle(LpspTwitchTokens.twitchTextTertiary)
+                }
+                .listRowBackground(LpspTwitchTokens.twitchSurface1)
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .background(LpspTwitchTokens.twitchCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspTwitchProfileTabScreen: View {
+    var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-            Text("Stream Chat").font(.system(size: 11.0, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-            ScrollView {
-                VStack(spacing: 8) {
-                    Text("pixelgremlin").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-                    Text("harborwave").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-                    Text("modbot").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-                    Text("kellen_v").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-                    Text("hana.r").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-                    Text("drift_").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
-                    Text("harborwave").font(.system(size: 14, weight: .bold)).foregroundStyle(Color(red: 0.937, green: 0.937, blue: 0.945))
+            VStack(spacing: 16) {
+                Circle()
+                    .fill(LpspTwitchTokens.twitchPurple.opacity(0.28))
+                    .frame(width: 84, height: 84)
+                    .overlay {
+                        Text("Y")
+                            .font(.title.weight(.bold))
+                            .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+                    }
+                    .overlay(
+                        Circle()
+                            .stroke(LpspTwitchTokens.twitchPurple, lineWidth: 2)
+                    )
+
+                Text("your_channel")
+                    .font(LpspTwitchFonts.twitchTitleLarge.weight(.bold))
+                    .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+
+                Text("Viewer · not streaming")
+                    .font(LpspTwitchFonts.twitchMeta)
+                    .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
+
+                HStack(spacing: 22) {
+                    LpspTwitchProfileStat(value: "0", label: "Followers")
+                    LpspTwitchProfileStat(value: "6", label: "Following")
+                    LpspTwitchProfileStat(value: "12", label: "Subs")
                 }
-                .padding(.vertical, 8)
+
+                Button("Channel Home") {}
+                    .buttonStyle(.borderedProminent)
+                    .tint(LpspTwitchTokens.twitchPurple)
             }
-            Text("Send a message").font(.system(size: 14))
-            }
-            .padding(16)
+            .padding(20)
         }
+    }
+}
+
+private struct LpspTwitchProfileStat: View {
+    let value: String
+    let label: String
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(LpspTwitchFonts.twitchChannelLabel.weight(.semibold))
+                .foregroundStyle(LpspTwitchTokens.twitchTextPrimary)
+            Text(label)
+                .font(LpspTwitchFonts.twitchCardSubtitle)
+                .foregroundStyle(LpspTwitchTokens.twitchTextSecondary)
         }
-        .background(Color(red: 0.055, green: 0.055, blue: 0.063).ignoresSafeArea())
-        .preferredColorScheme(.dark)
     }
 }
 

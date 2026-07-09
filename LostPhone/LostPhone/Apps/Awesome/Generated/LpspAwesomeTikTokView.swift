@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTikTokView: View {
     var body: some View {
-        LpspTikTokShowroomRoot()
+        LpspTikTokShowroomRoot(store: LpspTikTokStore())
     }
 }
 
@@ -184,7 +184,13 @@ fileprivate struct LpspTikTokActionRail: View {
 
     private var avatarBadge: some View {
         ZStack(alignment: .bottom) {
-            AsyncImage(url: avatarURL) { $0.resizable() } placeholder: { LpspTikTokTokens.tiktokSurface }
+            Group {
+                if let avatarURL {
+                    AsyncImage(url: avatarURL) { $0.resizable() } placeholder: { avatarPlaceholder }
+                } else {
+                    avatarPlaceholder
+                }
+            }
                 .frame(width: 48, height: 48)
                 .clipShape(Circle())
                 .overlay(Circle().stroke(.white, lineWidth: 2))
@@ -201,11 +207,23 @@ fileprivate struct LpspTikTokActionRail: View {
             }
         }
     }
+
+    private var avatarPlaceholder: some View {
+        Circle()
+            .fill(
+                LinearGradient(
+                    colors: [Color.orange, Color.pink],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+    }
 }
 
 fileprivate struct LpspTikTokActionIcon: View {
     let systemName: String
     let count: Int
+    var countLabel: String? = nil
     let tint: Color
     let action: () -> Void
 
@@ -216,8 +234,8 @@ fileprivate struct LpspTikTokActionIcon: View {
                     .font(.system(size: 30, weight: .semibold))
                     .foregroundStyle(tint)
                     .shadow(color: LpspTikTokTokens.tiktokScrimLight, radius: 3, x: 0, y: 1)
-                Text(LpspTikTokTikTokCount.format(count))
-                    .font(LpspTikTokFonts.tiktokActionCount)
+                Text(countLabel ?? LpspTikTokTikTokCount.format(count))
+                    .font(LpspTikTokFonts.tiktokActionCount.weight(.bold))
                     .foregroundStyle(.white)
                     .tiktokTextOnVideo()
             }
@@ -295,7 +313,7 @@ fileprivate struct LpspTikTokCaptionOverlay: View {
     private var captionText: Text {
         caption.split(separator: " ").reduce(Text("")) { acc, token in
             if token.hasPrefix("#") {
-                return acc + Text(" \(token)").font(LpspTikTokFonts.tiktokHashtag)
+                return acc + Text(" \(token)").font(LpspTikTokFonts.tiktokHashtag.weight(.bold))
             }
             return acc + Text(" \(token)")
         }
@@ -437,191 +455,589 @@ fileprivate struct LpspTikTokRootTabBar: View {
     }
 }
 
+// MARK: - Données & état (showroom Spectr)
+
+fileprivate enum LpspTikTokFeedMode: String, CaseIterable {
+    case following
+    case forYou
+
+    var title: String {
+        switch self {
+        case .following: return "Following"
+        case .forYou: return "For You"
+        }
+    }
+}
+
+fileprivate struct LpspTikTokVideo: Identifiable, Equatable {
+    let id: String
+    let username: String
+    let caption: String
+    let musicTitle: String
+    let gradient: [Color]
+    var likeCount: Int
+    var isLiked: Bool
+    var isFollowed: Bool
+    var commentCount: Int
+    var bookmarkCount: Int
+    var progress: Double
+}
+
+private enum LpspTikTokShowroomData {
+    static let featuredID = "kellenvoss-tokyo"
+
+    static let featured = LpspTikTokVideo(
+        id: featuredID,
+        username: "kellenvoss",
+        caption: "tokyo station on a rainy tuesday #tokyo #rainy #streetfilm",
+        musicTitle: "neon ritual - slow amber trio · neon ritual - slow amber trio · neon ritual",
+        gradient: [
+            Color(red: 0.08, green: 0.05, blue: 0.12),
+            Color(red: 0.12, green: 0.14, blue: 0.22),
+            LpspTikTokTokens.tiktokCanvas,
+        ],
+        likeCount: 812_100,
+        isLiked: true,
+        isFollowed: false,
+        commentCount: 4_567,
+        bookmarkCount: 42_800,
+        progress: 0.38
+    )
+
+    static let feed: [LpspTikTokVideo] = [
+        featured,
+        .init(
+            id: "harborwave-synth",
+            username: "harborwave",
+            caption: "late night synth loop #music #fyp #producer",
+            musicTitle: "original sound - harborwave",
+            gradient: [
+                Color(red: 0.15, green: 0.05, blue: 0.22),
+                Color(red: 0.05, green: 0.10, blue: 0.18),
+                LpspTikTokTokens.tiktokCanvas,
+            ],
+            likeCount: 128_400,
+            isLiked: false,
+            isFollowed: true,
+            commentCount: 892,
+            bookmarkCount: 12_300,
+            progress: 0.62
+        ),
+        .init(
+            id: "hana-watercolor",
+            username: "hana.r",
+            caption: "watercolor timelapse #art #calm #process",
+            musicTitle: "soft brush - hana.r",
+            gradient: [
+                Color(red: 0.22, green: 0.12, blue: 0.18),
+                Color(red: 0.10, green: 0.08, blue: 0.14),
+                LpspTikTokTokens.tiktokCanvas,
+            ],
+            likeCount: 54_200,
+            isLiked: false,
+            isFollowed: false,
+            commentCount: 341,
+            bookmarkCount: 6_700,
+            progress: 0.18
+        ),
+    ]
+
+    static let discoverTags = ["#tokyo", "#rainy", "#streetfilm", "#fyp", "#music", "#art"]
+
+    static let inbox: [(title: String, detail: String, time: String)] = [
+        ("kellenvoss mentioned you", "tokyo station on a rainy tuesday", "2m"),
+        ("New follower", "pixelgremlin started following you", "18m"),
+        ("harborwave is live", "late night synth loop", "1h"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspTikTokStore: ObservableObject {
+    @Published var selectedTab: LpspTikTokRootTabBar.LpspTikTokTab = .home
+    @Published var feedMode: LpspTikTokFeedMode = .forYou
+    @Published var videos: [LpspTikTokVideo]
+    @Published var currentVideoIndex = 0
+    @Published var showCreateSheet = false
+    @Published var showSearch = false
+
+    init() {
+        videos = LpspTikTokShowroomData.feed
+    }
+
+    var currentVideo: LpspTikTokVideo {
+        videos[currentVideoIndex]
+    }
+
+    func selectFeedMode(_ mode: LpspTikTokFeedMode) {
+        feedMode = mode
+    }
+
+    func toggleLike() {
+        guard videos.indices.contains(currentVideoIndex) else { return }
+        var video = videos[currentVideoIndex]
+        video.isLiked.toggle()
+        video.likeCount += video.isLiked ? 1 : -1
+        videos[currentVideoIndex] = video
+    }
+
+    func doubleTapLike() {
+        guard videos.indices.contains(currentVideoIndex) else { return }
+        var video = videos[currentVideoIndex]
+        guard !video.isLiked else { return }
+        video.isLiked = true
+        video.likeCount += 1
+        videos[currentVideoIndex] = video
+    }
+
+    func toggleFollow() {
+        guard videos.indices.contains(currentVideoIndex) else { return }
+        var video = videos[currentVideoIndex]
+        video.isFollowed.toggle()
+        videos[currentVideoIndex] = video
+    }
+
+    func advanceVideo() {
+        guard !videos.isEmpty else { return }
+        currentVideoIndex = (currentVideoIndex + 1) % videos.count
+    }
+
+    func openCreate() {
+        showCreateSheet = true
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspTikTokShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspTikTokSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspTikTokShortVideoDiscoverTabScreen()
-                .tabItem { Label("Discover", systemImage: "magnifyingglass") }
-                .tag(1)
-            LpspTikTokShortVideoInboxTabScreen()
-                .tabItem { Label("Inbox", systemImage: "tray.fill") }
-                .tag(2)
-            LpspTikTokShortVideoProfileTabScreen()
-                .tabItem { Label("Profile", systemImage: "person.fill") }
-                .tag(3)
-        }
-        .tint(LpspTikTokTokens.tiktokTextPrimary)
-        .preferredColorScheme(.dark)
-    }
-}
+    @ObservedObject var store: LpspTikTokStore
 
-
-private struct LpspTikTokGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTikTokTokens.tiktokTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
+        ZStack {
+            LpspTikTokTokens.tiktokCanvas.ignoresSafeArea()
+
+            switch store.selectedTab {
+            case .home:
+                LpspTikTokHomeFeedScreen(store: store)
+            case .discover:
+                LpspTikTokDiscoverTabScreen(store: store)
+            case .inbox:
+                LpspTikTokInboxTabScreen(store: store)
+            case .profile:
+                LpspTikTokProfileTabScreen(store: store)
             }
-            .navigationTitle(title)
+        }
+        .preferredColorScheme(.dark)
+        .sheet(isPresented: $store.showCreateSheet) {
+            LpspTikTokCreateSheet()
         }
     }
 }
 
+private struct LpspTikTokHomeFeedScreen: View {
+    @ObservedObject var store: LpspTikTokStore
+    @State private var burstHearts: [LpspTikTokHeartBurst] = []
 
-private struct LpspTikTokShortVideoFeedTabScreen: View {
-    @State private var isFollowed = false
-    @State private var isLiked = true
-    @State private var likeCount = 12800
+    private var video: LpspTikTokVideo { store.currentVideo }
+
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(red: 0.1, green: 0.05, blue: 0.15), LpspTikTokTokens.tiktokCanvas, .black],
+                colors: video.gradient,
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
-            VStack {
+
+            ForEach(burstHearts) { heart in
+                Image(systemName: "heart.fill")
+                    .font(.system(size: 120, weight: .bold))
+                    .foregroundStyle(LpspTikTokTokens.tiktokRose)
+                    .scaleEffect(heart.scale)
+                    .opacity(heart.opacity)
+                    .position(heart.position)
+            }
+
+            VStack(spacing: 0) {
+                LpspTikTokFeedTopBar(store: store)
+
                 Spacer()
-                HStack(alignment: .bottom) {
-                    LpspTikTokCaptionOverlay(username: "lost.phone", caption: "Showroom Lost Phone #fyp #swiftui", musicTitle: "Original Sound - lost.phone")
-                    LpspTikTokActionRail(
-                        avatarURL: nil,
-                        isFollowed: $isFollowed,
-                        likeCount: $likeCount,
-                        isLiked: $isLiked,
-                        commentCount: 420,
-                        bookmarkCount: 89,
-                        shareCount: 156,
-                        musicArtwork: nil
+
+                HStack(alignment: .bottom, spacing: 0) {
+                    LpspTikTokCaptionOverlay(
+                        username: video.username,
+                        caption: video.caption,
+                        musicTitle: video.musicTitle
                     )
+                    LpspTikTokSpectrActionRail(store: store)
                 }
-                LpspTikTokVideoScrubber(progress: 0.42)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 8)
+
+                LpspTikTokVideoScrubber(progress: video.progress)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 8)
+
+                LpspTikTokRootTabBar(
+                    selected: $store.selectedTab,
+                    onCreateTapped: { store.openCreate() },
+                    isOnFeed: true
+                )
             }
         }
+        .contentShape(Rectangle())
+        .onTapGesture(count: 2) {
+            store.doubleTapLike()
+            spawnHeart()
+        }
+        .gesture(
+            DragGesture(minimumDistance: 40)
+                .onEnded { value in
+                    if value.translation.height < -40 {
+                        store.advanceVideo()
+                    }
+                }
+        )
+    }
+
+    private func spawnHeart() {
+        let id = UUID()
+        let position = CGPoint(x: UIScreen.main.bounds.width * 0.5, y: UIScreen.main.bounds.height * 0.45)
+        burstHearts.append(LpspTikTokHeartBurst(id: id, position: position, scale: 0, opacity: 1))
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.55)) {
+            if let index = burstHearts.firstIndex(where: { $0.id == id }) {
+                burstHearts[index].scale = 1.4
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            burstHearts.removeAll { $0.id == id }
+        }
+        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
     }
 }
 
-private struct LpspTikTokShortVideoDiscoverTabScreen: View {
-    let cols = [GridItem(.flexible()), GridItem(.flexible())]
+private struct LpspTikTokFeedTopBar: View {
+    @ObservedObject var store: LpspTikTokStore
+
     var body: some View {
-        NavigationStack {
+        HStack {
+            Spacer()
+            HStack(spacing: 20) {
+                ForEach(LpspTikTokFeedMode.allCases, id: \.self) { mode in
+                    Button {
+                        store.selectFeedMode(mode)
+                    } label: {
+                        VStack(spacing: 4) {
+                            Text(mode.title)
+                                .font(.system(size: 17, weight: store.feedMode == mode ? .semibold : .regular))
+                                .foregroundStyle(
+                                    store.feedMode == mode
+                                        ? LpspTikTokTokens.tiktokTextPrimary
+                                        : LpspTikTokTokens.tiktokTextPrimary.opacity(0.55)
+                                )
+                                .tiktokTextOnVideo()
+                            if store.feedMode == mode {
+                                Capsule()
+                                    .fill(LpspTikTokTokens.tiktokTextPrimary)
+                                    .frame(width: 24, height: 2)
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            Spacer()
+            Button {
+                store.showSearch = true
+                store.selectedTab = .discover
+            } label: {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .shadow(color: LpspTikTokTokens.tiktokScrimLight, radius: 3, x: 0, y: 1)
+            }
+            .padding(.trailing, 16)
+        }
+        .padding(.top, 52)
+    }
+}
+
+private struct LpspTikTokSpectrActionRail: View {
+    @ObservedObject var store: LpspTikTokStore
+
+    private var video: LpspTikTokVideo { store.currentVideo }
+
+    var body: some View {
+        VStack(spacing: 24) {
+            ZStack(alignment: .bottom) {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [.orange, .pink],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 48, height: 48)
+                    .overlay(Circle().stroke(.white, lineWidth: 2))
+
+                if !video.isFollowed {
+                    Button { store.toggleFollow() } label: {
+                        Image(systemName: "plus")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 18, height: 18)
+                            .background(Circle().fill(LpspTikTokTokens.tiktokRose))
+                    }
+                    .offset(y: 9)
+                    .sensoryFeedback(.success, trigger: video.isFollowed)
+                }
+            }
+
+            LpspTikTokActionIcon(
+                systemName: video.isLiked ? "heart.fill" : "heart",
+                count: video.likeCount,
+                tint: video.isLiked ? LpspTikTokTokens.tiktokRose : .white
+            ) {
+                store.toggleLike()
+            }
+
+            LpspTikTokActionIcon(
+                systemName: "ellipsis.bubble.fill",
+                count: video.commentCount,
+                tint: .white
+            ) {}
+
+            LpspTikTokActionIcon(
+                systemName: "bookmark.fill",
+                count: video.bookmarkCount,
+                tint: .white
+            ) {}
+
+            LpspTikTokActionIcon(
+                systemName: "arrowshape.turn.up.right.fill",
+                count: 0,
+                countLabel: "Share",
+                tint: .white
+            ) {}
+
+            LpspTikTokSpinningMusicDisc(artwork: nil)
+        }
+        .padding(.trailing, 12)
+    }
+}
+
+private struct LpspTikTokDiscoverTabScreen: View {
+    @ObservedObject var store: LpspTikTokStore
+
+    private let cols = [GridItem(.flexible(), spacing: 4), GridItem(.flexible(), spacing: 4)]
+
+    var body: some View {
+        VStack(spacing: 0) {
             ScrollView {
                 LazyVGrid(columns: cols, spacing: 4) {
-                    ForEach(0..<12, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.12 + Double(i) * 0.04))
-                            .aspectRatio(9/16, contentMode: .fit)
-                            .overlay(alignment: .bottomLeading) {
-                                Text("#trend \(i + 1)").font(.caption.bold()).foregroundStyle(.white).padding(6)
+                    ForEach(Array(LpspTikTokShowroomData.discoverTags.enumerated()), id: \.offset) { index, tag in
+                        Button {
+                            store.currentVideoIndex = 0
+                            store.selectedTab = .home
+                        } label: {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            LpspTikTokTokens.tiktokRose.opacity(0.25 + Double(index) * 0.05),
+                                            LpspTikTokTokens.tiktokCanvas,
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .aspectRatio(9/16, contentMode: .fit)
+                                .overlay(alignment: .bottomLeading) {
+                                    Text(tag)
+                                        .font(LpspTikTokFonts.tiktokChip.weight(.bold))
+                                        .foregroundStyle(.white)
+                                        .tiktokTextOnVideo()
+                                        .padding(8)
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    ForEach(store.videos) { video in
+                        Button {
+                            if let index = store.videos.firstIndex(where: { $0.id == video.id }) {
+                                store.currentVideoIndex = index
+                                store.selectedTab = .home
                             }
+                        } label: {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(
+                                    LinearGradient(
+                                        colors: video.gradient,
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .aspectRatio(9/16, contentMode: .fit)
+                                .overlay(alignment: .bottomLeading) {
+                                    Text("@\(video.username)")
+                                        .font(LpspTikTokFonts.tiktokMeta.weight(.semibold))
+                                        .foregroundStyle(.white)
+                                        .tiktokTextOnVideo()
+                                        .padding(8)
+                                }
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(8)
             }
-            .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
-            .navigationTitle("Discover")
+
+            LpspTikTokRootTabBar(
+                selected: $store.selectedTab,
+                onCreateTapped: { store.openCreate() },
+                isOnFeed: false
+            )
         }
+        .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
     }
 }
 
-private struct LpspTikTokShortVideoInboxTabScreen: View {
+private struct LpspTikTokInboxTabScreen: View {
+    @ObservedObject var store: LpspTikTokStore
+
     var body: some View {
-        NavigationStack {
-            List(["Alex t'a mentionné", "Nouveau follower", "Live maintenant"], id: \.self) { item in
-                HStack {
-                    Circle().fill(LpspTikTokTokens.tiktokTextPrimary.opacity(0.2)).frame(width: 40, height: 40)
-                    Text(item)
+        VStack(spacing: 0) {
+            List {
+                ForEach(LpspTikTokShowroomData.inbox, id: \.title) { item in
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(LpspTikTokTokens.tiktokSurface)
+                            .frame(width: 44, height: 44)
+                            .overlay {
+                                Image(systemName: "bell.fill")
+                                    .foregroundStyle(LpspTikTokTokens.tiktokRose)
+                            }
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(item.title)
+                                .font(LpspTikTokFonts.tiktokUsernameList.weight(.semibold))
+                                .foregroundStyle(LpspTikTokTokens.tiktokTextPrimary)
+                            Text(item.detail)
+                                .font(LpspTikTokFonts.tiktokBody)
+                                .foregroundStyle(LpspTikTokTokens.tiktokTextSecondary)
+                        }
+
+                        Spacer()
+
+                        Text(item.time)
+                            .font(LpspTikTokFonts.tiktokMeta)
+                            .foregroundStyle(LpspTikTokTokens.tiktokTextTertiary)
+                    }
+                    .listRowBackground(LpspTikTokTokens.tiktokSurface.opacity(0.55))
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
             .navigationTitle("Inbox")
+
+            LpspTikTokRootTabBar(
+                selected: $store.selectedTab,
+                onCreateTapped: { store.openCreate() },
+                isOnFeed: false
+            )
         }
+        .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
     }
 }
 
-private struct LpspTikTokShortVideoProfileTabScreen: View {
+private struct LpspTikTokProfileTabScreen: View {
+    @ObservedObject var store: LpspTikTokStore
+    @State private var isFollowingProfile = false
+
     var body: some View {
-        NavigationStack {
+        VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 16) {
-                    Circle().fill(LpspTikTokTokens.tiktokTextPrimary.gradient).frame(width: 88, height: 88)
-                        .overlay(Text("LP").font(.title.bold()).foregroundStyle(.white))
-                    Text("@lost.phone").font(.title3.bold()).foregroundStyle(.white)
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [LpspTikTokTokens.tiktokCyan, LpspTikTokTokens.tiktokRose],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 88, height: 88)
+                        .overlay {
+                            Text("Y")
+                                .font(.title.weight(.bold))
+                                .foregroundStyle(.white)
+                        }
+
+                    Text("@you")
+                        .font(LpspTikTokFonts.tiktokDisplayName.weight(.bold))
+                        .foregroundStyle(LpspTikTokTokens.tiktokTextPrimary)
+
                     HStack(spacing: 24) {
-                        VStack { Text("128").bold(); Text("Following").font(.caption) }
-                        VStack { Text("12.4K").bold(); Text("Followers").font(.caption) }
-                        VStack { Text("89K").bold(); Text("Likes").font(.caption) }
+                        LpspTikTokProfileStat(value: "128", label: "Following")
+                        LpspTikTokProfileStat(value: "12.4K", label: "Followers")
+                        LpspTikTokProfileStat(value: "89K", label: "Likes")
                     }
-                    .foregroundStyle(.white)
+
+                    LpspTikTokTikTokFollowButton(isFollowing: $isFollowingProfile)
+                        .frame(width: 160)
                 }
-                .padding()
+                .padding(.vertical, 24)
             }
-            .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
-            .navigationTitle("Profile")
+
+            LpspTikTokRootTabBar(
+                selected: $store.selectedTab,
+                onCreateTapped: { store.openCreate() },
+                isOnFeed: false
+            )
+        }
+        .background(LpspTikTokTokens.tiktokCanvas.ignoresSafeArea())
+    }
+}
+
+private struct LpspTikTokProfileStat: View {
+    let value: String
+    let label: String
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(LpspTikTokFonts.tiktokUsername.weight(.bold))
+                .foregroundStyle(LpspTikTokTokens.tiktokTextPrimary)
+            Text(label)
+                .font(LpspTikTokFonts.tiktokMeta)
+                .foregroundStyle(LpspTikTokTokens.tiktokTextSecondary)
         }
     }
 }
 
+private struct LpspTikTokCreateSheet: View {
+    @Environment(\.dismiss) private var dismiss
 
-private struct LpspTikTokSpectrHomeTabScreen: View {
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            LinearGradient(colors: [Color(red:0.08,green:0.05,blue:0.12), Color(red: 0.004, green: 0.004, blue: 0.004)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                .ignoresSafeArea()
-        LinearGradient(colors: [Color(red:0.08,green:0.05,blue:0.12), Color.primary], startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
-        HStack(spacing: 20) {
-            Text("Following").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("For You").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.top, 52)
-        Image(systemName: "magnifyingglass").font(.system(size: 20)).foregroundStyle(.white).padding(.trailing, 16)
-        VStack(spacing: 20) {
-            ZStack(alignment: .bottom) {
-                Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
+        ZStack {
+            LpspTikTokTokens.tiktokCanvas.ignoresSafeArea()
+            VStack(spacing: 20) {
+                Text("+")
+                    .font(.system(size: 72, weight: .bold))
+                    .chromaticAberration(offset: 6)
+
+                Text("Create")
+                    .font(LpspTikTokFonts.tiktokSheetTitle.weight(.semibold))
+                    .foregroundStyle(LpspTikTokTokens.tiktokTextPrimary)
+
+                LpspTikTokTikTokCreateButton {
+                    dismiss()
+                }
+
+                Button("Close") { dismiss() }
+                    .font(LpspTikTokFonts.tiktokButtonSecondary)
+                    .foregroundStyle(LpspTikTokTokens.tiktokTextSecondary)
             }
-            VStack(spacing: 4) {
-                Text("812.1K").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            }
-            VStack(spacing: 4) {
-                Text("4,567").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            }
-            VStack(spacing: 4) {
-                Text("42.8K").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            }
-            VStack(spacing: 4) {
-                Text("Share").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            }
-            Circle().fill(.black).frame(width: 44, height: 44).overlay(Circle().fill(Color.red.opacity(0.8)).frame(width: 26, height: 26))
-        } .padding(.trailing, 12)
-        VStack(alignment: .leading, spacing: 6) {
-            Text("@kellenvoss").font(.system(size: 16.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("tokyo station on a rainy tuesday #tokyo #rainy #streetfilm").font(.system(size: 15)).foregroundStyle(.white)
-            HStack(spacing: 8) {
-                Text("neon ritual - slow amber trio · neon ritual - slow amber trio · neon ritual").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            } .foregroundStyle(.white.opacity(0.9))
-        } .padding(.horizontal, 14).padding(.bottom, 8)
-        Capsule().fill(.white.opacity(0.25)).frame(height: 4).padding(.horizontal, 24)
         }
-        .background(Color(red: 0.004, green: 0.004, blue: 0.004).ignoresSafeArea())
+        .presentationDetents([.medium])
         .preferredColorScheme(.dark)
     }
 }

@@ -85,6 +85,8 @@ struct LpspAppRouter: View {
     private func showroomAppView(named appName: String, canonical: String) -> some View {
         if CloneAppCatalog.isCloneApp(appName) {
             showroomCloneView(named: appName)
+        } else if VendoredShowroomCatalog.isVendored(canonical) {
+            VendoredShowroomRouter.view(for: canonical)
         } else if AwesomeShowroomCatalog.tierApps.contains(canonical) {
             AwesomeShowroomRouter.view(for: canonical)
         } else {
@@ -98,7 +100,7 @@ struct LpspAppRouter: View {
         case "Contacts":
             ContactsView()
         case "Rappels":
-            LpspRappelsView(lists: [])
+            LpspAwesomeRappelsView()
         case "Dictaphone":
             LpspDictaphoneView()
         case "Wallet":
@@ -112,35 +114,41 @@ struct LpspAppRouter: View {
     private func thirdPartyView(named appName: String, payload: AnyCodable?) -> some View {
         switch LpspAppAliases.canonical(appName) {
         case "WhatsApp":
-            AwesomeShowroomRouter.view(for: "WhatsApp")
+            LpspVendoredWhatsAppRootView()
         case "Signal":
-            AwesomeShowroomRouter.view(for: "Signal")
+            LpspAwesomeSignalView(conversations: LpspAdapters.signal(from: payload))
+        case "Messenger":
+            LpspVendoredMessengerRootView()
+        case "Telegram":
+            LpspAwesomeTelegramView(conversations: LpspAdapters.telegram(from: payload))
         case "Contacts":
             ContactsView(contacts: contacts)
         case "Uber":
-            AwesomeShowroomRouter.view(for: "Uber")
+            LpspVendoredUberRootView()
         case "Banque":
             AwesomeShowroomRouter.view(for: "Banque")
         case "Plans":
             AwesomeShowroomRouter.view(for: "Plans")
         case "Fichiers":
-            AwesomeShowroomRouter.view(for: "Fichiers")
+            LpspAwesomeFichiersView(files: LpspAdapters.fichiers(from: payload))
         case "Rappels":
-            LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
+            LpspAwesomeRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Instagram":
-            AwesomeShowroomRouter.view(for: "Instagram")
+            LpspVendoredInstagramRootView()
         case "Spotify":
-            AwesomeShowroomRouter.view(for: "Spotify")
+            LpspAwesomeSpotifyView(data: LpspAdapters.spotify(from: payload))
         case "Netflix":
-            AwesomeShowroomRouter.view(for: "Netflix")
+            LpspVendoredNetflixRootView()
         case "Apple Music":
-            AwesomeShowroomRouter.view(for: "Apple Music")
+            LpspVendoredAppleMusicRootView()
         case "Dictaphone":
             LpspDictaphoneView()
         case "Wallet":
             LpspWalletView()
         default:
-            if AwesomeShowroomCatalog.tierApps.contains(LpspAppAliases.canonical(appName)) {
+            if VendoredShowroomCatalog.isVendored(LpspAppAliases.canonical(appName)) {
+                VendoredShowroomRouter.view(for: appName)
+            } else if AwesomeShowroomCatalog.tierApps.contains(LpspAppAliases.canonical(appName)) {
                 AwesomeShowroomRouter.view(for: appName)
             } else {
                 GenericLpspAppView(appName: appName, payload: payload)
@@ -160,7 +168,7 @@ struct LpspAppRouter: View {
         case "Safari":
             SafariView()
         case "Mail":
-            MailView()
+            LpspVendoredGmailRootView()
         case "Notes":
             NotesView()
         case "Calendrier":
@@ -176,13 +184,13 @@ struct LpspAppRouter: View {
         case "Appareil photo", "Camera", "Caméra":
             CameraView()
         case "App Store":
-            AppStoreView()
+            LpspVendoredAppStoreRootView()
         case "Musique", "Music":
-            MusicView()
+            LpspVendoredAppleMusicRootView()
         case "Contacts":
             ContactsView()
         case "Rappels":
-            LpspRappelsView(lists: [])
+            LpspAwesomeRappelsView()
         case "Dictaphone":
             LpspDictaphoneView()
         case "Wallet":
@@ -213,7 +221,7 @@ struct LpspAppRouter: View {
                 history: LpspAdapters.safariHistory(from: payload)
             ))
         case "Mail":
-            MailView(manager: LpspCloneBridge.mailManager(from: LpspAdapters.mail(from: payload)))
+            LpspVendoredGmailRootView()
         case "Notes":
             NotesView(manager: LpspCloneBridge.notesManager(from: LpspAdapters.notes(from: payload)))
         case "Calendrier":
@@ -229,13 +237,13 @@ struct LpspAppRouter: View {
         case "Appareil photo", "Camera", "Caméra":
             CameraView()
         case "App Store":
-            AppStoreView()
+            LpspVendoredAppStoreRootView()
         case "Musique", "Music":
-            MusicView(manager: LpspCloneBridge.musicManager(from: payload))
+            LpspVendoredAppleMusicRootView()
         case "Contacts":
             ContactsView(contacts: contacts)
         case "Rappels":
-            LpspRappelsView(lists: LpspAdapters.rappels(from: payload))
+            LpspAwesomeRappelsView(lists: LpspAdapters.rappels(from: payload))
         case "Dictaphone":
             LpspDictaphoneView()
         case "Wallet":
@@ -257,12 +265,12 @@ struct LpspAppRouter: View {
         case .weather: WeatherView()
         case .calculator: CalculatorView()
         case .settings: SettingsView()
-        case .appStore: AppStoreView()
+        case .appStore: LpspVendoredAppStoreRootView()
         case .clock: ClockView()
         case .calendar:
             CalendarView(events: LpspCloneBridge.calendarEvents(from: LpspAdapters.calendar(from: payload)))
         case .camera: CameraView()
-        case .music: MusicView(manager: LpspCloneBridge.musicManager(from: payload))
+        case .music: LpspVendoredAppleMusicRootView()
         default:
             GenericLpspAppView(appName: appName, payload: payload)
         }

@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeZoomView: View {
     var body: some View {
-        LpspZoomShowroomRoot()
+        LpspZoomShowroomRoot(store: LpspZoomStore())
     }
 }
 
@@ -14,13 +14,13 @@ private enum LpspZoomFonts {
     static let zoomTitleLarge   = Font.system(size: 28, weight: .regular)
     static let zoomMeetingTopic = Font.system(size: 22, weight: .regular)
     static let zoomSection      = Font.system(size: 17, weight: .regular)
-    static let zoomListTitle    = Font.system(size: 16, weight: .regular)
+    static let zoomListTitle    = Font.system(size: 16, weight: .semibold)
     static let zoomBody         = Font.system(size: 15, weight: .regular)
-    static let zoomButton       = Font.system(size: 17, weight: .regular)
-    static let zoomControlLabel = Font.system(size: 11, weight: .regular)
+    static let zoomButton       = Font.system(size: 17, weight: .bold)
+    static let zoomControlLabel = Font.system(size: 11, weight: .semibold)
     static let zoomMetadata     = Font.system(size: 13, weight: .regular)
-    static let zoomTileName     = Font.system(size: 13, weight: .regular)
-    static let zoomTimer        = Font.system(size: 14, weight: .regular)
+    static let zoomTileName     = Font.system(size: 13, weight: .semibold)
+    static let zoomTimer        = Font.system(size: 14, weight: .bold)
     static let zoomTab          = Font.system(size: 10, weight: .regular)
     static let zoomTinyUpper    = Font.system(size: 11, weight: .regular)
     static func zoom(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
@@ -268,138 +268,497 @@ fileprivate struct LpspZoomGalleryGrid: View {
     }
 }
 
-fileprivate struct LpspZoomParticipant: Identifiable { let id = UUID(); let name: String; let isMuted: Bool; let isSpeaking: Bool }
+fileprivate struct LpspZoomParticipant: Identifiable {
+    let id: String
+    let name: String
+    let initials: String
+    var isMuted: Bool
+    var isSpeaking: Bool
+}
 
+// MARK: - Données & état (showroom Lost Phone)
 
+fileprivate struct LpspZoomShowroomMeeting: Identifiable {
+    let id: String
+    let time: String
+    let topic: String
+    let subtitle: String
+    let meetingID: String
+    let isSpectrDemo: Bool
+}
+
+fileprivate struct LpspZoomShowroomChatMessage: Identifiable {
+    let id: String
+    let author: String
+    let text: String
+    let time: String
+}
+
+private enum LpspZoomMobileTab: CaseIterable {
+    case meetings, teamChat, mail, phone, more
+
+    var label: String {
+        switch self {
+        case .meetings: "Meetings"
+        case .teamChat: "Team Chat"
+        case .mail: "Mail"
+        case .phone: "Phone"
+        case .more: "More"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .meetings: "video.fill"
+        case .teamChat: "bubble.left.and.bubble.right.fill"
+        case .mail: "envelope.fill"
+        case .phone: "phone.fill"
+        case .more: "ellipsis"
+        }
+    }
+}
+
+@MainActor
+fileprivate final class LpspZoomStore: ObservableObject {
+    @Published var selectedTab: LpspZoomMobileTab = .meetings
+    @Published var inCall = false
+    @Published var activeMeetingID: String?
+    @Published var participants: [LpspZoomParticipant] = []
+    @Published var micOn = false
+    @Published var videoOn = true
+    @Published var controlsVisible = true
+    @Published var isRecording = false
+    @Published var callElapsedSeconds = 754
+    @Published var meetingIDInput = ""
+    @Published var showJoinSheet = false
+    @Published var chats: [LpspZoomShowroomChatMessage]
+
+    let meetings: [LpspZoomShowroomMeeting]
+
+    init() {
+        self.meetings = LpspZoomShowroomData.meetings
+        self.chats = LpspZoomShowroomData.chats
+    }
+
+    var callTimerLabel: String {
+        let minutes = callElapsedSeconds / 60
+        let seconds = callElapsedSeconds % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+
+    func joinMeeting(_ meeting: LpspZoomShowroomMeeting) {
+        activeMeetingID = meeting.id
+        participants = meeting.isSpectrDemo
+            ? LpspZoomShowroomData.spectrParticipants
+            : LpspZoomShowroomData.storyParticipants
+        isRecording = meeting.isSpectrDemo
+        callElapsedSeconds = meeting.isSpectrDemo ? 754 : 0
+        micOn = false
+        videoOn = true
+        controlsVisible = true
+        inCall = true
+        selectedTab = .meetings
+    }
+
+    func joinWithID() {
+        let trimmed = meetingIDInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        activeMeetingID = "adhoc"
+        participants = LpspZoomShowroomData.storyParticipants
+        isRecording = false
+        callElapsedSeconds = 0
+        micOn = true
+        videoOn = true
+        inCall = true
+        showJoinSheet = false
+        meetingIDInput = ""
+    }
+
+    func leaveCall() {
+        inCall = false
+        activeMeetingID = nil
+        participants = []
+        isRecording = false
+    }
+
+    func revealControls() {
+        controlsVisible = true
+    }
+
+    func toggleActiveSpeaker() {
+        guard let index = participants.firstIndex(where: \.isSpeaking) else { return }
+        var updated = participants
+        let next = (index + 1) % updated.count
+        for i in updated.indices {
+            updated[i].isSpeaking = i == next
+        }
+        participants = updated
+    }
+
+    func sendChat(_ text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        chats.insert(
+            LpspZoomShowroomChatMessage(id: UUID().uuidString, author: "Mathieu G.", text: trimmed, time: "Now"),
+            at: 0
+        )
+    }
+}
+
+private enum LpspZoomShowroomData {
+    static let spectrParticipants: [LpspZoomParticipant] = [
+        .init(id: "ar", name: "Alex Rivera", initials: "AR", isMuted: false, isSpeaking: true),
+        .init(id: "mk", name: "Mia Kado", initials: "MK", isMuted: true, isSpeaking: false),
+        .init(id: "jt", name: "Jon Tao", initials: "JT", isMuted: false, isSpeaking: false),
+        .init(id: "sp", name: "Sam Park", initials: "SP", isMuted: true, isSpeaking: false),
+    ]
+
+    static let storyParticipants: [LpspZoomParticipant] = [
+        .init(id: "nk", name: "Nadia K.", initials: "NK", isMuted: false, isSpeaking: true),
+        .init(id: "vm", name: "Vincent Morel", initials: "VM", isMuted: true, isSpeaking: false),
+        .init(id: "mg", name: "Mathieu G.", initials: "MG", isMuted: false, isSpeaking: false),
+        .init(id: "sr", name: "Sam R.", initials: "SR", isMuted: false, isSpeaking: false),
+    ]
+
+    static let meetings: [LpspZoomShowroomMeeting] = [
+        .init(
+            id: "weekly-sync",
+            time: "10:00 AM",
+            topic: "Weekly Sync",
+            subtitle: "45 min · Zoom Meeting",
+            meetingID: "842 115 9033",
+            isSpectrDemo: true
+        ),
+        .init(
+            id: "brief-s7",
+            time: "6:00 PM",
+            topic: "Brief vitrine S7",
+            subtitle: "Mer 18 juin · EventsCult",
+            meetingID: "718 442 1190",
+            isSpectrDemo: false
+        ),
+        .init(
+            id: "logistique",
+            time: "9:30 PM",
+            topic: "Point logistique Gennevilliers",
+            subtitle: "Sam R. · 30 min",
+            meetingID: "555 902 4412",
+            isSpectrDemo: false
+        ),
+    ]
+
+    static let chats: [LpspZoomShowroomChatMessage] = [
+        .init(id: "c1", author: "Nadia K.", text: "Plus de photos dans les salles — on arrête les repérages.", time: "09:14"),
+        .init(id: "c2", author: "Vincent Morel", text: "Badge périmé mais couloirs Denon OK.", time: "Hier"),
+        .init(id: "c3", author: "Sam R.", text: "Camionnette validée côté Gennevilliers.", time: "2 juin"),
+    ]
+}
 
 // MARK: - Écrans showroom
 
 private struct LpspZoomShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspZoomStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspZoomSpectrHomeTabScreen()
-                .tabItem { Label("Meetings", systemImage: "video.fill") }
-                .tag(0)
-            LpspZoomMeetingsTabScreen(title: "Team Chat", tabIndex: 1)
-                .tabItem { Label("Team Chat", systemImage: "bubble.left.and.bubble.right.fill") }
-                .tag(1)
-            LpspZoomMeetingsTabScreen(title: "Mail", tabIndex: 2)
-                .tabItem { Label("Mail", systemImage: "envelope.fill") }
-                .tag(2)
-            LpspZoomMeetingsTabScreen(title: "Phone", tabIndex: 3)
-                .tabItem { Label("Phone", systemImage: "phone.fill") }
-                .tag(3)
-            LpspZoomMeetingsTabScreen(title: "More", tabIndex: 4)
-                .tabItem { Label("More", systemImage: "ellipsis") }
-                .tag(4)
+        ZStack {
+            if store.inCall {
+                LpspZoomInCallScreen(store: store)
+                    .transition(.opacity)
+            } else {
+                VStack(spacing: 0) {
+                    Group {
+                        switch store.selectedTab {
+                        case .meetings:
+                            LpspZoomMeetingsScreen(store: store)
+                        case .teamChat:
+                            LpspZoomTeamChatScreen(store: store)
+                        case .mail:
+                            LpspZoomMailScreen()
+                        case .phone:
+                            LpspZoomPhoneScreen()
+                        case .more:
+                            LpspZoomMoreScreen()
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                    LpspZoomMobileTabBar(store: store)
+                }
+                .background(LpspZoomTokens.zoomLightCanvas.ignoresSafeArea())
+            }
         }
-        .tint(LpspZoomTokens.zoomHandYellow)
-        
+        .sheet(isPresented: $store.showJoinSheet) {
+            LpspZoomJoinSheet(store: store)
+        }
     }
 }
 
+private struct LpspZoomMobileTabBar: View {
+    @ObservedObject var store: LpspZoomStore
 
-private struct LpspZoomGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspZoomTokens.zoomHandYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspZoomTokens.zoomHandYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        HStack(spacing: 0) {
+            ForEach(LpspZoomMobileTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { store.selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.label)
+                            .font(LpspZoomFonts.zoomTab)
                     }
+                    .foregroundStyle(store.selectedTab == tab ? LpspZoomTokens.zoomBlue : LpspZoomTokens.zoomTextTertiary)
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(LpspZoomTokens.zoomLightCanvas)
+        .overlay(alignment: .top) {
+            Rectangle().fill(LpspZoomTokens.zoomLightDivider).frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspZoomInCallScreen: View {
+    @ObservedObject var store: LpspZoomStore
+    @State private var hideTask: Task<Void, Never>?
+
+    var body: some View {
+        ZStack {
+            LpspZoomTokens.zoomCanvas.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                HStack {
+                    if store.isRecording {
+                        LpspZoomRecordingIndicator()
+                    }
+                    Spacer()
+                    Text(store.callTimerLabel)
+                        .font(LpspZoomFonts.zoomTimer)
+                        .foregroundStyle(LpspZoomTokens.zoomTextPrimary)
+                        .zoomTabular()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+
+                LpspZoomShowroomGalleryGrid(participants: store.participants)
+                    .padding(.top, 8)
+                    .onTapGesture {
+                        store.revealControls()
+                        scheduleHide()
+                    }
+
+                Spacer()
+
+                if store.controlsVisible {
+                    LpspZoomControlBar(
+                        micOn: $store.micOn,
+                        videoOn: $store.videoOn,
+                        onLeave: { store.leaveCall() }
+                    )
+                    .padding(.bottom, 16)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
-            .navigationTitle(title)
+        }
+        .preferredColorScheme(.dark)
+        .onAppear { scheduleHide() }
+        .onChange(of: store.controlsVisible) { _, visible in
+            if visible { scheduleHide() }
+        }
+        .onDisappear { hideTask?.cancel() }
+    }
+
+    private func scheduleHide() {
+        hideTask?.cancel()
+        hideTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeOut(duration: 0.25)) {
+                store.controlsVisible = false
+            }
         }
     }
 }
 
+private struct LpspZoomShowroomGalleryGrid: View {
+    let participants: [LpspZoomParticipant]
 
+    var body: some View {
+        let columns = gridColumns(for: participants.count)
+        LazyVGrid(columns: columns, spacing: 8) {
+            ForEach(participants) { participant in
+                LpspZoomGalleryTile(
+                    name: participant.name,
+                    isMuted: participant.isMuted,
+                    isActiveSpeaker: participant.isSpeaking
+                )
+                .aspectRatio(1, contentMode: .fit)
+            }
+        }
+        .padding(8)
+        .animation(.easeInOut(duration: 0.3), value: participants.map(\.id))
+    }
 
-private enum LpspZoomDemoParticipants {
-    static let items: [LpspZoomParticipant] = [
-        .init(name: "Alex", isMuted: false, isSpeaking: true),
-        .init(name: "Léa", isMuted: true, isSpeaking: false),
-    ]
+    private func gridColumns(for count: Int) -> [GridItem] {
+        let cols = count <= 1 ? 1 : 2
+        return Array(repeating: GridItem(.flexible(), spacing: 8), count: cols)
+    }
 }
 
-private struct LpspZoomMeetingsListTabScreen: View {
+private struct LpspZoomMeetingsScreen: View {
+    @ObservedObject var store: LpspZoomStore
+
     var body: some View {
         NavigationStack {
-            ScrollView { VStack(spacing: 8) { 
-                    LpspZoomMeetingRow(time: "10:00", topic: "Standup Lost Phone", subtitle: "ID: 123 456 789", onJoin: {})
-                    LpspZoomMeetingRow(time: "14:00", topic: "Review Spectr", subtitle: "Récurrent", onJoin: {})
-                        .padding(.vertical, 4)
- } }
+            ScrollView {
+                VStack(spacing: 8) {
+                    LpspZoomJoinButton(title: "Join a meeting") {
+                        store.showJoinSheet = true
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                    LpspZoomJoinButton(title: "New meeting") {
+                        if let demo = store.meetings.first(where: \.isSpectrDemo) {
+                            store.joinMeeting(demo)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+
+                    Text("Upcoming")
+                        .font(LpspZoomFonts.zoomSection.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+
+                    ForEach(store.meetings) { meeting in
+                        LpspZoomMeetingRow(
+                            time: meeting.time,
+                            topic: meeting.topic,
+                            subtitle: meeting.subtitle,
+                            onJoin: { store.joinMeeting(meeting) }
+                        )
+                    }
+                }
+                .padding(.bottom, 16)
+            }
             .background(LpspZoomTokens.zoomCanvas.ignoresSafeArea())
             .navigationTitle("Meetings")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 }
 
-private struct LpspZoomMeetingsChatTabScreen: View {
+private struct LpspZoomJoinSheet: View {
+    @ObservedObject var store: LpspZoomStore
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         NavigationStack {
-            LpspZoomGalleryGrid(participants: LpspZoomDemoParticipants.items)
-            .navigationTitle("Chat")
+            VStack(spacing: 16) {
+                TextField("Meeting ID", text: $store.meetingIDInput)
+                    .keyboardType(.numberPad)
+                    .font(LpspZoomFonts.zoomBody)
+                    .padding(12)
+                    .background(LpspZoomTokens.zoomLightSurface, in: RoundedRectangle(cornerRadius: 8))
+
+                LpspZoomJoinButton(title: "Join") {
+                    store.joinWithID()
+                    dismiss()
+                }
+
+                Spacer()
+            }
+            .padding(16)
+            .navigationTitle("Join")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+}
+
+private struct LpspZoomTeamChatScreen: View {
+    @ObservedObject var store: LpspZoomStore
+    @State private var draft = ""
+
+    var body: some View {
+        NavigationStack {
+            List(store.chats) { message in
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(message.author)
+                            .font(LpspZoomFonts.zoomListTitle)
+                        Spacer()
+                        Text(message.time)
+                            .font(LpspZoomFonts.zoomMetadata)
+                            .foregroundStyle(LpspZoomTokens.zoomTextTertiary)
+                    }
+                    Text(message.text)
+                        .font(LpspZoomFonts.zoomBody)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 4)
+            }
+            .listStyle(.plain)
+            .navigationTitle("Team Chat")
+            .safeAreaInset(edge: .bottom) {
+                HStack(spacing: 8) {
+                    TextField("Message…", text: $draft)
+                        .textFieldStyle(.roundedBorder)
+                    Button("Send") {
+                        store.sendChat(draft)
+                        draft = ""
+                    }
+                    .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+                .padding(12)
+                .background(.bar)
+            }
         }
     }
 }
 
-private struct LpspZoomMeetingsMailTabScreen: View {
-    var body: some View { NavigationStack { List(["Inbox", "Sent"], id: \.self) { Label($0, systemImage: "envelope") } .navigationTitle("Mail") } }
-}
-
-private struct LpspZoomMeetingsPhoneTabScreen: View {
-    var body: some View { NavigationStack { List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "phone") } .navigationTitle("Phone") } }
-}
-
-private struct LpspZoomMeetingsMoreTabScreen: View {
-    var body: some View { NavigationStack { List(["Settings", "Help"], id: \.self) { Label($0, systemImage: "gearshape") } .navigationTitle("More") } }
-}
-
-private struct LpspZoomMeetingsTabScreen: View {
-    let title: String
-    let tabIndex: Int
+private struct LpspZoomMailScreen: View {
     var body: some View {
-        let low = title.lowercased()
-        if low.contains("meeting") || low.contains("video") || tabIndex == 0 { LpspZoomMeetingsListTabScreen() }
-        else if low.contains("chat") || low.contains("team") { LpspZoomMeetingsChatTabScreen() }
-        else if low.contains("mail") { LpspZoomMeetingsMailTabScreen() }
-        else if low.contains("phone") { LpspZoomMeetingsPhoneTabScreen() }
-        else { LpspZoomMeetingsMoreTabScreen() }
-    }
-}
-
-
-private struct LpspZoomSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-                Text("Recording").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("12:34").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
-            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
-            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
-            RoundedRectangle(cornerRadius: 8).fill(Color(red:0.15,green:0.17,blue:0.22)).aspectRatio(1, contentMode: .fit).overlay(Text("Alex").font(.caption).foregroundStyle(.white), alignment: .bottomLeading).padding(6)
-        } .padding(8)
-                Text("Unmute").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Video").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Share").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Participants").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("React").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Leave").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+        NavigationStack {
+            List(["Inbox", "Sent", "Drafts"], id: \.self) { item in
+                Label(item, systemImage: "envelope")
+            }
+            .navigationTitle("Mail")
         }
-        .background(Color(red: 0.102, green: 0.102, blue: 0.102).ignoresSafeArea())
     }
 }
 
+private struct LpspZoomPhoneScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Nadia K.", "Vincent Morel", "Sam R."], id: \.self) { name in
+                Label(name, systemImage: "phone")
+            }
+            .navigationTitle("Phone")
+        }
+    }
+}
+
+private struct LpspZoomMoreScreen: View {
+    var body: some View {
+        NavigationStack {
+            List(["Settings", "Help", "Sign out"], id: \.self) { item in
+                Label(item, systemImage: item == "Settings" ? "gearshape" : item == "Help" ? "questionmark.circle" : "rectangle.portrait.and.arrow.right")
+            }
+            .navigationTitle("More")
+        }
+    }
+}
 

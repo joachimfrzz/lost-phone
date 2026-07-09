@@ -4,8 +4,15 @@ import SwiftUI
 // Meliwat/awesome-ios-design-md/messaging/telegram/DESIGN-swiftui.md
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeTelegramView: View {
+    var conversations: [LpspConversation]?
+
     var body: some View {
-        LpspTelegramShowroomRoot()
+        let storyThreads = conversations?.isEmpty == false ? conversations : nil
+        let threads = storyThreads ?? LpspTelegramShowroomData.conversations
+        LpspTelegramShowroomRoot(
+            store: LpspTelegramStore(conversations: threads),
+            isStoryMode: storyThreads != nil
+        )
     }
 }
 
@@ -100,6 +107,180 @@ private enum LpspTelegramFonts {
     static let tgTabLabel       = Font.system(size: 10, weight: .medium)
     static let tgButton         = Font.system(size: 17, weight: .semibold)
     static let tgCode           = Font.system(size: 15, weight: .regular)
+}
+
+// MARK: - Données & état (showroom + histoire LPSP)
+
+@MainActor
+fileprivate final class LpspTelegramStore: ObservableObject {
+    @Published private(set) var threads: [LpspConversation]
+    @Published var messagesByThread: [String: [LpspTelegramSpectrMessage]]
+
+    init(conversations: [LpspConversation]) {
+        self.threads = conversations
+        self.messagesByThread = Dictionary(
+            uniqueKeysWithValues: conversations.map { ($0.id, LpspTelegramStore.makeDisplayMessages(for: $0)) }
+        )
+    }
+
+    func thread(id: String) -> LpspConversation? {
+        threads.first { $0.id == id }
+    }
+
+    func markAsRead(threadId: String) {
+        guard let index = threads.firstIndex(where: { $0.id == threadId }),
+              threads[index].isUnread else { return }
+        let old = threads[index]
+        threads[index] = LpspConversation(
+            id: old.id,
+            contactName: old.contactName,
+            messages: old.messages,
+            isUnread: false
+        )
+    }
+
+    func send(text: String, threadId: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        let time = formatter.string(from: Date())
+        messagesByThread[threadId, default: []].append(
+            .init(id: "sent-\(UUID().uuidString)", kind: .outgoing(text: trimmed, time: time, readState: .delivered))
+        )
+        if let index = threads.firstIndex(where: { $0.id == threadId }) {
+            let old = threads[index]
+            let newMessage = LpspMessage(
+                id: "sent-\(UUID().uuidString)",
+                text: trimmed,
+                isUser: true,
+                date: Date(),
+                dateRaw: time
+            )
+            threads[index] = LpspConversation(
+                id: old.id,
+                contactName: old.contactName,
+                messages: old.messages + [newMessage],
+                isUnread: false
+            )
+        }
+    }
+
+    private static func makeDisplayMessages(for conversation: LpspConversation) -> [LpspTelegramSpectrMessage] {
+        if conversation.id == LpspTelegramShowroomData.oliviaThreadId {
+            return LpspTelegramShowroomData.oliviaDisplayMessages
+        }
+        return conversation.messages.map { message in
+            let time = LpspAdapters.formatWhatsAppBubbleTime(message)
+            if message.isUser {
+                return LpspTelegramSpectrMessage(
+                    id: message.id,
+                    kind: .outgoing(text: message.text, time: time, readState: .read)
+                )
+            }
+            return LpspTelegramSpectrMessage(
+                id: message.id,
+                kind: .incoming(text: message.text, time: time)
+            )
+        }
+    }
+}
+
+fileprivate struct LpspTelegramSpectrMessage: Identifiable {
+    enum Kind {
+        case incoming(text: String, time: String)
+        case outgoing(text: String, time: String, readState: LpspTelegramReadState)
+    }
+
+    let id: String
+    let kind: Kind
+}
+
+fileprivate enum LpspTelegramReadState {
+    case sent, delivered, read
+}
+
+private enum LpspTelegramShowroomData {
+    static let oliviaThreadId = "tg-olivia-park"
+    static let oliviaPinnedMessage = "Demo day Friday — bring a laptop."
+
+    static var conversations: [LpspConversation] {
+        [
+            LpspConversation(
+                id: oliviaThreadId,
+                contactName: "Olivia Park",
+                messages: oliviaPlainMessages,
+                isUnread: false
+            ),
+            LpspConversation(
+                id: "tg-alex-martin",
+                contactName: "Alex Martin",
+                messages: [
+                    LpspMessage(id: "a1", text: "On se voit ce soir ?", isUser: false, date: nil, dateRaw: "10:24"),
+                    LpspMessage(id: "a2", text: "Oui, vers 19h", isUser: true, date: nil, dateRaw: "10:26"),
+                ],
+                isUnread: true
+            ),
+            LpspConversation(
+                id: "tg-lea-dupont",
+                contactName: "Léa Dupont",
+                messages: [
+                    LpspMessage(id: "l1", text: "Merci pour hier", isUser: false, date: nil, dateRaw: "Hier"),
+                ],
+                isUnread: false
+            ),
+        ]
+    }
+
+    static let oliviaDisplayMessages: [LpspTelegramSpectrMessage] = [
+        .init(id: "o1", kind: .incoming(text: "Ok quick update — the gradient prototype is running.", time: "10:21")),
+        .init(id: "o2", kind: .outgoing(text: "Amazing, want me to test on the old iPhone?", time: "10:22", readState: .read)),
+        .init(id: "o3", kind: .incoming(text: "yes pls 🙏", time: "10:23")),
+        .init(id: "o4", kind: .incoming(text: "perfect, on it", time: "10:26")),
+    ]
+
+    private static var oliviaPlainMessages: [LpspMessage] {
+        oliviaDisplayMessages.map { msg in
+            switch msg.kind {
+            case .incoming(let text, let time):
+                return LpspMessage(id: msg.id, text: text, isUser: false, date: nil, dateRaw: time)
+            case .outgoing(let text, let time, _):
+                return LpspMessage(id: msg.id, text: text, isUser: true, date: nil, dateRaw: time)
+            }
+        }
+    }
+
+    static func pinnedMessage(for threadId: String) -> String? {
+        threadId == oliviaThreadId ? oliviaPinnedMessage : nil
+    }
+
+    static func isPinned(threadId: String) -> Bool {
+        threadId == oliviaThreadId
+    }
+}
+
+private enum LpspTelegramContactStyle {
+    static func initials(for name: String) -> String {
+        let cleaned = name.filter { $0.isLetter || $0.isWhitespace }
+        let parts = cleaned.split(separator: " ")
+        if parts.count >= 2 {
+            return String(parts[0].prefix(1) + parts[1].prefix(1)).uppercased()
+        }
+        return String(cleaned.prefix(2)).uppercased()
+    }
+
+    static func gradient(for name: String) -> [Color] {
+        if name.contains("Olivia") {
+            return [Color(red: 0.424, green: 0.608, blue: 0.788), Color(red: 0.180, green: 0.361, blue: 0.561)]
+        }
+        return [LpspTelegramTokens.tgAccentLight, LpspTelegramTokens.tgAccent]
+    }
+
+    static func subtitle(for name: String) -> String {
+        if name.contains("Olivia") { return "last seen recently" }
+        if name.contains("Alex") { return "last seen today at 10:26" }
+        return "last seen recently"
+    }
 }
 
 fileprivate struct LpspTelegramTgComposeBar: View {
@@ -308,8 +489,8 @@ fileprivate struct LpspTelegramTgSwipeToReply<Content: View>: View {
     }
 }
 
-fileprivate struct LpspTelegramTgChatListRow: View {
-    let avatar: Image
+fileprivate struct LpspTelegramTgChatListRow<Avatar: View>: View {
+    let avatar: Avatar
     let name: String
     let preview: String
     let timestamp: String
@@ -320,8 +501,6 @@ fileprivate struct LpspTelegramTgChatListRow: View {
     var body: some View {
         HStack(spacing: 12) {
             avatar
-                .resizable()
-                .aspectRatio(contentMode: .fill)
                 .frame(width: 54, height: 54)
                 .clipShape(Circle())
 
@@ -377,289 +556,560 @@ fileprivate struct LpspTelegramTgChatListRow: View {
 
 // MARK: - Écrans showroom
 
-private struct LpspTelegramShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspTelegramSpectrHomeTabScreen()
-                .tabItem { Label("Contacts", systemImage: "person.2.fill") }
-                .tag(0)
-            LpspTelegramCallsTabScreen()
-                .tabItem { Label("Calls", systemImage: "phone.fill") }
-                .tag(1)
-            LpspTelegramChatsTabScreen()
-                .tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right.fill") }
-                .tag(2)
-            LpspTelegramSettingsTabScreen()
-                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
-                .tag(3)
+private enum LpspTelegramTab: Int, CaseIterable {
+    case contacts, calls, chats, settings
+
+    var label: String {
+        switch self {
+        case .contacts: "Contacts"
+        case .calls: "Calls"
+        case .chats: "Chats"
+        case .settings: "Settings"
         }
-        .tint(LpspTelegramTokens.tgAccent)
-        
+    }
+
+    var icon: String {
+        switch self {
+        case .contacts: "person.2.fill"
+        case .calls: "phone.fill"
+        case .chats: "bubble.left.and.bubble.right.fill"
+        case .settings: "gearshape.fill"
+        }
     }
 }
 
+private enum LpspTelegramChatRoute: Hashable {
+    case thread(String)
+}
 
-private struct LpspTelegramGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
+private struct LpspTelegramShowroomRoot: View {
+    @ObservedObject var store: LpspTelegramStore
+    var isStoryMode = false
+    @State private var selectedTab: LpspTelegramTab = .chats
+    @State private var chatsPath = NavigationPath()
+
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspTelegramTokens.tgAccent.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspTelegramTokens.tgAccent))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+        VStack(spacing: 0) {
+            Group {
+                switch selectedTab {
+                case .contacts:
+                    LpspTelegramContactsTabScreen(store: store, isStoryMode: isStoryMode)
+                case .calls:
+                    LpspTelegramCallsTabScreen(store: store)
+                case .chats:
+                    LpspTelegramChatsTabScreen(store: store, path: $chatsPath)
+                case .settings:
+                    LpspTelegramSettingsTabScreen(isStoryMode: isStoryMode)
                 }
             }
-            .navigationTitle(title)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspTelegramSpectrTabBar(selectedTab: $selectedTab)
+        }
+        .background(LpspTelegramTokens.tgCanvasLight.ignoresSafeArea())
+        .preferredColorScheme(.light)
+    }
+}
+
+private struct LpspTelegramSpectrTabBar: View {
+    @Binding var selectedTab: LpspTelegramTab
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspTelegramTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 22))
+                        Text(tab.label)
+                            .font(LpspTelegramFonts.tgTabLabel)
+                    }
+                    .foregroundStyle(selectedTab == tab ? LpspTelegramTokens.tgAccent : LpspTelegramTokens.tgTextSecondary)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(LpspTelegramPressableStyle(pressedScale: 0.95))
+            }
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 2)
+        .background(LpspTelegramTokens.tgSurface1Light)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspTelegramTokens.tgDividerLight)
+                .frame(height: 0.5)
         }
     }
 }
 
-
-private struct LpspTelegramDemoChat: Identifiable {
-    let id = UUID()
-    let name: String
-    let preview: String
-    let time: String
-    let unread: Int
-    let hasRing: Bool
+private struct LpspTelegramPressableStyle: ButtonStyle {
+    var pressedScale: CGFloat = 0.97
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? pressedScale : 1)
+            .animation(.spring(response: 0.22, dampingFraction: 0.7), value: configuration.isPressed)
+    }
 }
 
-private enum LpspTelegramDemoChats {
-    static let chats: [LpspTelegramDemoChat] = [
-        .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24", unread: 2, hasRing: true),
-        .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier", unread: 0, hasRing: false),
-        .init(name: "Famille", preview: "Photo: vacances", time: "Lun.", unread: 5, hasRing: true),
-    ]
+private struct LpspTelegramDemoAvatar: View {
+    let initials: String
+    let gradient: [Color]
+
+    var body: some View {
+        Circle()
+            .fill(LinearGradient(colors: gradient, startPoint: .topLeading, endPoint: .bottomTrailing))
+            .overlay(Text(initials).font(.system(size: 13, weight: .semibold)).foregroundStyle(.white))
+    }
 }
 
 private struct LpspTelegramChatsTabScreen: View {
+    @ObservedObject var store: LpspTelegramStore
+    @Binding var path: NavigationPath
+
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
-
-                ForEach(LpspTelegramDemoChats.chats) { chat in
-                    NavigationLink {
-                        LpspTelegramChatDetailScreen(chat: chat)
+                ForEach(store.threads) { thread in
+                    Button {
+                        path.append(LpspTelegramChatRoute.thread(thread.id))
                     } label: {
-                        LpspTelegramTgChatListRow(avatar: Image(systemName: "person.circle.fill"), name: chat.name, preview: chat.preview, timestamp: chat.time, unreadCount: chat.unread, isPinned: false, isMuted: !chat.hasRing)
+                        LpspTelegramTgChatListRow(
+                            avatar: LpspTelegramDemoAvatar(
+                                initials: LpspTelegramContactStyle.initials(for: thread.contactName),
+                                gradient: LpspTelegramContactStyle.gradient(for: thread.contactName)
+                            ),
+                            name: thread.contactName,
+                            preview: thread.preview,
+                            timestamp: LpspAdapters.formatShortDate(thread.lastDate, fallback: thread.lastDateRaw),
+                            unreadCount: thread.isUnread ? 1 : 0,
+                            isPinned: LpspTelegramShowroomData.isPinned(threadId: thread.id),
+                            isMuted: false
+                        )
                     }
+                    .buttonStyle(.plain)
+                    .listRowInsets(EdgeInsets())
                 }
-
             }
             .listStyle(.plain)
             .navigationTitle("Chats")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { } label: {
+                        Image(systemName: "square.and.pencil")
+                            .foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+                    }
+                    .disabled(true)
+                }
+            }
+            .navigationDestination(for: LpspTelegramChatRoute.self) { route in
+                if case .thread(let id) = route {
+                    LpspTelegramChatScreen(store: store, threadId: id, onBack: { path.removeLast() })
+                }
+            }
         }
     }
 }
 
+private struct LpspTelegramChatScreen: View {
+    @ObservedObject var store: LpspTelegramStore
+    let threadId: String
+    let onBack: () -> Void
 
-private struct LpspTelegramChatDetailScreen: View {
-    let chat: LpspTelegramDemoChat
+    @State private var draft = ""
+    @FocusState private var inputFocused: Bool
+
+    private var thread: LpspConversation? { store.thread(id: threadId) }
+    private var contactName: String { thread?.contactName ?? "" }
+    private var messages: [LpspTelegramSpectrMessage] { store.messagesByThread[threadId] ?? [] }
+    private var pinnedMessage: String? { LpspTelegramShowroomData.pinnedMessage(for: threadId) }
+
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 8) {
-
-                    LpspTelegramTgOutgoingBubble(text: "Salut, tu es dispo ?", timestamp: "10:24", isRead: true)
-                    LpspTelegramTgIncomingBubble(text: "Oui, j'arrive !", senderName: nil, senderId: nil)
-
-                }
-                .padding(.vertical, 8)
+            LpspTelegramSpectrChatNav(contactName: contactName, onBack: onBack)
+            if let pinnedMessage {
+                LpspTelegramSpectrPinnedBanner(text: pinnedMessage)
             }
-            .background(LpspTelegramTokens.tgCanvasLight.ignoresSafeArea())
-            LpspTelegramTgComposeBar()
+            LpspTelegramSpectrChatBody(messages: messages)
+            LpspTelegramSpectrComposerBar(
+                text: $draft,
+                isFocused: $inputFocused,
+                onSend: sendMessage
+            )
         }
-        .navigationTitle(chat.name)
-        .navigationBarTitleDisplayMode(.inline)
+        .background(LpspTelegramTokens.tgChatBGBlue.ignoresSafeArea())
+        .navigationBarHidden(true)
+        .onAppear { store.markAsRead(threadId: threadId) }
+    }
+
+    private func sendMessage() {
+        store.send(text: draft, threadId: threadId)
+        draft = ""
+        inputFocused = false
     }
 }
 
+private struct LpspTelegramSpectrChatNav: View {
+    let contactName: String
+    let onBack: () -> Void
 
-private struct LpspTelegramCallsTabScreen: View {
     var body: some View {
-        NavigationStack {
-            List(LpspTelegramDemoChats.chats) { chat in
-                HStack {
-                    Circle().fill(LpspTelegramTokens.tgAccent.opacity(0.15)).frame(width: 40, height: 40)
-                        .overlay(Image(systemName: "phone.fill").foregroundStyle(LpspTelegramTokens.tgAccent))
-                    VStack(alignment: .leading) {
-                        Text(chat.name).font(.system(size: 17, weight: .semibold))
-                        Text("Appel vocal · Hier").font(.subheadline).foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Image(systemName: "info.circle").foregroundStyle(.secondary)
+        HStack(spacing: 10) {
+            Button(action: onBack) {
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .semibold))
+                    Text("Back")
+                        .font(.system(size: 17))
                 }
+                .foregroundStyle(LpspTelegramTokens.tgAccent)
             }
-            .navigationTitle("Appels")
+            .buttonStyle(LpspTelegramPressableStyle())
+
+            LpspTelegramDemoAvatar(
+                initials: LpspTelegramContactStyle.initials(for: contactName),
+                gradient: LpspTelegramContactStyle.gradient(for: contactName)
+            )
+            .frame(width: 32, height: 32)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(contactName)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(LpspTelegramTokens.tgTextPrimary)
+                Text(LpspTelegramContactStyle.subtitle(for: contactName))
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+            }
+
+            Spacer()
+
+            Button { } label: {
+                Image(systemName: "video.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(LpspTelegramTokens.tgAccent)
+            }
+            .buttonStyle(LpspTelegramPressableStyle())
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 56)
+        .background(LpspTelegramTokens.tgCanvasLight)
+    }
+}
+
+private struct LpspTelegramSpectrPinnedBanner: View {
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 10) {
+            RoundedRectangle(cornerRadius: 1.5)
+                .fill(LpspTelegramTokens.tgAccent)
+                .frame(width: 3, height: 34)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Pinned Message")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(LpspTelegramTokens.tgAccent)
+                Text(text)
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundStyle(LpspTelegramTokens.tgTextPrimary)
+                    .lineLimit(1)
+            }
+            Spacer()
+            Image(systemName: "pin.fill")
+                .font(.system(size: 14))
+                .foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(LpspTelegramTokens.tgCanvasLight)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(LpspTelegramTokens.tgDividerLight)
+                .frame(height: 0.5)
         }
     }
 }
 
-private struct LpspTelegramMessagingTabScreen: View {
-    let title: String
-    var body: some View {
-        let low = title.lowercased()
-        if low.contains("update") { LpspTelegramUpdatesTabScreen() }
-        else if low.contains("setting") || low.contains("réglage") { LpspTelegramSettingsTabScreen() }
-        else if low.contains("communit") { LpspTelegramCommunitiesTabScreen() }
-        else if low.contains("contact") { LpspTelegramContactsTabScreen() }
-        else { LpspTelegramChatsTabScreen() }
-    }
-}
+private struct LpspTelegramSpectrChatBody: View {
+    let messages: [LpspTelegramSpectrMessage]
 
-private struct LpspTelegramUpdatesTabScreen: View {
     var body: some View {
-        NavigationStack {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 14) {
-                    ForEach(LpspTelegramDemoStories.items) { s in
-                        VStack(spacing: 4) {
-                            Circle().strokeBorder(LpspTelegramTokens.tgAccent, lineWidth: 2).frame(width: 66, height: 66)
-                            Text(s.name).font(.caption).lineLimit(1).frame(width: 72)
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 4) {
+                    ForEach(messages) { message in
+                        switch message.kind {
+                        case .incoming(let text, let time):
+                            LpspTelegramSpectrTextBubble(text: text, time: time, outgoing: false)
+                                .id(message.id)
+                        case .outgoing(let text, let time, let readState):
+                            LpspTelegramSpectrTextBubble(text: text, time: time, outgoing: true, readState: readState)
+                                .id(message.id)
                         }
                     }
                 }
-                .padding(.horizontal, 12).padding(.vertical, 10)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 8)
             }
-            .navigationTitle("Updates")
+            .background(LpspTelegramTokens.tgChatBGBlue)
+            .onAppear {
+                if let last = messages.last {
+                    proxy.scrollTo(last.id, anchor: .bottom)
+                }
+            }
+            .onChange(of: messages.count) { _, _ in
+                if let last = messages.last {
+                    withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
+                }
+            }
         }
     }
 }
 
-private struct LpspTelegramDemoStoryItem: Identifiable { let id = UUID(); let name: String }
-private enum LpspTelegramDemoStories {
-    static let items: [LpspTelegramDemoStoryItem] = [
-        .init(name: "Votre statut"), .init(name: "Alex"), .init(name: "Léa"),
-    ]
-}
+private struct LpspTelegramSpectrTextBubble: View {
+    let text: String
+    let time: String
+    let outgoing: Bool
+    var readState: LpspTelegramReadState?
 
-private struct LpspTelegramSettingsTabScreen: View {
+    private var bubbleShape: UnevenRoundedRectangle {
+        if outgoing {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 17,
+                bottomLeadingRadius: 17,
+                bottomTrailingRadius: 6,
+                topTrailingRadius: 17
+            )
+        } else {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 17,
+                bottomLeadingRadius: 6,
+                bottomTrailingRadius: 17,
+                topTrailingRadius: 17
+            )
+        }
+    }
+
+    private var metaTrailingPadding: CGFloat {
+        guard !time.isEmpty || (outgoing && readState != nil) else { return 12 }
+        let timeWidth = CGFloat(max(time.count, 4)) * 5.5
+        let ticks: CGFloat = (outgoing && readState != nil) ? 16 : 0
+        return timeWidth + ticks + 14
+    }
+
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Compte") { Label("Profil", systemImage: "person.circle"); Label("Confidentialité", systemImage: "lock") }
-                Section("App") { Label("Notifications", systemImage: "bell"); Label("Stockage", systemImage: "internaldrive") }
-            }
-            .navigationTitle("Settings")
+        HStack(alignment: .bottom, spacing: 0) {
+            if outgoing { Spacer(minLength: UIScreen.main.bounds.width * 0.2) }
+
+            Text(verbatim: text)
+                .font(LpspTelegramFonts.tgBubbleBody)
+                .foregroundStyle(outgoing ? .white : LpspTelegramTokens.tgTextPrimary)
+                .lineSpacing(2)
+                .multilineTextAlignment(outgoing ? .trailing : .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 8)
+                .padding(.leading, 12)
+                .padding(.trailing, metaTrailingPadding)
+                .padding(.bottom, 20)
+                .background(
+                    bubbleShape
+                        .fill(outgoing ? LpspTelegramTokens.tgBubbleOutgoing : LpspTelegramTokens.tgBubbleIncomingLight)
+                        .shadow(color: .black.opacity(outgoing ? 0.06 : 0.04), radius: 0.5, y: 1)
+                )
+                .overlay(alignment: .bottomTrailing) {
+                    HStack(spacing: 3) {
+                        if !time.isEmpty {
+                            Text(time)
+                                .font(LpspTelegramFonts.tgTimestampBubble)
+                                .foregroundStyle(outgoing ? .white.opacity(0.8) : LpspTelegramTokens.tgTextSecondary)
+                        }
+                        if outgoing, let readState {
+                            LpspTelegramSpectrReadTicks(state: readState)
+                        }
+                    }
+                    .padding(.trailing, 10)
+                    .padding(.bottom, 5)
+                }
+                .frame(maxWidth: UIScreen.main.bounds.width * 0.78, alignment: outgoing ? .trailing : .leading)
+
+            if !outgoing { Spacer(minLength: UIScreen.main.bounds.width * 0.2) }
         }
     }
 }
 
-private struct LpspTelegramCommunitiesTabScreen: View {
+private struct LpspTelegramSpectrReadTicks: View {
+    let state: LpspTelegramReadState
+
+    var body: some View {
+        HStack(spacing: -4) {
+            Image(systemName: "checkmark")
+            Image(systemName: "checkmark")
+        }
+        .font(.system(size: 9, weight: .bold))
+        .foregroundStyle(.white.opacity(state == .read ? 0.95 : 0.7))
+    }
+}
+
+private struct LpspTelegramSpectrComposerBar: View {
+    @Binding var text: String
+    var isFocused: FocusState<Bool>.Binding
+    let onSend: () -> Void
+
+    private var hasText: Bool { !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+    var body: some View {
+        HStack(spacing: 16) {
+            Button { } label: {
+                Image(systemName: "paperclip")
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+                    .rotationEffect(.degrees(45))
+            }
+            .buttonStyle(LpspTelegramPressableStyle())
+
+            ZStack(alignment: .leading) {
+                if text.isEmpty {
+                    Text("Message")
+                        .font(.system(size: 16))
+                        .foregroundStyle(LpspTelegramTokens.tgTextTertiary)
+                }
+                TextField("", text: $text, axis: .vertical)
+                    .font(.system(size: 16))
+                    .foregroundStyle(LpspTelegramTokens.tgTextPrimary)
+                    .lineLimit(1...5)
+                    .focused(isFocused)
+            }
+
+            Button { } label: {
+                Image(systemName: "face.smiling")
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+            }
+            .buttonStyle(LpspTelegramPressableStyle())
+
+            Button {
+                if hasText { onSend() }
+            } label: {
+                Image(systemName: hasText ? "paperplane.fill" : "mic.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspTelegramTokens.tgAccent)
+            }
+            .buttonStyle(LpspTelegramPressableStyle(pressedScale: 0.92))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(LpspTelegramTokens.tgSurface1Light)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LpspTelegramTokens.tgDividerLight)
+                .frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspTelegramCallsTabScreen: View {
+    @ObservedObject var store: LpspTelegramStore
+
     var body: some View {
         NavigationStack {
-            List(["Famille", "Équipe projet"], id: \.self) { Label($0, systemImage: "person.3") }
-            .navigationTitle("Communities")
+            List(store.threads) { thread in
+                HStack(spacing: 12) {
+                    LpspTelegramDemoAvatar(
+                        initials: LpspTelegramContactStyle.initials(for: thread.contactName),
+                        gradient: LpspTelegramContactStyle.gradient(for: thread.contactName)
+                    )
+                    .frame(width: 40, height: 40)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(thread.contactName)
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(LpspTelegramTokens.tgTextPrimary)
+                        Text("Voice call · \(LpspAdapters.formatShortDate(thread.lastDate, fallback: thread.lastDateRaw))")
+                            .font(.system(size: 14))
+                            .foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+                    }
+                    Spacer()
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Calls")
         }
     }
 }
 
 private struct LpspTelegramContactsTabScreen: View {
+    @ObservedObject var store: LpspTelegramStore
+    var isStoryMode = false
+
     var body: some View {
         NavigationStack {
-            List(["Alex Martin", "Léa Dupont"], id: \.self) { Label($0, systemImage: "person.circle") }
+            Group {
+                if isStoryMode {
+                    ContentUnavailableView(
+                        "No contacts",
+                        systemImage: "person.2",
+                        description: Text("Your Telegram contacts will appear here.")
+                    )
+                } else {
+                    List(store.threads) { thread in
+                        HStack(spacing: 12) {
+                            LpspTelegramDemoAvatar(
+                                initials: LpspTelegramContactStyle.initials(for: thread.contactName),
+                                gradient: LpspTelegramContactStyle.gradient(for: thread.contactName)
+                            )
+                            .frame(width: 40, height: 40)
+                            Text(thread.contactName)
+                                .font(.system(size: 17, weight: .regular))
+                                .foregroundStyle(LpspTelegramTokens.tgTextPrimary)
+                        }
+                    }
+                    .listStyle(.plain)
+                }
+            }
             .navigationTitle("Contacts")
         }
     }
 }
 
-private struct LpspTelegramDemoBubble: View {
-    let text: String
-    var outgoing: Bool = true
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 60) }
-            Text(text)
-                .font(.system(size: 17))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspTelegramTokens.tgAccent.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 60) }
-        }
-        .padding(.horizontal, 8)
-    }
-}
+private struct LpspTelegramSettingsTabScreen: View {
+    var isStoryMode = false
+    @Environment(\.deviceOwner) private var owner
 
-private struct LpspTelegramDemoComposeBar: View {
-    @State private var text = ""
     var body: some View {
-        HStack {
-            TextField("Message", text: $text)
-                .padding(10)
-                .background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-            Image(systemName: "paperplane.fill")
-                .foregroundStyle(LpspTelegramTokens.tgAccent)
-                .font(.title2)
-        }
-        .padding(8)
-        .background(.ultraThinMaterial)
-    }
-}
-
-
-private struct LpspTelegramSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 10) {
-            Image(systemName: "chevron.left").font(.system(size: 17, weight: .semibold))
-            Text("OP").font(.system(size: 13.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            VStack(alignment: .leading, spacing: 0) {
-                Text("Olivia Park").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("last seen recently").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.439, green: 0.459, blue: 0.475))
+        NavigationStack {
+            Group {
+                if isStoryMode {
+                    ContentUnavailableView(
+                        "Settings",
+                        systemImage: "gearshape",
+                        description: Text("Telegram settings are not available in this story.")
+                    )
+                } else {
+                    List {
+                        Section("Account") {
+                            HStack {
+                                Text("Name")
+                                Spacer()
+                                Text(owner.name).foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+                            }
+                            Label("Privacy", systemImage: "lock")
+                            Label("Notifications", systemImage: "bell")
+                        }
+                        Section("Chats") {
+                            HStack {
+                                Text("Chat wallpaper")
+                                Spacer()
+                                Text("Blue").foregroundStyle(LpspTelegramTokens.tgTextSecondary)
+                            }
+                        }
+                    }
+                    .listStyle(.insetGrouped)
+                }
             }
-        } .padding(.horizontal, 12).frame(height: 56)
-                Text("Pinned Message").font(.system(size: 11.0, weight: .semibold)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-                Text("Demo day Friday — bring a laptop.").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-        ScrollView {
-            VStack(spacing: 8) {
-            HStack {
-                Text("Ok quick update — the gradient prototype is running.").font(.system(size: 16)).foregroundStyle(.primary)
-                    .padding(.horizontal, 12).padding(.vertical, 8)
-                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
-                Spacer(minLength: 48)
-            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
-            HStack {
-                Spacer(minLength: 48)
-                Text("Amazing, want me to test on the old iPhone?").font(.system(size: 16)).foregroundStyle(.white)
-                    .padding(.horizontal, 12).padding(.vertical, 8)
-                    .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-            }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-                Text("10:22").font(.system(size: 10.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-            HStack {
-                Text("yes pls 🙏").font(.system(size: 16)).foregroundStyle(.primary)
-                    .padding(.horizontal, 12).padding(.vertical, 8)
-                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
-                Spacer(minLength: 48)
-            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
-            HStack {
-                Spacer(minLength: 48)
-                Text("").font(.system(size: 16)).foregroundStyle(.white)
-                    .padding(.horizontal, 12).padding(.vertical, 8)
-                    .background(Color(red: 0.000, green: 0.584, blue: 0.965)).clipShape(RoundedRectangle(cornerRadius: 18))
-            }.frame(maxWidth: .infinity, alignment: .trailing).padding(.horizontal, 12)
-            HStack {
-                Text("perfect, on it").font(.system(size: 16)).foregroundStyle(.primary)
-                    .padding(.horizontal, 12).padding(.vertical, 8)
-                    .background(Color(red: 0.149, green: 0.149, blue: 0.149)).clipShape(RoundedRectangle(cornerRadius: 18))
-                Spacer(minLength: 48)
-            }.frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 12)
-            }
-            .padding(.vertical, 8)
+            .navigationTitle("Settings")
         }
-        HStack(spacing: 12) {
-            Text("Message").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.000, blue: 0.000))
-        } .padding(.horizontal, 8).padding(.vertical, 6).background(Color(red: 0.122, green: 0.173, blue: 0.204))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
-
 

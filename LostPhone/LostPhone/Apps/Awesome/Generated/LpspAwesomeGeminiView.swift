@@ -5,13 +5,13 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGeminiView: View {
     var body: some View {
-        LpspGeminiShowroomRoot()
+        LpspGeminiShowroomRoot(store: LpspGeminiStore())
     }
 }
 
 // MARK: - Composants spec (préfixés)
 private enum LpspGeminiFonts {
-    static let gemGreeting    = Font.system(size: 28, weight: .regular)
+    static let gemGreeting    = Font.system(size: 28, weight: .medium)
     static let gemTitle       = Font.system(size: 22, weight: .regular)
     static let gemSection     = Font.system(size: 18, weight: .regular)
     static let gemAnswerH2    = Font.system(size: 20, weight: .regular)
@@ -19,7 +19,7 @@ private enum LpspGeminiFonts {
     static let gemAnswerBody  = Font.system(size: 16, weight: .regular)
     static let gemUserTurn    = Font.system(size: 16, weight: .regular)
     static let gemPromptInput = Font.system(size: 16, weight: .regular)
-    static let gemChip        = Font.system(size: 14, weight: .regular)
+    static let gemChip        = Font.system(size: 14, weight: .medium)
     static let gemMeta        = Font.system(size: 13, weight: .regular)
     static let gemCode        = Font.system(size: 14, weight: .regular)
     static let gemLabelUpper  = Font.system(size: 11, weight: .regular)
@@ -280,128 +280,542 @@ fileprivate struct LpspGeminiGemPressableStyle: ButtonStyle {
 
 
 
+// MARK: - Données & état (showroom Lost Phone)
+
+fileprivate enum LpspGeminiShowroomRole {
+    case user, assistant
+}
+
+fileprivate enum LpspGeminiAssistantState {
+    case complete
+    case thinking
+    case streaming
+}
+
+fileprivate struct LpspGeminiShowroomMessage: Identifiable {
+    let id: String
+    let role: LpspGeminiShowroomRole
+    let text: String
+    var assistantState: LpspGeminiAssistantState = .complete
+}
+
+fileprivate struct LpspGeminiShowroomConversation: Identifiable {
+    let id: String
+    var title: String
+    let section: String
+    var messages: [LpspGeminiShowroomMessage]
+}
+
+fileprivate struct LpspGeminiSuggestionChip: Identifiable {
+    let id: String
+    let label: String
+    let featured: Bool
+    let prompt: String
+}
+
+@MainActor
+fileprivate final class LpspGeminiStore: ObservableObject {
+    @Published var conversations: [LpspGeminiShowroomConversation]
+    @Published var activeConversationID: String
+    @Published var composeText = ""
+    @Published var isGenerating = false
+    @Published var showDrawer = false
+    @Published var drawerSearch = ""
+    @Published var showModelPicker = false
+
+    let userName = "Mathieu"
+    let suggestions: [LpspGeminiSuggestionChip] = LpspGeminiShowroomData.suggestions
+
+    init() {
+        self.conversations = LpspGeminiShowroomData.conversations
+        self.activeConversationID = LpspGeminiShowroomData.defaultConversationID
+    }
+
+    var activeConversation: LpspGeminiShowroomConversation {
+        conversations.first { $0.id == activeConversationID } ?? conversations[0]
+    }
+
+    var isEmptyChat: Bool {
+        activeConversation.messages.isEmpty
+    }
+
+    var drawerSections: [(title: String, chats: [LpspGeminiShowroomConversation])] {
+        let ordered = ["TODAY", "PREVIOUS 7 DAYS", "PREVIOUS 30 DAYS"]
+        let filtered = conversations.filter { conv in
+            let q = drawerSearch.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return q.isEmpty || conv.title.lowercased().contains(q)
+        }
+        return ordered.compactMap { section in
+            let chats = filtered.filter { $0.section == section }
+            return chats.isEmpty ? nil : (section, chats)
+        }
+    }
+
+    func selectConversation(_ id: String) {
+        activeConversationID = id
+        composeText = ""
+        showDrawer = false
+    }
+
+    func newChat() {
+        let id = "new-\(UUID().uuidString.prefix(6))"
+        conversations.insert(
+            LpspGeminiShowroomConversation(id: id, title: "New chat", section: "TODAY", messages: []),
+            at: 0
+        )
+        activeConversationID = id
+        composeText = ""
+        showDrawer = false
+    }
+
+    func applySuggestion(_ chip: LpspGeminiSuggestionChip) {
+        composeText = chip.prompt
+        sendMessage()
+    }
+
+    func sendMessage() {
+        let trimmed = composeText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !isGenerating else {
+            if isGenerating { stopGenerating() }
+            return
+        }
+
+        appendMessage(.init(id: UUID().uuidString, role: .user, text: trimmed))
+        composeText = ""
+        updateTitleIfNeeded(from: trimmed)
+        isGenerating = true
+
+        appendMessage(.init(id: "thinking-\(UUID().uuidString)", role: .assistant, text: "", assistantState: .thinking))
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 900_000_000)
+            removeThinkingMessage()
+            let reply = LpspGeminiShowroomData.reply(for: trimmed)
+            var streaming = reply
+            streaming.assistantState = .streaming
+            appendMessage(streaming)
+            try? await Task.sleep(nanoseconds: 1_200_000_000)
+            mutateActive { conv in
+                if let idx = conv.messages.lastIndex(where: { $0.role == .assistant }) {
+                    var msg = conv.messages[idx]
+                    msg.assistantState = .complete
+                    conv.messages[idx] = msg
+                }
+            }
+            isGenerating = false
+        }
+    }
+
+    func stopGenerating() {
+        isGenerating = false
+        removeThinkingMessage()
+        mutateActive { conv in
+            if let idx = conv.messages.lastIndex(where: { $0.assistantState == .streaming }) {
+                var msg = conv.messages[idx]
+                msg.assistantState = .complete
+                conv.messages[idx] = msg
+            }
+        }
+    }
+
+    private func appendMessage(_ message: LpspGeminiShowroomMessage) {
+        mutateActive { $0.messages.append(message) }
+    }
+
+    private func removeThinkingMessage() {
+        mutateActive { conv in
+            conv.messages.removeAll { $0.assistantState == .thinking }
+        }
+    }
+
+    private func updateTitleIfNeeded(from prompt: String) {
+        mutateActive { conv in
+            if conv.title == "New chat" || conv.title.hasPrefix("Explain what") {
+                conv.title = String(prompt.prefix(40))
+            }
+        }
+    }
+
+    private func mutateActive(_ update: (inout LpspGeminiShowroomConversation) -> Void) {
+        guard let index = conversations.firstIndex(where: { $0.id == activeConversationID }) else { return }
+        var conversation = conversations[index]
+        update(&conversation)
+        conversations[index] = conversation
+    }
+}
+
+private enum LpspGeminiShowroomData {
+    static let defaultConversationID = "transformer-demo"
+
+    static let suggestions: [LpspGeminiSuggestionChip] = [
+        .init(id: "s1", label: "Explain transformers", featured: true, prompt: "Explain what a transformer is, simply."),
+        .init(id: "s2", label: "Créneaux maintenance 18/06", featured: false, prompt: "Résume les fenêtres d'accès maintenance Salle 710 le 18 juin."),
+        .init(id: "s3", label: "Brief vitrine S7", featured: true, prompt: "Quels indices croiser entre Gennevilliers et la vitrine ?"),
+    ]
+
+    static let conversations: [LpspGeminiShowroomConversation] = [
+        .init(
+            id: "transformer-demo",
+            title: "Explain what a transformer is, simply.",
+            section: "TODAY",
+            messages: [
+                .init(id: "u1", role: .user, text: "Explain what a transformer is, simply."),
+                .init(
+                    id: "a1",
+                    role: .assistant,
+                    text: "A **transformer** is a neural network architecture that reads an entire sequence at once and learns which parts matter most using a mechanism called **attention**. Instead of processing words one by one, it weighs every word against every other word in parallel — which is why it scales so well to long context.",
+                    assistantState: .complete
+                ),
+                .init(id: "a2", role: .assistant, text: "", assistantState: .thinking),
+            ]
+        ),
+        .init(
+            id: "louvre-windows",
+            title: "Fenêtres maintenance Louvre",
+            section: "TODAY",
+            messages: [
+                .init(id: "lu1", role: .user, text: "Résume les fenêtres d'accès maintenance Salle 710 le 18 juin."),
+                .init(
+                    id: "la1",
+                    role: .assistant,
+                    text: "**Mercredi 18/06** — intervention clim **19h15–19h27** (effectif réduit).\n\nAngle mort caméra confirmé entre pilier et porte latérale (~3 s). La vitrine reste faisable en **4 min** si l'équipe tient le hall.",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+        .init(
+            id: "brief-s7",
+            title: "Brief vitrine S7",
+            section: "PREVIOUS 7 DAYS",
+            messages: [
+                .init(id: "b1", role: .user, text: "Quels indices croiser entre Gennevilliers et la vitrine ?"),
+                .init(
+                    id: "ba1",
+                    role: .assistant,
+                    text: "Local **Gennevilliers** = stockage discret + accès camionnette.\n\nVitrine = fenêtre **18/06** + badge périmé mais couloirs connus.\n\nRecoupe avec photos **sans EXIF** dans Fichiers et fil **#planning-s7** sur Teams.",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+        .init(
+            id: "gennevilliers",
+            title: "Accès Gennevilliers discret",
+            section: "PREVIOUS 30 DAYS",
+            messages: [
+                .init(id: "g1", role: .user, text: "Comment valider un point de transfert discret ?"),
+                .init(
+                    id: "ga1",
+                    role: .assistant,
+                    text: "Zone indus rue des Caboeufs : propre, discret, accès camionnette facile. Sam l'a validé le 2 juin — transfert avant **23h** max.",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+    ]
+
+    static func reply(for prompt: String) -> LpspGeminiShowroomMessage {
+        let lower = prompt.lowercased()
+        if lower.contains("transformer") || lower.contains("attention") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Think of **attention** as a spotlight: for each word, the model asks “which other words should I look at right now?” That parallel lookup is what makes transformers fast at long documents.",
+                assistantState: .complete
+            )
+        }
+        if lower.contains("louvre") || lower.contains("maintenance") || lower.contains("18") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Le créneau du **18/06 après 19h10** reste le plus propre : ronde réduite, angle mort caméra, accès camionnette côté Gennevilliers déjà validé.",
+                assistantState: .complete
+            )
+        }
+        if lower.contains("vitrine") || lower.contains("gennevilliers") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Recoupe **Gennevilliers** (stockage) avec la fenêtre **18/06** et les messages Nadia sur Teams. Évite les photos dans les salles chaudes.",
+                assistantState: .complete
+            )
+        }
+        return .init(
+            id: UUID().uuidString,
+            role: .assistant,
+            text: "Je peux approfondir si tu précises le lieu, la date ou les personnes impliquées.",
+            assistantState: .complete
+        )
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspGeminiShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspGeminiStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspGeminiSpectrHomeTabScreen()
-                .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
-                .tag(0)
-            LpspGeminiAiTabScreen(title: "Historique", tabIndex: 1)
-                .tabItem { Label("Historique", systemImage: "clock") }
-                .tag(1)
+        ZStack(alignment: .leading) {
+            LpspGeminiChatScreen(store: store)
+
+            if store.showDrawer {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .onTapGesture { store.showDrawer = false }
+
+                LpspGeminiDrawer(store: store)
+                    .transition(.move(edge: .leading))
+            }
         }
-        .tint(LpspGeminiTokens.gemCoral)
-        
+        .animation(.easeInOut(duration: 0.22), value: store.showDrawer)
+        .sheet(isPresented: $store.showModelPicker) {
+            LpspGeminiModelPickerSheet(store: store)
+        }
     }
 }
 
+private struct LpspGeminiChatScreen: View {
+    @ObservedObject var store: LpspGeminiStore
 
-private struct LpspGeminiGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspGeminiTokens.gemCoral.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGeminiTokens.gemCoral))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        VStack(spacing: 0) {
+            LpspGeminiTopBar(store: store)
+
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 20) {
+                        if store.isEmptyChat {
+                            LpspGeminiGreetingBlock(store: store)
+                        }
+
+                        ForEach(store.activeConversation.messages) { message in
+                            LpspGeminiMessageView(message: message, isGenerating: store.isGenerating)
+                                .id(message.id)
+                        }
+                    }
+                    .padding(.vertical, 16)
+                }
+                .onChange(of: store.activeConversation.messages.count) { _, _ in
+                    scrollToBottom(proxy: proxy)
+                }
+            }
+
+            LpspGeminiGemPromptBar(
+                text: $store.composeText,
+                isStreaming: store.isGenerating,
+                onSend: { store.sendMessage() },
+                onStop: { store.stopGenerating() }
+            )
+            .padding(.bottom, 8)
+        }
+        .background(LpspGeminiTokens.gemCanvas.ignoresSafeArea())
+    }
+
+    private func scrollToBottom(proxy: ScrollViewProxy) {
+        if let last = store.activeConversation.messages.last {
+            withAnimation(.easeOut(duration: 0.2)) {
+                proxy.scrollTo(last.id, anchor: .bottom)
+            }
+        }
+    }
+}
+
+private struct LpspGeminiTopBar: View {
+    @ObservedObject var store: LpspGeminiStore
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button { store.showDrawer = true } label: {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 20))
+                    .foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+                    .frame(width: 44, height: 44)
+            }
+
+            Button { store.showModelPicker = true } label: {
+                HStack(spacing: 4) {
+                    Text("Gemini")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+                }
+            }
+
+            Spacer()
+
+            Circle()
+                .fill(LpspGeminiTokens.gemSurface)
+                .frame(width: 32, height: 32)
+                .overlay(
+                    Text("MG")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+                )
+        }
+        .padding(.horizontal, 8)
+        .frame(height: 44)
+        .background(LpspGeminiTokens.gemCanvas)
+    }
+}
+
+private struct LpspGeminiGreetingBlock: View {
+    @ObservedObject var store: LpspGeminiStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Hello, \(store.userName)")
+                .font(LpspGeminiFonts.gemGreeting)
+                .foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+                .padding(.horizontal, 16)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(store.suggestions) { chip in
+                        LpspGeminiGemSuggestionChip(label: chip.label, featured: chip.featured) {
+                            store.applySuggestion(chip)
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct LpspGeminiMessageView: View {
+    let message: LpspGeminiShowroomMessage
+    let isGenerating: Bool
+
+    var body: some View {
+        switch message.role {
+        case .user:
+            LpspGeminiGemUserTurn(text: message.text)
+        case .assistant:
+            switch message.assistantState {
+            case .thinking:
+                HStack(alignment: .top, spacing: 10) {
+                    LpspGeminiGemSparkle(size: 20)
+                    LpspGeminiGemThinking()
+                }
+                .padding(.horizontal, 16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            case .streaming:
+                HStack(alignment: .top, spacing: 10) {
+                    LpspGeminiGemSparkle(size: 20)
+                    LpspGeminiGemStreamingText(text: message.text)
+                }
+                .padding(.horizontal, 16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            case .complete:
+                LpspGeminiGemAssistantTurn(
+                    markdown: (try? AttributedString(markdown: message.text)) ?? AttributedString(message.text),
+                    isStreaming: false
+                )
+            }
+        }
+    }
+}
+
+private struct LpspGeminiDrawer: View {
+    @ObservedObject var store: LpspGeminiStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Button { store.newChat() } label: {
+                    Text("New chat")
+                        .font(LpspGeminiFonts.gemButton.weight(.semibold))
+                        .foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(LpspGeminiTokens.gemSurface))
+                }
+                Spacer()
+                Button { store.showDrawer = false } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+                }
+            }
+            .padding(16)
+
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+                TextField("Search chats", text: $store.drawerSearch)
+                    .font(LpspGeminiFonts.gemMeta)
+            }
+            .padding(12)
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(LpspGeminiTokens.gemDivider, lineWidth: 1))
+            .padding(.horizontal, 16)
+
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(store.drawerSections, id: \.title) { section in
+                        Text(section.title)
+                            .font(LpspGeminiFonts.gemLabelUpper.weight(.semibold))
+                            .foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 16)
+                            .padding(.bottom, 6)
+
+                        ForEach(section.chats) { chat in
+                            Button {
+                                store.selectConversation(chat.id)
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "bubble.left")
+                                        .font(.system(size: 18))
+                                        .foregroundStyle(LpspGeminiTokens.gemTextSecondary)
+                                    Text(chat.title)
+                                        .font(LpspGeminiFonts.gemButton)
+                                        .foregroundStyle(LpspGeminiTokens.gemTextPrimary)
+                                        .lineLimit(1)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 16)
+                                .frame(height: 48)
+                                .background(
+                                    chat.id == store.activeConversationID
+                                        ? LpspGeminiTokens.gemSurface
+                                        : Color.clear,
+                                    in: Capsule()
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 8)
+                        }
                     }
                 }
             }
-            .navigationTitle(title)
         }
+        .frame(width: UIScreen.main.bounds.width * 0.82, alignment: .leading)
+        .frame(maxHeight: .infinity)
+        .background(LpspGeminiTokens.gemCanvas)
     }
 }
 
+private struct LpspGeminiModelPickerSheet: View {
+    @ObservedObject var store: LpspGeminiStore
+    @Environment(\.dismiss) private var dismiss
 
-private struct LpspGeminiDemoBubble: View {
-    let text: String
-    var outgoing: Bool
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 40) }
-            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspGeminiTokens.gemCoral.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 40) }
-        }
-    }
-}
-
-private struct LpspGeminiDemoComposeBar: View {
-    @State private var text = ""
-    var body: some View {
-        HStack {
-            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-            Image(systemName: "paperplane.fill").foregroundStyle(LpspGeminiTokens.gemCoral)
-        }
-        .padding(8)
-    }
-}
-
-private struct LpspGeminiAiChatTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 12) {
-
-                    LpspGeminiDemoBubble(text: "Bonjour !", outgoing: true)
-                    LpspGeminiDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
-
-                }
-                .padding()
-            }
-            .background(LpspGeminiTokens.gemCanvas.ignoresSafeArea())
-            LpspGeminiDemoComposeBar()
-        }
-    }
-}
-
-
-private struct LpspGeminiAiHistoryTabScreen: View {
     var body: some View {
         NavigationStack {
-            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
-            .navigationTitle("Historique")
-        }
-    }
-}
-
-
-private struct LpspGeminiAiTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        if tabIndex == 0 || title.lowercased().contains("chat") { LpspGeminiAiChatTabScreen() }
-        else { LpspGeminiAiHistoryTabScreen() }
-    }
-}
-
-
-private struct LpspGeminiSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-            Text("Gemini").font(.system(size: 17.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 16).frame(height: 44)
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-            Text("Explain what a transformer is, simply.").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("transformer").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("attention").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            List {
+                Label("Gemini 2.0 Flash", systemImage: "checkmark.circle.fill")
+                Label("Gemini 1.5 Pro", systemImage: "circle")
+                Label("Gemini 1.5 Flash", systemImage: "circle")
             }
-            .padding(16)
+            .navigationTitle("Model")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("OK") { dismiss() }
+                }
+            }
         }
-                    Text("Ask a follow-up…").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        .presentationDetents([.medium])
     }
 }
-
 

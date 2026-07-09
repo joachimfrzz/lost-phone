@@ -1,0 +1,11 @@
+# Ne pas committer les archives (trop lourdes)
+*.zip
+*.tar
+*.tar.gz
+*.rar
+sopheamen-bundle/
+
+# Garder la doc
+!README.md
+!SOPHEAMEN_MANIFEST.md
+!.gitignore

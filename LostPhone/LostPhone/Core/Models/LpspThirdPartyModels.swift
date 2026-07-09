@@ -99,8 +99,10 @@ struct LpspReminderList: Identifiable, Equatable, Hashable {
 
 struct LpspInstagramPost: Identifiable, Equatable, Hashable {
     let id: String
+    let author: String
     let caption: String
     let date: String
+    let dateParsed: Date?
     let likes: Int
 }
 
@@ -110,10 +112,21 @@ struct LpspInstagramProfile: Equatable {
     let posts: [LpspInstagramPost]
 }
 
+struct LpspUberAccount: Equatable {
+    let name: String
+    let email: String
+    let phone: String
+    let passengerRating: Double
+    let paymentMethod: String
+    let savedPlaces: [LpspMapPlace]
+}
+
 struct LpspSpotifyTrack: Identifiable, Equatable, Hashable {
     let id: String
     let title: String
     let artist: String
+    let playedAtRaw: String?
+    let playedAt: Date?
 }
 
 struct LpspSpotifyPlaylist: Identifiable, Equatable, Hashable {

@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeYouTubeMusicView: View {
     var body: some View {
-        LpspYouTubeMusicShowroomRoot()
+        LpspYouTubeMusicShowroomRoot(store: LpspYouTubeMusicStore())
     }
 }
 
@@ -63,6 +63,8 @@ private enum LpspYouTubeMusicFonts {
     static let ytmButton      = Font.system(size: 15, weight: .regular)
 }
 
+fileprivate enum LpspYouTubeMusicPlayMode { case song, video }
+
 fileprivate struct LpspYouTubeMusicNowPlayingView: View {
     let artworkURL: String
     let track: String
@@ -70,8 +72,6 @@ fileprivate struct LpspYouTubeMusicNowPlayingView: View {
     @State private var progress: Double = 0.42
     @State private var scrubbing = false
     @State private var mode: LpspYouTubeMusicPlayMode = .song
-
-    enum LpspYouTubeMusicPlayMode { case song, video }
 
     var body: some View {
         ZStack {
@@ -133,7 +133,7 @@ fileprivate struct LpspYouTubeMusicNowPlayingView: View {
 }
 
 fileprivate struct LpspYouTubeMusicSongVideoToggle: View {
-    @Binding var mode: LpspYouTubeMusicNowPlayingView.LpspYouTubeMusicPlayMode
+    @Binding var mode: LpspYouTubeMusicPlayMode
 
     var body: some View {
         HStack(spacing: 6) {
@@ -316,150 +316,661 @@ fileprivate extension View {
     func ytmTheme() -> some View { modifier(LpspYouTubeMusicYTMTheme()) }
 }
 
+// MARK: - Showroom data & store
+
+private enum LpspYouTubeMusicShowroomTab: String, CaseIterable, Identifiable {
+    case home, samples, explore, library
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .samples: "Samples"
+        case .explore: "Explore"
+        case .library: "Library"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .samples: "record.circle"
+        case .explore: "magnifyingglass"
+        case .library: "books.vertical.fill"
+        }
+    }
+}
+
+private struct LpspYouTubeMusicTrack: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let artist: String
+    let album: String
+    let artworkColors: [Color]
+}
+
+private enum LpspYouTubeMusicShowroomData {
+    static let midnightCity = LpspYouTubeMusicTrack(
+        id: "midnight-city",
+        title: "Midnight City",
+        artist: "M83",
+        album: "Hurry Up, We're Dreaming",
+        artworkColors: [
+            Color(red: 0.35, green: 0.18, blue: 0.72),
+            Color(red: 0.12, green: 0.42, blue: 0.88),
+        ]
+    )
+
+    static let reckoner = LpspYouTubeMusicTrack(
+        id: "reckoner",
+        title: "Reckoner",
+        artist: "Radiohead",
+        album: "In Rainbows",
+        artworkColors: [
+            Color(red: 0.82, green: 0.42, blue: 0.18),
+            Color(red: 0.55, green: 0.18, blue: 0.22),
+        ]
+    )
+
+    static let queue: [LpspYouTubeMusicTrack] = [
+        midnightCity,
+        reckoner,
+        LpspYouTubeMusicTrack(
+            id: "wait",
+            title: "Wait",
+            artist: "M83",
+            album: "Hurry Up, We're Dreaming",
+            artworkColors: [Color(red: 0.22, green: 0.28, blue: 0.62), Color(red: 0.48, green: 0.22, blue: 0.58)]
+        ),
+        LpspYouTubeMusicTrack(
+            id: "starlight",
+            title: "Starlight",
+            artist: "M83",
+            album: "Saturday Night, Sunday Morning",
+            artworkColors: [Color(red: 0.18, green: 0.52, blue: 0.72), Color(red: 0.08, green: 0.28, blue: 0.48)]
+        ),
+    ]
+
+    static let sampleMixes = ["Your Mix 1", "Your Mix 2", "Discover Mix", "New Release Mix"]
+
+    static let exploreCategories = ["New releases", "Charts", "Moods & genres", "Podcasts"]
+
+    static let librarySections = ["Liked songs", "Playlists", "Albums", "Artists", "Downloads"]
+}
+
+@MainActor
+fileprivate final class LpspYouTubeMusicStore: ObservableObject {
+    @Published var selectedTab: LpspYouTubeMusicShowroomTab = .home
+    @Published var currentTrack: LpspYouTubeMusicTrack = LpspYouTubeMusicShowroomData.midnightCity
+    @Published var tracks: [LpspYouTubeMusicTrack] = LpspYouTubeMusicShowroomData.queue
+    @Published var isPlaying = true
+    @Published var progress = 0.417
+    @Published var isScrubbing = false
+    @Published var playMode: LpspYouTubeMusicPlayMode = .song
+    @Published var searchQuery = ""
+    @Published var selectedLibrarySection = LpspYouTubeMusicShowroomData.librarySections[0]
+
+    var elapsedLabel: String { "1:48" }
+
+    var remainingLabel: String { "-2:34" }
+
+    var upNextTrack: LpspYouTubeMusicTrack? {
+        guard let index = tracks.firstIndex(of: currentTrack) else { return nil }
+        return tracks[(index + 1) % tracks.count]
+    }
+
+    func togglePlay() {
+        isPlaying.toggle()
+    }
+
+    func setPlayMode(_ mode: LpspYouTubeMusicPlayMode) {
+        playMode = mode
+    }
+
+    func seek(to value: Double) {
+        progress = min(1, max(0, value))
+    }
+
+    func setScrubbing(_ value: Bool) {
+        isScrubbing = value
+    }
+
+    func playTrack(_ track: LpspYouTubeMusicTrack) {
+        currentTrack = track
+        progress = 0.12
+        isPlaying = true
+        selectedTab = .home
+    }
+
+    func skipNext() {
+        guard let index = tracks.firstIndex(of: currentTrack) else { return }
+        currentTrack = tracks[(index + 1) % tracks.count]
+        progress = 0.12
+        isPlaying = true
+    }
+
+    func skipPrevious() {
+        guard let index = tracks.firstIndex(of: currentTrack) else { return }
+        currentTrack = tracks[(index - 1 + tracks.count) % tracks.count]
+        progress = 0.12
+        isPlaying = true
+    }
+
+    func selectLibrarySection(_ section: String) {
+        selectedLibrarySection = section
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspYouTubeMusicShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspYouTubeMusicSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house.fill") }
-                .tag(0)
-            LpspYouTubeMusicMusicHomeTabScreen()
-                .tabItem { Label("Samples", systemImage: "rectangle.stack.fill") }
-                .tag(1)
-            LpspYouTubeMusicMusicHomeTabScreen()
-                .tabItem { Label("Explore", systemImage: "magnifyingglass") }
-                .tag(2)
-            LpspYouTubeMusicMusicLibraryTabScreen()
-                .tabItem { Label("Library", systemImage: "books.vertical.fill") }
-                .tag(3)
-        }
-        .tint(LpspYouTubeMusicTokens.ytmActionWhite)
-        .preferredColorScheme(.dark)
-    }
-}
+    @ObservedObject var store: LpspYouTubeMusicStore
 
-
-private struct LpspYouTubeMusicGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspYouTubeMusicTokens.ytmActionWhite.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspYouTubeMusicTokens.ytmActionWhite))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private enum LpspYouTubeMusicDemoTracks {
-    struct Item: Identifiable {
-        let id = UUID()
-        let title: String
-        let artist: String
-        let isPlaying: Bool
-    }
-    static let items: [Item] = [
-        .init(title: "Blinding Lights", artist: "The Weeknd", isPlaying: true),
-        .init(title: "As It Was", artist: "Harry Styles", isPlaying: false),
-        .init(title: "Flowers", artist: "Miley Cyrus", isPlaying: false),
-    ]
-}
-private struct LpspYouTubeMusicMusicHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Bonsoir").font(.system(size: 28, weight: .bold)).padding(.horizontal)
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        ForEach(0..<4, id: \.self) { i in
-                            RoundedRectangle(cornerRadius: 8).fill(LpspYouTubeMusicTokens.ytmActionWhite.opacity(0.15 + Double(i) * 0.05))
-                                .frame(height: 100)
-                                .overlay(alignment: .bottomLeading) {
-                                    Text("Playlist \(i + 1)").font(.subheadline.bold()).padding(8)
-                                }
-                        }
-                    }
-                    .padding(.horizontal)
-                    Text("Récemment joué").font(.headline).padding(.horizontal)
-
-                    ForEach(0..<4, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.08))
-                            .frame(height: 56)
-                            .padding(.horizontal)
-                    }
-
-                }
-            }
-            .background(LpspYouTubeMusicTokens.ytmCanvas.ignoresSafeArea())
-            .navigationTitle("")
-        }
-    }
-}
-
-private struct LpspYouTubeMusicMusicSearchTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack {
-                HStack {
-                    Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                    Text("Artistes, titres ou podcasts").foregroundStyle(.secondary)
-                    Spacer()
-                }
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 8).fill(Color(.systemGray6)))
-                .padding()
-                Spacer()
-            }
-            .navigationTitle("Rechercher")
-        }
-    }
-}
-
-private struct LpspYouTubeMusicMusicLibraryTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Titres likés", "Playlists", "Albums", "Artistes"], id: \.self) { item in
-                HStack {
-                    RoundedRectangle(cornerRadius: 4).fill(LpspYouTubeMusicTokens.ytmActionWhite.opacity(0.2)).frame(width: 48, height: 48)
-                    Text(item).font(.body)
-                }
-            }
-            .navigationTitle("Bibliothèque")
-        }
-    }
-}
-
-
-
-private struct LpspYouTubeMusicSpectrHomeTabScreen: View {
     var body: some View {
         VStack(spacing: 0) {
-                Text("FROM YOUR LIBRARY").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Song").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Video").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("Midnight City").font(.system(size: 22.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                Text("M83 · Hurry Up, We're Dreaming").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("1:48").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("-2:34").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Up Next").font(.system(size: 10.0, weight: .bold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Reckoner — Radiohead").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspYouTubeMusicSpectrHomeTabScreen(store: store)
+                case .samples:
+                    LpspYouTubeMusicSamplesTabScreen(store: store)
+                case .explore:
+                    LpspYouTubeMusicExploreTabScreen(store: store)
+                case .library:
+                    LpspYouTubeMusicLibraryTabScreen(store: store)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspYouTubeMusicLabeledTabBar(store: store)
         }
-        .background(Color(red: 0.012, green: 0.012, blue: 0.012).ignoresSafeArea())
+        .background(LpspYouTubeMusicTokens.ytmCanvas.ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspYouTubeMusicLabeledTabBar: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspYouTubeMusicShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 20, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspYouTubeMusicFonts.ytmTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspYouTubeMusicTokens.ytmActionWhite
+                            : LpspYouTubeMusicTokens.ytmTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspYouTubeMusicTokens.ytmTabBar
+                .overlay(
+                    Rectangle()
+                        .fill(LpspYouTubeMusicTokens.ytmDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspYouTubeMusicSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: store.currentTrack.artworkColors,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .scaleEffect(1.4)
+            .blur(radius: 40)
+            .opacity(0.85)
+            .overlay(
+                LinearGradient(
+                    colors: [.clear, LpspYouTubeMusicTokens.ytmCanvas],
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                LpspYouTubeMusicSpectrTopBar()
+
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(
+                        LinearGradient(
+                            colors: store.currentTrack.artworkColors,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 232, height: 232)
+                    .shadow(color: .black.opacity(0.7), radius: 30, y: 24)
+                    .padding(.top, 26)
+
+                LpspYouTubeMusicShowroomSongVideoToggle(store: store)
+                    .padding(.top, 22)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(store.currentTrack.title)
+                        .font(LpspYouTubeMusicFonts.ytmNowPlaying.weight(.semibold))
+                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                    Text("\(store.currentTrack.artist) · \(store.currentTrack.album)")
+                        .font(LpspYouTubeMusicFonts.ytmSubtitle)
+                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextSecondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 22)
+
+                LpspYouTubeMusicShowroomScrubber(store: store)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 20)
+
+                LpspYouTubeMusicShowroomTransportControls(store: store)
+                    .padding(.top, 14)
+
+                if let upNext = store.upNextTrack {
+                    LpspYouTubeMusicShowroomUpNextRow(track: upNext) {
+                        store.skipNext()
+                    }
+                    .padding(.top, 18)
+                }
+
+                Spacer(minLength: 0)
+            }
+        }
+    }
+}
+
+private struct LpspYouTubeMusicSpectrTopBar: View {
+    var body: some View {
+        HStack {
+            Image(systemName: "chevron.down")
+                .font(.system(size: 22))
+            Spacer()
+            Text("FROM YOUR LIBRARY")
+                .font(.system(size: 11, weight: .medium))
+                .tracking(0.6)
+                .foregroundStyle(LpspYouTubeMusicTokens.ytmTextSecondary)
+            Spacer()
+            Image(systemName: "ellipsis")
+                .font(.system(size: 22))
+        }
+        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+        .padding(.horizontal, 20)
+        .padding(.top, 6)
+    }
+}
+
+private struct LpspYouTubeMusicShowroomSongVideoToggle: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        LpspYouTubeMusicSongVideoToggle(
+            mode: Binding(
+                get: { store.playMode },
+                set: { store.setPlayMode($0) }
+            )
+        )
+    }
+}
+
+private struct LpspYouTubeMusicShowroomScrubber: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        LpspYouTubeMusicScrubber(
+            progress: Binding(
+                get: { store.progress },
+                set: { store.seek(to: $0) }
+            ),
+            scrubbing: Binding(
+                get: { store.isScrubbing },
+                set: { store.setScrubbing($0) }
+            )
+        )
+    }
+}
+
+private struct LpspYouTubeMusicShowroomTransportControls: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        HStack {
+            Image(systemName: "backward.end.fill")
+                .font(.system(size: 22))
+            Spacer()
+            Button(action: { store.skipPrevious() }) {
+                Image(systemName: "backward.fill")
+                    .font(.system(size: 26))
+            }
+            .buttonStyle(.plain)
+            Spacer()
+            Button(action: { store.togglePlay() }) {
+                ZStack {
+                    Circle()
+                        .fill(LpspYouTubeMusicTokens.ytmActionWhite)
+                        .frame(width: 64, height: 64)
+                    Image(systemName: store.isPlaying ? "pause.fill" : "play.fill")
+                        .font(.system(size: 26))
+                        .foregroundStyle(LpspYouTubeMusicTokens.ytmCanvas)
+                }
+            }
+            .buttonStyle(.plain)
+            Spacer()
+            Button(action: { store.skipNext() }) {
+                Image(systemName: "forward.fill")
+                    .font(.system(size: 26))
+            }
+            .buttonStyle(.plain)
+            Spacer()
+            Image(systemName: "forward.end.fill")
+                .font(.system(size: 22))
+        }
+        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+        .padding(.horizontal, 32)
+    }
+}
+
+private struct LpspYouTubeMusicShowroomUpNextRow: View {
+    let track: LpspYouTubeMusicTrack
+    let onPlayNext: () -> Void
+
+    var body: some View {
+        Button(action: onPlayNext) {
+            HStack(spacing: 12) {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(
+                        LinearGradient(
+                            colors: track.artworkColors,
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 48, height: 48)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Up Next")
+                        .font(LpspYouTubeMusicFonts.ytmEyebrow.weight(.bold))
+                        .tracking(0.6)
+                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextSecondary)
+                    Text("\(track.title) — \(track.artist)")
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 18))
+                    .foregroundStyle(LpspYouTubeMusicTokens.ytmTextSecondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(LpspYouTubeMusicTokens.ytmSurface1.opacity(0.55))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .padding(.horizontal, 16)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct LpspYouTubeMusicSamplesTabScreen: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Quick picks")
+                    .font(LpspYouTubeMusicFonts.ytmScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                LazyVGrid(
+                    columns: [GridItem(.flexible()), GridItem(.flexible())],
+                    spacing: 12
+                ) {
+                    ForEach(Array(LpspYouTubeMusicShowroomData.sampleMixes.enumerated()), id: \.offset) { index, mix in
+                        Button {
+                            store.playTrack(LpspYouTubeMusicShowroomData.queue[index % LpspYouTubeMusicShowroomData.queue.count])
+                        } label: {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(
+                                    LinearGradient(
+                                        colors: LpspYouTubeMusicShowroomData.queue[index % LpspYouTubeMusicShowroomData.queue.count].artworkColors,
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(height: 120)
+                                .overlay(alignment: .bottomLeading) {
+                                    Text(mix)
+                                        .font(LpspYouTubeMusicFonts.ytmCardHeader.weight(.semibold))
+                                        .foregroundStyle(.white)
+                                        .padding(10)
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 16)
+
+                Text("Queue")
+                    .font(LpspYouTubeMusicFonts.ytmSection.weight(.semibold))
+                    .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                    .padding(.horizontal, 16)
+
+                LpspYouTubeMusicShowroomTrackList(store: store)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspYouTubeMusicExploreTabScreen: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 10) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextSecondary)
+                    TextField("Artists, songs, or podcasts", text: $store.searchQuery)
+                        .font(LpspYouTubeMusicFonts.ytmBody)
+                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                        .tint(LpspYouTubeMusicTokens.ytmRed)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(LpspYouTubeMusicTokens.ytmSurface1)
+                )
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+
+                ForEach(LpspYouTubeMusicShowroomData.exploreCategories, id: \.self) { category in
+                    Button {
+                        store.searchQuery = category
+                    } label: {
+                        HStack {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(LpspYouTubeMusicTokens.ytmChipBg)
+                                .frame(width: 48, height: 48)
+                                .overlay {
+                                    Image(systemName: "music.note")
+                                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextSecondary)
+                                }
+                            Text(category)
+                                .font(LpspYouTubeMusicFonts.ytmRowTitle)
+                                .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(LpspYouTubeMusicTokens.ytmTextTertiary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if !store.searchQuery.isEmpty {
+                    Text("Results")
+                        .font(LpspYouTubeMusicFonts.ytmSection.weight(.semibold))
+                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+
+                    LpspYouTubeMusicShowroomTrackList(store: store)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspYouTubeMusicLibraryTabScreen: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Library")
+                    .font(LpspYouTubeMusicFonts.ytmScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+
+                ForEach(LpspYouTubeMusicShowroomData.librarySections, id: \.self) { section in
+                    Button {
+                        store.selectLibrarySection(section)
+                    } label: {
+                        HStack(spacing: 12) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(
+                                    store.selectedLibrarySection == section
+                                        ? LpspYouTubeMusicTokens.ytmActionWhite.opacity(0.18)
+                                        : LpspYouTubeMusicTokens.ytmChipBg
+                                )
+                                .frame(width: 48, height: 48)
+                                .overlay {
+                                    Image(systemName: libraryIcon(for: section))
+                                        .foregroundStyle(LpspYouTubeMusicTokens.ytmTextSecondary)
+                                }
+                            Text(section)
+                                .font(LpspYouTubeMusicFonts.ytmBody)
+                                .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                            Spacer()
+                            if store.selectedLibrarySection == section {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(LpspYouTubeMusicTokens.ytmActionWhite)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if store.selectedLibrarySection == "Liked songs" {
+                    LpspYouTubeMusicShowroomTrackList(store: store)
+                        .padding(.top, 8)
+                }
+            }
+            .padding(.bottom, 16)
+        }
+    }
+
+    private func libraryIcon(for section: String) -> String {
+        switch section {
+        case "Liked songs": "heart.fill"
+        case "Playlists": "music.note.list"
+        case "Albums": "square.stack.fill"
+        case "Artists": "person.fill"
+        case "Downloads": "arrow.down.circle.fill"
+        default: "music.note"
+        }
+    }
+}
+
+private struct LpspYouTubeMusicShowroomTrackList: View {
+    @ObservedObject var store: LpspYouTubeMusicStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(filteredTracks) { track in
+                Button {
+                    store.playTrack(track)
+                } label: {
+                    HStack(spacing: 12) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(
+                                LinearGradient(
+                                    colors: track.artworkColors,
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 48, height: 48)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(track.title)
+                                .font(LpspYouTubeMusicFonts.ytmRowTitle.weight(.medium))
+                                .foregroundStyle(LpspYouTubeMusicTokens.ytmTextPrimary)
+                            Text(track.artist)
+                                .font(LpspYouTubeMusicFonts.ytmSubtitle)
+                                .foregroundStyle(LpspYouTubeMusicTokens.ytmTextSecondary)
+                        }
+
+                        Spacer()
+
+                        if store.currentTrack.id == track.id && store.isPlaying {
+                            Image(systemName: "waveform")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(LpspYouTubeMusicTokens.ytmActionWhite)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private var filteredTracks: [LpspYouTubeMusicTrack] {
+        guard !store.searchQuery.isEmpty else { return store.tracks }
+        return store.tracks.filter {
+            $0.title.localizedCaseInsensitiveContains(store.searchQuery)
+                || $0.artist.localizedCaseInsensitiveContains(store.searchQuery)
+                || $0.album.localizedCaseInsensitiveContains(store.searchQuery)
+        }
+    }
+}
 

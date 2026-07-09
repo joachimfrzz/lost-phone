@@ -1,498 +1,855 @@
 import SwiftUI
+import MapKit
 
 // Fidélité Spectr — écran d'accueil = preview galerie https://www.spectr.to/gallery/google-maps
 // Meliwat/awesome-ios-design-md/travel/google-maps/DESIGN-swiftui.md
-// Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePlansView: View {
+    var mapsData: LpspMapsData?
+
     var body: some View {
-        LpspPlansShowroomRoot()
+        let storyData = mapsData
+        LpspPlansShowroomRoot(
+            store: LpspPlansStore(
+                places: storyData.map { LpspPlansStore.places(from: $0) } ?? LpspPlansShowroomData.places,
+                trips: storyData.map { LpspPlansStore.trips(from: $0) } ?? LpspPlansShowroomData.trips,
+                routes: storyData.map { LpspPlansStore.routes(from: $0) } ?? LpspPlansShowroomData.routes
+            ),
+            isStoryMode: storyData != nil
+        )
     }
 }
 
-// MARK: - Composants spec (préfixés)
+// MARK: - Tokens & composants
+
 private enum LpspPlansTokens {
-    // MARK: - Canvas & Surfaces (Light)
-    static let gmCanvas        = Color.white                                   // #FFFFFF
-    static let gmSurfaceMuted  = Color(red: 0.945, green: 0.953, blue: 0.957) // #F1F3F4
-    static let gmDivider       = Color(red: 0.855, green: 0.863, blue: 0.878) // #DADCE0
-
-    // MARK: - Text
-    static let gmTextPrimary   = Color(red: 0.125, green: 0.133, blue: 0.141) // #202124
-    static let gmTextSecondary = Color(red: 0.373, green: 0.388, blue: 0.408) // #5F6368
-    static let gmTextTertiary  = Color(red: 0.502, green: 0.525, blue: 0.545) // #80868B
-
-    // MARK: - Google Logo Colors (Pin System)
-    static let gmBlue          = Color(red: 0.259, green: 0.522, blue: 0.957) // #4285F4
-    static let gmBluePressed   = Color(red: 0.102, green: 0.451, blue: 0.910) // #1A73E8
-    static let gmBlueDark      = Color(red: 0.090, green: 0.306, blue: 0.651) // #174EA6
-    static let gmRed           = Color(red: 0.918, green: 0.263, blue: 0.208) // #EA4335
-    static let gmYellow        = Color(red: 0.984, green: 0.737, blue: 0.016) // #FBBC04
-    static let gmGreen         = Color(red: 0.204, green: 0.659, blue: 0.325) // #34A853
-    static let gmOrange        = Color(red: 0.984, green: 0.549, blue: 0.000) // #FB8C00
-
-    // MARK: - Map Tiles (Light)
-    static let gmRoadWhite     = Color.white                                   // #FFFFFF
-    static let gmHighwayYellow = Color(red: 0.992, green: 0.965, blue: 0.890) // #FDF6E3
-    static let gmWaterBlue     = Color(red: 0.667, green: 0.855, blue: 1.000) // #AADAFF
-    static let gmParkGreen     = Color(red: 0.784, green: 0.902, blue: 0.788) // #C8E6C9
-    static let gmBuildingFill  = Color(red: 0.941, green: 0.941, blue: 0.941) // #F0F0F0
-
-    // MARK: - Dark Mode
-    static let gmDarkCanvas    = Color(red: 0.125, green: 0.133, blue: 0.141) // #202124
-    static let gmDarkSurface1  = Color(red: 0.176, green: 0.180, blue: 0.192) // #2D2E31
-    static let gmDarkSurface2  = Color(red: 0.235, green: 0.251, blue: 0.263) // #3C4043
-    static let gmDarkTextPrim  = Color(red: 0.910, green: 0.918, blue: 0.929) // #E8EAED
-
-    // MARK: - Blue Halo (Accuracy Circle)
-    static let gmBlueHalo      = Color(red: 0.259, green: 0.522, blue: 0.957, opacity: 0.18)
-    static let gmBlueHaloEdge  = Color(red: 0.259, green: 0.522, blue: 0.957, opacity: 0.4)
+    static let canvas       = Color.white
+    static let surfaceMuted = Color(red: 0.945, green: 0.953, blue: 0.957)
+    static let divider      = Color(red: 0.855, green: 0.863, blue: 0.878)
+    static let textPrimary  = Color(red: 0.125, green: 0.133, blue: 0.141)
+    static let textSecondary = Color(red: 0.373, green: 0.388, blue: 0.408)
+    static let blue         = Color(red: 0.259, green: 0.522, blue: 0.957)
+    static let bluePressed  = Color(red: 0.102, green: 0.451, blue: 0.910)
+    static let red          = Color(red: 0.918, green: 0.263, blue: 0.208)
+    static let yellow       = Color(red: 0.984, green: 0.737, blue: 0.016)
+    static let green        = Color(red: 0.204, green: 0.659, blue: 0.325)
+    static let orange       = Color(red: 0.984, green: 0.549, blue: 0.000)
+    static let blueHalo     = Color(red: 0.259, green: 0.522, blue: 0.957, opacity: 0.18)
+    static let blueHaloEdge = Color(red: 0.259, green: 0.522, blue: 0.957, opacity: 0.4)
 }
 
 private enum LpspPlansFonts {
-    // Google Sans (headings, CTAs)
-    static let gmNavTurn      = Font.system(size: 36, weight: .regular)
-    static let gmScreenTitle  = Font.system(size: 28, weight: .regular)
-    static let gmPlaceTitle   = Font.system(size: 20, weight: .regular)
-    static let gmSection      = Font.system(size: 16, weight: .regular)
-    static let gmButton       = Font.system(size: 16, weight: .regular)
-    static let gmButtonSmall  = Font.system(size: 14, weight: .regular)
-    static let gmTab          = Font.system(size: 11, weight: .regular)
-    static let gmChip         = Font.system(size: 14, weight: .regular)
-
-    // Roboto (body, UI, data)
-    static let gmRowTitle     = Font.system(size: 16, weight: .regular)
-    static let gmBody         = Font.system(size: 14, weight: .regular)
-    static let gmAddress      = Font.system(size: 14, weight: .regular)
-    static let gmMeta         = Font.system(size: 13, weight: .regular)
-    static let gmRating       = Font.system(size: 14, weight: .regular)
-    static let gmETA          = Font.system(size: 16, weight: .regular)
-    static let gmDistancePill = Font.system(size: 13, weight: .regular)
+    static let screenTitle = Font.system(size: 22, weight: .semibold)
+    static let placeTitle  = Font.system(size: 20, weight: .semibold)
+    static let rowTitle    = Font.system(size: 16, weight: .medium)
+    static let body        = Font.system(size: 14, weight: .regular)
+    static let meta        = Font.system(size: 13, weight: .regular)
+    static let tab         = Font.system(size: 10, weight: .regular)
+    static let buttonSmall = Font.system(size: 14, weight: .medium)
 }
 
-// Tabular numerals modifier for distances, ETAs, speeds
-fileprivate extension View {
-    func gmTabularFigures() -> some View {
-        self.monospacedDigit()
+fileprivate struct LpspPlansPressableStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .animation(.spring(response: 0.2, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 
-fileprivate struct LpspPlansGMSearchBar: View {
-    let onTap: () -> Void
-    let onMic: () -> Void
-    var body: some View {
-        HStack(spacing: 12) {
-            Circle()
-                .fill(Color.gray.opacity(0.3))
-                .frame(width: 28, height: 28)
-                .overlay(Image(systemName: "person.fill").foregroundStyle(.white).font(.system(size: 14)))
-            Text("Search here")
-                .font(LpspPlansFonts.gmButton)
-                .foregroundStyle(LpspPlansTokens.gmTextSecondary)
-            Spacer()
-            Button(action: onMic) {
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 20))
-                    .foregroundStyle(LpspPlansTokens.gmTextSecondary)
-            }
-        }
-        .padding(.horizontal, 16)
-        .frame(height: 48)
-        .background(
-            Capsule().fill(LpspPlansTokens.gmCanvas)
-                .shadow(color: .black.opacity(0.15), radius: 8, y: 2)
-        )
-        .padding(.horizontal, 16)
-        .onTapGesture(perform: onTap)
-    }
-}
-
-fileprivate struct LpspPlansGMDirectionsFAB: View {
+fileprivate struct LpspPlansSearchBar: View {
+    let placeholder: String
     let action: () -> Void
-    @State private var pressed = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Circle()
+                    .fill(LpspPlansTokens.blue)
+                    .frame(width: 28, height: 28)
+                    .overlay(Text("M").font(.system(size: 12, weight: .bold)).foregroundStyle(.white))
+                Text(placeholder)
+                    .font(LpspPlansFonts.rowTitle)
+                    .foregroundStyle(LpspPlansTokens.textSecondary)
+                Spacer()
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(LpspPlansTokens.textSecondary)
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 48)
+            .background(
+                Capsule()
+                    .fill(LpspPlansTokens.canvas)
+                    .shadow(color: .black.opacity(0.12), radius: 8, y: 2)
+            )
+        }
+        .buttonStyle(LpspPlansPressableStyle())
+    }
+}
+
+fileprivate struct LpspPlansDirectionsFAB: View {
+    let action: () -> Void
+
     var body: some View {
         Button(action: action) {
             Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
-                .font(.system(size: 24, weight: .semibold))
+                .font(.system(size: 22, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 56, height: 56)
-                .background(Circle().fill(pressed ? LpspPlansTokens.gmBluePressed : LpspPlansTokens.gmBlue))
-                .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
+                .background(Circle().fill(LpspPlansTokens.blue))
+                .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
         }
-        .scaleEffect(pressed ? 0.95 : 1)
-        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: pressed)
-        .sensoryFeedback(.impact(weight: .medium), trigger: pressed)
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in pressed = true }
-                .onEnded   { _ in pressed = false }
-        )
+        .buttonStyle(LpspPlansPressableStyle())
     }
 }
 
-fileprivate struct LpspPlansGMLocationDot: View {
-    @State private var pulse = false
-    var headingDegrees: Double?  // if non-nil, draw a cone in that direction
-
-    var body: some View {
-        ZStack {
-            // Accuracy circle
-            Circle()
-                .fill(LpspPlansTokens.gmBlueHalo)
-                .overlay(Circle().stroke(LpspPlansTokens.gmBlueHaloEdge, lineWidth: 1))
-                .frame(width: 140, height: 140)
-
-            // Heading cone (optional)
-            if let heading = headingDegrees {
-                LpspPlansTriangle()
-                    .fill(LinearGradient(
-                        colors: [LpspPlansTokens.gmBlue.opacity(0.55), LpspPlansTokens.gmBlue.opacity(0)],
-                        startPoint: .top, endPoint: .bottom))
-                    .frame(width: 40, height: 48)
-                    .offset(y: -48)
-                    .rotationEffect(.degrees(heading))
-            }
-
-            // Inner blue dot with white stroke ring
-            Circle()
-                .fill(LpspPlansTokens.gmBlue)
-                .frame(width: 12, height: 12)
-                .overlay(Circle().stroke(.white, lineWidth: 3).frame(width: 18, height: 18))
-                .scaleEffect(pulse ? 1.15 : 1.0)
-        }
-        .onAppear {
-            withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
-                pulse = true
-            }
-        }
-    }
-}
-
-fileprivate struct LpspPlansTriangle: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        p.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        p.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        p.closeSubpath()
-        return p
-    }
-}
-
-fileprivate struct LpspPlansGMMapPin: View {
-    enum LpspPlansKind { case `default`, saved, homeWork, category(String) }
-    let kind: LpspPlansKind
-    var fillColor: Color {
-        switch kind {
-        case .default:       return LpspPlansTokens.gmRed
-        case .saved:         return LpspPlansTokens.gmGreen
-        case .homeWork:      return LpspPlansTokens.gmBlue
-        case .category:      return LpspPlansTokens.gmOrange
-        }
-    }
-    var body: some View {
-        ZStack(alignment: .top) {
-            LpspPlansTeardropShape()
-                .fill(fillColor)
-                .frame(width: 32, height: 40)
-                .shadow(color: .black.opacity(0.25), radius: 3, y: 4)
-
-            if case .default = kind {
-                Circle()
-                    .fill(.white)
-                    .frame(width: 10, height: 10)
-                    .offset(y: 10)
-            } else if case .category(let symbol) = kind {
-                Image(systemName: symbol)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .offset(y: 10)
-            }
-        }
-    }
-}
-
-fileprivate struct LpspPlansTeardropShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        let circleD = rect.width
-        p.addArc(center: CGPoint(x: rect.midX, y: rect.width / 2),
-                 radius: circleD / 2,
-                 startAngle: .degrees(0),
-                 endAngle: .degrees(360), clockwise: false)
-        p.move(to: CGPoint(x: rect.minX + 2, y: rect.width / 2))
-        p.addQuadCurve(to: CGPoint(x: rect.midX, y: rect.maxY),
-                       control: CGPoint(x: rect.minX, y: rect.width))
-        p.addQuadCurve(to: CGPoint(x: rect.maxX - 2, y: rect.width / 2),
-                       control: CGPoint(x: rect.maxX, y: rect.width))
-        return p
-    }
-}
-
-fileprivate struct LpspPlansGMPlaceCard: View {
+fileprivate struct LpspPlansCategoryChip: View {
     let title: String
-    let rating: Double
-    let reviewCount: Int
-    let category: String
-    let distance: String
-    let isOpen: Bool
+    let icon: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon).font(.system(size: 14))
+                Text(title).font(LpspPlansFonts.buttonSmall)
+            }
+            .foregroundStyle(isSelected ? LpspPlansTokens.textPrimary : LpspPlansTokens.textSecondary)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(
+                Capsule().fill(isSelected ? LpspPlansTokens.surfaceMuted : LpspPlansTokens.canvas)
+                    .overlay(Capsule().stroke(LpspPlansTokens.divider, lineWidth: isSelected ? 0 : 1))
+            )
+        }
+        .buttonStyle(LpspPlansPressableStyle())
+    }
+}
+
+fileprivate struct LpspPlansPlaceCard: View {
+    let place: LpspPlansShowroomPlace
+    let isSaved: Bool
+    let onDirections: () -> Void
+    let onSave: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 12) {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(LpspPlansTokens.gmSurfaceMuted)
+                    .fill(
+                        LinearGradient(
+                            colors: [place.accent.opacity(0.35), LpspPlansTokens.surfaceMuted],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .frame(width: 72, height: 72)
+                    .overlay(Image(systemName: place.icon).font(.title2).foregroundStyle(LpspPlansTokens.blue))
+
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(title).font(LpspPlansFonts.gmPlaceTitle).foregroundStyle(LpspPlansTokens.gmTextPrimary).lineLimit(2)
+                    Text(place.name)
+                        .font(LpspPlansFonts.placeTitle)
+                        .foregroundStyle(LpspPlansTokens.textPrimary)
+                        .lineLimit(2)
                     HStack(spacing: 4) {
-                        Text(String(format: "%.1f", rating))
-                            .font(LpspPlansFonts.gmRating)
-                            .foregroundStyle(LpspPlansTokens.gmTextPrimary)
-                            .gmTabularFigures()
+                        Text(String(format: "%.1f", place.rating))
+                            .font(LpspPlansFonts.body)
+                            .foregroundStyle(LpspPlansTokens.textPrimary)
                         ForEach(0..<5, id: \.self) { i in
-                            Image(systemName: Double(i) < rating ? "star.fill" : "star")
-                                .font(.system(size: 12))
-                                .foregroundStyle(LpspPlansTokens.gmYellow)
+                            Image(systemName: Double(i) < place.rating ? "star.fill" : "star")
+                                .font(.system(size: 11))
+                                .foregroundStyle(LpspPlansTokens.yellow)
                         }
-                        Text("(\(reviewCount))")
-                            .font(LpspPlansFonts.gmBody)
-                            .foregroundStyle(LpspPlansTokens.gmTextSecondary)
+                        Text("(\(place.reviewCount))")
+                            .font(LpspPlansFonts.meta)
+                            .foregroundStyle(LpspPlansTokens.textSecondary)
                     }
-                    Text("\(category) · \(distance)")
-                        .font(LpspPlansFonts.gmMeta)
-                        .foregroundStyle(LpspPlansTokens.gmTextSecondary)
-                    if isOpen {
-                        Text("Open now")
-                            .font(LpspPlansFonts.gmMeta.weight(.medium))
-                            .foregroundStyle(LpspPlansTokens.gmGreen)
+                    Text("\(place.category) · \(place.distance)")
+                        .font(LpspPlansFonts.meta)
+                        .foregroundStyle(LpspPlansTokens.textSecondary)
+                    if place.isOpen {
+                        Text("Ouvert")
+                            .font(LpspPlansFonts.meta.weight(.medium))
+                            .foregroundStyle(LpspPlansTokens.green)
                     }
+                    Text(place.address)
+                        .font(LpspPlansFonts.meta)
+                        .foregroundStyle(LpspPlansTokens.textSecondary)
+                        .lineLimit(1)
                 }
             }
-            LpspPlansGMActionRow()
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    actionPill("arrow.triangle.turn.up.right.diamond.fill", "Itinéraire", filled: true, action: onDirections)
+                    actionPill(isSaved ? "bookmark.fill" : "bookmark", "Enregistrer", filled: false, action: onSave)
+                    actionPill("square.and.arrow.up", "Partager", filled: false) { }
+                    actionPill("phone.fill", "Appeler", filled: false) { }
+                }
+            }
         }
         .padding(16)
-        .background(LpspPlansTokens.gmCanvas)
+        .background(LpspPlansTokens.canvas)
     }
-}
 
-fileprivate struct LpspPlansGMActionRow: View {
-    var body: some View {
-        HStack(spacing: 12) {
-            LpspPlansGMPillButton(icon: "arrow.triangle.turn.up.right.diamond.fill", title: "Directions", filled: true)
-            LpspPlansGMPillButton(icon: "bookmark", title: "Save", filled: false)
-            LpspPlansGMPillButton(icon: "square.and.arrow.up", title: "Share", filled: false)
-            LpspPlansGMPillButton(icon: "phone.fill", title: "Call", filled: false)
+    private func actionPill(_ icon: String, _ title: String, filled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon).font(.system(size: 14, weight: .medium))
+                Text(title).font(LpspPlansFonts.buttonSmall)
+            }
+            .foregroundStyle(filled ? .white : LpspPlansTokens.blue)
+            .padding(.horizontal, 14)
+            .frame(height: 36)
+            .background(
+                Capsule().fill(filled ? LpspPlansTokens.blue : Color.clear)
+                    .overlay(Capsule().stroke(filled ? Color.clear : LpspPlansTokens.divider, lineWidth: 1))
+            )
         }
+        .buttonStyle(LpspPlansPressableStyle())
     }
 }
 
-fileprivate struct LpspPlansGMPillButton: View {
-    let icon: String
-    let title: String
-    let filled: Bool
-    var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon).font(.system(size: 16, weight: .medium))
-            Text(title).font(LpspPlansFonts.gmButtonSmall)
-        }
-        .foregroundStyle(filled ? .white : LpspPlansTokens.gmBlue)
-        .padding(.horizontal, 16)
-        .frame(height: 36)
-        .background(
-            Capsule().fill(filled ? LpspPlansTokens.gmBlue : Color.clear)
-                .overlay(Capsule().stroke(filled ? Color.clear : LpspPlansTokens.gmDivider, lineWidth: 1))
-        )
-    }
-}
-
-fileprivate struct LpspPlansGMTurnCard: View {
+fileprivate struct LpspPlansTurnCard: View {
     let instruction: String
     let distance: String
-    let nextInstruction: String?
+    let eta: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .center, spacing: 16) {
+            HStack(spacing: 14) {
                 Image(systemName: "arrow.turn.up.right")
-                    .font(.system(size: 44, weight: .bold))
+                    .font(.system(size: 40, weight: .bold))
                     .foregroundStyle(.white)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(instruction)
-                        .font(.custom("GoogleSans-Bold", size: 22))
+                        .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(.white)
                         .lineLimit(2)
-                    Text("in \(distance)")
-                        .font(LpspPlansFonts.gmBody)
-                        .foregroundStyle(.white.opacity(0.7))
-                        .gmTabularFigures()
+                    Text("dans \(distance) · \(eta)")
+                        .font(LpspPlansFonts.meta)
+                        .foregroundStyle(.white.opacity(0.75))
                 }
                 Spacer()
-            }
-            if let next = nextInstruction {
-                HStack(spacing: 10) {
-                    Image(systemName: "arrow.turn.up.left")
-                        .font(.system(size: 22, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.8))
-                    Text("Then \(next)")
-                        .font(LpspPlansFonts.gmBody)
-                        .foregroundStyle(.white.opacity(0.8))
-                }
-                .padding(.top, 6)
-                .overlay(Rectangle().frame(height: 1).foregroundStyle(.white.opacity(0.2)), alignment: .top)
             }
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 16).fill(LpspPlansTokens.gmBlue))
-        .shadow(color: .black.opacity(0.2), radius: 16, y: 4)
-        .padding(.horizontal, 16)
+        .background(RoundedRectangle(cornerRadius: 16).fill(LpspPlansTokens.blue))
+        .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
     }
 }
 
-import MapKit
+fileprivate struct LpspPlansMapView: View {
+    let places: [LpspPlansShowroomPlace]
+    let selectedPlaceID: String?
+    let showsRoute: Bool
+    let routeEnd: LpspPlansShowroomPlace?
 
-final class LpspPlansGMRouteRenderer: MKOverlayRenderer {
-    override func draw(_ mapRect: MKMapRect, zoomScale: MKZoomScale, in context: CGContext) {
-        guard let polyline = overlay as? MKPolyline else { return }
-        let path = CGMutablePath()
-        for i in 0..<polyline.pointCount {
-            let pt = self.point(for: polyline.points()[i])
-            if i == 0 { path.move(to: pt) } else { path.addLine(to: pt) }
+    private let userLocation = CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522)
+
+    var body: some View {
+        Map(initialPosition: .region(MKCoordinateRegion(
+            center: userLocation,
+            span: MKCoordinateSpan(latitudeDelta: 0.045, longitudeDelta: 0.045)
+        ))) {
+            Annotation("Vous", coordinate: userLocation) {
+                ZStack {
+                    Circle()
+                        .fill(LpspPlansTokens.blueHalo)
+                        .frame(width: 80, height: 80)
+                    Circle()
+                        .fill(LpspPlansTokens.blue)
+                        .frame(width: 12, height: 12)
+                        .overlay(Circle().stroke(.white, lineWidth: 3).frame(width: 18, height: 18))
+                }
+            }
+
+            ForEach(places) { place in
+                Annotation(place.name, coordinate: place.coordinate) {
+                    Image(systemName: selectedPlaceID == place.id ? "mappin.circle.fill" : "mappin.circle")
+                        .font(.system(size: 28))
+                        .foregroundStyle(selectedPlaceID == place.id ? LpspPlansTokens.red : LpspPlansTokens.red.opacity(0.85))
+                }
+            }
+
+            if showsRoute, let end = routeEnd {
+                MapPolyline(coordinates: [userLocation, end.coordinate])
+                    .stroke(LpspPlansTokens.blue, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+            }
         }
-        // Casing
-        context.setStrokeColor(UIColor(red: 0.09, green: 0.306, blue: 0.651, alpha: 1).cgColor) // #174EA6
-        context.setLineWidth(6.5 / zoomScale)
-        context.setLineCap(.round)
-        context.addPath(path); context.strokePath()
-
-        // Fill
-        context.setStrokeColor(UIColor(red: 0.259, green: 0.522, blue: 0.957, alpha: 1).cgColor) // #4285F4
-        context.setLineWidth(5 / zoomScale)
-        context.setLineCap(.round)
-        context.addPath(path); context.strokePath()
+        .mapStyle(.standard(pointsOfInterest: .excludingAll))
+        .mapControlVisibility(.hidden)
     }
 }
 
+// MARK: - Données & état
 
+fileprivate struct LpspPlansShowroomPlace: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let address: String
+    let category: String
+    let rating: Double
+    let reviewCount: Int
+    let distance: String
+    let isOpen: Bool
+    let icon: String
+    let accent: Color
+    let coordinate: CLLocationCoordinate2D
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+fileprivate struct LpspPlansShowroomTrip: Identifiable, Hashable {
+    let id: String
+    let origin: String
+    let destination: String
+    let mode: String
+    let duration: String
+    let dateLabel: String
+}
+
+fileprivate struct LpspPlansShowroomRoute: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let origin: String
+    let destination: String
+    let duration: String
+}
+
+@MainActor
+fileprivate final class LpspPlansStore: ObservableObject {
+    @Published var selectedTab: LpspPlansTab = .explore
+    @Published var selectedPlace: LpspPlansShowroomPlace?
+    @Published var selectedCategory: String?
+    @Published var showSearch = false
+    @Published var showNavigation = false
+    @Published var navigationDestination: LpspPlansShowroomPlace?
+    @Published var searchQuery = ""
+    @Published var savedPlaceIDs: Set<String>
+
+    let places: [LpspPlansShowroomPlace]
+    let trips: [LpspPlansShowroomTrip]
+    let routes: [LpspPlansShowroomRoute]
+
+    init(places: [LpspPlansShowroomPlace], trips: [LpspPlansShowroomTrip], routes: [LpspPlansShowroomRoute]) {
+        self.places = places
+        self.trips = trips
+        self.routes = routes
+        self.savedPlaceIDs = ["home", "work", "louvre"]
+        self.selectedPlace = places.first { $0.id == "louvre" }
+    }
+
+    var filteredPlaces: [LpspPlansShowroomPlace] {
+        let categoryFiltered = places.filter { place in
+            guard let selectedCategory else { return true }
+            return place.category.localizedCaseInsensitiveContains(selectedCategory)
+        }
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !query.isEmpty else { return categoryFiltered }
+        return categoryFiltered.filter {
+            $0.name.lowercased().contains(query) || $0.address.lowercased().contains(query)
+        }
+    }
+
+    var savedPlaces: [LpspPlansShowroomPlace] {
+        places.filter { savedPlaceIDs.contains($0.id) }
+    }
+
+    func selectPlace(_ place: LpspPlansShowroomPlace) {
+        selectedPlace = place
+    }
+
+    func toggleSaved(_ place: LpspPlansShowroomPlace) {
+        if savedPlaceIDs.contains(place.id) {
+            savedPlaceIDs.remove(place.id)
+        } else {
+            savedPlaceIDs.insert(place.id)
+        }
+    }
+
+    func isSaved(_ place: LpspPlansShowroomPlace) -> Bool {
+        savedPlaceIDs.contains(place.id)
+    }
+
+    func startDirections(to place: LpspPlansShowroomPlace) {
+        navigationDestination = place
+        selectedPlace = place
+        showNavigation = true
+        selectedTab = .go
+    }
+
+    static func places(from data: LpspMapsData) -> [LpspPlansShowroomPlace] {
+        let coords: [CLLocationCoordinate2D] = [
+            .init(latitude: 48.8606, longitude: 2.3376),
+            .init(latitude: 48.8372, longitude: 2.3708),
+            .init(latitude: 48.8606, longitude: 2.3376),
+        ]
+        return data.places.enumerated().map { index, place in
+            LpspPlansShowroomPlace(
+                id: place.id,
+                name: place.label,
+                address: place.address,
+                category: "Adresse",
+                rating: 4.5,
+                reviewCount: 100,
+                distance: "—",
+                isOpen: true,
+                icon: "mappin.circle.fill",
+                accent: LpspPlansTokens.blue,
+                coordinate: coords[index % coords.count]
+            )
+        }
+    }
+
+    static func trips(from data: LpspMapsData) -> [LpspPlansShowroomTrip] {
+        data.trips.map { trip in
+            LpspPlansShowroomTrip(
+                id: trip.id,
+                origin: trip.origin,
+                destination: trip.destination,
+                mode: trip.mode,
+                duration: trip.duration,
+                dateLabel: LpspAdapters.formatShortDate(trip.date, fallback: trip.dateRaw)
+            )
+        }
+    }
+
+    static func routes(from data: LpspMapsData) -> [LpspPlansShowroomRoute] {
+        data.routes.map { route in
+            LpspPlansShowroomRoute(
+                id: route.id,
+                name: route.name,
+                origin: route.origin,
+                destination: route.destination,
+                duration: route.duration
+            )
+        }
+    }
+}
+
+private enum LpspPlansShowroomData {
+    static let places: [LpspPlansShowroomPlace] = [
+        .init(id: "home", name: "Domicile", address: "14 Rue de Rivoli, 75001 Paris", category: "Domicile", rating: 0, reviewCount: 0, distance: "—", isOpen: true, icon: "house.fill", accent: LpspPlansTokens.blue, coordinate: .init(latitude: 48.8566, longitude: 2.3522)),
+        .init(id: "work", name: "Travail", address: "Station F, 55 Bd Vincent Auriol", category: "Travail", rating: 0, reviewCount: 0, distance: "—", isOpen: true, icon: "briefcase.fill", accent: LpspPlansTokens.green, coordinate: .init(latitude: 48.8372, longitude: 2.3708)),
+        .init(id: "louvre", name: "Musée du Louvre", address: "Rue de Rivoli, 75001 Paris", category: "Musée", rating: 4.7, reviewCount: 98241, distance: "350 m", isOpen: true, icon: "building.columns.fill", accent: LpspPlansTokens.orange, coordinate: .init(latitude: 48.8606, longitude: 2.3376)),
+        .init(id: "boot", name: "Boot Café", address: "19 Rue du Pont aux Choux", category: "Café", rating: 4.6, reviewCount: 842, distance: "900 m", isOpen: true, icon: "cup.and.saucer.fill", accent: LpspPlansTokens.yellow, coordinate: .init(latitude: 48.8627, longitude: 2.3625)),
+        .init(id: "nord", name: "Gare du Nord", address: "18 Rue de Dunkerque", category: "Gare", rating: 3.9, reviewCount: 12400, distance: "2,1 km", isOpen: true, icon: "tram.fill", accent: LpspPlansTokens.red, coordinate: .init(latitude: 48.8809, longitude: 2.3553)),
+        .init(id: "bastille", name: "Place de la Bastille", address: "75011 Paris", category: "Monument", rating: 4.4, reviewCount: 5100, distance: "1,8 km", isOpen: true, icon: "mappin.and.ellipse", accent: LpspPlansTokens.red, coordinate: .init(latitude: 48.8530, longitude: 2.3690)),
+    ]
+
+    static let trips: [LpspPlansShowroomTrip] = [
+        .init(id: "t1", origin: "Bastille", destination: "Musée du Louvre", mode: "Voiture", duration: "16 min", dateLabel: "12 juin"),
+        .init(id: "t2", origin: "Domicile", destination: "Gare du Nord", mode: "Transports", duration: "22 min", dateLabel: "2 juin"),
+        .init(id: "t3", origin: "Travail", destination: "Boot Café", mode: "À pied", duration: "14 min", dateLabel: "28 mai"),
+    ]
+
+    static let routes: [LpspPlansShowroomRoute] = [
+        .init(id: "r1", name: "Maison → Travail", origin: "14 Rue de Rivoli", destination: "Station F", duration: "18 min"),
+        .init(id: "r2", name: "Louvre → Gare du Nord", origin: "Musée du Louvre", destination: "Gare du Nord", duration: "24 min"),
+    ]
+}
 
 // MARK: - Écrans showroom
 
-private struct LpspPlansShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspPlansSpectrHomeTabScreen()
-                .tabItem { Label("Explore", systemImage: "safari.fill") }
-                .tag(0)
-            LpspPlansMapsTabScreen(title: "Go", tabIndex: 1)
-                .tabItem { Label("Go", systemImage: "location.north.circle.fill") }
-                .tag(1)
-            LpspPlansMapsTabScreen(title: "Saved", tabIndex: 2)
-                .tabItem { Label("Saved", systemImage: "bookmark.fill") }
-                .tag(2)
-            LpspPlansMapsTabScreen(title: "Contribute", tabIndex: 3)
-                .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
-                .tag(3)
-            LpspPlansMapsTabScreen(title: "Updates", tabIndex: 4)
-                .tabItem { Label("Updates", systemImage: "newspaper.fill") }
-                .tag(4)
+private enum LpspPlansTab: CaseIterable {
+    case explore, go, saved, contribute, updates
+
+    var label: String {
+        switch self {
+        case .explore: "Explorer"
+        case .go: "Go"
+        case .saved: "Enregistrés"
+        case .contribute: "Contribuer"
+        case .updates: "Actus"
         }
-        .tint(LpspPlansTokens.gmYellow)
-        
+    }
+
+    var icon: String {
+        switch self {
+        case .explore: "safari.fill"
+        case .go: "location.north.circle.fill"
+        case .saved: "bookmark.fill"
+        case .contribute: "plus.circle.fill"
+        case .updates: "newspaper.fill"
+        }
     }
 }
 
+private struct LpspPlansShowroomRoot: View {
+    @ObservedObject var store: LpspPlansStore
+    var isStoryMode = false
 
-private struct LpspPlansGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
+    var body: some View {
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .explore:
+                    LpspPlansExploreTabScreen(store: store)
+                case .go:
+                    LpspPlansGoTabScreen(store: store)
+                case .saved:
+                    LpspPlansSavedTabScreen(store: store)
+                case .contribute:
+                    LpspPlansContributeTabScreen()
+                case .updates:
+                    LpspPlansUpdatesTabScreen(store: store)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspPlansTabBar(selectedTab: $store.selectedTab)
+        }
+        .background(LpspPlansTokens.canvas.ignoresSafeArea())
+        .sheet(isPresented: $store.showSearch) {
+            LpspPlansSearchSheet(store: store)
+        }
+    }
+}
+
+private struct LpspPlansTabBar: View {
+    @Binding var selectedTab: LpspPlansTab
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspPlansTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) { selectedTab = tab }
+                } label: {
+                    VStack(spacing: 2) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: selectedTab == tab ? .semibold : .regular))
+                        Text(tab.label)
+                            .font(LpspPlansFonts.tab)
+                    }
+                    .foregroundStyle(selectedTab == tab ? LpspPlansTokens.textPrimary : LpspPlansTokens.textSecondary)
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(LpspPlansPressableStyle())
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(LpspPlansTokens.canvas)
+        .overlay(alignment: .top) {
+            Rectangle().fill(LpspPlansTokens.divider).frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspPlansExploreTabScreen: View {
+    @ObservedObject var store: LpspPlansStore
+
+    private let categories = [
+        ("Restaurants", "fork.knife"),
+        ("Cafés", "cup.and.saucer.fill"),
+        ("Musées", "building.columns.fill"),
+        ("Transports", "tram.fill"),
+    ]
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            LpspPlansMapView(
+                places: store.places,
+                selectedPlaceID: store.selectedPlace?.id,
+                showsRoute: false,
+                routeEnd: nil
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 12) {
+                LpspPlansSearchBar(placeholder: "Rechercher ici") {
+                    store.showSearch = true
+                }
+                .padding(.horizontal, 4)
+                .padding(.top, 8)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(categories, id: \.0) { category, icon in
+                            LpspPlansCategoryChip(
+                                title: category,
+                                icon: icon,
+                                isSelected: store.selectedCategory == category
+                            ) {
+                                store.selectedCategory = store.selectedCategory == category ? nil : category
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                }
+
+                Spacer()
+
+                HStack {
+                    Spacer()
+                    LpspPlansDirectionsFAB {
+                        if let place = store.selectedPlace {
+                            store.startDirections(to: place)
+                        }
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.bottom, store.selectedPlace == nil ? 16 : 180)
+                }
+            }
+
+            if let place = store.selectedPlace {
+                VStack(spacing: 0) {
+                    Capsule()
+                        .fill(LpspPlansTokens.divider)
+                        .frame(width: 36, height: 4)
+                        .padding(.top, 8)
+                    LpspPlansPlaceCard(
+                        place: place,
+                        isSaved: store.isSaved(place),
+                        onDirections: { store.startDirections(to: place) },
+                        onSave: { store.toggleSaved(place) }
+                    )
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(LpspPlansTokens.canvas)
+                        .shadow(color: .black.opacity(0.12), radius: 12, y: -2)
+                )
+            }
+        }
+    }
+}
+
+private struct LpspPlansGoTabScreen: View {
+    @ObservedObject var store: LpspPlansStore
+
+    var body: some View {
+        ZStack {
+            if store.showNavigation, let destination = store.navigationDestination {
+                LpspPlansMapView(
+                    places: store.places,
+                    selectedPlaceID: destination.id,
+                    showsRoute: true,
+                    routeEnd: destination
+                )
+                .ignoresSafeArea()
+
+                VStack {
+                    LpspPlansTurnCard(
+                        instruction: "Tournez à droite sur \(destination.name)",
+                        distance: "120 m",
+                        eta: destination.distance == "—" ? "18 min" : destination.distance
+                    )
+                    .padding(.horizontal, 8)
+                    .padding(.top, 8)
+                    Spacer()
+                    HStack {
+                        Button {
+                            store.showNavigation = false
+                        } label: {
+                            Text("Quitter")
+                                .font(LpspPlansFonts.rowTitle)
+                                .foregroundStyle(LpspPlansTokens.blue)
+                                .padding(.horizontal, 18)
+                                .padding(.vertical, 10)
+                                .background(Capsule().fill(LpspPlansTokens.canvas))
+                        }
+                        .buttonStyle(LpspPlansPressableStyle())
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 80)
+                }
+            } else {
+                NavigationStack {
+                    List {
+                        Section("Itinéraires enregistrés") {
+                            ForEach(store.routes) { route in
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(route.name)
+                                        .font(LpspPlansFonts.rowTitle)
+                                        .foregroundStyle(LpspPlansTokens.textPrimary)
+                                    Text("\(route.origin) → \(route.destination)")
+                                        .font(LpspPlansFonts.meta)
+                                        .foregroundStyle(LpspPlansTokens.textSecondary)
+                                    Text(route.duration)
+                                        .font(LpspPlansFonts.meta)
+                                        .foregroundStyle(LpspPlansTokens.blue)
+                                }
+                                .padding(.vertical, 4)
+                            }
+                        }
+
+                        Section("Trajets récents") {
+                            ForEach(store.trips) { trip in
+                                HStack(spacing: 12) {
+                                    Image(systemName: icon(for: trip.mode))
+                                        .foregroundStyle(LpspPlansTokens.blue)
+                                        .frame(width: 28)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("\(trip.origin) → \(trip.destination)")
+                                            .font(LpspPlansFonts.rowTitle)
+                                            .foregroundStyle(LpspPlansTokens.textPrimary)
+                                            .lineLimit(1)
+                                        Text("\(trip.dateLabel) · \(trip.mode) · \(trip.duration)")
+                                            .font(LpspPlansFonts.meta)
+                                            .foregroundStyle(LpspPlansTokens.textSecondary)
+                                    }
+                                }
+                                .padding(.vertical, 4)
+                            }
+                        }
+                    }
+                    .navigationTitle("Go")
+                }
+            }
+        }
+    }
+
+    private func icon(for mode: String) -> String {
+        let low = mode.lowercased()
+        if low.contains("pied") { return "figure.walk" }
+        if low.contains("transport") { return "tram.fill" }
+        return "car.fill"
+    }
+}
+
+private struct LpspPlansSavedTabScreen: View {
+    @ObservedObject var store: LpspPlansStore
+
     var body: some View {
         NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspPlansTokens.gmYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspPlansTokens.gmYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+            List {
+                Section("Listes") {
+                    Label("Favoris Paris", systemImage: "heart.fill")
+                    Label("Lost Phone leads", systemImage: "magnifyingglass")
+                }
+
+                Section("Lieux enregistrés") {
+                    ForEach(store.savedPlaces) { place in
+                        Button {
+                            store.selectPlace(place)
+                            store.selectedTab = .explore
+                        } label: {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(place.accent.opacity(0.25))
+                                    .frame(width: 44, height: 44)
+                                    .overlay(Image(systemName: place.icon).foregroundStyle(LpspPlansTokens.blue))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(place.name)
+                                        .font(LpspPlansFonts.rowTitle)
+                                        .foregroundStyle(LpspPlansTokens.textPrimary)
+                                    Text(place.address)
+                                        .font(LpspPlansFonts.meta)
+                                        .foregroundStyle(LpspPlansTokens.textSecondary)
+                                        .lineLimit(1)
+                                }
+                            }
+                        }
                     }
                 }
             }
-            .navigationTitle(title)
+            .navigationTitle("Enregistrés")
         }
     }
 }
 
-
-private struct LpspPlansMapsHomeTabScreen: View {
+private struct LpspPlansContributeTabScreen: View {
     var body: some View {
-        ZStack {
-            Color.gray.opacity(0.15).ignoresSafeArea()
-            VStack {
-                HStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.ultraThinMaterial)
-                        .frame(height: 48)
-                        .overlay(HStack { Image(systemName: "magnifyingglass"); Text("Rechercher") }.foregroundStyle(.secondary))
-                        .padding()
-                    Spacer()
+        NavigationStack {
+            List {
+                Label("Ajouter un lieu", systemImage: "mappin.and.ellipse")
+                Label("Évaluer un endroit", systemImage: "star")
+                Label("Signaler un problème", systemImage: "exclamationmark.bubble")
+                Label("Ajouter une photo", systemImage: "camera")
+            }
+            .navigationTitle("Contribuer")
+        }
+    }
+}
+
+private struct LpspPlansUpdatesTabScreen: View {
+    @ObservedObject var store: LpspPlansStore
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Pour vous") {
+                    ForEach(store.places.prefix(3)) { place in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Nouveau avis sur \(place.name)")
+                                .font(LpspPlansFonts.rowTitle)
+                            Text("Un utilisateur a partagé une photo récente.")
+                                .font(LpspPlansFonts.meta)
+                                .foregroundStyle(LpspPlansTokens.textSecondary)
+                        }
+                        .padding(.vertical, 4)
+                    }
                 }
-                Spacer()
+            }
+            .navigationTitle("Actus")
+        }
+    }
+}
+
+private struct LpspPlansSearchSheet: View {
+    @ObservedObject var store: LpspPlansStore
+    @Environment(\.dismiss) private var dismiss
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if store.searchQuery.isEmpty {
+                    Section("Suggestions") {
+                        ForEach(store.places.prefix(4)) { place in
+                            Button {
+                                store.selectPlace(place)
+                                dismiss()
+                                store.selectedTab = .explore
+                            } label: {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(place.name)
+                                        .font(LpspPlansFonts.rowTitle)
+                                        .foregroundStyle(LpspPlansTokens.textPrimary)
+                                    Text(place.address)
+                                        .font(LpspPlansFonts.meta)
+                                        .foregroundStyle(LpspPlansTokens.textSecondary)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Section("Résultats") {
+                        ForEach(store.filteredPlaces) { place in
+                            Button {
+                                store.selectPlace(place)
+                                dismiss()
+                                store.selectedTab = .explore
+                            } label: {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(place.name)
+                                        .font(LpspPlansFonts.rowTitle)
+                                        .foregroundStyle(LpspPlansTokens.textPrimary)
+                                    Text(place.address)
+                                        .font(LpspPlansFonts.meta)
+                                        .foregroundStyle(LpspPlansTokens.textSecondary)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .searchable(text: $store.searchQuery, prompt: "Rechercher un lieu")
+            .navigationTitle("Recherche")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Fermer") { dismiss() }
+                }
             }
         }
     }
 }
-
-private struct LpspPlansMapsRoutesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Maison → Bureau", "Bureau → Gare"], id: \.self) { Label($0, systemImage: "arrow.triangle.turn.up.right.diamond") }
-            .navigationTitle("Itinéraire")
-        }
-    }
-}
-
-private struct LpspPlansMapsProfileTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List { Label("Adresses enregistrées", systemImage: "mappin"); Label("Historique", systemImage: "clock") }
-            .navigationTitle("Profil")
-        }
-    }
-}
-
-private struct LpspPlansMapsTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        let low = title.lowercased()
-        if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspPlansMapsHomeTabScreen() }
-        else if low.contains("itin") || low.contains("route") { LpspPlansMapsRoutesTabScreen() }
-        else { LpspPlansMapsProfileTabScreen() }
-    }
-}
-
-
-private struct LpspPlansSpectrHomeTabScreen: View {
-    var body: some View {
-        ZStack(alignment: .bottom) {
-        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
-            Text("Search here").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-            Text("M").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-        VStack(spacing: 0) {
-                    Text("Sanborn's Café").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                        Text("4.6").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                        Text("★★★★★").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                        Text("(142)").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                        Text("Open").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                Text("Directions").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                Text("Call").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                Text("Save").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-        } .background(Color(red: 1.000, green: 1.000, blue: 1.000)).clipShape(RoundedRectangle(cornerRadius: 16))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
-    }
-}
-
-

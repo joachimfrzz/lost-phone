@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGoogleMapsView: View {
     var body: some View {
-        LpspGoogleMapsShowroomRoot()
+        LpspGoogleMapsShowroomRoot(store: LpspGoogleMapsStore())
     }
 }
 
@@ -374,125 +374,558 @@ final class LpspGoogleMapsGMRouteRenderer: MKOverlayRenderer {
 
 
 
+// MARK: - Showroom data & store
+
+private enum LpspGoogleMapsShowroomTab: String, CaseIterable, Identifiable {
+    case explore, go, saved, contribute, updates
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .explore: "Explore"
+        case .go: "Go"
+        case .saved: "Saved"
+        case .contribute: "Contribute"
+        case .updates: "Updates"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .explore: "safari.fill"
+        case .go: "location.north.fill"
+        case .saved: "bookmark.fill"
+        case .contribute: "plus.circle.fill"
+        case .updates: "bell.fill"
+        }
+    }
+}
+
+private struct LpspGoogleMapsPlace: Identifiable, Equatable {
+    let id: String
+    let title: String
+    let rating: Double
+    let reviewCount: Int
+    let category: String
+    let distance: String
+    let isOpen: Bool
+    var isSaved: Bool
+}
+
+private enum LpspGoogleMapsShowroomData {
+    static let featured = LpspGoogleMapsPlace(
+        id: "sanborns",
+        title: "Sanborn's Café",
+        rating: 4.6,
+        reviewCount: 142,
+        category: "Coffee shop",
+        distance: "0.3 mi",
+        isOpen: true,
+        isSaved: false
+    )
+
+    static let savedPlaces = [
+        LpspGoogleMapsPlace(
+            id: "home",
+            title: "Home",
+            rating: 0,
+            reviewCount: 0,
+            category: "Saved place",
+            distance: "2.1 mi",
+            isOpen: true,
+            isSaved: true
+        ),
+        LpspGoogleMapsPlace(
+            id: "work",
+            title: "Work",
+            rating: 0,
+            reviewCount: 0,
+            category: "Saved place",
+            distance: "4.8 mi",
+            isOpen: true,
+            isSaved: true
+        ),
+    ]
+
+    static let updates = [
+        ("Traffic on Market St", "Slower than usual · 12 min ago"),
+        ("New photos at Sanborn's Café", "Added by local guide · 1 hr ago"),
+    ]
+}
+
+@MainActor
+fileprivate final class LpspGoogleMapsStore: ObservableObject {
+    @Published var selectedTab: LpspGoogleMapsShowroomTab = .explore
+    @Published var featuredPlace: LpspGoogleMapsPlace = LpspGoogleMapsShowroomData.featured
+    @Published var savedPlaces: [LpspGoogleMapsPlace] = LpspGoogleMapsShowroomData.savedPlaces
+    @Published var isNavigating = false
+    @Published var searchQuery = ""
+    @Published var lastActionMessage = ""
+
+    func startDirections() {
+        isNavigating = true
+        selectedTab = .go
+        lastActionMessage = "Directions to \(featuredPlace.title)"
+    }
+
+    func toggleSaveFeatured() {
+        var updated = featuredPlace
+        updated.isSaved.toggle()
+        featuredPlace = updated
+        if featuredPlace.isSaved {
+            if !savedPlaces.contains(where: { $0.id == featuredPlace.id }) {
+                savedPlaces.append(featuredPlace)
+            }
+        } else {
+            savedPlaces.removeAll { $0.id == featuredPlace.id }
+        }
+        lastActionMessage = featuredPlace.isSaved ? "Saved \(featuredPlace.title)" : "Removed save"
+    }
+
+    func callPlace() {
+        lastActionMessage = "Calling \(featuredPlace.title)…"
+    }
+
+    func openSearch() {
+        searchQuery = featuredPlace.title
+        lastActionMessage = "Search opened"
+    }
+
+    func endNavigation() {
+        isNavigating = false
+        selectedTab = .explore
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspGoogleMapsShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspGoogleMapsSpectrHomeTabScreen()
-                .tabItem { Label("Explore", systemImage: "safari.fill") }
-                .tag(0)
-            LpspGoogleMapsMapsTabScreen(title: "Go", tabIndex: 1)
-                .tabItem { Label("Go", systemImage: "location.north.circle.fill") }
-                .tag(1)
-            LpspGoogleMapsMapsTabScreen(title: "Saved", tabIndex: 2)
-                .tabItem { Label("Saved", systemImage: "bookmark.fill") }
-                .tag(2)
-            LpspGoogleMapsMapsTabScreen(title: "Contribute", tabIndex: 3)
-                .tabItem { Label("Contribute", systemImage: "plus.circle.fill") }
-                .tag(3)
-            LpspGoogleMapsMapsTabScreen(title: "Updates", tabIndex: 4)
-                .tabItem { Label("Updates", systemImage: "newspaper.fill") }
-                .tag(4)
-        }
-        .tint(LpspGoogleMapsTokens.gmYellow)
-        
-    }
-}
+    @ObservedObject var store: LpspGoogleMapsStore
 
-
-private struct LpspGoogleMapsGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspGoogleMapsTokens.gmYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGoogleMapsTokens.gmYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
+        VStack(spacing: 0) {
+            Group {
+                switch store.selectedTab {
+                case .explore:
+                    LpspGoogleMapsSpectrHomeTabScreen(store: store)
+                case .go:
+                    LpspGoogleMapsGoTabScreen(store: store)
+                case .saved:
+                    LpspGoogleMapsSavedTabScreen(store: store)
+                case .contribute:
+                    LpspGoogleMapsContributeTabScreen()
+                case .updates:
+                    LpspGoogleMapsUpdatesTabScreen()
                 }
             }
-            .navigationTitle(title)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            LpspGoogleMapsLabeledTabBar(store: store)
         }
+        .background(LpspGoogleMapsTokens.gmCanvas.ignoresSafeArea())
     }
 }
 
+private struct LpspGoogleMapsLabeledTabBar: View {
+    @ObservedObject var store: LpspGoogleMapsStore
 
-private struct LpspGoogleMapsMapsHomeTabScreen: View {
+    var body: some View {
+        HStack {
+            ForEach(LpspGoogleMapsShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspGoogleMapsFonts.gmTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspGoogleMapsTokens.gmBlue
+                            : LpspGoogleMapsTokens.gmTextSecondary
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspGoogleMapsTokens.gmCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspGoogleMapsTokens.gmDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspGoogleMapsShowroomMapCanvas: View {
     var body: some View {
         ZStack {
-            Color.gray.opacity(0.15).ignoresSafeArea()
-            VStack {
-                HStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.ultraThinMaterial)
-                        .frame(height: 48)
-                        .overlay(HStack { Image(systemName: "magnifyingglass"); Text("Rechercher") }.foregroundStyle(.secondary))
-                        .padding()
-                    Spacer()
+            Color(red: 0.961, green: 0.945, blue: 0.910)
+
+            RoundedRectangle(cornerRadius: 4)
+                .fill(LpspGoogleMapsTokens.gmParkGreen)
+                .frame(width: 120, height: 80)
+                .offset(x: -80, y: -120)
+
+            RoundedRectangle(cornerRadius: 4)
+                .fill(LpspGoogleMapsTokens.gmParkGreen)
+                .frame(width: 90, height: 60)
+                .offset(x: 100, y: -60)
+
+            RoundedRectangle(cornerRadius: 4)
+                .fill(LpspGoogleMapsTokens.gmWaterBlue)
+                .frame(width: 140, height: 70)
+                .offset(x: -40, y: 80)
+
+            RoundedRectangle(cornerRadius: 2)
+                .fill(LpspGoogleMapsTokens.gmHighwayYellow)
+                .frame(width: 260, height: 10)
+                .rotationEffect(.degrees(-12))
+
+            RoundedRectangle(cornerRadius: 1)
+                .fill(LpspGoogleMapsTokens.gmRoadWhite)
+                .frame(width: 180, height: 6)
+                .rotationEffect(.degrees(24))
+                .shadow(color: .black.opacity(0.06), radius: 1, y: 1)
+
+            RoundedRectangle(cornerRadius: 1)
+                .fill(LpspGoogleMapsTokens.gmBuildingFill)
+                .frame(width: 48, height: 36)
+                .offset(x: 60, y: -20)
+
+            RoundedRectangle(cornerRadius: 1)
+                .fill(LpspGoogleMapsTokens.gmBuildingFill)
+                .frame(width: 36, height: 28)
+                .offset(x: -50, y: 30)
+
+            LpspGoogleMapsGMLocationDot()
+                .offset(y: 20)
+
+            LpspGoogleMapsGMMapPin(kind: .default)
+                .offset(y: -24)
+        }
+    }
+}
+
+private struct LpspGoogleMapsShowroomSearchBar: View {
+    @ObservedObject var store: LpspGoogleMapsStore
+
+    var body: some View {
+        LpspGoogleMapsGMSearchBar(
+            onTap: { store.openSearch() },
+            onMic: { store.lastActionMessage = "Voice search" }
+        )
+    }
+}
+
+private struct LpspGoogleMapsShowroomPlaceSheet: View {
+    @ObservedObject var store: LpspGoogleMapsStore
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Capsule()
+                .fill(LpspGoogleMapsTokens.gmDivider)
+                .frame(width: 36, height: 4)
+                .padding(.top, 8)
+
+            HStack(alignment: .top, spacing: 12) {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(LpspGoogleMapsTokens.gmSurfaceMuted)
+                    .frame(width: 72, height: 72)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(store.featuredPlace.title)
+                        .font(LpspGoogleMapsFonts.gmPlaceTitle.weight(.semibold))
+                        .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+
+                    HStack(spacing: 4) {
+                        Text(String(format: "%.1f", store.featuredPlace.rating))
+                            .font(LpspGoogleMapsFonts.gmRating)
+                            .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                        ForEach(0..<5, id: \.self) { index in
+                            Image(systemName: Double(index) < store.featuredPlace.rating ? "star.fill" : "star")
+                                .font(.system(size: 12))
+                                .foregroundStyle(LpspGoogleMapsTokens.gmYellow)
+                        }
+                        Text("(\(store.featuredPlace.reviewCount))")
+                            .font(LpspGoogleMapsFonts.gmBody)
+                            .foregroundStyle(LpspGoogleMapsTokens.gmTextSecondary)
+                    }
+
+                    Text("\(store.featuredPlace.category) · Open · \(store.featuredPlace.distance)")
+                        .font(LpspGoogleMapsFonts.gmMeta)
+                        .foregroundStyle(LpspGoogleMapsTokens.gmTextSecondary)
                 }
+            }
+            .padding(.horizontal, 16)
+
+            LpspGoogleMapsShowroomActionRow(store: store)
+                .padding(.bottom, 12)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(LpspGoogleMapsTokens.gmCanvas)
+                .shadow(color: .black.opacity(0.12), radius: 16, y: -4)
+        )
+    }
+}
+
+private struct LpspGoogleMapsShowroomActionRow: View {
+    @ObservedObject var store: LpspGoogleMapsStore
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: { store.startDirections() }) {
+                LpspGoogleMapsGMPillButton(
+                    icon: "arrow.triangle.turn.up.right.diamond.fill",
+                    title: "Directions",
+                    filled: true
+                )
+            }
+            .buttonStyle(.plain)
+
+            Button(action: { store.callPlace() }) {
+                LpspGoogleMapsGMPillButton(icon: "phone.fill", title: "Call", filled: false)
+            }
+            .buttonStyle(.plain)
+
+            Button(action: { store.toggleSaveFeatured() }) {
+                LpspGoogleMapsGMPillButton(
+                    icon: store.featuredPlace.isSaved ? "bookmark.fill" : "bookmark",
+                    title: "Save",
+                    filled: false
+                )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
+private struct LpspGoogleMapsSpectrHomeTabScreen: View {
+    @ObservedObject var store: LpspGoogleMapsStore
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            LpspGoogleMapsShowroomMapCanvas()
+                .ignoresSafeArea()
+
+            VStack {
+                LpspGoogleMapsShowroomSearchBar(store: store)
+                    .padding(.top, 8)
                 Spacer()
+            }
+
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    LpspGoogleMapsGMDirectionsFAB {
+                        store.startDirections()
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.bottom, 180)
+                }
+            }
+
+            LpspGoogleMapsShowroomPlaceSheet(store: store)
+        }
+    }
+}
+
+private struct LpspGoogleMapsGoTabScreen: View {
+    @ObservedObject var store: LpspGoogleMapsStore
+
+    var body: some View {
+        ZStack {
+            LpspGoogleMapsShowroomMapCanvas()
+                .ignoresSafeArea()
+
+            VStack {
+                if store.isNavigating {
+                    LpspGoogleMapsGMTurnCard(
+                        instruction: "Turn right on Oak Street",
+                        distance: "800 ft",
+                        nextInstruction: "Turn left on Market Street"
+                    )
+                    .padding(.top, 16)
+                } else {
+                    VStack(spacing: 16) {
+                        Text("Where to?")
+                            .font(LpspGoogleMapsFonts.gmScreenTitle.weight(.bold))
+                            .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                            .padding(.top, 24)
+
+                        LpspGoogleMapsShowroomSearchBar(store: store)
+
+                        Button(action: { store.startDirections() }) {
+                            HStack {
+                                Image(systemName: "mappin.and.ellipse")
+                                Text(store.featuredPlace.title)
+                            }
+                            .font(LpspGoogleMapsFonts.gmButton)
+                            .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(LpspGoogleMapsTokens.gmSurfaceMuted)
+                            )
+                            .padding(.horizontal, 16)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                Spacer()
+
+                if store.isNavigating {
+                    Button("End navigation") {
+                        store.endNavigation()
+                    }
+                    .font(LpspGoogleMapsFonts.gmButton.weight(.semibold))
+                    .foregroundStyle(LpspGoogleMapsTokens.gmBlue)
+                    .padding(.bottom, 16)
+                }
             }
         }
     }
 }
 
-private struct LpspGoogleMapsMapsRoutesTabScreen: View {
+private struct LpspGoogleMapsSavedTabScreen: View {
+    @ObservedObject var store: LpspGoogleMapsStore
+
     var body: some View {
-        NavigationStack {
-            List(["Maison → Bureau", "Bureau → Gare"], id: \.self) { Label($0, systemImage: "arrow.triangle.turn.up.right.diamond") }
-            .navigationTitle("Itinéraire")
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Saved")
+                    .font(LpspGoogleMapsFonts.gmScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                ForEach(store.savedPlaces) { place in
+                    Button {
+                        store.featuredPlace = place
+                        store.selectedTab = .explore
+                    } label: {
+                        HStack(spacing: 12) {
+                            Circle()
+                                .fill(LpspGoogleMapsTokens.gmBlue)
+                                .frame(width: 40, height: 40)
+                                .overlay(
+                                    Image(systemName: place.id == "home" ? "house.fill" : "briefcase.fill")
+                                        .foregroundStyle(.white)
+                                )
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(place.title)
+                                    .font(LpspGoogleMapsFonts.gmRowTitle.weight(.semibold))
+                                    .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                                Text(place.distance)
+                                    .font(LpspGoogleMapsFonts.gmMeta)
+                                    .foregroundStyle(LpspGoogleMapsTokens.gmTextSecondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(LpspGoogleMapsTokens.gmTextTertiary)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if store.featuredPlace.isSaved,
+                   !store.savedPlaces.contains(where: { $0.id == store.featuredPlace.id }) {
+                    Text(store.featuredPlace.title)
+                        .font(LpspGoogleMapsFonts.gmRowTitle)
+                        .foregroundStyle(LpspGoogleMapsTokens.gmTextSecondary)
+                        .padding(.horizontal, 16)
+                }
+            }
+            .padding(.bottom, 16)
         }
     }
 }
 
-private struct LpspGoogleMapsMapsProfileTabScreen: View {
+private struct LpspGoogleMapsContributeTabScreen: View {
     var body: some View {
-        NavigationStack {
-            List { Label("Adresses enregistrées", systemImage: "mappin"); Label("Historique", systemImage: "clock") }
-            .navigationTitle("Profil")
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Contribute")
+                    .font(LpspGoogleMapsFonts.gmScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+
+                ForEach(["Add a place", "Write a review", "Upload photos", "Fix the map"], id: \.self) { item in
+                    HStack {
+                        Circle()
+                            .fill(LpspGoogleMapsTokens.gmSurfaceMuted)
+                            .frame(width: 44, height: 44)
+                            .overlay(
+                                Image(systemName: "plus")
+                                    .foregroundStyle(LpspGoogleMapsTokens.gmBlue)
+                            )
+                        Text(item)
+                            .font(LpspGoogleMapsFonts.gmRowTitle)
+                            .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+            }
+            .padding(.bottom, 16)
         }
     }
 }
 
-private struct LpspGoogleMapsMapsTabScreen: View {
-    let title: String
-    let tabIndex: Int
+private struct LpspGoogleMapsUpdatesTabScreen: View {
     var body: some View {
-        let low = title.lowercased()
-        if tabIndex == 0 || low.contains("carte") || low.contains("map") || low.contains("home") { LpspGoogleMapsMapsHomeTabScreen() }
-        else if low.contains("itin") || low.contains("route") { LpspGoogleMapsMapsRoutesTabScreen() }
-        else { LpspGoogleMapsMapsProfileTabScreen() }
-    }
-}
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Updates")
+                    .font(LpspGoogleMapsFonts.gmScreenTitle.weight(.bold))
+                    .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
 
-
-private struct LpspGoogleMapsSpectrHomeTabScreen: View {
-    var body: some View {
-        ZStack(alignment: .bottom) {
-        Color(red:0.89,green:0.91,blue:0.85).ignoresSafeArea()
-            Text("Search here").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-            Text("M").font(.system(size: 12.0, weight: .bold)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-        VStack(spacing: 0) {
-                    Text("Sanborn's Café").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                        Text("4.6").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                        Text("★★★★★").font(.system(size: 11.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                        Text("(142)").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                        Text("Open").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                Text("Directions").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                Text("Call").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-                Text("Save").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.125, green: 0.129, blue: 0.141))
-        } .background(Color(red: 1.000, green: 1.000, blue: 1.000)).clipShape(RoundedRectangle(cornerRadius: 16))
+                ForEach(LpspGoogleMapsShowroomData.updates, id: \.0) { update in
+                    HStack(alignment: .top, spacing: 12) {
+                        Circle()
+                            .fill(LpspGoogleMapsTokens.gmBlue.opacity(0.12))
+                            .frame(width: 40, height: 40)
+                            .overlay(
+                                Image(systemName: "bell.fill")
+                                    .foregroundStyle(LpspGoogleMapsTokens.gmBlue)
+                            )
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(update.0)
+                                .font(LpspGoogleMapsFonts.gmRowTitle.weight(.semibold))
+                                .foregroundStyle(LpspGoogleMapsTokens.gmTextPrimary)
+                            Text(update.1)
+                                .font(LpspGoogleMapsFonts.gmMeta)
+                                .foregroundStyle(LpspGoogleMapsTokens.gmTextSecondary)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+            }
+            .padding(.bottom, 16)
         }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
     }
 }
-
 

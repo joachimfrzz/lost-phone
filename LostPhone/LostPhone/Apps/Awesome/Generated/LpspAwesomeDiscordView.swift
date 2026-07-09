@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeDiscordView: View {
     var body: some View {
-        LpspDiscordShowroomRoot()
+        LpspDiscordShowroomRoot(store: LpspDiscordStore())
     }
 }
 
@@ -296,6 +296,7 @@ fileprivate struct LpspDiscordDCMessageRow: View {
 
 fileprivate struct LpspDiscordDCComposeBar: View {
     let channelName: String
+    var onSend: ((String) -> Void)? = nil
     @State private var text: String = ""
     @FocusState private var isFocused: Bool
 
@@ -323,7 +324,12 @@ fileprivate struct LpspDiscordDCComposeBar: View {
             .foregroundStyle(LpspDiscordTokens.dcTextSecondary)
 
             if !text.isEmpty {
-                Button { text = "" } label: {
+                Button {
+                    let outgoing = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !outgoing.isEmpty else { return }
+                    onSend?(outgoing)
+                    text = ""
+                } label: {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(.white)
@@ -467,265 +473,806 @@ fileprivate struct LpspDiscordDCReactionChip: View {
 
 
 
-// MARK: - Écrans showroom
+// MARK: - Données & état
 
-private struct LpspDiscordShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspDiscordSpectrHomeTabScreen()
-                .tabItem { Label("Servers", systemImage: "square.grid.2x2.fill") }
-                .tag(0)
-            LpspDiscordDiscordMessagesTabScreen()
-                .tabItem { Label("Messages", systemImage: "bubble.left.and.bubble.right.fill") }
-                .tag(1)
-            LpspDiscordDiscordNotificationsTabScreen()
-                .tabItem { Label("Notifications", systemImage: "bell.fill") }
-                .tag(2)
-            LpspDiscordDiscordYouTabScreen()
-                .tabItem { Label("You", systemImage: "person.crop.circle.fill") }
-                .tag(3)
-        }
-        .tint(LpspDiscordTokens.dcIdleYellow)
-        .preferredColorScheme(.dark)
-    }
+fileprivate struct LpspDiscordShowroomChannel: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let type: LpspDiscordDCChannelRow.LpspDiscordChannelType
+    let unreadCount: Int
+    let mentionCount: Int
 }
 
-
-private struct LpspDiscordGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspDiscordTokens.dcIdleYellow.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspDiscordTokens.dcIdleYellow))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
-        }
-    }
-}
-
-
-private struct LpspDiscordDiscordDemoServer: Identifiable {
+fileprivate struct LpspDiscordShowroomServer: Identifiable, Hashable {
     let id: String
     let name: String
     let initials: String
     let unreadCount: Int
     let mentionCount: Int
+    let channels: [LpspDiscordShowroomChannel]
 }
 
-private enum LpspDiscordDiscordDemoData {
-    static let servers: [LpspDiscordDiscordDemoServer] = [
-        .init(id: "s1", name: "Lost Phone", initials: "LP", unreadCount: 0, mentionCount: 2),
-        .init(id: "s2", name: "SwiftUI", initials: "SW", unreadCount: 3, mentionCount: 0),
-        .init(id: "s3", name: "Paris", initials: "PA", unreadCount: 0, mentionCount: 0),
-    ]
-    static let channels = ["general", "showroom", "design-review"]
+fileprivate struct LpspDiscordShowroomReaction: Hashable {
+    let emoji: String
+    let count: Int
 }
 
-private struct LpspDiscordDiscordServersTabScreen: View {
-    @State private var activeServerId: String? = "s1"
-    var body: some View {
-        HStack(spacing: 0) {
-            LpspDiscordDCServerRail(servers: LpspDiscordDiscordDemoData.servers.map {
-                LpspDiscordServer(id: $0.id, name: $0.name, imageUri: nil, initials: $0.initials, unreadCount: $0.unreadCount, mentionCount: $0.mentionCount)
-            }, activeServerId: $activeServerId)
-            VStack(spacing: 0) {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        Text("TEXT CHANNELS").font(.caption.bold()).foregroundStyle(.secondary).padding(.horizontal, 12).padding(.top, 8)
-                        ForEach(Array(LpspDiscordDiscordDemoData.channels.enumerated()), id: \.offset) { idx, name in
-                            LpspDiscordDCChannelRow(name: name, type: .text, isActive: idx == 0, unreadCount: idx == 1 ? 2 : 0, mentionCount: idx == 0 ? 1 : 0)
-                        }
-                        ForEach(0..<4, id: \.self) { i in
-                            LpspDiscordDCMessageRow(
-                                avatar: Image(systemName: "person.circle.fill"),
-                                username: i == 0 ? "Alex" : "Léa",
-                                roleColor: LpspDiscordTokens.dcIdleYellow,
-                                timestamp: "10:2\(i)",
-                                message: i == 0 ? "Showroom Spectr prêt !" : "Super rendu 👍",
-                                presenceStatus: .online,
-                                isGroupedWithPrevious: i > 0
-                            )
-                        }
-                    }
-                }
-                .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
-                LpspDiscordDCComposeBar(channelName: "general")
-            }
-        }
-        .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
-    }
+fileprivate struct LpspDiscordShowroomMessage: Identifiable, Hashable {
+    let id: String
+    let username: String
+    let roleColor: Color
+    let timestamp: String
+    let body: String
+    let presence: LpspDiscordDCMessageRow.LpspDiscordPresenceStatus
+    let isGroupedWithPrevious: Bool
+    let reactions: [LpspDiscordShowroomReaction]
 }
 
-private struct LpspDiscordDiscordMessagesTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List {
-                ForEach(LpspDiscordDemoChats.chats) { chat in
-                    NavigationLink {
-                        LpspDiscordDiscordDMDetailScreen(chat: chat)
-                    } label: {
-                        HStack(spacing: 12) {
-                            Circle().fill(LpspDiscordTokens.dcIdleYellow.opacity(0.2)).frame(width: 48, height: 48)
-                            VStack(alignment: .leading) {
-                                Text(chat.name).font(.headline)
-                                Text(chat.preview).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
-                            }
-                            Spacer()
-                            Text(chat.time).font(.caption).foregroundStyle(.secondary)
-                        }
-                    }
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
-            .navigationTitle("Messages")
-        }
-    }
-}
-
-private struct LpspDiscordDiscordDMDetailScreen: View {
-    let chat: LpspDiscordDemoChat
-    var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 8) {
-                    LpspDiscordDCMessageRow(
-                        avatar: Image(systemName: "person.circle.fill"),
-                        username: chat.name,
-                        roleColor: LpspDiscordTokens.dcIdleYellow,
-                        timestamp: "10:24",
-                        message: "On se voit ce soir ?",
-                        presenceStatus: .online,
-                        isGroupedWithPrevious: false
-                    )
-                    LpspDiscordDCMessageRow(
-                        avatar: Image(systemName: "person.circle.fill"),
-                        username: "Vous",
-                        roleColor: .white,
-                        timestamp: "10:25",
-                        message: "Oui, j'arrive !",
-                        presenceStatus: .online,
-                        isGroupedWithPrevious: false
-                    )
-                }
-                .padding(.vertical, 8)
-            }
-            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
-            LpspDiscordDCComposeBar(channelName: "general")
-        }
-        .navigationTitle(chat.name)
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-private struct LpspDiscordDiscordNotificationsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Mention in #general", "Nouveau message de Alex", "Invitation serveur"], id: \.self) { item in
-                Label(item, systemImage: "bell.fill")
-            }
-            .scrollContentBackground(.hidden)
-            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
-            .navigationTitle("Notifications")
-        }
-    }
-}
-
-private struct LpspDiscordDiscordYouTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                Circle().fill(LpspDiscordTokens.dcIdleYellow.gradient).frame(width: 80, height: 80)
-                Text("lost.phone").font(.title2.bold())
-                Text("En ligne").foregroundStyle(.green)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
-            .navigationTitle("You")
-        }
-    }
-}
-
-private struct LpspDiscordDemoChat: Identifiable {
-    let id = UUID()
+fileprivate struct LpspDiscordShowroomDM: Identifiable, Hashable {
+    let id: String
     let name: String
     let preview: String
     let time: String
+    let presence: LpspDiscordDCMessageRow.LpspDiscordPresenceStatus
+    var messages: [LpspDiscordShowroomMessage]
 }
 
-private enum LpspDiscordDemoChats {
-    static let chats: [LpspDiscordDemoChat] = [
-        .init(name: "Alex Martin", preview: "On se voit ce soir ?", time: "10:24"),
-        .init(name: "Léa Dupont", preview: "Merci pour hier", time: "Hier"),
+fileprivate struct LpspDiscordShowroomNotification: Identifiable, Hashable {
+    let id: String
+    let title: String
+    let subtitle: String
+    let time: String
+    let isUnread: Bool
+}
+
+private enum LpspDiscordMobileTab: CaseIterable {
+    case servers, messages, notifications, you
+
+    var label: String {
+        switch self {
+        case .servers: "Serveurs"
+        case .messages: "Messages"
+        case .notifications: "Notifs"
+        case .you: "Profil"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .servers: "square.grid.2x2.fill"
+        case .messages: "bubble.left.and.bubble.right.fill"
+        case .notifications: "bell.fill"
+        case .you: "person.crop.circle.fill"
+        }
+    }
+}
+
+@MainActor
+fileprivate final class LpspDiscordStore: ObservableObject {
+    @Published var selectedTab: LpspDiscordMobileTab = .servers
+    @Published var activeServerId: String?
+    @Published var activeChannelId: String?
+    @Published var messagesByChannel: [String: [LpspDiscordShowroomMessage]]
+    @Published var directMessages: [LpspDiscordShowroomDM]
+    @Published var activeDMId: String?
+    @Published var notifications: [LpspDiscordShowroomNotification]
+
+    let servers: [LpspDiscordShowroomServer]
+
+    init() {
+        self.servers = LpspDiscordShowroomData.servers
+        self.messagesByChannel = LpspDiscordShowroomData.messagesByChannel
+        self.directMessages = LpspDiscordShowroomData.directMessages
+        self.notifications = LpspDiscordShowroomData.notifications
+        self.activeServerId = "eventscult"
+        self.activeChannelId = "general"
+    }
+
+    var activeServer: LpspDiscordShowroomServer? {
+        servers.first { $0.id == activeServerId }
+    }
+
+    var activeChannel: LpspDiscordShowroomChannel? {
+        activeServer?.channels.first { $0.id == activeChannelId }
+    }
+
+    var channelKey: String? {
+        guard let activeServerId, let activeChannelId else { return nil }
+        return "\(activeServerId)/\(activeChannelId)"
+    }
+
+    var activeMessages: [LpspDiscordShowroomMessage] {
+        guard let key = channelKey else { return [] }
+        return messagesByChannel[key] ?? []
+    }
+
+    var activeDM: LpspDiscordShowroomDM? {
+        directMessages.first { $0.id == activeDMId }
+    }
+
+    var railServers: [LpspDiscordServer] {
+        servers.map {
+            LpspDiscordServer(
+                id: $0.id,
+                name: $0.name,
+                imageUri: nil,
+                initials: $0.initials,
+                unreadCount: $0.unreadCount,
+                mentionCount: $0.mentionCount
+            )
+        }
+    }
+
+    func selectServer(_ id: String) {
+        activeServerId = id
+        activeChannelId = servers.first { $0.id == id }?.channels.first?.id
+        selectedTab = .servers
+    }
+
+    func selectChannel(_ id: String) {
+        activeChannelId = id
+    }
+
+    func sendChannelMessage(_ text: String) {
+        guard let key = channelKey else { return }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        let time = formatter.string(from: Date())
+        let message = LpspDiscordShowroomMessage(
+            id: "sent-\(UUID().uuidString)",
+            username: "mathieu_g",
+            roleColor: LpspDiscordTokens.dcBlurple,
+            timestamp: "Aujourd'hui à \(time)",
+            body: text,
+            presence: .online,
+            isGroupedWithPrevious: false,
+            reactions: []
+        )
+        messagesByChannel[key, default: []].append(message)
+    }
+
+    func sendDMMessage(_ text: String) {
+        guard let dmId = activeDMId,
+              let index = directMessages.firstIndex(where: { $0.id == dmId }) else { return }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        let time = formatter.string(from: Date())
+        directMessages[index].messages.append(
+            LpspDiscordShowroomMessage(
+                id: "dm-\(UUID().uuidString)",
+                username: "mathieu_g",
+                roleColor: .white,
+                timestamp: time,
+                body: text,
+                presence: .online,
+                isGroupedWithPrevious: false,
+                reactions: []
+            )
+        )
+        directMessages[index] = LpspDiscordShowroomDM(
+            id: directMessages[index].id,
+            name: directMessages[index].name,
+            preview: text,
+            time: time,
+            presence: directMessages[index].presence,
+            messages: directMessages[index].messages
+        )
+    }
+
+    func toggleReaction(channelKey: String, messageId: String, emoji: String) {
+        guard var messages = messagesByChannel[channelKey],
+              let index = messages.firstIndex(where: { $0.id == messageId }) else { return }
+        var message = messages[index]
+        if let reactionIndex = message.reactions.firstIndex(where: { $0.emoji == emoji }) {
+            var reactions = message.reactions
+            let current = reactions[reactionIndex]
+            reactions[reactionIndex] = LpspDiscordShowroomReaction(emoji: emoji, count: max(0, current.count - 1))
+            if reactions[reactionIndex].count == 0 {
+                reactions.remove(at: reactionIndex)
+            }
+            message = LpspDiscordShowroomMessage(
+                id: message.id,
+                username: message.username,
+                roleColor: message.roleColor,
+                timestamp: message.timestamp,
+                body: message.body,
+                presence: message.presence,
+                isGroupedWithPrevious: message.isGroupedWithPrevious,
+                reactions: reactions
+            )
+        } else {
+            message = LpspDiscordShowroomMessage(
+                id: message.id,
+                username: message.username,
+                roleColor: message.roleColor,
+                timestamp: message.timestamp,
+                body: message.body,
+                presence: message.presence,
+                isGroupedWithPrevious: message.isGroupedWithPrevious,
+                reactions: message.reactions + [LpspDiscordShowroomReaction(emoji: emoji, count: 1)]
+            )
+        }
+        messages[index] = message
+        messagesByChannel[channelKey] = messages
+    }
+}
+
+private enum LpspDiscordShowroomData {
+    static let servers: [LpspDiscordShowroomServer] = [
+        .init(
+            id: "eventscult",
+            name: "EventsCult — Projet Dame",
+            initials: "EC",
+            unreadCount: 2,
+            mentionCount: 1,
+            channels: [
+                .init(id: "annonces", name: "annonces", type: .announcement, unreadCount: 0, mentionCount: 0),
+                .init(id: "general", name: "général", type: .text, unreadCount: 0, mentionCount: 1),
+                .init(id: "planning", name: "planning-s7", type: .text, unreadCount: 3, mentionCount: 0),
+                .init(id: "logistique", name: "logistique", type: .text, unreadCount: 1, mentionCount: 0),
+                .init(id: "voice", name: "Briefing vocal", type: .voice, unreadCount: 0, mentionCount: 0),
+            ]
+        ),
+        .init(
+            id: "freelance",
+            name: "Freelance Paris",
+            initials: "FP",
+            unreadCount: 1,
+            mentionCount: 0,
+            channels: [
+                .init(id: "jobs", name: "missions", type: .text, unreadCount: 1, mentionCount: 0),
+                .init(id: "feedback", name: "retours-clients", type: .text, unreadCount: 0, mentionCount: 0),
+            ]
+        ),
+        .init(
+            id: "bastille",
+            name: "Studio Bastille",
+            initials: "SB",
+            unreadCount: 0,
+            mentionCount: 0,
+            channels: [
+                .init(id: "wip", name: "work-in-progress", type: .text, unreadCount: 0, mentionCount: 0),
+            ]
+        ),
     ]
+
+    static let messagesByChannel: [String: [LpspDiscordShowroomMessage]] = [
+        "eventscult/general": [
+            msg("g1", "nadia_k", LpspDiscordTokens.dcDNDRed, "11 juin · 18:02", "Réunion vendredi 18h — tout le monde présent. Pas de retard.", .dnd, false, [LpspDiscordShowroomReaction(emoji: "✅", count: 3)]),
+            msg("g2", "vincent_m", .orange, "11 juin · 18:05", "Je confirme pour la vitrine. 4 min si l'équipe est réduite.", .idle, false, []),
+            msg("g3", "sam_r", LpspDiscordTokens.dcOnlineGreen, "11 juin · 18:11", "Gennevilliers validé côté accès camionnette.", .online, false, [LpspDiscordShowroomReaction(emoji: "👍", count: 2)]),
+            msg("g4", "mathieu_g", LpspDiscordTokens.dcBlurple, "11 juin · 18:24", "OK je passe les relevés ce soir. Dernière visite demain matin.", .online, false, []),
+            msg("g5", "nadia_k", LpspDiscordTokens.dcDNDRed, "12 juin · 09:15", "@mathieu_g plus de photos avec ton tel dans les salles. On arrête les repérages.", .dnd, false, [LpspDiscordShowroomReaction(emoji: "⚠️", count: 1)]),
+        ],
+        "eventscult/planning": [
+            msg("p1", "nadia_k", LpspDiscordTokens.dcDNDRed, "7 juin · 21:40", "Les horaires maintenance sont dans le brief v3 — relis avant envoi.", .dnd, false, []),
+            msg("p2", "vincent_m", .orange, "7 juin · 21:52", "Ronde PM : 19h15 passage S7, pas 19h. Fenêtre 12 min confirmée.", .idle, false, [LpspDiscordShowroomReaction(emoji: "🕐", count: 4)]),
+            msg("p3", "mathieu_g", LpspDiscordTokens.dcBlurple, "8 juin · 08:30", "Maintenance 18/06 notée. Effectif réduit = opportunité.", .online, false, []),
+            msg("p4", "vincent_m", .orange, "10 juin · 14:02", "Angle mort caméra confirmé entre pilier et porte — 3 sec.", .idle, true, []),
+        ],
+        "eventscult/logistique": [
+            msg("l1", "sam_r", LpspDiscordTokens.dcOnlineGreen, "2 juin · 14:18", "Zone indus rue des Caboeufs. Propre, discret.", .online, false, []),
+            msg("l2", "nadia_k", LpspDiscordTokens.dcDNDRed, "2 juin · 14:25", "Point C = quai Rivoli, pas côté pyramide.", .dnd, false, []),
+            msg("l3", "sam_r", LpspDiscordTokens.dcOnlineGreen, "6 juin · 19:45", "Transfert G. avant 23h max — accès OK.", .online, false, [LpspDiscordShowroomReaction(emoji: "🚐", count: 2)]),
+        ],
+        "eventscult/annonces": [
+            msg("a1", "nadia_k", LpspDiscordTokens.dcDNDRed, "12 juin · 08:00", "⚠️ Dernier jour de repérage terrain. Ensuite radio silence jusqu'à J.", .dnd, false, []),
+        ],
+        "freelance/jobs": [
+            msg("f1", "sophie_compta", LpspDiscordTokens.dcTextLink, "3 avr. · 10:14", "Devis menu Maillot validé — facture à envoyer.", .online, false, []),
+            msg("f2", "atelier_soma", .pink, "14 mai · 08:03", "On reporte le projet identité à la rentrée, désolée.", .offline, false, []),
+        ],
+        "bastille/wip": [
+            msg("b1", "mathieu_g", LpspDiscordTokens.dcBlurple, "28 mai · 22:10", "Planche logo Sōma v3 — palette terre cuite.", .online, false, []),
+        ],
+    ]
+
+    static let directMessages: [LpspDiscordShowroomDM] = [
+        .init(
+            id: "dm-nadia",
+            name: "Nadia K.",
+            preview: "Plus de photos dans les salles",
+            time: "09:15",
+            presence: .dnd,
+            messages: [
+                msg("dn1", "Nadia K.", LpspDiscordTokens.dcDNDRed, "09:14", "Mathieu. Plus de photos avec ton tel dans les salles chaudes.", .dnd, false, []),
+                msg("dn2", "Nadia K.", LpspDiscordTokens.dcDNDRed, "09:15", "On arrête les repérages à partir d'aujourd'hui.", .dnd, false, []),
+            ]
+        ),
+        .init(
+            id: "dm-vincent",
+            name: "Vincent Morel",
+            preview: "Badge périmé mais je connais les couloirs",
+            time: "Hier",
+            presence: .idle,
+            messages: [
+                msg("dv1", "Vincent Morel", .orange, "Hier 21:02", "J'ai bossé sur pire à la Fondation Vuitton. La vitrine c'est jouable.", .idle, false, []),
+                msg("dv2", "Vincent Morel", .orange, "Hier 21:05", "Badge périmé mais je connais les couloirs Denon.", .idle, false, []),
+            ]
+        ),
+        .init(
+            id: "dm-sam",
+            name: "Sam R.",
+            preview: "C'est bon pour le local Gennevilliers",
+            time: "2 juin",
+            presence: .online,
+            messages: [
+                msg("ds1", "Sam R.", LpspDiscordTokens.dcOnlineGreen, "2 juin", "C'est bon pour le local. Propre, discret, accès camionnette facile.", .online, false, []),
+            ]
+        ),
+    ]
+
+    static let notifications: [LpspDiscordShowroomNotification] = [
+        .init(id: "n1", title: "Mention dans #général", subtitle: "Nadia K. : @mathieu_g plus de photos…", time: "09:15", isUnread: true),
+        .init(id: "n2", title: "Nouveau message", subtitle: "Vincent Morel t'a envoyé un message", time: "Hier", isUnread: true),
+        .init(id: "n3", title: "EventsCult — Projet Dame", subtitle: "3 messages non lus dans #planning-s7", time: "8 juin", isUnread: false),
+        .init(id: "n4", title: "Réaction", subtitle: "Sam a réagi 🚐 à ton message", time: "6 juin", isUnread: false),
+    ]
+
+    private static func msg(
+        _ id: String,
+        _ user: String,
+        _ color: Color,
+        _ time: String,
+        _ body: String,
+        _ presence: LpspDiscordDCMessageRow.LpspDiscordPresenceStatus,
+        _ grouped: Bool,
+        _ reactions: [LpspDiscordShowroomReaction]
+    ) -> LpspDiscordShowroomMessage {
+        LpspDiscordShowroomMessage(
+            id: id,
+            username: user,
+            roleColor: color,
+            timestamp: time,
+            body: body,
+            presence: presence,
+            isGroupedWithPrevious: grouped,
+            reactions: reactions
+        )
+    }
 }
 
+// MARK: - Écrans showroom
 
-private struct LpspDiscordSpectrHomeTabScreen: View {
+private struct LpspDiscordShowroomRoot: View {
+    @ObservedObject var store: LpspDiscordStore
+
     var body: some View {
         VStack(spacing: 0) {
-        VStack(spacing: 20) {
-            VStack(spacing: 4) {
+            Group {
+                switch store.selectedTab {
+                case .servers:
+                    LpspDiscordServersScreen(store: store)
+                case .messages:
+                    LpspDiscordMessagesHubScreen(store: store)
+                case .notifications:
+                    LpspDiscordNotificationsScreen(store: store)
+                case .you:
+                    LpspDiscordProfileScreen(store: store)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            }
-            VStack(spacing: 4) {
-                Text("DS").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-            }
-            VStack(spacing: 4) {
-                Text("G").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-            }
-            VStack(spacing: 4) {
-                Text("IX").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                Text("3").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-            }
-            VStack(spacing: 4) {
-                Text("FM").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-            }
-            Text("+").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-        } .padding(.trailing, 12)
-                Text("#").font(.system(size: 18.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                Text("general").font(.system(size: 15.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-                            Text("Aria").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("Today at 10:18 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("v4.2.0-rc1").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("🔥 3").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("😀 2").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("👍 5").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-                            Text("statbot").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("BOT").font(.system(size: 9.0, weight: .bold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("10:19 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("rc1").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("@aria").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-                            Text("Jules").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("10:21 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                        Text("on it — deploying preview now.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("🚀 4").font(.system(size: 11.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                    Circle().fill(LinearGradient(colors: [.orange, .pink], startPoint: .topLeading, endPoint: .bottomTrailing)).frame(width: 48, height: 48)
-                            Text("makenzie").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                            Text("10:23 AM").font(.system(size: 10.5, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                        Text("the presence dots look so clean on this canvas 😌").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-            VStack(spacing: 6) {
-                    Text("+").font(.system(size: 18.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-                    Text("Message #general").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.949, green: 0.953, blue: 0.961))
-            } .padding(.horizontal, 12).padding(.bottom, 8)
+            LpspDiscordMobileTabBar(store: store)
         }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspDiscordMobileTabBar: View {
+    @ObservedObject var store: LpspDiscordStore
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(LpspDiscordMobileTab.allCases, id: \.self) { tab in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        store.selectedTab = tab
+                        if tab != .messages { store.activeDMId = nil }
+                    }
+                } label: {
+                    VStack(spacing: 2) {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 18, weight: store.selectedTab == tab ? .semibold : .regular))
+                            if tab == .notifications, store.notifications.contains(where: \.isUnread) {
+                                Circle()
+                                    .fill(LpspDiscordTokens.dcDNDRed)
+                                    .frame(width: 8, height: 8)
+                                    .offset(x: 6, y: -2)
+                            }
+                        }
+                        Text(tab.label)
+                            .font(.system(size: 10))
+                    }
+                    .foregroundStyle(store.selectedTab == tab ? LpspDiscordTokens.dcTextPrimary : LpspDiscordTokens.dcTextMuted)
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(LpspDiscordTokens.dcServerRail)
+        .overlay(alignment: .top) {
+            Rectangle().fill(LpspDiscordTokens.dcDivider).frame(height: 0.5)
+        }
+    }
+}
+
+private struct LpspDiscordServersScreen: View {
+    @ObservedObject var store: LpspDiscordStore
+
+    var body: some View {
+        HStack(spacing: 0) {
+            LpspDiscordDCServerRail(
+                servers: store.railServers,
+                activeServerId: Binding(
+                    get: { store.activeServerId },
+                    set: { if let id = $0 { store.selectServer(id) } }
+                )
+            )
+
+            if let server = store.activeServer {
+                LpspDiscordChannelSidebar(store: store, server: server)
+                    .frame(width: 128)
+
+                LpspDiscordChannelChatScreen(store: store, server: server)
+            } else {
+                ContentUnavailableView("Sélectionnez un serveur", systemImage: "server.rack")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(LpspDiscordTokens.dcChatCanvas)
+            }
+        }
+    }
+}
+
+private struct LpspDiscordChannelSidebar: View {
+    @ObservedObject var store: LpspDiscordStore
+    let server: LpspDiscordShowroomServer
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text(server.initials)
+                    .font(.caption.bold())
+                    .foregroundStyle(.white)
+                    .frame(width: 28, height: 28)
+                    .background(RoundedRectangle(cornerRadius: 6).fill(LpspDiscordTokens.dcBlurple))
+                Text(server.name)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(LpspDiscordTokens.dcTextPrimary)
+                    .lineLimit(2)
+                Spacer()
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 10)
+            .background(LpspDiscordTokens.dcChannelList)
+
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    Text("TEXTUEL")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(LpspDiscordTokens.dcTextMuted)
+                        .padding(.horizontal, 10)
+                        .padding(.top, 10)
+                        .padding(.bottom, 4)
+
+                    ForEach(server.channels.filter { $0.type != .voice }) { channel in
+                        Button {
+                            store.selectChannel(channel.id)
+                        } label: {
+                            LpspDiscordDCChannelRow(
+                                name: channel.name,
+                                type: channel.type,
+                                isActive: store.activeChannelId == channel.id,
+                                unreadCount: channel.unreadCount,
+                                mentionCount: channel.mentionCount
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    Text("VOCAL")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(LpspDiscordTokens.dcTextMuted)
+                        .padding(.horizontal, 10)
+                        .padding(.top, 14)
+                        .padding(.bottom, 4)
+
+                    ForEach(server.channels.filter { $0.type == .voice }) { channel in
+                        LpspDiscordDCChannelRow(
+                            name: channel.name,
+                            type: channel.type,
+                            isActive: false,
+                            unreadCount: 0,
+                            mentionCount: 0
+                        )
+                        .opacity(0.75)
+                    }
+                }
+            }
+            .background(LpspDiscordTokens.dcChannelList)
+        }
+        .background(LpspDiscordTokens.dcChannelList)
+    }
+}
+
+private struct LpspDiscordChannelChatScreen: View {
+    @ObservedObject var store: LpspDiscordStore
+    let server: LpspDiscordShowroomServer
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 8) {
+                Image(systemName: "number")
+                    .foregroundStyle(LpspDiscordTokens.dcTextMuted)
+                Text(store.activeChannel?.name ?? "général")
+                    .font(LpspDiscordFonts.dcChannelActive)
+                    .foregroundStyle(LpspDiscordTokens.dcTextPrimary)
+                Spacer()
+                Image(systemName: "bell")
+                    .foregroundStyle(LpspDiscordTokens.dcTextMuted)
+                Image(systemName: "person.2")
+                    .foregroundStyle(LpspDiscordTokens.dcTextMuted)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(LpspDiscordTokens.dcChatCanvas)
+            .overlay(alignment: .bottom) {
+                Rectangle().fill(LpspDiscordTokens.dcDivider).frame(height: 0.5)
+            }
+
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(store.activeMessages) { message in
+                        VStack(alignment: .leading, spacing: 4) {
+                            LpspDiscordDCMessageRow(
+                                avatar: avatar(for: message.username),
+                                username: message.username,
+                                roleColor: message.roleColor,
+                                timestamp: message.timestamp,
+                                message: message.body,
+                                presenceStatus: message.presence,
+                                isGroupedWithPrevious: message.isGroupedWithPrevious
+                            )
+                            if !message.reactions.isEmpty {
+                                HStack(spacing: 6) {
+                                    ForEach(message.reactions, id: \.emoji) { reaction in
+                                        LpspDiscordDCReactionChip(
+                                            emoji: reaction.emoji,
+                                            count: reaction.count,
+                                            didYouReact: false
+                                        ) {
+                                            if let key = store.channelKey {
+                                                store.toggleReaction(channelKey: key, messageId: message.id, emoji: reaction.emoji)
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(.leading, 68)
+                                .padding(.bottom, 4)
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+            }
+            .background(LpspDiscordTokens.dcChatCanvas)
+
+            LpspDiscordDCComposeBar(channelName: "#\(store.activeChannel?.name ?? "général")") { text in
+                store.sendChannelMessage(text)
+            }
+        }
+        .background(LpspDiscordTokens.dcChatCanvas)
+    }
+
+    private func avatar(for username: String) -> Image {
+        Image(systemName: "person.circle.fill")
+    }
+}
+
+private struct LpspDiscordMessagesHubScreen: View {
+    @ObservedObject var store: LpspDiscordStore
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let dm = store.activeDM {
+                    LpspDiscordDMChatScreen(store: store, dm: dm)
+                } else {
+                    List {
+                        ForEach(store.directMessages) { chat in
+                            Button {
+                                store.activeDMId = chat.id
+                            } label: {
+                                HStack(spacing: 12) {
+                                    ZStack(alignment: .bottomTrailing) {
+                                        Circle()
+                                            .fill(LpspDiscordTokens.dcBlurple.opacity(0.35))
+                                            .frame(width: 48, height: 48)
+                                            .overlay(
+                                                Text(String(chat.name.prefix(1)))
+                                                    .font(.headline)
+                                                    .foregroundStyle(.white)
+                                            )
+                                        Circle()
+                                            .fill(presenceColor(chat.presence))
+                                            .frame(width: 12, height: 12)
+                                            .overlay(Circle().stroke(LpspDiscordTokens.dcChatCanvas, lineWidth: 2))
+                                    }
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(chat.name)
+                                            .font(.headline)
+                                            .foregroundStyle(LpspDiscordTokens.dcTextPrimary)
+                                        Text(chat.preview)
+                                            .font(.subheadline)
+                                            .foregroundStyle(LpspDiscordTokens.dcTextSecondary)
+                                            .lineLimit(1)
+                                    }
+                                    Spacer()
+                                    Text(chat.time)
+                                        .font(.caption)
+                                        .foregroundStyle(LpspDiscordTokens.dcTextMuted)
+                                }
+                            }
+                        }
+                    }
+                    .scrollContentBackground(.hidden)
+                    .navigationTitle("Messages")
+                }
+            }
+            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+        }
+    }
+
+    private func presenceColor(_ status: LpspDiscordDCMessageRow.LpspDiscordPresenceStatus) -> Color {
+        switch status {
+        case .online: return LpspDiscordTokens.dcOnlineGreen
+        case .idle: return LpspDiscordTokens.dcIdleYellow
+        case .dnd: return LpspDiscordTokens.dcDNDRed
+        case .offline: return LpspDiscordTokens.dcOfflineGray
+        case .streaming: return LpspDiscordTokens.dcStreamingPurple
+        }
+    }
+}
+
+private struct LpspDiscordDMChatScreen: View {
+    @ObservedObject var store: LpspDiscordStore
+    let dm: LpspDiscordShowroomDM
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Button("Retour") { store.activeDMId = nil }
+                    .font(.subheadline)
+                    .foregroundStyle(LpspDiscordTokens.dcTextLink)
+                Spacer()
+                Text(dm.name)
+                    .font(.headline)
+                    .foregroundStyle(LpspDiscordTokens.dcTextPrimary)
+                Spacer()
+                Circle()
+                    .fill(LpspDiscordTokens.dcOnlineGreen)
+                    .frame(width: 8, height: 8)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(LpspDiscordTokens.dcChannelList)
+
+            ScrollView {
+                LazyVStack(spacing: 8) {
+                    ForEach(dm.messages) { message in
+                        LpspDiscordDCMessageRow(
+                            avatar: Image(systemName: "person.circle.fill"),
+                            username: message.username,
+                            roleColor: message.roleColor,
+                            timestamp: message.timestamp,
+                            message: message.body,
+                            presenceStatus: message.presence,
+                            isGroupedWithPrevious: message.isGroupedWithPrevious
+                        )
+                    }
+                }
+                .padding(.vertical, 8)
+            }
+            .background(LpspDiscordTokens.dcChatCanvas)
+
+            LpspDiscordDCComposeBar(channelName: dm.name) { text in
+                store.sendDMMessage(text)
+            }
+        }
+    }
+}
+
+private struct LpspDiscordNotificationsScreen: View {
+    @ObservedObject var store: LpspDiscordStore
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(store.notifications) { notification in
+                    HStack(alignment: .top, spacing: 12) {
+                        Circle()
+                            .fill(notification.isUnread ? LpspDiscordTokens.dcDNDRed : LpspDiscordTokens.dcTextMuted)
+                            .frame(width: 8, height: 8)
+                            .padding(.top, 6)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(notification.title)
+                                .font(.headline)
+                                .foregroundStyle(LpspDiscordTokens.dcTextPrimary)
+                            Text(notification.subtitle)
+                                .font(.subheadline)
+                                .foregroundStyle(LpspDiscordTokens.dcTextSecondary)
+                            Text(notification.time)
+                                .font(.caption)
+                                .foregroundStyle(LpspDiscordTokens.dcTextMuted)
+                        }
+                    }
+                    .listRowBackground(LpspDiscordTokens.dcChannelList)
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .navigationTitle("Notifications")
+            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+        }
+    }
+}
+
+private struct LpspDiscordProfileScreen: View {
+    @ObservedObject var store: LpspDiscordStore
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                Circle()
+                    .fill(LpspDiscordGradients.dcNitroGradient)
+                    .frame(width: 88, height: 88)
+                    .overlay(Text("MG").font(.title.bold()).foregroundStyle(.white))
+
+                VStack(spacing: 6) {
+                    Text("mathieu_g")
+                        .font(.title2.bold())
+                        .foregroundStyle(LpspDiscordTokens.dcTextPrimary)
+                    Text("Mathieu Garnier")
+                        .foregroundStyle(LpspDiscordTokens.dcTextSecondary)
+                    HStack(spacing: 6) {
+                        Circle().fill(LpspDiscordTokens.dcOnlineGreen).frame(width: 8, height: 8)
+                        Text("En ligne")
+                            .foregroundStyle(LpspDiscordTokens.dcOnlineGreen)
+                    }
+                    .font(.subheadline)
+                }
+
+                VStack(alignment: .leading, spacing: 10) {
+                    profileRow("Serveurs", "\(store.servers.count)")
+                    profileRow("Messages directs", "\(store.directMessages.count)")
+                    profileRow("Rôle actif", "EventsCult · repérage")
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(RoundedRectangle(cornerRadius: 12).fill(LpspDiscordTokens.dcChannelList))
+                .padding(.horizontal, 20)
+
+                Spacer()
+            }
+            .padding(.top, 24)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(LpspDiscordTokens.dcChatCanvas.ignoresSafeArea())
+            .navigationTitle("Profil")
+        }
+    }
+
+    private func profileRow(_ title: String, _ value: String) -> some View {
+        HStack {
+            Text(title)
+                .foregroundStyle(LpspDiscordTokens.dcTextSecondary)
+            Spacer()
+            Text(value)
+                .foregroundStyle(LpspDiscordTokens.dcTextPrimary)
+        }
+        .font(.subheadline)
+    }
+}
 

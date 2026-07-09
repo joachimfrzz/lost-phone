@@ -189,9 +189,9 @@ Option B — via Artifacts Actions :
 
 PIN dans l'app : 1503 (histoire J-3)
 
-SHOWROOM — TESTER LES 14 APPS REDDIT :
-  Menu → « Showroom — 14 apps Reddit » → accès direct sans PIN
-  Grille + dock identiques au clone zerocode117 · bouton « ◀ Home » dans chaque app
+SHOWROOM — TESTER LES APPS AWESOME :
+  Menu → « Showroom — clones Apple + tier Awesome » → accès direct sans PIN
+  Grille + dock · bouton « ◀ Home » dans chaque app tierce
 
 Sur Appetize : clique DANS l'écran du téléphone simulé si rien ne bouge.
 Les logs AuthKit / PPT sont normaux (bruit simulateur Apple).

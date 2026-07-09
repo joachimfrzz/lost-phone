@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeClaudeView: View {
     var body: some View {
-        LpspClaudeShowroomRoot()
+        LpspClaudeShowroomRoot(store: LpspClaudeStore())
     }
 }
 
@@ -236,10 +236,7 @@ fileprivate struct LpspClaudeChatInput: View {
 
                 // Send circle
                 Button(action: {
-                    if canSend {
-                        onSend()
-                        text = ""
-                    }
+                    if canSend { onSend() }
                 }) {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 16, weight: .bold))
@@ -474,188 +471,457 @@ fileprivate struct LpspClaudeArtifactCard: View {
     }
 }
 
-fileprivate struct LpspClaudeConversationView: View {
-    @State private var input = ""
-    @State private var modelName = "Claude Opus 4.5"
-    @State private var showingModelPicker = false
+// MARK: - Données & état (showroom Lost Phone)
 
-    var body: some View {
-        VStack(spacing: 0) {
-            // Top header
-            HStack {
-                Button { /* open sidebar */ } label: {
-                    Image(systemName: "line.3.horizontal").font(.system(size: 18)).foregroundStyle(LpspClaudeTokens.claudeInk)
-                }
-                Spacer()
-                Text("Untitled chat").font(LpspClaudeFonts.claudeConvTitle).foregroundStyle(LpspClaudeTokens.claudeInk)
-                Spacer()
-                Button { /* ... */ } label: {
-                    Image(systemName: "ellipsis").font(.system(size: 18)).foregroundStyle(LpspClaudeTokens.claudeInk)
-                }
-            }
-            .padding(.horizontal, 16)
-            .frame(height: 52)
-            .background(LpspClaudeTokens.claudeCream)
+fileprivate enum LpspClaudeShowroomRole {
+    case user, assistant
+}
 
-            // Model chip
-            HStack {
-                LpspClaudeModelPickerChip(modelName: modelName) { showingModelPicker = true }
-                Spacer()
-            }
-            .padding(.horizontal, 20).padding(.bottom, 8)
+fileprivate enum LpspClaudeAssistantState {
+    case complete
+    case thinking
+    case streaming
+}
 
-            ScrollView {
-                VStack(spacing: 32) {
-                    LpspClaudeUserMessage(text: "Explain Bayesian inference like I'm a curious 15-year-old.")
-                    LpspClaudeAssistantMessage(
-                        modelName: modelName,
-                        content: AttributedString("Imagine you're trying to figure out…"),
-                        isStreaming: true
-                    )
-                }
-                .padding(.horizontal, 16).padding(.vertical, 16)
-            }
-            .background(LpspClaudeTokens.claudeCream)
+fileprivate struct LpspClaudeShowroomMessage: Identifiable {
+    let id: String
+    let role: LpspClaudeShowroomRole
+    let text: String
+    var assistantState: LpspClaudeAssistantState = .complete
+}
 
-            LpspClaudeChatInput(text: $input, onSend: {}, onAttach: {})
+fileprivate struct LpspClaudeShowroomConversation: Identifiable {
+    let id: String
+    var title: String
+    let section: String
+    var messages: [LpspClaudeShowroomMessage]
+}
+
+@MainActor
+fileprivate final class LpspClaudeStore: ObservableObject {
+    @Published var conversations: [LpspClaudeShowroomConversation]
+    @Published var activeConversationID: String
+    @Published var composeText = ""
+    @Published var isGenerating = false
+    @Published var showDrawer = false
+    @Published var drawerSearch = ""
+    @Published var showModelPicker = false
+    @Published var selectedModel = "Claude Opus 4.5"
+
+    let models: [LpspClaudeModelPickerSheet.LpspClaudeModelOption] = [
+        .init(name: "Claude Opus 4.5", subtitle: "Most intelligent", available: true),
+        .init(name: "Claude Sonnet 4.5", subtitle: "Fast and capable", available: true),
+        .init(name: "Claude Haiku 4.5", subtitle: "Quickest responses", available: true),
+    ]
+
+    init() {
+        self.conversations = LpspClaudeShowroomData.conversations
+        self.activeConversationID = LpspClaudeShowroomData.defaultConversationID
+    }
+
+    var activeConversation: LpspClaudeShowroomConversation {
+        conversations.first { $0.id == activeConversationID } ?? conversations[0]
+    }
+
+    var drawerSections: [(title: String, chats: [LpspClaudeShowroomConversation])] {
+        let ordered = ["TODAY", "PREVIOUS 7 DAYS", "PREVIOUS 30 DAYS"]
+        let filtered = conversations.filter { conv in
+            let q = drawerSearch.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return q.isEmpty || conv.title.lowercased().contains(q)
         }
-        .background(LpspClaudeTokens.claudeCream.ignoresSafeArea())
-        .sheet(isPresented: $showingModelPicker) {
-            LpspClaudeModelPickerSheet(
-                selectedModel: $modelName,
-                models: [
-                    .init(name: "Claude Opus 4.5",   subtitle: "Most intelligent",     available: true),
-                    .init(name: "Claude Sonnet 4.5", subtitle: "Fast and capable",     available: true),
-                    .init(name: "Claude Haiku 4.5",  subtitle: "Quickest responses",   available: true),
-                ],
-                onClose: { showingModelPicker = false }
+        return ordered.compactMap { section in
+            let chats = filtered.filter { $0.section == section }
+            return chats.isEmpty ? nil : (section, chats)
+        }
+    }
+
+    func selectConversation(_ id: String) {
+        activeConversationID = id
+        composeText = ""
+        showDrawer = false
+    }
+
+    func newChat() {
+        let id = "new-\(UUID().uuidString.prefix(6))"
+        conversations.insert(
+            LpspClaudeShowroomConversation(id: id, title: "Untitled chat", section: "TODAY", messages: []),
+            at: 0
+        )
+        activeConversationID = id
+        composeText = ""
+        showDrawer = false
+    }
+
+    func sendMessage() {
+        let trimmed = composeText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !isGenerating else {
+            if isGenerating { stopGenerating() }
+            return
+        }
+
+        appendMessage(.init(id: UUID().uuidString, role: .user, text: trimmed))
+        composeText = ""
+        updateTitleIfNeeded(from: trimmed)
+        isGenerating = true
+
+        appendMessage(.init(id: "thinking-\(UUID().uuidString)", role: .assistant, text: "", assistantState: .thinking))
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            removeThinkingMessage()
+            var streaming = LpspClaudeShowroomData.reply(for: trimmed)
+            streaming.assistantState = .streaming
+            appendMessage(streaming)
+            try? await Task.sleep(nanoseconds: 1_400_000_000)
+            mutateActive { conv in
+                if let idx = conv.messages.lastIndex(where: { $0.role == .assistant }) {
+                    var msg = conv.messages[idx]
+                    msg.assistantState = .complete
+                    conv.messages[idx] = msg
+                }
+            }
+            isGenerating = false
+        }
+    }
+
+    func stopGenerating() {
+        isGenerating = false
+        removeThinkingMessage()
+        mutateActive { conv in
+            if let idx = conv.messages.lastIndex(where: { $0.assistantState == .streaming }) {
+                var msg = conv.messages[idx]
+                msg.assistantState = .complete
+                conv.messages[idx] = msg
+            }
+        }
+    }
+
+    private func appendMessage(_ message: LpspClaudeShowroomMessage) {
+        mutateActive { $0.messages.append(message) }
+    }
+
+    private func removeThinkingMessage() {
+        mutateActive { conv in
+            conv.messages.removeAll { $0.assistantState == .thinking }
+        }
+    }
+
+    private func updateTitleIfNeeded(from prompt: String) {
+        mutateActive { conv in
+            if conv.title == "Untitled chat" || conv.title.hasPrefix("Explain Bayesian") {
+                conv.title = String(prompt.prefix(42))
+            }
+        }
+    }
+
+    private func mutateActive(_ update: (inout LpspClaudeShowroomConversation) -> Void) {
+        guard let index = conversations.firstIndex(where: { $0.id == activeConversationID }) else { return }
+        var conversation = conversations[index]
+        update(&conversation)
+        conversations[index] = conversation
+    }
+}
+
+private enum LpspClaudeShowroomData {
+    static let defaultConversationID = "bayesian-demo"
+
+    static let conversations: [LpspClaudeShowroomConversation] = [
+        .init(
+            id: "bayesian-demo",
+            title: "Explain Bayesian inference like I'm a curious 15-year-old.",
+            section: "TODAY",
+            messages: [
+                .init(id: "u1", role: .user, text: "Explain Bayesian inference like I'm a curious 15-year-old."),
+                .init(
+                    id: "a1",
+                    role: .assistant,
+                    text: "Imagine you're trying to figure out whether your friend is mad at you. You start with a guess (**prior**): \"probably not.\" Then you get a new clue — they didn't text back (**evidence**). You update your guess (**posterior**): \"hmm, maybe a little.\"\n\nThat's Bayesian thinking: **start with what you believe, then revise when new info arrives.**",
+                    assistantState: .complete
+                ),
+                .init(
+                    id: "a2",
+                    role: .assistant,
+                    text: "they have keys",
+                    assistantState: .streaming
+                ),
+            ]
+        ),
+        .init(
+            id: "louvre-windows",
+            title: "Fenêtres maintenance Louvre",
+            section: "TODAY",
+            messages: [
+                .init(id: "lu1", role: .user, text: "Résume les fenêtres d'accès maintenance Salle 710 le 18 juin."),
+                .init(
+                    id: "la1",
+                    role: .assistant,
+                    text: "**Mercredi 18/06** — intervention clim **19h15–19h27** (effectif réduit).\n\nAngle mort caméra confirmé entre pilier et porte latérale (~3 s). La vitrine reste faisable en **4 min** si l'équipe tient le hall.",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+        .init(
+            id: "brief-s7",
+            title: "Brief vitrine S7",
+            section: "PREVIOUS 7 DAYS",
+            messages: [
+                .init(id: "b1", role: .user, text: "Quels indices croiser entre Gennevilliers et la vitrine ?"),
+                .init(
+                    id: "ba1",
+                    role: .assistant,
+                    text: "Local **Gennevilliers** = stockage discret + accès camionnette.\n\nVitrine = fenêtre **18/06** + badge périmé mais couloirs connus.\n\nRecoupe avec photos **sans EXIF** dans Fichiers et fil **#planning-s7** sur Teams.",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+        .init(
+            id: "eventscult",
+            title: "Alias EventsCult crédibles",
+            section: "PREVIOUS 30 DAYS",
+            messages: [
+                .init(id: "e1", role: .user, text: "Propose 2 alias crédibles pour une agence événementielle parisienne."),
+                .init(
+                    id: "ea1",
+                    role: .assistant,
+                    text: "1. **Maison Lumière** — pop-up Marais, site minimal\n2. **EventsCult** — serveur Discord actif, brief Dame de Fer v3",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+    ]
+
+    static func reply(for prompt: String) -> LpspClaudeShowroomMessage {
+        let lower = prompt.lowercased()
+        if lower.contains("bayesian") || lower.contains("prior") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "The math version: **P(belief | evidence) ∝ P(evidence | belief) × P(belief)**. In plain words: new confidence = how well the clue fits your theory × how confident you were before.",
+                assistantState: .complete
             )
-            .presentationDetents([.medium])
         }
+        if lower.contains("louvre") || lower.contains("maintenance") || lower.contains("18") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Le créneau du **18/06 après 19h10** reste le plus propre : ronde réduite, angle mort caméra, accès camionnette côté Gennevilliers déjà validé.",
+                assistantState: .complete
+            )
+        }
+        if lower.contains("vitrine") || lower.contains("gennevilliers") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Recoupe **Gennevilliers** (stockage) avec la fenêtre **18/06** et les messages Nadia sur Teams. Évite les photos dans les salles chaudes.",
+                assistantState: .complete
+            )
+        }
+        return .init(
+            id: UUID().uuidString,
+            role: .assistant,
+            text: "Je peux approfondir si tu précises le lieu, la date ou les personnes impliquées.",
+            assistantState: .complete
+        )
     }
 }
 
 // MARK: - Écrans showroom
 
 private struct LpspClaudeShowroomRoot: View {
-    @State private var selectedTab = 0
+    @ObservedObject var store: LpspClaudeStore
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspClaudeSpectrHomeTabScreen()
-                .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
-                .tag(0)
-            LpspClaudeAiTabScreen(title: "Historique", tabIndex: 1)
-                .tabItem { Label("Historique", systemImage: "clock") }
-                .tag(1)
+        ZStack(alignment: .leading) {
+            LpspClaudeChatScreen(store: store)
+
+            if store.showDrawer {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture { store.showDrawer = false }
+
+                LpspClaudeDrawer(store: store)
+                    .transition(.move(edge: .leading))
+            }
         }
-        .tint(LpspClaudeTokens.claudeCream)
-        
+        .animation(.easeInOut(duration: 0.22), value: store.showDrawer)
+        .sheet(isPresented: $store.showModelPicker) {
+            LpspClaudeModelPickerSheet(
+                selectedModel: $store.selectedModel,
+                models: store.models,
+                onClose: { store.showModelPicker = false }
+            )
+            .presentationDetents([.medium])
+        }
     }
 }
 
+private struct LpspClaudeChatScreen: View {
+    @ObservedObject var store: LpspClaudeStore
 
-private struct LpspClaudeGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspClaudeTokens.claudeCream.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspClaudeTokens.claudeCream))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
+        VStack(spacing: 0) {
+            HStack {
+                Button { store.showDrawer = true } label: {
+                    Image(systemName: "line.3.horizontal")
+                        .font(.system(size: 18))
+                        .foregroundStyle(LpspClaudeTokens.claudeInk)
+                }
+                Spacer()
+                Text(store.activeConversation.title)
+                    .font(LpspClaudeFonts.claudeConvTitle)
+                    .foregroundStyle(LpspClaudeTokens.claudeInk)
+                    .lineLimit(1)
+                Spacer()
+                Button { store.newChat() } label: {
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 18))
+                        .foregroundStyle(LpspClaudeTokens.claudeInk)
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 52)
+            .background(LpspClaudeTokens.claudeCream)
+
+            HStack {
+                LpspClaudeModelPickerChip(modelName: store.selectedModel) {
+                    store.showModelPicker = true
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 8)
+
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 32) {
+                        ForEach(store.activeConversation.messages) { message in
+                            LpspClaudeMessageView(message: message, modelName: store.selectedModel)
+                                .id(message.id)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 16)
+                }
+                .onChange(of: store.activeConversation.messages.count) { _, _ in
+                    scrollToBottom(proxy: proxy)
+                }
+            }
+
+            LpspClaudeChatInput(
+                text: $store.composeText,
+                onSend: { store.sendMessage() },
+                onAttach: {}
+            )
+        }
+        .background(LpspClaudeTokens.claudeCream.ignoresSafeArea())
+    }
+
+    private func scrollToBottom(proxy: ScrollViewProxy) {
+        if let last = store.activeConversation.messages.last {
+            withAnimation(.easeOut(duration: 0.2)) {
+                proxy.scrollTo(last.id, anchor: .bottom)
+            }
+        }
+    }
+}
+
+private struct LpspClaudeMessageView: View {
+    let message: LpspClaudeShowroomMessage
+    let modelName: String
+
+    var body: some View {
+        switch message.role {
+        case .user:
+            LpspClaudeUserMessage(text: message.text)
+        case .assistant:
+            switch message.assistantState {
+            case .thinking:
+                LpspClaudeThinkingIndicator(elapsedSeconds: nil)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            case .streaming, .complete:
+                LpspClaudeAssistantMessage(
+                    modelName: modelName,
+                    content: (try? AttributedString(markdown: message.text)) ?? AttributedString(message.text),
+                    isStreaming: message.assistantState == .streaming
+                )
+            }
+        }
+    }
+}
+
+private struct LpspClaudeDrawer: View {
+    @ObservedObject var store: LpspClaudeStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Button { store.newChat() } label: {
+                    HStack(spacing: 6) {
+                        LpspClaudeClaudeAvatar(size: 14)
+                        Text("New chat")
+                            .font(LpspClaudeFonts.claudeAction.weight(.semibold))
+                            .foregroundStyle(LpspClaudeTokens.claudeInk)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(RoundedRectangle(cornerRadius: 16).fill(LpspClaudeTokens.claudeSurface1))
+                }
+                Spacer()
+                Button { store.showDrawer = false } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(LpspClaudeTokens.claudeStone)
+                }
+            }
+            .padding(16)
+
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(LpspClaudeTokens.claudeStone)
+                TextField("Search chats", text: $store.drawerSearch)
+                    .font(LpspClaudeFonts.claudeMeta)
+            }
+            .padding(12)
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(LpspClaudeTokens.claudeSand, lineWidth: 1))
+            .padding(.horizontal, 16)
+
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(store.drawerSections, id: \.title) { section in
+                        Text(section.title)
+                            .font(LpspClaudeFonts.claudeGroupHeader.weight(.semibold))
+                            .foregroundStyle(LpspClaudeTokens.claudeStone)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 16)
+                            .padding(.bottom, 6)
+
+                        ForEach(section.chats) { chat in
+                            Button { store.selectConversation(chat.id) } label: {
+                                HStack(spacing: 10) {
+                                    LpspClaudeClaudeAvatar(size: 12, color: chat.id == store.activeConversationID ? LpspClaudeTokens.claudeOrange : LpspClaudeTokens.claudeStone)
+                                    Text(chat.title)
+                                        .font(LpspClaudeFonts.claudeAction)
+                                        .foregroundStyle(LpspClaudeTokens.claudeInk)
+                                        .lineLimit(1)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 16)
+                                .frame(height: 44)
+                                .background(
+                                    chat.id == store.activeConversationID
+                                        ? LpspClaudeTokens.claudeOrangeSoft
+                                        : Color.clear,
+                                    in: RoundedRectangle(cornerRadius: 10)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 8)
+                        }
                     }
                 }
             }
-            .navigationTitle(title)
         }
+        .frame(width: UIScreen.main.bounds.width * 0.82, alignment: .leading)
+        .frame(maxHeight: .infinity)
+        .background(LpspClaudeTokens.claudePaper)
     }
 }
-
-
-private struct LpspClaudeDemoBubble: View {
-    let text: String
-    var outgoing: Bool
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 40) }
-            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspClaudeTokens.claudeCream.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 40) }
-        }
-    }
-}
-
-private struct LpspClaudeDemoComposeBar: View {
-    @State private var text = ""
-    var body: some View {
-        HStack {
-            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-            Image(systemName: "paperplane.fill").foregroundStyle(LpspClaudeTokens.claudeCream)
-        }
-        .padding(8)
-    }
-}
-
-private struct LpspClaudeAiChatTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 12) {
-
-                    LpspClaudeDemoBubble(text: "Bonjour !", outgoing: true)
-                    LpspClaudeDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
-
-                }
-                .padding()
-            }
-            .background(LpspClaudeTokens.claudeDarkCanvas.ignoresSafeArea())
-            LpspClaudeDemoComposeBar()
-        }
-    }
-}
-
-
-private struct LpspClaudeAiHistoryTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
-            .navigationTitle("Historique")
-        }
-    }
-}
-
-
-private struct LpspClaudeAiTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        if tabIndex == 0 || title.lowercased().contains("chat") { LpspClaudeAiChatTabScreen() }
-        else { LpspClaudeAiHistoryTabScreen() }
-    }
-}
-
-
-private struct LpspClaudeSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack {
-            Text("Untitled chat").font(.system(size: 16.0, weight: .semibold)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        } .padding(.horizontal, 16).frame(height: 48)
-        Text("Claude Opus 4.5").font(.system(size: 15, weight: .semibold)).padding(.horizontal, 12).padding(.vertical, 6).background(Color(.systemGray6)).clipShape(Capsule())
-            Text("Explain Bayesian inference like I'm a curious 15-year-old.").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("Claude").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("· Opus 4.5").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("they have keys").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("\"it jingles when I walk\"").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-                    Text("updates").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-            Text("Reply to Claude…").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 1.000, green: 1.000, blue: 1.000))
-        }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
-    }
-}
-
-

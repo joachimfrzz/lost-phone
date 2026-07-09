@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomeGrokView: View {
     var body: some View {
-        LpspGrokShowroomRoot()
+        LpspGrokShowroomRoot(store: LpspGrokStore())
     }
 }
 
@@ -63,6 +63,17 @@ fileprivate extension View {
 // Convenience until Inter is registered:
 
 
+fileprivate struct LpspGrokGrokGlyphMark: View {
+    var size: CGFloat = 24
+
+    var body: some View {
+        Text("G")
+            .font(.system(size: size * 0.58, weight: .bold, design: .rounded))
+            .foregroundStyle(LpspGrokTokens.grokTextPrimary)
+            .frame(width: size, height: size)
+    }
+}
+
 fileprivate struct LpspGrokGrokUserBubble: View {
     let text: String
 
@@ -93,9 +104,7 @@ fileprivate struct LpspGrokGrokAssistantResponse: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Image("grok-glyph") // 24pt mark, once per response
-                .resizable().frame(width: 24, height: 24)
-                .foregroundStyle(LpspGrokTokens.grokTextPrimary)
+            LpspGrokGrokGlyphMark(size: 24)
 
             (Text(text)
                 + (isStreaming
@@ -147,7 +156,8 @@ fileprivate struct LpspGrokXCitationCard: View {
                     Text("@\(handle) · \(timeAgo)")
                         .font(LpspGrokFonts.grokCiteMeta).foregroundStyle(LpspGrokTokens.grokTextSecondary)
                     Spacer()
-                    Image("x-glyph").resizable().frame(width: 16, height: 16)
+                    Text("𝕏")
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(LpspGrokTokens.grokTextSecondary)
                 }
                 Text(postText)
@@ -284,137 +294,459 @@ fileprivate struct LpspGrokGrokPromptBar: View {
 
 
 
+// MARK: - Données & état (showroom Lost Phone)
+
+fileprivate enum LpspGrokShowroomRole {
+    case user, assistant
+}
+
+fileprivate enum LpspGrokAssistantState {
+    case complete
+    case streaming
+}
+
+fileprivate struct LpspGrokCitation: Identifiable {
+    let id: String
+    let author: String
+    let handle: String
+    let timeAgo: String
+    let isVerified: Bool
+    let postText: String
+    let replies: Int
+    let reposts: Int
+    let likes: Int
+}
+
+fileprivate struct LpspGrokShowroomMessage: Identifiable {
+    let id: String
+    let role: LpspGrokShowroomRole
+    let text: String
+    var assistantState: LpspGrokAssistantState = .complete
+    var citation: LpspGrokCitation?
+}
+
+fileprivate struct LpspGrokShowroomConversation: Identifiable {
+    let id: String
+    var title: String
+    let section: String
+    var messages: [LpspGrokShowroomMessage]
+}
+
+@MainActor
+fileprivate final class LpspGrokStore: ObservableObject {
+    @Published var conversations: [LpspGrokShowroomConversation]
+    @Published var activeConversationID: String
+    @Published var composeText = ""
+    @Published var isGenerating = false
+    @Published var isFunMode = false
+    @Published var showDrawer = false
+    @Published var drawerSearch = ""
+
+    init() {
+        self.conversations = LpspGrokShowroomData.conversations
+        self.activeConversationID = LpspGrokShowroomData.defaultConversationID
+    }
+
+    var activeConversation: LpspGrokShowroomConversation {
+        conversations.first { $0.id == activeConversationID } ?? conversations[0]
+    }
+
+    var sendState: LpspGrokGrokSendButton.State {
+        if isGenerating { return .streaming }
+        return composeText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .disabled : .enabled
+    }
+
+    var drawerSections: [(title: String, chats: [LpspGrokShowroomConversation])] {
+        let ordered = ["TODAY", "PREVIOUS 7 DAYS", "PREVIOUS 30 DAYS"]
+        let filtered = conversations.filter { conv in
+            let q = drawerSearch.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            return q.isEmpty || conv.title.lowercased().contains(q)
+        }
+        return ordered.compactMap { section in
+            let chats = filtered.filter { $0.section == section }
+            return chats.isEmpty ? nil : (section, chats)
+        }
+    }
+
+    func selectConversation(_ id: String) {
+        activeConversationID = id
+        composeText = ""
+        showDrawer = false
+    }
+
+    func newChat() {
+        let id = "new-\(UUID().uuidString.prefix(6))"
+        conversations.insert(
+            LpspGrokShowroomConversation(id: id, title: "New chat", section: "TODAY", messages: []),
+            at: 0
+        )
+        activeConversationID = id
+        composeText = ""
+        showDrawer = false
+    }
+
+    func sendMessage() {
+        let trimmed = composeText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !isGenerating else {
+            if isGenerating { stopGenerating() }
+            return
+        }
+
+        appendMessage(.init(id: UUID().uuidString, role: .user, text: trimmed))
+        composeText = ""
+        updateTitleIfNeeded(from: trimmed)
+        isGenerating = true
+
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 800_000_000)
+            var streaming = LpspGrokShowroomData.reply(for: trimmed, funMode: isFunMode)
+            streaming.assistantState = .streaming
+            appendMessage(streaming)
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            mutateActive { conv in
+                if let idx = conv.messages.lastIndex(where: { $0.role == .assistant }) {
+                    var msg = conv.messages[idx]
+                    msg.assistantState = .complete
+                    conv.messages[idx] = msg
+                }
+            }
+            isGenerating = false
+        }
+    }
+
+    func stopGenerating() {
+        isGenerating = false
+        mutateActive { conv in
+            if let idx = conv.messages.lastIndex(where: { $0.assistantState == .streaming }) {
+                var msg = conv.messages[idx]
+                msg.assistantState = .complete
+                conv.messages[idx] = msg
+            }
+        }
+    }
+
+    private func appendMessage(_ message: LpspGrokShowroomMessage) {
+        mutateActive { $0.messages.append(message) }
+    }
+
+    private func updateTitleIfNeeded(from prompt: String) {
+        mutateActive { conv in
+            if conv.title == "New chat" || conv.title.hasPrefix("What's the latest") {
+                conv.title = String(prompt.prefix(42))
+            }
+        }
+    }
+
+    private func mutateActive(_ update: (inout LpspGrokShowroomConversation) -> Void) {
+        guard let index = conversations.firstIndex(where: { $0.id == activeConversationID }) else { return }
+        var conversation = conversations[index]
+        update(&conversation)
+        conversations[index] = conversation
+    }
+}
+
+private enum LpspGrokShowroomData {
+    static let defaultConversationID = "grok4-x-launch"
+
+    static let spectrCitation = LpspGrokCitation(
+        id: "cite1",
+        author: "Devin Park",
+        handle: "devbuilds",
+        timeAgo: "2h",
+        isVerified: true,
+        postText: "Grok 4's real-time X access is the actual moat here. Asked it about a thread from 10 minutes ago and it cited the exact posts.",
+        replies: 128,
+        reposts: 342,
+        likes: 2100
+    )
+
+    static let conversations: [LpspGrokShowroomConversation] = [
+        .init(
+            id: "grok4-x-launch",
+            title: "What's the latest reaction to the Grok 4 launch on X?",
+            section: "TODAY",
+            messages: [
+                .init(id: "u1", role: .user, text: "What's the latest reaction to the Grok 4 launch on X?"),
+                .init(
+                    id: "a1",
+                    role: .assistant,
+                    text: "Developers are focused on real-time X integration — Grok can cite posts from minutes ago, not just training data. Sentiment is mostly impressed, with some skepticism about moderation.",
+                    assistantState: .streaming,
+                    citation: spectrCitation
+                ),
+            ]
+        ),
+        .init(
+            id: "louvre-rumors",
+            title: "Rumeurs couloir Denon",
+            section: "TODAY",
+            messages: [
+                .init(id: "lu1", role: .user, text: "Que dit X sur les rumeurs de travaux nocturnes au Louvre ?"),
+                .init(
+                    id: "la1",
+                    role: .assistant,
+                    text: "Peu de posts publics — surtout des photos floues de camionnettes côté Rivoli. Rien de confirmé, mais plusieurs comptes locaux mentionnent des badges maintenance après 19h.",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+        .init(
+            id: "eventscult-discord",
+            title: "EventsCult sur X",
+            section: "PREVIOUS 7 DAYS",
+            messages: [
+                .init(id: "e1", role: .user, text: "Trouve des mentions d'EventsCult sur X cette semaine."),
+                .init(
+                    id: "ea1",
+                    role: .assistant,
+                    text: "Aucun compte vérifié. Quelques posts anonymes sur des pop-ups Marais — probablement du bruit. Le fil Discord reste plus actif.",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+        .init(
+            id: "gennevilliers",
+            title: "Zone Gennevilliers",
+            section: "PREVIOUS 30 DAYS",
+            messages: [
+                .init(id: "g1", role: .user, text: "Y a-t-il des posts récents sur rue des Caboeufs ?"),
+                .init(
+                    id: "ga1",
+                    role: .assistant,
+                    text: "Rien de récent sur X. Sam a validé le point de transfert le 2 juin — mieux vaut rester discret que poster.",
+                    assistantState: .complete
+                ),
+            ]
+        ),
+    ]
+
+    static func reply(for prompt: String, funMode: Bool) -> LpspGrokShowroomMessage {
+        let lower = prompt.lowercased()
+        if funMode {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Fun mode activated 😎 — I'll keep it spicy. Ask me anything about X drama or Lost Phone mysteries.",
+                assistantState: .complete
+            )
+        }
+        if lower.contains("louvre") || lower.contains("denon") || lower.contains("maintenance") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Peu de posts publics — surtout des rumeurs sur des camionnettes Rivoli après 19h. Le créneau **18/06** reste le plus crédible côté maintenance.",
+                assistantState: .complete
+            )
+        }
+        if lower.contains("eventscult") || lower.contains("discord") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "EventsCult n'a pas de présence X notable. Le serveur Discord (#planning-s7) est plus parlant pour le brief Dame.",
+                assistantState: .complete
+            )
+        }
+        if lower.contains("grok") || lower.contains("x ") || lower.contains("launch") {
+            return .init(
+                id: UUID().uuidString,
+                role: .assistant,
+                text: "Real-time X access remains the headline feature — Grok cites fresh posts with handles and timestamps.",
+                assistantState: .complete,
+                citation: spectrCitation
+            )
+        }
+        return .init(
+            id: UUID().uuidString,
+            role: .assistant,
+            text: "Je peux chercher sur X si tu précises le sujet, le lieu ou la date.",
+            assistantState: .complete
+        )
+    }
+}
+
 // MARK: - Écrans showroom
 
 private struct LpspGrokShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspGrokSpectrHomeTabScreen()
-                .tabItem { Label("Chat", systemImage: "bubble.left.fill") }
-                .tag(0)
-            LpspGrokAiTabScreen(title: "Historique", tabIndex: 1)
-                .tabItem { Label("Historique", systemImage: "clock") }
-                .tag(1)
-        }
-        .tint(LpspGrokTokens.grokAccentWhite)
-        
-    }
-}
+    @ObservedObject var store: LpspGrokStore
 
-
-private struct LpspGrokGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
     var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspGrokTokens.grokAccentWhite.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspGrokTokens.grokAccentWhite))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
+        ZStack(alignment: .leading) {
+            LpspGrokChatScreen(store: store)
+
+            if store.showDrawer {
+                Color.black.opacity(0.55)
+                    .ignoresSafeArea()
+                    .onTapGesture { store.showDrawer = false }
+
+                LpspGrokDrawer(store: store)
+                    .transition(.move(edge: .leading))
             }
-            .navigationTitle(title)
         }
-    }
-}
-
-
-private struct LpspGrokDemoBubble: View {
-    let text: String
-    var outgoing: Bool
-    var body: some View {
-        HStack {
-            if outgoing { Spacer(minLength: 40) }
-            Text(text).padding(12).background(RoundedRectangle(cornerRadius: 16).fill(outgoing ? LpspGrokTokens.grokAccentWhite.opacity(0.2) : Color(.systemGray5)))
-            if !outgoing { Spacer(minLength: 40) }
-        }
-    }
-}
-
-private struct LpspGrokDemoComposeBar: View {
-    @State private var text = ""
-    var body: some View {
-        HStack {
-            TextField("Message…", text: $text).padding(10).background(RoundedRectangle(cornerRadius: 20).fill(Color(.systemGray6)))
-            Image(systemName: "paperplane.fill").foregroundStyle(LpspGrokTokens.grokAccentWhite)
-        }
-        .padding(8)
-    }
-}
-
-private struct LpspGrokAiChatTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                LazyVStack(spacing: 12) {
-
-                    LpspGrokDemoBubble(text: "Bonjour !", outgoing: true)
-                    LpspGrokDemoBubble(text: "Comment puis-je vous aider ?", outgoing: false)
-
-                }
-                .padding()
-            }
-            .background(LpspGrokTokens.grokCanvas.ignoresSafeArea())
-            LpspGrokDemoComposeBar()
-        }
-    }
-}
-
-
-private struct LpspGrokAiHistoryTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            List(["Showroom Lost Phone", "SwiftUI tips"], id: \.self) { Label($0, systemImage: "bubble.left") }
-            .navigationTitle("Historique")
-        }
-    }
-}
-
-
-private struct LpspGrokAiTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        if tabIndex == 0 || title.lowercased().contains("chat") { LpspGrokAiChatTabScreen() }
-        else { LpspGrokAiHistoryTabScreen() }
-    }
-}
-
-
-private struct LpspGrokSpectrHomeTabScreen: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        HStack(spacing: 12) {
-                Text("Regular").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                Text("Fun").font(.system(size: 14.0, weight: .semibold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-        } .padding(.horizontal, 16).frame(height: 44)
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-            Text("What's the latest reaction to the Grok 4 launch on X?").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                    Text("G").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                    Text("▍").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("Devin Park").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("@devbuilds · 2h").font(.system(size: 13.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("𝕏").font(.system(size: 14.0, weight: .bold)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                        Text("Grok 4's real-time X access is the actual moat here. Asked it about a thread from 10 minutes ago and it cited the exact posts.").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("128").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("342").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-                            Text("2.1K").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-            }
-            .padding(16)
-        }
-                Text("Ask Grok anything").font(.system(size: 16.0, weight: .regular)).foregroundStyle(Color(red: 0.906, green: 0.914, blue: 0.918))
-        }
-        .background(Color(red: 0.000, green: 0.000, blue: 0.000).ignoresSafeArea())
+        .animation(.easeInOut(duration: 0.22), value: store.showDrawer)
         .preferredColorScheme(.dark)
     }
 }
 
+private struct LpspGrokChatScreen: View {
+    @ObservedObject var store: LpspGrokStore
 
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Button { store.showDrawer = true } label: {
+                    Image(systemName: "line.3.horizontal")
+                        .font(.system(size: 20))
+                        .foregroundStyle(LpspGrokTokens.grokTextPrimary)
+                }
+                LpspGrokGrokModeToggle(isFun: $store.isFunMode)
+                Spacer()
+                Button { store.newChat() } label: {
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 18))
+                        .foregroundStyle(LpspGrokTokens.grokTextPrimary)
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 44)
+
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 20) {
+                        ForEach(store.activeConversation.messages) { message in
+                            LpspGrokMessageView(message: message)
+                                .id(message.id)
+                        }
+                    }
+                    .padding(.vertical, 16)
+                }
+                .onChange(of: store.activeConversation.messages.count) { _, _ in
+                    scrollToBottom(proxy: proxy)
+                }
+            }
+
+            LpspGrokGrokPromptBar(
+                text: $store.composeText,
+                sendState: store.sendState,
+                onSend: { store.sendMessage() }
+            )
+            .padding(.bottom, 8)
+        }
+        .background(LpspGrokTokens.grokCanvas.ignoresSafeArea())
+    }
+
+    private func scrollToBottom(proxy: ScrollViewProxy) {
+        if let last = store.activeConversation.messages.last {
+            withAnimation(.easeOut(duration: 0.2)) {
+                proxy.scrollTo(last.id, anchor: .bottom)
+            }
+        }
+    }
+}
+
+private struct LpspGrokMessageView: View {
+    let message: LpspGrokShowroomMessage
+
+    var body: some View {
+        switch message.role {
+        case .user:
+            LpspGrokGrokUserBubble(text: message.text)
+                .padding(.horizontal, 16)
+        case .assistant:
+            VStack(alignment: .leading, spacing: 12) {
+                LpspGrokGrokAssistantResponse(
+                    text: message.text,
+                    isStreaming: message.assistantState == .streaming
+                )
+                if let citation = message.citation {
+                    LpspGrokXCitationCard(
+                        author: citation.author,
+                        handle: citation.handle,
+                        timeAgo: citation.timeAgo,
+                        isVerified: citation.isVerified,
+                        postText: citation.postText,
+                        replies: citation.replies,
+                        reposts: citation.reposts,
+                        likes: citation.likes,
+                        onOpen: {}
+                    )
+                    .padding(.horizontal, 16)
+                }
+            }
+        }
+    }
+}
+
+private struct LpspGrokDrawer: View {
+    @ObservedObject var store: LpspGrokStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Button { store.newChat() } label: {
+                    Text("New chat")
+                        .font(LpspGrokFonts.grokButton.weight(.semibold))
+                        .foregroundStyle(LpspGrokTokens.grokTextPrimary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(LpspGrokTokens.grokSurface1))
+                }
+                Spacer()
+                Button { store.showDrawer = false } label: {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(LpspGrokTokens.grokTextSecondary)
+                }
+            }
+            .padding(16)
+
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(LpspGrokTokens.grokTextSecondary)
+                TextField("Search chats", text: $store.drawerSearch)
+                    .font(LpspGrokFonts.grokCiteMeta)
+                    .foregroundStyle(LpspGrokTokens.grokTextPrimary)
+            }
+            .padding(12)
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(LpspGrokTokens.grokDivider, lineWidth: 1))
+            .padding(.horizontal, 16)
+
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(store.drawerSections, id: \.title) { section in
+                        Text(section.title)
+                            .font(LpspGrokFonts.grokLabelUpper.weight(.semibold))
+                            .foregroundStyle(LpspGrokTokens.grokTextSecondary)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 16)
+                            .padding(.bottom, 6)
+
+                        ForEach(section.chats) { chat in
+                            Button { store.selectConversation(chat.id) } label: {
+                                HStack(spacing: 10) {
+                                    LpspGrokGrokGlyphMark(size: 18)
+                                    Text(chat.title)
+                                        .font(LpspGrokFonts.grokConvoTitle)
+                                        .foregroundStyle(LpspGrokTokens.grokTextPrimary)
+                                        .lineLimit(1)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 16)
+                                .frame(height: 48)
+                                .background(
+                                    chat.id == store.activeConversationID
+                                        ? LpspGrokTokens.grokSurface2
+                                        : Color.clear,
+                                    in: Capsule()
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 8)
+                        }
+                    }
+                }
+            }
+        }
+        .frame(width: UIScreen.main.bounds.width * 0.82, alignment: .leading)
+        .frame(maxHeight: .infinity)
+        .background(LpspGrokTokens.grokSurface1)
+    }
+}

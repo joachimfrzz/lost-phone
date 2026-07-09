@@ -1,0 +1,128 @@
+//
+//  VendoredInstagramEditProfileView.swift
+//  Instagram clone
+//
+//  Created by Sopheamen VAN on 17/3/24.
+//
+
+import SwiftUI
+
+struct VendoredInstagramEditProfileView: View {
+    @State private var nameTextfield = vendoredInstagramUserDataCurrent.fullname
+    @State private var usernameTextfield = vendoredInstagramUserDataCurrent.username
+    @State private var pronounsTextfield = ""
+    @State private var bioTextfield = ""
+    @State private var addLinkTextfield = ""
+    @State private var genderTextfield = "Male"
+    
+    @Environment(\.dismiss)  var dismiss
+    
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack (spacing: 14){
+                    // image profile view
+                    VendoredInstagramProfileImageView(profileImage: vendoredInstagramUserDataCurrent.profileImage, size: 100)
+                    Button {
+                        
+                    }label: {
+                        Text("Edit picture or avatar")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.vendoredInstagramVendoredInstagramPrimary)
+                    }
+                    // divider line
+                    Divider()
+                    
+                    VStack (alignment: .leading){
+                        VendoredInstagramTextFieldBottomBorderLineView(placeHolder: "Name", controller: $nameTextfield)
+                        VendoredInstagramTextFieldBottomBorderLineView(placeHolder: "Username", controller: $usernameTextfield)
+                        VendoredInstagramTextFieldBottomBorderLineView(placeHolder: "Pronouns", controller: $pronounsTextfield)
+                        VendoredInstagramTextFieldBottomBorderLineView(placeHolder: "Bio", controller: $bioTextfield)
+                        
+                    }
+                    .padding(.horizontal)
+                    
+                    // add links
+                    VStack (spacing: 12){
+                        HStack {
+                            Text("Links")
+                                .fontWeight(.regular)
+                                .frame(maxWidth: 100,alignment: .leading)
+                            TextField("Add Links",text: $addLinkTextfield)
+                                .disabled(true)
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(Color.vendoredInstagramBlackOpacity.opacity(0.5))
+                        }
+                        .padding(.horizontal)
+                        Divider()
+                    }
+                    
+                    // gender
+                    VStack (spacing: 12){
+                        HStack {
+                            Text("Gender")
+                                .fontWeight(.regular)
+                                .frame(maxWidth: 100,alignment: .leading)
+                            TextField("Gender",text: $genderTextfield)
+                                .disabled(true)
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(Color.vendoredInstagramBlackOpacity.opacity(0.5))
+                        }
+                        .padding(.horizontal)
+                        Divider()
+                    }
+                    
+                    // switch account
+                    VStack (alignment: .leading,spacing: 12){
+                        Text("Switch to professional account")
+                            .fontWeight(.regular)
+                            .frame(maxWidth: .infinity,alignment: .leading)
+                            .foregroundStyle(Color.vendoredInstagramVendoredInstagramPrimary)
+                            .padding(.horizontal)
+                        Divider()
+                        
+                    }
+                    
+                    // personal information settings
+                    Text("Personal information settings")
+                        .fontWeight(.regular)
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                        .foregroundStyle(Color.vendoredInstagramVendoredInstagramPrimary)
+                        .padding(.horizontal)
+                        .padding(.vertical, -6)
+                
+                   
+                }
+                
+            }
+            .navigationTitle("Edit profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    }label: {
+                        Text("Cancel")
+                            .font(.headline)
+                            .foregroundStyle(.black)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        
+                    }label: {
+                        Text("Done")
+                            .font(.headline)
+                            .foregroundStyle(Color.vendoredInstagramVendoredInstagramPrimary)
+                    }
+                }
+            }
+            .padding(.vertical)
+        }
+    }
+}
+
+#Preview {
+    VendoredInstagramEditProfileView()
+}

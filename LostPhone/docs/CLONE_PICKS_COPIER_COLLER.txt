@@ -1,0 +1,154 @@
+LOST PHONE — Choix clones JOACHIM (2026-07-08 soir)
+(Modifie puis renvoie en copier-coller)
+
+
+===== DEJA FAIT =====
+Apple Music, Rappels, Contacts, Wallet, Dictaphone, apps Apple page 1
+
+
+===== MESSAGERIE =====
+
+WhatsApp
+https://github.com/efxlve/whatsapp-clone
+
+Telegram
+https://github.com/Swiftgram/Telegram-iOS
+
+Microsoft Teams
+(vide)
+
+Messenger (?)
+https://github.com/sopheamen007/app.mobile.facebook-messenger-app-ui
+
+Signal
+https://github.com/signalapp/Signal-iOS
+
+
+===== SOCIAL =====
+
+Instagram
+https://github.com/dmakarau/InstagramClone
+
+Snapchat
+https://www.patreon.com/sopheamenvan/posts/swiftui-snapchat-106774973
+
+Facebook
+https://github.com/omarthamri/FacebookClone
+ou https://github.com/jmmanoza/Facebook
+
+LinkedIn
+https://www.patreon.com/sopheamenvan/posts/swiftui-linkedin-106774147
+
+Twitter
+https://github.com/boardguy1024/TwitterSwiftUI
++ https://github.com/jurmadani/TwitterClone
+
+Discord
+https://github.com/piwien/Discord-Clone
+
+
+===== DATING =====
+
+Tinder
+https://github.com/FranckNdame/swiftui.builds
+https://github.com/enesozmus/SwiftUI-Tinder-Clone
+
+Happn / Bumble / Hinge
+(vide)
+
+
+===== MUSIQUE =====
+
+Spotify
+https://github.com/denoni/SpotifyClone
+https://github.com/adriancysvillegast/Spotify-SwiftUI
+https://github.com/SwiftlyCoded/Spotify-Clone-SwiftUI
+
+
+===== VIDEO =====
+
+Netflix
+https://github.com/qeude/Notflix
+
+YouTube Music
+https://github.com/barisozgenn/YoutubeMusicClone-SwiftUI-UIKit
+
+YouTube
+https://github.com/milika/SmartTubeIOS
+
+Prime Video
+https://github.com/yagizdo/PrimeVideoDesignWithSwift
+
+
+===== IA =====
+
+ChatGPT
+https://github.com/acalderon20/chatGPT_clone
+
+Grok
+grok_clone_v1.zip (local)
+
+
+===== FINANCE =====
+
+Banque
+https://github.com/Pankajrana01/SuperWallet-SwiftUI
+https://github.com/govardhansbhati/pocketpulse
+
+PayPal
+https://github.com/pikkukurkku/PayPalClone
+
+Coinbase / Binance
+https://github.com/RedDragonJ/Swift-Learning/tree/main/SwiftUIAndCoinbase (a verifier)
+https://www.patreon.com/sopheamenvan/posts/build-phantom-on-124537380
+
+
+===== SHOPPING & MOBILITE =====
+
+Amazon
+https://github.com/Djallil14/Amazing.ca-Amazon-SwiftUI-Clone
+https://github.com/404ibra/AmazonClone
+
+Uber
+https://github.com/Huss3n/UberSwiftUI
+https://github.com/WorkWithAfridi/SwiftUI-iUber_A-Uber-Clone
+
+Uber Eats
+(vide)
+
+Waze
+https://github.com/GGCIRILLO/Waze-Clone-NC1
+
+
+===== VOYAGE =====
+
+AirBNB
+https://github.com/piwien/Airbnb-Clone
+
+Hotel
+(vide)
+
+Flighty
+https://github.com/chrisfree/flightySwiftUI
+
+Train
+(vide)
+
+
+===== UTILITAIRES =====
+
+Fichiers
+(vide)
+
+Plans
+https://github.com/karanb03/iOS-map-clone
+
+
+===== ZIPS LOCAUX (21 au total — a envoyer) =====
+grok_clone_v1.zip
+(+ 20 autres a lister)
+
+
+===== REMARQUES =====
+
+

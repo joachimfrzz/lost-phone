@@ -5,7 +5,7 @@ import SwiftUI
 // Généré par generate_awesome_apps_v3.py — composants extraits de la spec
 struct LpspAwesomePayPalView: View {
     var body: some View {
-        LpspPayPalShowroomRoot()
+        LpspPayPalShowroomRoot(store: LpspPayPalStore())
     }
 }
 
@@ -339,158 +339,553 @@ fileprivate struct LpspPayPalStatusPill: View {
 
 
 
-// MARK: - Écrans showroom
+// MARK: - Showroom data & store
 
-private struct LpspPayPalShowroomRoot: View {
-    @State private var selectedTab = 0
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            LpspPayPalSpectrHomeTabScreen()
-                .tabItem { Label("Home", systemImage: "house") }
-                .tag(0)
-            LpspPayPalFinanceHomeTabScreen()
-                .tabItem { Label("Send", systemImage: "paperplane") }
-                .tag(1)
-            LpspPayPalFinanceHomeTabScreen()
-                .tabItem { Label("Wallet", systemImage: "wallet.pass") }
-                .tag(2)
-            LpspPayPalFinanceHomeTabScreen()
-                .tabItem { Label("Activity", systemImage: "clock") }
-                .tag(3)
-            LpspPayPalFinanceHomeTabScreen()
-                .tabItem { Label("Finances", systemImage: "chart.line.uptrend.xyaxis") }
-                .tag(4)
+private enum LpspPayPalShowroomTab: String, CaseIterable, Identifiable {
+    case home, send, wallet, activity, finances
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .home: "Home"
+        case .send: "Send"
+        case .wallet: "Wallet"
+        case .activity: "Activity"
+        case .finances: "Finances"
         }
-        .tint(LpspPayPalTokens.ppTextPrimary)
-        
     }
-}
 
-
-private struct LpspPayPalGenericTabScreen: View {
-    let title: String
-    let tabIndex: Int
-    var body: some View {
-        NavigationStack {
-            List(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(LpspPayPalTokens.ppTextPrimary.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                        .overlay(Image(systemName: "app.fill").foregroundStyle(LpspPayPalTokens.ppTextPrimary))
-                    VStack(alignment: .leading) {
-                        Text("\(title) \(i + 1)").font(.system(size: 17, weight: .semibold))
-                        Text("Contenu démo").font(.system(size: 14)).foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .navigationTitle(title)
+    var icon: String {
+        switch self {
+        case .home: "house.fill"
+        case .send: "paperplane.fill"
+        case .wallet: "wallet.pass.fill"
+        case .activity: "clock.fill"
+        case .finances: "chart.line.uptrend.xyaxis"
         }
     }
 }
 
+private enum LpspPayPalActivityFilter: String, CaseIterable, Identifiable {
+    case all, sent, received, pending
 
-private struct LpspPayPalFinanceHomeTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Solde total").font(.subheadline).foregroundStyle(.secondary)
-                        Text("2 847,50 €").font(.system(size: 36, weight: .bold))
-                    }
-                    .padding(.horizontal)
+    var id: String { rawValue }
 
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(LinearGradient(colors: [LpspPayPalTokens.ppTextPrimary, LpspPayPalTokens.ppTextPrimary.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(height: 180)
-                        .overlay(alignment: .bottomLeading) {
-                            Text("•••• 4829").font(.title2.bold()).foregroundStyle(.white).padding(20)
-                        }
-                        .padding(.horizontal)
-
-                    Text("Transactions").font(.headline).padding(.horizontal)
-
-                    ForEach(LpspPayPalDemoTx.items) { tx in
-                        HStack {
-                            Circle().fill(LpspPayPalTokens.ppTextPrimary.opacity(0.15)).frame(width: 40, height: 40)
-                            VStack(alignment: .leading) { Text(tx.title); Text(tx.date).font(.caption).foregroundStyle(.secondary) }
-                            Spacer()
-                            Text(tx.amount).font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(tx.amount.hasPrefix("-") ? Color.primary : Color.green)
-                        }
-                        .padding(.horizontal)
-                    }
-
-                }
-                .padding(.vertical)
-            }
-            .background(LpspPayPalTokens.ppCanvas.ignoresSafeArea())
-            .navigationTitle("Accueil")
+    var label: String {
+        switch self {
+        case .all: "All"
+        case .sent: "Sent"
+        case .received: "Received"
+        case .pending: "Pending"
         }
     }
 }
 
-private struct LpspPayPalFinanceCardsTabScreen: View {
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    RoundedRectangle(cornerRadius: 16).fill(LpspPayPalTokens.ppTextPrimary).frame(height: 180).padding(.horizontal)
-                    Text("Gérez vos cartes").font(.headline)
-                }
-                .padding(.vertical)
-            }
-            .background(LpspPayPalTokens.ppCanvas.ignoresSafeArea())
-            .navigationTitle("Cartes")
-        }
-    }
+private struct LpspPayPalActivity: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let subtitle: String
+    let amount: Double
+    let direction: LpspPayPalActivityRow.LpspPayPalDirection
+    let icon: LpspPayPalActivityRow.LpspPayPalActivityIcon
+    let filter: LpspPayPalActivityFilter
 }
 
-private struct LpspPayPalDemoTx: Identifiable {
-    let id = UUID()
-    let title: String
-    let date: String
-    let amount: String
-    let incoming: Bool
-    let icon: String
-    static let items: [LpspPayPalDemoTx] = [
-        .init(title: "Carrefour", date: "Aujourd'hui", amount: "-42,30 €", incoming: false, icon: "cart.fill"),
-        .init(title: "Virement reçu", date: "Hier", amount: "+150,00 €", incoming: true, icon: "arrow.down.circle.fill"),
+private enum LpspPayPalShowroomData {
+    static let activities: [LpspPayPalActivity] = [
+        LpspPayPalActivity(
+            id: "sarah",
+            name: "Sarah Kim",
+            subtitle: "Today, 2:18 PM · Completed",
+            amount: 42.00,
+            direction: .received,
+            icon: .received,
+            filter: .received
+        ),
+        LpspPayPalActivity(
+            id: "marcus",
+            name: "Marcus Lin",
+            subtitle: "Yesterday · Completed",
+            amount: 18.50,
+            direction: .sent,
+            icon: .sent,
+            filter: .sent
+        ),
+        LpspPayPalActivity(
+            id: "wholefoods",
+            name: "Whole Foods Market",
+            subtitle: "Dec 1 · Visa debit ·· 4242",
+            amount: 67.84,
+            direction: .sent,
+            icon: .card,
+            filter: .sent
+        ),
+        LpspPayPalActivity(
+            id: "cashback",
+            name: "Cashback Reward",
+            subtitle: "Nov 28 · From PayPal",
+            amount: 3.42,
+            direction: .received,
+            icon: .reward,
+            filter: .received
+        ),
+        LpspPayPalActivity(
+            id: "pending",
+            name: "Alex Mercer",
+            subtitle: "Pending · Requested today",
+            amount: 25.00,
+            direction: .received,
+            icon: .received,
+            filter: .pending
+        ),
     ]
 }
 
+@MainActor
+fileprivate final class LpspPayPalStore: ObservableObject {
+    @Published var selectedTab: LpspPayPalShowroomTab = .home
+    @Published var balance: Double = 1247.92
+    @Published var activityFilter: LpspPayPalActivityFilter = .all
+    @Published var activities: [LpspPayPalActivity] = LpspPayPalShowroomData.activities
+    @Published var sendAmount = "25"
+    @Published var showTransferSheet = false
 
-private struct LpspPayPalSpectrHomeTabScreen: View {
+    var filteredActivities: [LpspPayPalActivity] {
+        switch activityFilter {
+        case .all:
+            return activities.filter { $0.filter != .pending || activityFilter == .pending }
+        case .sent, .received, .pending:
+            return activities.filter { $0.filter == activityFilter }
+        }
+    }
+
+    func setFilter(_ filter: LpspPayPalActivityFilter) {
+        activityFilter = filter
+    }
+
+    func addMoney() {
+        balance += 100
+        activities.insert(
+            LpspPayPalActivity(
+                id: "add-\(activities.count)",
+                name: "Added money",
+                subtitle: "Just now · Completed",
+                amount: 100,
+                direction: .received,
+                icon: .received,
+                filter: .received
+            ),
+            at: 0
+        )
+    }
+
+    func transferMoney() {
+        balance -= 50
+        activities.insert(
+            LpspPayPalActivity(
+                id: "transfer-\(activities.count)",
+                name: "Bank transfer",
+                subtitle: "Just now · Completed",
+                amount: 50,
+                direction: .sent,
+                icon: .sent,
+                filter: .sent
+            ),
+            at: 0
+        )
+        showTransferSheet = false
+    }
+
+    func sendMoney() {
+        let value = Double(sendAmount) ?? 0
+        guard value > 0 else { return }
+        balance -= value
+        activities.insert(
+            LpspPayPalActivity(
+                id: "send-\(activities.count)",
+                name: "Marcus Lin",
+                subtitle: "Just now · Completed",
+                amount: value,
+                direction: .sent,
+                icon: .sent,
+                filter: .sent
+            ),
+            at: 0
+        )
+        sendAmount = "25"
+        selectedTab = .home
+    }
+}
+
+// MARK: - Écrans showroom
+
+private struct LpspPayPalShowroomRoot: View {
+    @ObservedObject var store: LpspPayPalStore
+
     var body: some View {
         VStack(spacing: 0) {
-                Text("P").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                Text("P").font(.system(size: 14, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-            HStack(spacing: 16) {
+            Group {
+                switch store.selectedTab {
+                case .home:
+                    LpspPayPalHomeTabScreen(store: store)
+                case .send:
+                    LpspPayPalSendTabScreen(store: store)
+                case .wallet:
+                    LpspPayPalWalletTabScreen(store: store)
+                case .activity:
+                    LpspPayPalActivityTabScreen(store: store)
+                case .finances:
+                    LpspPayPalFinancesTabScreen(store: store)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            } .foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                Text("PayPal balance").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.173, green: 0.180, blue: 0.184))
-                Text("$1,247.92").font(.system(size: 36.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                    Text("Add Money").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                    Text("Transfer").font(.system(size: 13.0, weight: .bold)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                Text("All").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                Text("Sent").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                Text("Received").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                Text("Pending").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                        Text("Sarah Kim").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                        Text("Today, 2:18 PM · Completed").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                    Text("+$42.00").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                        Text("Marcus Lin").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                        Text("Yesterday · Completed").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                    Text("$18.50").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                        Text("Whole Foods Market").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                        Text("Dec 1 · Visa debit ·· 4242").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                    Text("$67.84").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                        Text("Cashback Reward").font(.system(size: 14.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                        Text("Nov 28 · From PayPal").font(.system(size: 12.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
-                    Text("+$3.42").font(.system(size: 15.0, weight: .regular)).foregroundStyle(Color(red: 0.000, green: 0.078, blue: 0.208))
+            LpspPayPalLabeledTabBar(store: store)
         }
-        .background(Color(red: 1.000, green: 1.000, blue: 1.000).ignoresSafeArea())
+        .background(LpspPayPalTokens.ppCanvas.ignoresSafeArea())
+        .sheet(isPresented: $store.showTransferSheet) {
+            LpspPayPalTransferSheet(store: store)
+        }
+    }
+}
+
+private struct LpspPayPalLabeledTabBar: View {
+    @ObservedObject var store: LpspPayPalStore
+
+    var body: some View {
+        HStack {
+            ForEach(LpspPayPalShowroomTab.allCases) { tab in
+                Button {
+                    store.selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 20, weight: store.selectedTab == tab ? .semibold : .regular))
+                        Text(tab.title)
+                            .font(LpspPayPalFonts.ppTab.weight(store.selectedTab == tab ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                    .foregroundStyle(
+                        store.selectedTab == tab
+                            ? LpspPayPalTokens.payPalBlue
+                            : LpspPayPalTokens.ppTextMuted
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
+        .background(
+            LpspPayPalTokens.ppCanvas
+                .overlay(
+                    Rectangle()
+                        .fill(LpspPayPalTokens.ppDivider)
+                        .frame(height: 1),
+                    alignment: .top
+                )
+        )
+    }
+}
+
+private struct LpspPayPalSpectrTopBar: View {
+    var body: some View {
+        HStack {
+            LpspPayPalPayPalWordmark(size: 28)
+
+            Spacer()
+
+            HStack(spacing: 20) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                Image(systemName: "bell")
+                    .font(.system(size: 22))
+                    .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 48)
+    }
+}
+
+private struct LpspPayPalShowroomBalanceCard: View {
+    @ObservedObject var store: LpspPayPalStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("PayPal balance")
+                .font(LpspPayPalFonts.ppActivitySub)
+                .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+
+            Text(store.balance, format: .currency(code: "USD"))
+                .font(LpspPayPalFonts.ppBalanceHero.weight(.bold))
+                .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                .monospacedDigit()
+                .contentTransition(.numericText())
+                .animation(.snappy, value: store.balance)
+
+            HStack(spacing: 12) {
+                Button(action: { store.addMoney() }) {
+                    Text("Add Money")
+                        .font(LpspPayPalFonts.ppButton)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(Capsule().fill(LpspPayPalTokens.payPalBlue))
+                }
+                .buttonStyle(.plain)
+
+                Button(action: { store.showTransferSheet = true }) {
+                    Text("Transfer")
+                        .font(LpspPayPalFonts.ppButtonSmall.weight(.semibold))
+                        .foregroundStyle(LpspPayPalTokens.payPalBlue)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .overlay(
+                            Capsule()
+                                .stroke(LpspPayPalTokens.payPalBlue, lineWidth: 1.5)
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(LpspPayPalTokens.ppCanvas)
+                .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(LpspPayPalTokens.ppDivider, lineWidth: 1)
+        )
+        .padding(.horizontal, 16)
+    }
+}
+
+private struct LpspPayPalActivityFilterRow: View {
+    @ObservedObject var store: LpspPayPalStore
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(LpspPayPalActivityFilter.allCases) { filter in
+                    LpspPayPalActivityFilterChip(
+                        label: filter.label,
+                        isSelected: store.activityFilter == filter
+                    ) {
+                        store.setFilter(filter)
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .padding(.vertical, 12)
+    }
+}
+
+private struct LpspPayPalActivityList: View {
+    let activities: [LpspPayPalActivity]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(activities) { activity in
+                LpspPayPalActivityRow(
+                    name: activity.name,
+                    subtitle: activity.subtitle,
+                    amount: activity.amount,
+                    direction: activity.direction,
+                    icon: activity.icon
+                )
+            }
+        }
+    }
+}
+
+private struct LpspPayPalHomeTabScreen: View {
+    @ObservedObject var store: LpspPayPalStore
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                LpspPayPalSpectrTopBar()
+                LpspPayPalShowroomBalanceCard(store: store)
+                LpspPayPalActivityFilterRow(store: store)
+                LpspPayPalActivityList(activities: store.filteredActivities)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspPayPalSendTabScreen: View {
+    @ObservedObject var store: LpspPayPalStore
+
+    var body: some View {
+        VStack(spacing: 24) {
+            LpspPayPalSpectrTopBar()
+
+            Spacer()
+
+            VStack(spacing: 8) {
+                Text("USD")
+                    .font(LpspPayPalFonts.ppMeta)
+                    .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Text("$")
+                        .font(.system(size: 40, weight: .bold))
+                        .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+                    TextField("0", text: $store.sendAmount)
+                        .font(LpspPayPalFonts.ppSendAmountHero.weight(.bold))
+                        .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.leading)
+                }
+            }
+
+            Spacer()
+
+            LpspPayPalPayPalPrimaryButton(label: sendLabel) {
+                store.sendMoney()
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+    }
+
+    private var sendLabel: String {
+        let value = Double(store.sendAmount) ?? 0
+        return "Send \(value.formatted(.currency(code: "USD")))"
+    }
+}
+
+private struct LpspPayPalWalletTabScreen: View {
+    @ObservedObject var store: LpspPayPalStore
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                LpspPayPalSpectrTopBar()
+
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: [LpspPayPalTokens.payPalBlue, LpspPayPalTokens.payPalSky],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(height: 180)
+                    .overlay(alignment: .bottomLeading) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("PayPal Debit")
+                                .font(LpspPayPalFonts.ppCardTitle.weight(.semibold))
+                                .foregroundStyle(.white)
+                            Text("•••• 4242")
+                                .font(LpspPayPalFonts.ppMeta)
+                                .foregroundStyle(.white.opacity(0.85))
+                        }
+                        .padding(20)
+                    }
+                    .padding(.horizontal, 16)
+
+                LpspPayPalShowroomBalanceCard(store: store)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspPayPalActivityTabScreen: View {
+    @ObservedObject var store: LpspPayPalStore
+
+    var body: some View {
+        VStack(spacing: 0) {
+            LpspPayPalSpectrTopBar()
+            LpspPayPalActivityFilterRow(store: store)
+
+            ScrollView {
+                LpspPayPalActivityList(activities: store.filteredActivities)
+            }
+        }
+    }
+}
+
+private struct LpspPayPalFinancesTabScreen: View {
+    @ObservedObject var store: LpspPayPalStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                LpspPayPalSpectrTopBar()
+
+                Text("Monthly summary")
+                    .font(LpspPayPalFonts.ppSectionHeader.weight(.semibold))
+                    .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                    .padding(.horizontal, 16)
+
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(LpspPayPalTokens.ppSurfaceGray)
+                    .frame(height: 160)
+                    .overlay {
+                        VStack(spacing: 8) {
+                            Text("Spending")
+                                .font(LpspPayPalFonts.ppMeta)
+                                .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+                            Text("$286.34")
+                                .font(LpspPayPalFonts.ppBalanceHero.weight(.bold))
+                                .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+
+                Text("Recent activity")
+                    .font(LpspPayPalFonts.ppSectionHeader.weight(.semibold))
+                    .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+                    .padding(.horizontal, 16)
+
+                LpspPayPalActivityList(activities: Array(store.activities.prefix(3)))
+            }
+            .padding(.bottom, 16)
+        }
+    }
+}
+
+private struct LpspPayPalTransferSheet: View {
+    @ObservedObject var store: LpspPayPalStore
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Transfer to bank")
+                    .font(LpspPayPalFonts.ppSectionHeader.weight(.semibold))
+                    .foregroundStyle(LpspPayPalTokens.ppTextPrimary)
+
+                Text("Move $50.00 to your linked checking account.")
+                    .font(LpspPayPalFonts.ppBody)
+                    .foregroundStyle(LpspPayPalTokens.ppTextMuted)
+
+                LpspPayPalPayPalPrimaryButton(label: "Transfer $50.00") {
+                    store.transferMoney()
+                    dismiss()
+                }
+
+                Spacer()
+            }
+            .padding(16)
+            .background(LpspPayPalTokens.ppCanvas)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 }
 

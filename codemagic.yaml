@@ -26,6 +26,10 @@ workflows:
           include: true
         - pattern: swiftui
           include: true
+        - pattern: cursor/vendored-clones-a052
+          include: true
+        - pattern: "cursor/**"
+          include: true
 
     scripts:
       - name: Install XcodeGen

@@ -38,5 +38,5 @@ struct VendoredInstagramStoryView: View {
 }
 
 #Preview {
-    VendoredInstagramStoryView(profileUrl: userDataCurrent.profileImage, storyText: userDataCurrent.fullname)
+    VendoredInstagramStoryView(profileUrl: vendoredInstagramUserDataCurrent.profileImage, storyText: vendoredInstagramUserDataCurrent.fullname)
 }

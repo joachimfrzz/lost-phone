@@ -12,7 +12,7 @@ import Kingfisher
 
 struct VendoredThreadsHomeView: View {
     // get post data from model
-    var postDatas:[VendoredThreadsPostResponse] = postData
+    var postDatas:[VendoredThreadsPostResponse] = vendoredThreadsPostData
     var body: some View {
         NavigationStack {
             ScrollView {

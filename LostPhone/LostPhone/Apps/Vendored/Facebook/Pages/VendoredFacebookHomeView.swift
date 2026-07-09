@@ -131,7 +131,7 @@ struct VendoredFacebookProfileWhatIsOnYourMindView:View {
 }
 
 struct VendoredFacebookStoryView:View {
-    var stories:[VendoredFacebookStoryResponse] = storyData
+    var stories:[VendoredFacebookStoryResponse] = vendoredFacebookStoryData
     var body: some View {
         VStack (spacing:12){
             // tab story, reels

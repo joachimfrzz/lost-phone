@@ -22,5 +22,5 @@ struct VendoredMessengerProfileImageView: View {
 }
 
 #Preview {
-    VendoredMessengerProfileImageView(profileImageUrl: userData[0].imgUrl, size: 40)
+    VendoredMessengerProfileImageView(profileImageUrl: vendoredMessengerUserData[0].imgUrl, size: 40)
 }

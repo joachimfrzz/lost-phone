@@ -42,5 +42,5 @@ struct VendoredInstagramUserMessagingRowView: View {
 }
 
 #Preview {
-    VendoredInstagramUserMessagingRowView(profileImageUrl: userDataCurrent.profileImage, username: userDataCurrent.fullname, lastModifierDate: "1h ago")
+    VendoredInstagramUserMessagingRowView(profileImageUrl: vendoredInstagramUserDataCurrent.profileImage, username: vendoredInstagramUserDataCurrent.fullname, lastModifierDate: "1h ago")
 }

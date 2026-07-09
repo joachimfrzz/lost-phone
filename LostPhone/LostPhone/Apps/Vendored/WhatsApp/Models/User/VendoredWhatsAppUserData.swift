@@ -9,7 +9,7 @@ import Foundation
 
 let currentUserData:VendoredWhatsAppUserResponse = VendoredWhatsAppUserResponse(id: UUID(), name: "Jane Smith", profileUrl: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=600")
 
-let userData:[VendoredWhatsAppUserResponse] = [
+let vendoredWhatsAppUserData:[VendoredWhatsAppUserResponse] = [
   VendoredWhatsAppUserResponse(id: UUID(), name: "John Doe", profileUrl: "https://images.pexels.com/photos/697509/pexels-photo-697509.jpeg?auto=compress&cs=tinysrgb&w=600"),
   VendoredWhatsAppUserResponse(id: UUID(), name: "Alice Johnson", profileUrl: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600"),
   VendoredWhatsAppUserResponse(id: UUID(), name: "+1 234 567 8901", profileUrl: "https://images.pexels.com/photos/1542085/pexels-photo-1542085.jpeg?auto=compress&cs=tinysrgb&w=600"),

@@ -155,7 +155,7 @@ struct VendoredLinkedInMessageView: View {
 }
 
 struct VendoredLinkedInFocusedView: View {
-    var messageDatas:[VendoredLinkedInMessageResponse] = messagesData
+    var messageDatas:[VendoredLinkedInMessageResponse] = vendoredLinkedInMessagesData
     var body: some View {
         LazyVStack (spacing:10){
             ForEach(messageDatas) { message in

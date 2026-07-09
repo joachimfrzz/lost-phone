@@ -8,7 +8,7 @@
 import Foundation
 
 
-var userDataCurrent: VendoredLinkedInUserLinkedInResponse = VendoredLinkedInUserLinkedInResponse(
+var vendoredLinkedInUserDataCurrent: VendoredLinkedInUserLinkedInResponse = VendoredLinkedInUserLinkedInResponse(
     id: UUID(),
     fullname: "Samantha Carter",
     type: 1,

@@ -22,13 +22,13 @@ struct VendoredInstagramSaveLoginInfoView: View {
                         .padding(.bottom, 5)
                     Text("We'll save the login info for ")
                         .font(.body) +
-                    Text(userDataCurrent.username)
+                    Text(vendoredInstagramUserDataCurrent.username)
                         .font(.body)
                         .fontWeight(.semibold) +
                     Text(", so you won't need to enter it on your iCloud devices next time you log in.")
                 }
                 Spacer()
-                VendoredInstagramCircleAvatarProfileBigView(profileUrl: userDataCurrent.profileImage, width: 200, height: 200)
+                VendoredInstagramCircleAvatarProfileBigView(profileUrl: vendoredInstagramUserDataCurrent.profileImage, width: 200, height: 200)
                 Spacer()
                 VStack (spacing: 12){
                     NavigationLink(destination: VendoredInstagramRootApp()){

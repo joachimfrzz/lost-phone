@@ -7,13 +7,13 @@
 import Foundation
 
 // assuming this is current user login
-var userDataCurrent: VendoredInstagramUserInstagramResponse =
+var vendoredInstagramUserDataCurrent: VendoredInstagramUserInstagramResponse =
 VendoredInstagramUserInstagramResponse(id: 15, username: "style_icon", profileImage: "https://images.unsplash.com/profile-1627609241345-8fb41ec24d95image?bg=fff&crop=faces&dpr=1&h=150&w=150&auto=format&fit=crop&q=60&ixlib=rb-4.0.3", fullname: "Stella Style", pronouns: "she/her", bio: "Fashionista | Street style star | Fashion tips for every season", link: "https://example.com", gender: "Female", totalPosts: 600, totalFollowers: 7600, totalFollowing: 534)
 
 
 
 // user list
-var userData: [VendoredInstagramUserInstagramResponse] = [
+var vendoredInstagramUserData: [VendoredInstagramUserInstagramResponse] = [
     VendoredInstagramUserInstagramResponse(id: 1, username: "artlover88", profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fHByb2ZpbGV8ZW58MHx8MHx8fDA%3D", fullname: "Alex Johnson", pronouns: "they/them", bio: "Art enthusiast 🎨 | Travel junkie 🌍 | Coffee lover ☕", link: "https://example.com", gender: "Non-binary", totalPosts: 312, totalFollowers: 1503, totalFollowing: 487),
     VendoredInstagramUserInstagramResponse(id: 2, username: "mountain_adventurer", profileImage: "https://images.unsplash.com/photo-1517070208541-6ddc4d3efbcb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzZ8fHByb2ZpbGV8ZW58MHx8MHx8fDA%3D", fullname: "Chris Mountain", pronouns: "he/him", bio: "Exploring high peaks 🏔️ | Photographer 📸", link: "https://example.com", gender: "Male", totalPosts: 210, totalFollowers: 2200, totalFollowing: 300),
     VendoredInstagramUserInstagramResponse(id: 3, username: "tech_guru", profileImage: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDJ8fHByb2ZpbGV8ZW58MHx8MHx8fDA%3D", fullname: "Samantha Tech", pronouns: "she/her", bio: "Tech enthusiast, blogger, and coder. Follow me for tech tips.", link: "https://example.com", gender: "Female", totalPosts: 134, totalFollowers: 1820, totalFollowing: 411),

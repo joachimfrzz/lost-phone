@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct VendoredInstagramEditProfileView: View {
-    @State private var nameTextfield = userDataCurrent.fullname
-    @State private var usernameTextfield = userDataCurrent.username
+    @State private var nameTextfield = vendoredInstagramUserDataCurrent.fullname
+    @State private var usernameTextfield = vendoredInstagramUserDataCurrent.username
     @State private var pronounsTextfield = ""
     @State private var bioTextfield = ""
     @State private var addLinkTextfield = ""
@@ -22,7 +22,7 @@ struct VendoredInstagramEditProfileView: View {
             ScrollView {
                 VStack (spacing: 14){
                     // image profile view
-                    VendoredInstagramProfileImageView(profileImage: userDataCurrent.profileImage, size: 100)
+                    VendoredInstagramProfileImageView(profileImage: vendoredInstagramUserDataCurrent.profileImage, size: 100)
                     Button {
                         
                     }label: {

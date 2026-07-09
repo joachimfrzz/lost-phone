@@ -7,7 +7,7 @@
 
 import Foundation
 
-let messagesData: [VendoredInstagramMessagingResponse] = [
+let vendoredInstagramMessagesData: [VendoredInstagramMessagingResponse] = [
     VendoredInstagramMessagingResponse(id: 1, text: "Hey! How's it going?", isMe: true),
     VendoredInstagramMessagingResponse(id: 2, text: "Hi! I'm doing well, thanks. How about you?", isMe: false),
     VendoredInstagramMessagingResponse(id: 3, text: "I'm good too. Just working on a new project at the moment.", isMe: true),

@@ -7,7 +7,7 @@
 
 import Foundation
 
-let postData: [VendoredLinkedInPostResponse] = [
+let vendoredLinkedInPostData: [VendoredLinkedInPostResponse] = [
     VendoredLinkedInPostResponse(
         id: UUID(),
         user: userLinkedInData[2],

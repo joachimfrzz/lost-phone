@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct VendoredInstagramHomeView: View {
-    let storiesData:[VendoredInstagramStoryResponse] = storyData
+    let storiesData:[VendoredInstagramStoryResponse] = vendoredInstagramStoryData
     let postData:[VendoredInstagramPostResponse] = postsData
     
     
@@ -86,7 +86,7 @@ struct VendoredInstagramHomeProfileViewAndStory: View {
     var body: some View {
         VStack (spacing: 5){
             ZStack {
-                KFImage(URL(string: userDataCurrent.profileImage))
+                KFImage(URL(string: vendoredInstagramUserDataCurrent.profileImage))
                     .resizable()
                     .scaledToFill()
                     .clipped()

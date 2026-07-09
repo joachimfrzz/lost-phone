@@ -8,7 +8,7 @@
 import Foundation
 
 
-let tabData:[VendoredUberTabResponse] = [
+let vendoredUberTabData:[VendoredUberTabResponse] = [
     VendoredUberTabResponse(title: "Rides", imageUrl: "tab_img_1"),
     VendoredUberTabResponse(title: "Eats", imageUrl: "tab_img_2")
 ]

@@ -23,5 +23,5 @@ struct VendoredSnapchatProfileImageView: View {
 }
 
 #Preview {
-    VendoredSnapchatProfileImageView(profileImage: userDataCurrent.profileImage, size: 40)
+    VendoredSnapchatProfileImageView(profileImage: vendoredSnapchatUserDataCurrent.profileImage, size: 40)
 }

@@ -24,5 +24,5 @@ struct VendoredInstagramCircleAvatarProfileBigView: View {
 }
 
 #Preview {
-    VendoredInstagramCircleAvatarProfileBigView(profileUrl: userDataCurrent.profileImage, width: 200, height: 200)
+    VendoredInstagramCircleAvatarProfileBigView(profileUrl: vendoredInstagramUserDataCurrent.profileImage, width: 200, height: 200)
 }

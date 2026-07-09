@@ -99,7 +99,7 @@ struct VendoredMessengerChatDetailView: View {
 }
 
 #Preview {
-    VendoredMessengerChatDetailView(chat: chatData[2])
+    VendoredMessengerChatDetailView(chat: vendoredMessengerChatData[2])
 }
 
 struct VendoredMessengerProfileView:View {

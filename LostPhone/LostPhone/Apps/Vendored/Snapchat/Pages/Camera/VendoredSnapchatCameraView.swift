@@ -75,7 +75,7 @@ struct VendoredSnapchatProfileAndOptionIconsView: View {
     var body: some View {
         HStack (alignment: .top){
             HStack {
-                VendoredSnapchatProfileImageView(profileImage: userDataCurrent.profileImage, size: 35)
+                VendoredSnapchatProfileImageView(profileImage: vendoredSnapchatUserDataCurrent.profileImage, size: 35)
                     .overlay(Circle().stroke(Color.white, lineWidth: 3))
                 VendoredSnapchatIconButtonOpacity(iconName: "magnifyingglass")
             }

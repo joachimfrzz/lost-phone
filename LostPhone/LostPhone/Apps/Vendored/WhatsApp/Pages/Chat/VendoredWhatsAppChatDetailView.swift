@@ -164,7 +164,7 @@ struct VendoredWhatsAppChatDetailView: View {
 }
 
 #Preview {
-    VendoredWhatsAppChatDetailView(chatResponse: chatData[0])
+    VendoredWhatsAppChatDetailView(chatResponse: vendoredWhatsAppChatData[0])
 }
 
 struct VendoredWhatsAppheaderSettingView: View {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct VendoredWhatsAppChatView: View {
-    let chatAllData:[VendoredWhatsAppChatResponse] = chatData
+    let chatAllData:[VendoredWhatsAppChatResponse] = vendoredWhatsAppChatData
     
     var body: some View {
         NavigationStack {

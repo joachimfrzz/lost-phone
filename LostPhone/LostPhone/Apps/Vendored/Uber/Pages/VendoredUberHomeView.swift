@@ -10,7 +10,7 @@ import SwiftUI
 import Kingfisher
 
 struct VendoredUberHomeView: View {
-    var tabs:[VendoredUberTabResponse] = tabData
+    var tabs:[VendoredUberTabResponse] = vendoredUberTabData
     @State private var selectedIndex = 1
     // for smooth animation
     @Namespace private var animation

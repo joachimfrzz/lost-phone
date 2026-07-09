@@ -5,7 +5,7 @@ struct VendoredSpotifyReelView: View {
     @Binding var showTabBar: Bool
     @Binding var selected: VendoredSpotifySpotifyTabItem
     
-    @State private var reels: [VendoredSpotifyReel] = reelsData
+    @State private var reels: [VendoredSpotifyReel] = vendoredSpotifyReelsData
     @State private var likedCounter: [VendoredSpotifyLike] = []
     @State private var toasts: [VendoredSpotifyToast] = []
     

@@ -82,7 +82,7 @@ struct VendoredMessengerTextFieldSearchView:View {
 
 struct VendoredMessengerStoryView:View {
     // get story data from story data
-    var storyDatas:[VendoredMessengerStoryResponse] = storyData
+    var storyDatas:[VendoredMessengerStoryResponse] = vendoredMessengerStoryData
     var body: some View {
         // add scroll to right
         ScrollView (.horizontal, showsIndicators: false){
@@ -161,7 +161,7 @@ struct VendoredMessengerStoryRowView:View {
 }
 
 struct VendoredMessengerChatHistoryView:View {
-    var chatDatas:[VendoredMessengerChatResponse] = chatData
+    var chatDatas:[VendoredMessengerChatResponse] = vendoredMessengerChatData
     
     var body: some View {
         LazyVStack (spacing:20){

@@ -7,7 +7,7 @@
 import Foundation
 
 
-let messagesData: [VendoredLinkedInMessageResponse] = [
+let vendoredLinkedInMessagesData: [VendoredLinkedInMessageResponse] = [
     VendoredLinkedInMessageResponse(
         id: UUID(),
         user: userLinkedInData[0],

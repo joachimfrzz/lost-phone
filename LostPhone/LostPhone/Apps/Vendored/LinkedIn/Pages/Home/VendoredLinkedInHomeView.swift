@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 struct VendoredLinkedInHomeView: View {
    
-    var postAllDatas:[VendoredLinkedInPostResponse] = postData
+    var postAllDatas:[VendoredLinkedInPostResponse] = vendoredLinkedInPostData
     
    
     

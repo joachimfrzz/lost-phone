@@ -67,7 +67,7 @@ struct VendoredLinkedInRootApp: View {
             .toolbar {
                 // profile
                 ToolbarItem(placement: .topBarLeading) {
-                    VendoredLinkedInProfileImageView(profileImage: userDataCurrent.profileImage, size: 35)
+                    VendoredLinkedInProfileImageView(profileImage: vendoredLinkedInUserDataCurrent.profileImage, size: 35)
                 }
                 
                 // search textfield

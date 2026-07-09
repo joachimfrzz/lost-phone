@@ -97,7 +97,7 @@ struct VendoredLinkedInMessageDetailView: View {
 }
 
 #Preview {
-    VendoredLinkedInMessageDetailView(message: messagesData[0])
+    VendoredLinkedInMessageDetailView(message: vendoredLinkedInMessagesData[0])
 }
 
 struct VendoredLinkedInProfileHeaderView: View {
@@ -183,11 +183,11 @@ struct VendoredLinkedInMessageViewRow: View {
     var messageDetail: VendoredLinkedInMessageDetailResponse
     var body: some View {
         HStack (alignment: .top,spacing:12){
-            VendoredLinkedInProfileImageView(profileImage: messageDetail.isMe ? userDataCurrent.profileImage : message.user.profileImage, size: 40)
+            VendoredLinkedInProfileImageView(profileImage: messageDetail.isMe ? vendoredLinkedInUserDataCurrent.profileImage : message.user.profileImage, size: 40)
                 .padding(.top,5)
             VStack (alignment: .leading){
                 HStack (spacing: 0){
-                    Text(messageDetail.isMe ? userDataCurrent.fullname : message.user.fullname)
+                    Text(messageDetail.isMe ? vendoredLinkedInUserDataCurrent.fullname : message.user.fullname)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     Text(" - \(messageDetail.time)")

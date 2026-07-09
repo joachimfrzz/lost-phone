@@ -71,7 +71,7 @@ struct VendoredWhatsAppChatRowView: View {
 }
 
 #Preview {
-    VendoredWhatsAppChatRowView(chatResponse: chatData[0])
+    VendoredWhatsAppChatRowView(chatResponse: vendoredWhatsAppChatData[0])
 }
 
 struct VendoredWhatsAppIconTypeView: View {

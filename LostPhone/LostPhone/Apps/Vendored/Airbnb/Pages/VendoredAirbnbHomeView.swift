@@ -98,7 +98,7 @@ struct VendoredAirbnbSearchView:View {
 
 struct VendoredAirbnbTabsContentView:View {
     // list tabs
-    var tabs:[VendoredAirbnbTabResponse] = tabData
+    var tabs:[VendoredAirbnbTabResponse] = vendoredAirbnbTabData
     // state index
     @State private var selectedIndex = 1
     // animation

@@ -29,8 +29,8 @@ struct VendoredInstagramLandingLoginView: View {
                 
                 VStack (spacing: 30){
                     // logo and username
-                    VendoredInstagramCircleAvatarProfileBigView(profileUrl: userDataCurrent.profileImage, width: 200, height: 200)
-                    Text(userDataCurrent.username)
+                    VendoredInstagramCircleAvatarProfileBigView(profileUrl: vendoredInstagramUserDataCurrent.profileImage, width: 200, height: 200)
+                    Text(vendoredInstagramUserDataCurrent.username)
                         .font(.title)
                         .fontWeight(.semibold)
                     

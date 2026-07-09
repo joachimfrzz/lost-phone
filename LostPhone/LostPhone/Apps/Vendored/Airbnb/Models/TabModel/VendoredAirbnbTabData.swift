@@ -7,7 +7,7 @@
 
 import Foundation
 
-let tabData = [
+let vendoredAirbnbTabData = [
     VendoredAirbnbTabResponse(title: "Tiny homes", imageUrl: "https://a0.muscache.com/pictures/3271df99-f071-4ecf-9128-eb2d2b1f50f0.jpg"),
     VendoredAirbnbTabResponse(title: "Icons", imageUrl: "https://a0.muscache.com/im/pictures/mediaverse/category_icon/original/3e5243c8-4d15-4c6b-97e3-7ba2bb7bb880.png"),
     VendoredAirbnbTabResponse(title: "Lakefront", imageUrl: "https://a0.muscache.com/pictures/677a041d-7264-4c45-bb72-52bff21eb6e8.jpg"),

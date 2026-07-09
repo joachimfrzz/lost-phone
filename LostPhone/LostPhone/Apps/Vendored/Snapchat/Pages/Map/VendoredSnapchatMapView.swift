@@ -52,7 +52,7 @@ struct VendoredSnapchatProfileMapAndOptionIconsView: View {
     var body: some View {
         HStack (alignment: .top){
             HStack {
-                VendoredSnapchatProfileImageView(profileImage: userDataCurrent.profileImage, size: 35)
+                VendoredSnapchatProfileImageView(profileImage: vendoredSnapchatUserDataCurrent.profileImage, size: 35)
                     .overlay(Circle().stroke(Color.white, lineWidth: 3))
                     .shadow(color: Color.black.opacity(0.5), radius: 10, x: 0, y: 2)
                 VendoredSnapchatIconButtonOpacity(iconName: "magnifyingglass")
@@ -117,7 +117,7 @@ struct VendoredSnapchatProfileMapAndOptionIconsView: View {
 struct VendoredSnapchatEmojiView: View {
     var body: some View {
         ZStack {
-            Image(userDataCurrent.profileImage)
+            Image(vendoredSnapchatUserDataCurrent.profileImage)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 60, height: 60)
@@ -140,7 +140,7 @@ struct VendoredSnapchatEmojiView: View {
 struct VendoredSnapchatMyBitmojiPlaceFriendView: View {
     var body: some View {
         HStack (alignment: .bottom){
-            VendoredSnapchatCircleProfileTextView(image: userDataCurrent.profileImage, title: "My Bitmoji")
+            VendoredSnapchatCircleProfileTextView(image: vendoredSnapchatUserDataCurrent.profileImage, title: "My Bitmoji")
                 
             Spacer()
             VStack (spacing:14){

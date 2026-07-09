@@ -7,7 +7,7 @@
 
 import Foundation
 
-let userDataCurrent = VendoredSnapchatUserSnapchatResponse(
+let vendoredSnapchatUserDataCurrent = VendoredSnapchatUserSnapchatResponse(
     id: UUID(),
     username: "michael.scott",
     fullname: "Michael Scott",

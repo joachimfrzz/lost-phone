@@ -10,7 +10,7 @@ import SwiftUI
 struct VendoredInstagramLoginView: View {
     @Environment(\.dismiss) var dismiss
     
-    @State private var username: String = userDataCurrent.fullname
+    @State private var username: String = vendoredInstagramUserDataCurrent.fullname
     @State private var password: String = ""
     var body: some View {
         NavigationStack {

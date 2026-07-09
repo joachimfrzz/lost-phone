@@ -72,9 +72,9 @@ struct VendoredLinkedInUploadPostView: View {
 struct VendoredLinkedInProfileView: View {
     var body: some View {
         HStack {
-            VendoredLinkedInProfileImageView(profileImage: userDataCurrent.profileImage, size: 48)
+            VendoredLinkedInProfileImageView(profileImage: vendoredLinkedInUserDataCurrent.profileImage, size: 48)
             VStack (alignment: .leading,spacing:2){
-                Text(userDataCurrent.fullname)
+                Text(vendoredLinkedInUserDataCurrent.fullname)
                     .font(.headline)
                     .fontWeight(.semibold)
                 Button {

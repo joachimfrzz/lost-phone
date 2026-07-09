@@ -187,5 +187,5 @@ struct VendoredInstagramReelsVideoView: View {
 }
 
 #Preview {
-    VendoredInstagramReelsVideoView(reels: VendoredInstagramReelsResponse(id: reelsData[0].id, user: reelsData[0].user, song: reelsData[0].song, caption: reelsData[0].caption, videoUrl: reelsData[0].videoUrl, totalLikes: reelsData[0].totalLikes, totalComments: reelsData[0].totalComments, totalShares: reelsData[0].totalShares), player: AVPlayer())
+    VendoredInstagramReelsVideoView(reels: VendoredInstagramReelsResponse(id: vendoredInstagramReelsData[0].id, user: vendoredInstagramReelsData[0].user, song: vendoredInstagramReelsData[0].song, caption: vendoredInstagramReelsData[0].caption, videoUrl: vendoredInstagramReelsData[0].videoUrl, totalLikes: vendoredInstagramReelsData[0].totalLikes, totalComments: vendoredInstagramReelsData[0].totalComments, totalShares: vendoredInstagramReelsData[0].totalShares), player: AVPlayer())
 }

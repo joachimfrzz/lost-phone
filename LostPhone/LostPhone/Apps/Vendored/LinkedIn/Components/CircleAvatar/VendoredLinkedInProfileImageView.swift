@@ -22,6 +22,6 @@ struct VendoredLinkedInProfileImageView: View {
 }
 
 #Preview {
-    VendoredLinkedInProfileImageView(profileImage: userDataCurrent.profileImage, size: 40)
+    VendoredLinkedInProfileImageView(profileImage: vendoredLinkedInUserDataCurrent.profileImage, size: 40)
 }
 

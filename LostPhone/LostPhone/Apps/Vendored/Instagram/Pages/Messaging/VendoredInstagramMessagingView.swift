@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct VendoredInstagramMessagingView: View {
-    let userDataMessaging: [VendoredInstagramUserInstagramResponse] = userData
+    let userDataMessaging: [VendoredInstagramUserInstagramResponse] = vendoredInstagramUserData
     @Environment(\.dismiss)  var dismiss
     var body: some View {
         NavigationStack {
@@ -57,7 +57,7 @@ struct VendoredInstagramMessagingView: View {
                                 .foregroundStyle(.black)
                                 .padding(.top,4)
                         }
-                        Text(userDataCurrent.username)
+                        Text(vendoredInstagramUserDataCurrent.username)
                             .font(.title)
                             .fontWeight(.semibold)
                         

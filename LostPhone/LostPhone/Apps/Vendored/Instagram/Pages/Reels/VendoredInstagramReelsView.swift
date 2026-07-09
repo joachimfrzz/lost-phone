@@ -9,7 +9,7 @@ import SwiftUI
 import AVKit
 
 struct VendoredInstagramReelsView: View {
-    var reelDatas:[VendoredInstagramReelsResponse] = reelsData
+    var reelDatas:[VendoredInstagramReelsResponse] = vendoredInstagramReelsData
     @State private var scrollPosition: String?
     @State private var player = AVPlayer()
     

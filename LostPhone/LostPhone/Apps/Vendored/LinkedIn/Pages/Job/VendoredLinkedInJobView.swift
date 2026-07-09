@@ -155,7 +155,7 @@ struct VendoredLinkedInRecommendedForYouView: View {
 struct VendoredLinkedInPremiumAccountView: View {
     var body: some View {
         HStack {
-            VendoredLinkedInProfileImageView(profileImage: userDataCurrent.profileImage, size: 50)
+            VendoredLinkedInProfileImageView(profileImage: vendoredLinkedInUserDataCurrent.profileImage, size: 50)
             VStack (alignment: .leading,spacing:8){
                 Text("Try Premium to see jobs where you would be a top applicant")
                     .font(.subheadline)

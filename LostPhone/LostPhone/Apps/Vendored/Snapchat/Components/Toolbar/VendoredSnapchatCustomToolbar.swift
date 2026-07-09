@@ -12,7 +12,7 @@ struct VendoredSnapchatCustomToolbar:View {
     var body: some View {
         HStack {
             HStack {
-                VendoredSnapchatProfileImageView(profileImage: userDataCurrent.profileImage, size: 35)
+                VendoredSnapchatProfileImageView(profileImage: vendoredSnapchatUserDataCurrent.profileImage, size: 35)
                     .overlay(Circle().stroke(Color.gray.opacity(0.1), lineWidth: 3))
                 VendoredSnapchatIconButton(iconName: "magnifyingglass")
             }

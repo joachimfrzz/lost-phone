@@ -9,7 +9,7 @@ import SwiftUI
 
 struct VendoredInstagramMessagingDetailView: View {
     let user:VendoredInstagramUserInstagramResponse
-    let messagingData:[VendoredInstagramMessagingResponse] = messagesData
+    let messagingData:[VendoredInstagramMessagingResponse] = vendoredInstagramMessagesData
     @Environment(\.dismiss)  var dismiss
     @State private var searchText = ""
     
@@ -176,7 +176,7 @@ struct VendoredInstagramMessagingDetailView: View {
 }
 
 #Preview {
-    VendoredInstagramMessagingDetailView(user: userData[0])
+    VendoredInstagramMessagingDetailView(user: vendoredInstagramUserData[0])
 }
 
 

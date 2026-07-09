@@ -14,7 +14,7 @@ struct VendoredSpotifyReel: Identifiable {
     var isLiked: Bool = false
 }
 
-var reelsData: [VendoredSpotifyReel] {
+var vendoredSpotifyReelsData: [VendoredSpotifyReel] {
     [
         .init(videoID: "reel1", authorName: "Google Pixel 10 zoom camera"),
         .init(videoID: "reel2", authorName: "Lida com números né?"),

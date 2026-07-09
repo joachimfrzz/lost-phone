@@ -7,7 +7,7 @@
 
 import Foundation
 
-let userData: [VendoredFacebookUserResponse] = [
+let vendoredFacebookUserData: [VendoredFacebookUserResponse] = [
     VendoredFacebookUserResponse(name: "John Smith", imageUrl: "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D", isOnline: true),
     VendoredFacebookUserResponse(name: "Sheryl Sandberg", imageUrl: "https://images.unsplash.com/photo-1517630800677-932d836ab680?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHByb2ZpbGV8ZW58MHx8MHx8fDA%3D", isOnline: false),
     VendoredFacebookUserResponse(name: "Chris Cox", imageUrl: "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHByb2ZpbGV8ZW58MHx8MHx8fDA%3D", isOnline: true),

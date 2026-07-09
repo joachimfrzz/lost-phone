@@ -22,5 +22,5 @@ struct VendoredInstagramProfileImageView: View {
 }
 
 #Preview {
-    VendoredInstagramProfileImageView(profileImage: userDataCurrent.profileImage, size: 40)
+    VendoredInstagramProfileImageView(profileImage: vendoredInstagramUserDataCurrent.profileImage, size: 40)
 }

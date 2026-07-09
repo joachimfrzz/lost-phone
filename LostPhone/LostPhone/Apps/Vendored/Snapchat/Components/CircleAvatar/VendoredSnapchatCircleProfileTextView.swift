@@ -40,5 +40,5 @@ struct VendoredSnapchatCircleProfileTextView: View {
 }
 
 #Preview {
-    VendoredSnapchatCircleProfileTextView(image: userDataCurrent.profileImage, title: "My Bitmoji")
+    VendoredSnapchatCircleProfileTextView(image: vendoredSnapchatUserDataCurrent.profileImage, title: "My Bitmoji")
 }

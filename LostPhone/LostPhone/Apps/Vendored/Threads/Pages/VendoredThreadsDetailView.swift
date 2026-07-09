@@ -30,7 +30,7 @@ struct VendoredThreadsDetailView: View {
 }
 
 #Preview {
-    VendoredThreadsDetailView(post: postData[0])
+    VendoredThreadsDetailView(post: vendoredThreadsPostData[0])
 }
 
 struct VendoredThreadsCloseAndOptionView:View {

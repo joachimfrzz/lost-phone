@@ -24,7 +24,7 @@ struct VendoredInstagramProfileView: View {
                         
                         // posts, followers, following
                         HStack {
-                            VendoredInstagramCustomLikesFollowersFollowing(title: "Posts", numberCount: userDataCurrent.totalPosts)
+                            VendoredInstagramCustomLikesFollowersFollowing(title: "Posts", numberCount: vendoredInstagramUserDataCurrent.totalPosts)
                             VendoredInstagramCustomLikesFollowersFollowing(title: "Followers", numberCount: 10 )
                             VendoredInstagramCustomLikesFollowersFollowing(title: "Following", numberCount: 2301)
                         }
@@ -55,7 +55,7 @@ struct VendoredInstagramProfileView: View {
             .toolbar {
 //                ToolbarItem (placement: .topBarLeading) {
 //                    HStack {
-//                        Text(userDataCurrent.username)
+//                        Text(vendoredInstagramUserDataCurrent.username)
 //                            .font(.title)
 //                            .fontWeight(.semibold)
 //                        Image(systemName: "chevron.down")
@@ -111,7 +111,7 @@ struct VendoredInstagramProfileViewAndStory: View {
     
     var body: some View {
         ZStack {
-            VendoredInstagramProfileImageView(profileImage: userDataCurrent.profileImage, size: 100)
+            VendoredInstagramProfileImageView(profileImage: vendoredInstagramUserDataCurrent.profileImage, size: 100)
             Button {
                 
             }label: {

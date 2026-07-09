@@ -8,7 +8,7 @@
 import Foundation
 
 
-let userData: [VendoredMessengerUserResponse] = [
+let vendoredMessengerUserData: [VendoredMessengerUserResponse] = [
     VendoredMessengerUserResponse(
         name: "John Doe",
         imgUrl: "https://plus.unsplash.com/premium_photo-1707097187291-15abc0358957?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzd8fHByb2ZpbGV8ZW58MHx8MHx8fDA%3D",

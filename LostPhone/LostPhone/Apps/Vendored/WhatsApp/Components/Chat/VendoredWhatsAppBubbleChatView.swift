@@ -91,6 +91,6 @@ struct VendoredWhatsAppBubbleChatView: View {
     }
 }
 #Preview {
-    VendoredWhatsAppBubbleChatView(text: chatData[0].text ?? "Hello, World!", isMe: true, timeAgo: chatData[0].timeAgo)
+    VendoredWhatsAppBubbleChatView(text: vendoredWhatsAppChatData[0].text ?? "Hello, World!", isMe: true, timeAgo: vendoredWhatsAppChatData[0].timeAgo)
 }
 

@@ -17,8 +17,7 @@ struct VendoredSnapchatCameraView: View {
         NavigationStack {
             ZStack {
                 if isCameraActive && !permissionDenied {
-                    CameraPreview()
-                        .edgesIgnoringSafeArea(.all)
+                    Color.black.edgesIgnoringSafeArea(.all)
                 } else if permissionDenied {
                     Text("Camera permission denied. Please enable it in settings.")
                         .padding()

@@ -63,11 +63,12 @@ struct VendoredGeminiDetailView: View {
                     .padding(.bottom, 140)
                 }
                 // floating button
-                VendoredGeminiFloatingButtonView(promptText: $promptText) {
-                    let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !text.isEmpty else { return }
-                    fetchAIContent(with: text)
-                }
+                VendoredGeminiFloatingButtonView(promptText: $promptText)
+                    .onSubmit {
+                        let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !text.isEmpty else { return }
+                        fetchAIContent(with: text)
+                    }
             }
             .background(Color(uiColor: .systemBackground))
             // title

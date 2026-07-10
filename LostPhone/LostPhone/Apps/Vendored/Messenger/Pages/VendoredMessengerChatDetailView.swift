@@ -29,7 +29,8 @@ struct VendoredMessengerChatDetailView: View {
                     .padding(.bottom, 60)
                 }
                 // footer
-                VendoredMessengerFooterView(messageText: $messageText, onSend: sendMessage)
+                VendoredMessengerFooterView(messageText: $messageText)
+                    .onSubmit { sendMessage() }
             }
             .preferredColorScheme(.light)
             .navigationBarBackButtonHidden(true)
@@ -379,7 +380,6 @@ struct VendoredMessengerVideoView:View {
 
 struct VendoredMessengerFooterView:View {
     @Binding var messageText: String
-    var onSend: () -> Void
     var body: some View {
         HStack (spacing: 22){
             // location
@@ -425,7 +425,7 @@ struct VendoredMessengerFooterView:View {
             // send message text field
             HStack {
                 TextField("Aa", text: $messageText)
-                    .onSubmit(onSend)
+                    .submitLabel(.send)
                 Spacer()
                 Button {
                     

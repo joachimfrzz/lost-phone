@@ -66,12 +66,11 @@ struct VendoredGeminiDetailView: View {
                     .padding(.bottom, 140)
                 }
                 // floating button
-                VendoredGeminiFloatingButtonView(promptText: $promptText)
-                    .onSubmit {
-                        let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
-                        guard !text.isEmpty else { return }
-                        fetchAIContent(with: text)
-                    }
+                VendoredGeminiFloatingButtonView(promptText: $promptText, onSubmit: {
+                    let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !text.isEmpty else { return }
+                    fetchAIContent(with: text)
+                })
             }
             .background(Color(uiColor: .systemBackground))
             // title
@@ -115,33 +114,36 @@ struct VendoredGeminiDetailView: View {
     }
     
     // func to get from api service
-    func fetchAIContent(with prompt:String){
+    @MainActor
+    func fetchAIContent(with prompt: String) {
         isLoading = true
         VendoredGeminiAIService.fetchAIContent(prompt: prompt) { result in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 isLoading = false
                 switch result {
                 case .success(let text):
-                    self.extractedText = text
+                    extractedText = text
                     typingAnimation()
-                    //
                 case .failure:
-                    self.extractedText = "I couldn't reach the server. Try asking about **messages**, **photos**, or **Uber** rides."
+                    extractedText = "I couldn't reach the server. Try asking about **messages**, **photos**, or **Uber** rides."
                 }
             }
         }
     }
-    // func for animation typing smooth
-    func typingAnimation(){
+
+    @MainActor
+    func typingAnimation() {
         typingIndex = 0
         displayedText = ""
-        
+
         Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
-            if typingIndex < extractedText.count {
-                displayedText.append(extractedText[extractedText.index(extractedText.startIndex, offsetBy: typingIndex)])
-                typingIndex += 1
-            }else {
-                timer.invalidate()
+            Task { @MainActor in
+                if typingIndex < extractedText.count {
+                    displayedText.append(extractedText[extractedText.index(extractedText.startIndex, offsetBy: typingIndex)])
+                    typingIndex += 1
+                } else {
+                    timer.invalidate()
+                }
             }
         }
     }

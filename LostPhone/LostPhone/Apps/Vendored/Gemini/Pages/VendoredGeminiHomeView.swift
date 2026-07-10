@@ -26,12 +26,11 @@ struct VendoredGeminiHomeView: View {
                 )
                 .frame(maxHeight: .infinity)
                 // floating button
-                VendoredGeminiFloatingButtonView(promptText: $promptText)
-                    .onSubmit {
-                        if !promptText.isEmpty {
-                            navigationDetail = true
-                        }
+                VendoredGeminiFloatingButtonView(promptText: $promptText, onSubmit: {
+                    if !promptText.isEmpty {
+                        navigationDetail = true
                     }
+                })
             }
             .navigationDestination(isPresented: $navigationDetail) {
                 VendoredGeminiDetailView(text: promptText)

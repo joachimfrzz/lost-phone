@@ -63,11 +63,12 @@ struct VendoredGeminiDetailView: View {
                     .padding(.bottom, 140)
                 }
                 // floating button
-                VendoredGeminiFloatingButtonView(promptText: $promptText, onSubmit: {
-                    let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !text.isEmpty else { return }
-                    fetchAIContent(with: text)
-                })
+                VendoredGeminiFloatingButtonView(promptText: $promptText)
+                    .onSubmit {
+                        let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !text.isEmpty else { return }
+                        fetchAIContent(with: text)
+                    }
             }
             .background(Color(uiColor: .systemBackground))
             // title
@@ -111,11 +112,10 @@ struct VendoredGeminiDetailView: View {
     }
     
     // func to get from api service
-    @MainActor
     func fetchAIContent(with prompt: String) {
         isLoading = true
         VendoredGeminiAIService.fetchAIContent(prompt: prompt) { result in
-            Task { @MainActor in
+            DispatchQueue.main.async {
                 isLoading = false
                 switch result {
                 case .success(let text):
@@ -128,19 +128,16 @@ struct VendoredGeminiDetailView: View {
         }
     }
 
-    @MainActor
     func typingAnimation() {
         typingIndex = 0
         displayedText = ""
 
         Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
-            MainActor.assumeIsolated {
-                if typingIndex < extractedText.count {
-                    displayedText.append(extractedText[extractedText.index(extractedText.startIndex, offsetBy: typingIndex)])
-                    typingIndex += 1
-                } else {
-                    timer.invalidate()
-                }
+            if typingIndex < extractedText.count {
+                displayedText.append(extractedText[extractedText.index(extractedText.startIndex, offsetBy: typingIndex)])
+                typingIndex += 1
+            } else {
+                timer.invalidate()
             }
         }
     }

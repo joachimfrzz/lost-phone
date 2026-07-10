@@ -3,39 +3,7 @@ import AVFoundation
 import Combine
 
 // Modèles zerocode117 conservés pour LpspCloneBridge / LpspAdapters.
-// Vues remplacées par les clones Sopheamen dans Apps/Vendored/.
-
-struct Email: Identifiable, Hashable {
-    let id: UUID
-    let sender: String
-    let subject: String
-    let body: String
-    let date: Date
-    var isRead: Bool
-    var isFlagged: Bool
-
-    init(stableId: String, sender: String, subject: String, body: String, date: Date, isRead: Bool, isFlagged: Bool) {
-        self.id = LpspStableId.uuid(stableId)
-        self.sender = sender
-        self.subject = subject
-        self.body = body
-        self.date = date
-        self.isRead = isRead
-        self.isFlagged = isFlagged
-    }
-
-    var preview: String {
-        body.replacingOccurrences(of: "\n", with: " ")
-    }
-}
-
-final class MailManager: ObservableObject {
-    @Published var emails: [Email] = []
-
-    init(emails: [Email] = []) {
-        self.emails = emails
-    }
-}
+// Email + MailManager → EmailApp.swift ; vues Mail → MailView dans le même fichier.
 
 struct Track: Identifiable, Codable, Hashable {
     let trackId: Int

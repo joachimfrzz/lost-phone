@@ -99,6 +99,7 @@ struct VendoredFacebookHomeView: View {
                 }
             }
         }
+        .preferredColorScheme(.light)
     }
 }
 

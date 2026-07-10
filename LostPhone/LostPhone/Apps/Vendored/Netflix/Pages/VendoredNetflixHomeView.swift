@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct VendoredNetflixHomeView: View {
+    @State private var showProfile = false
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -36,9 +38,9 @@ struct VendoredNetflixHomeView: View {
                 ToolbarItem (placement: .topBarTrailing){
                     HStack (spacing: 14){
                         Button {
-                            
+                            showProfile = true
                         }label: {
-                            Image(systemName: "arrow.down")
+                            Image(systemName: "person.crop.circle")
                                 .font(.headline)
                                 .foregroundStyle(.white)
                         }
@@ -53,6 +55,17 @@ struct VendoredNetflixHomeView: View {
                     
                 }
             }
+        }
+        .sheet(isPresented: $showProfile) {
+            NavigationStack {
+                List {
+                    Text("Alex — profil principal")
+                    Text("Historique de visionnage")
+                    Text("Ma liste")
+                }
+                .navigationTitle("Profil")
+            }
+            .preferredColorScheme(.dark)
         }
     }
 }

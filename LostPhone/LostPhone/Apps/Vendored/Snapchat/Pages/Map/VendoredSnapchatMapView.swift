@@ -14,13 +14,26 @@ struct VendoredSnapchatMapView: View {
             center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
             span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     )
+    private let mapFriends: [VendoredSnapMapFriend] = [
+        VendoredSnapMapFriend(image: "default_user", coordinate: CLLocationCoordinate2D(latitude: 37.776, longitude: -122.418)),
+        VendoredSnapMapFriend(image: "default_user", coordinate: CLLocationCoordinate2D(latitude: 37.773, longitude: -122.421))
+    ]
     
     var body: some View {
         NavigationStack {
             ZStack {
                 // add map view
-                Map(coordinateRegion: $region)
-                                .edgesIgnoringSafeArea(.all)
+                Map(coordinateRegion: $region, annotationItems: mapFriends) { friend in
+                    MapAnnotation(coordinate: friend.coordinate) {
+                        Image(friend.image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 36, height: 36)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(.white, lineWidth: 2))
+                    }
+                }
+                .edgesIgnoringSafeArea(.all)
                 
                 // add icons and options
                 VStack {
@@ -46,6 +59,12 @@ struct VendoredSnapchatMapView: View {
 
 #Preview {
     VendoredSnapchatMapView()
+}
+
+struct VendoredSnapMapFriend: Identifiable {
+    let id = UUID()
+    let image: String
+    let coordinate: CLLocationCoordinate2D
 }
 
 struct VendoredSnapchatProfileMapAndOptionIconsView: View {

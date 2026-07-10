@@ -10,6 +10,9 @@ import SwiftUI
 import Kingfisher
 
 struct VendoredYouTubeHomeView: View {
+    @State private var showSearch = false
+    @State private var showProfile = false
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -33,21 +36,23 @@ struct VendoredYouTubeHomeView: View {
             .toolbar {
                 // logo
                 ToolbarItem (placement: .topBarLeading){
-                    HStack (spacing:5){
-                        ZStack {
-                            Rectangle()
-                                .fill(.white)
-                                .frame(width: 20, height: 20)
-                            
+                    HStack(spacing: 8) {
+                        Button { showProfile = true } label: {
+                            Image(systemName: "person.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(.primary)
+                        }
+                        HStack (spacing:5){
                             Image("logo")
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 30)
+                            Text("YouTube")
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.primary)
                         }
-                        // title
-                        Text("Youtube")
-                            .font(.title3)
-                            .fontWeight(.bold)
+                        
                     }
                 }
                 // icons
@@ -61,7 +66,7 @@ struct VendoredYouTubeHomeView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 20, height: 20)
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.primary)
                         }
                         // notification
                         Button {
@@ -71,17 +76,17 @@ struct VendoredYouTubeHomeView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 20, height: 20)
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.primary)
                         }
                         // search
                         Button {
-                            
+                            showSearch = true
                         }label: {
                             Image(systemName: "magnifyingglass")
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 20, height: 20)
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.primary)
                         }
                     }
                 }
@@ -89,6 +94,24 @@ struct VendoredYouTubeHomeView: View {
         }
         // to dark theme
         .preferredColorScheme(.dark)
+        .sheet(isPresented: $showSearch) {
+            NavigationStack {
+                TextField("Search YouTube", text: .constant(""))
+                    .textFieldStyle(.roundedBorder)
+                    .padding()
+                    .navigationTitle("Search")
+            }
+        }
+        .sheet(isPresented: $showProfile) {
+            NavigationStack {
+                List {
+                    Text("Watch history")
+                    Text("Your videos")
+                    Text("Playlists")
+                }
+                .navigationTitle("Profile")
+            }
+        }
     }
 }
 

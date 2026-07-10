@@ -22,7 +22,10 @@ struct VendoredInstagramHomeView: View {
                         VendoredInstagramHomeProfileViewAndStory()
                         // profile add story
                         ForEach(storiesData) { story in
-                            VendoredInstagramStoryView(profileUrl: story.user.profileImage, storyText: story.user.fullname)
+                            NavigationLink(destination: VendoredInstagramStoryDetailView(user: story.user)) {
+                                VendoredInstagramStoryView(profileUrl: story.user.profileImage, storyText: story.user.fullname)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -60,11 +63,12 @@ struct VendoredInstagramHomeView: View {
                             
                         }
                         NavigationLink(destination: VendoredInstagramMessagingView().hideTabBar()) {
-                                       Image("message_icon")
-                                           .resizable()
-                                           .scaledToFit()
-                                           .frame(width: 23, height: 23)
-                                   }
+                            Image(systemName: "paperplane")
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(.black)
+                                .frame(width: 23, height: 23)
+                        }
                       
                     }
                     

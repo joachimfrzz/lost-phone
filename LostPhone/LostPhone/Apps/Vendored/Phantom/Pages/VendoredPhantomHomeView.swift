@@ -96,6 +96,7 @@ struct VendoredPhantomContentInfoView:View {
             // scrollable list content
             ScrollView (showsIndicators: false){
                 VStack (spacing: 16){
+                    VendoredPhantomTransactionsView()
                     // options
                     VendoredPhantomOptionsView()
                     // list currencies
@@ -106,6 +107,41 @@ struct VendoredPhantomContentInfoView:View {
         .padding(.top, 60)
         .padding(.horizontal)
         .padding(.bottom)
+    }
+}
+
+struct VendoredPhantomTransactionsView: View {
+    private let transactions = [
+        ("Received SOL", "+$42.10", "Today"),
+        ("Swap USDC → SOL", "-$18.00", "Yesterday"),
+        ("NFT purchase", "-$120.00", "Mon")
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Recent activity")
+                .font(.headline)
+                .foregroundStyle(.white)
+            ForEach(transactions, id: \.0) { tx in
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(tx.0)
+                            .foregroundStyle(.white)
+                        Text(tx.2)
+                            .font(.caption)
+                            .foregroundStyle(.white.opacity(0.5))
+                    }
+                    Spacer()
+                    Text(tx.1)
+                        .foregroundStyle(tx.1.hasPrefix("+") ? Color.vendoredPhantomSuccessColor : .white)
+                }
+                .padding(.vertical, 8)
+                Divider().overlay(.white.opacity(0.15))
+            }
+        }
+        .padding()
+        .background(Color.vendoredPhantomCardBackgroundColor)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 

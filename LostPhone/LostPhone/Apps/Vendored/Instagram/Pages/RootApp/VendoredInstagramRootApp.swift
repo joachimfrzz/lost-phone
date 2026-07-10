@@ -9,7 +9,6 @@ import SwiftUI
 
 struct VendoredInstagramRootApp: View {
     @State private var selectedIndex = 0
-    @State private var isUploadPresented: Bool = false
     
     var body: some View {
             TabView (selection: $selectedIndex){
@@ -72,16 +71,9 @@ struct VendoredInstagramRootApp: View {
             }
             .colorScheme(selectedIndex ==  3  ? .dark : .light)
             .onChange(of: selectedIndex) {
-                if(selectedIndex == 2){
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        self.isUploadPresented = true
-                        self.selectedIndex = 0
-                    }
+                if selectedIndex == 2 {
+                    selectedIndex = 0
                 }
-
-            }
-            .sheet(isPresented: $isUploadPresented) {
-                VendoredInstagramBrowseGalleryView() // Your upload view here
             }
             .navigationBarBackButtonHidden(true)
             

@@ -95,6 +95,7 @@ struct VendoredMessengerChatDetailView: View {
                 }
             }
         }
+        .preferredColorScheme(.light)
     }
 }
 

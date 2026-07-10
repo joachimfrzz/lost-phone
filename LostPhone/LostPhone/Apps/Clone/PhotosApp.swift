@@ -139,18 +139,6 @@ struct LibraryView: View {
                     .pickerStyle(.segmented)
                     .frame(width: 220)
                 }
-
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Sélectionner") { }
-                        .fontWeight(.medium)
-                        .disabled(readOnly)
-                }
-
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {}) {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                }
             }
         }
     }

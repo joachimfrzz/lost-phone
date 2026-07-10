@@ -20,7 +20,7 @@ enum VendoredTikTokTikTokIcon: String {
 struct VendoredTikTokTikTokIconView: View {
     var icon: VendoredTikTokTikTokIcon
     var size: CGFloat = 30
-    var color: Color = .black
+    var color: Color = .white
 
     private var systemFallback: String {
         switch icon {

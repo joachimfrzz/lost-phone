@@ -2,6 +2,8 @@ import SwiftUI
 
 // MARK: - Main View
 struct WeatherView: View {
+    private let hours = HourlyMock.generate()
+
     var body: some View {
         ZStack {
             // 1. Dynamic Background
@@ -16,12 +18,12 @@ struct WeatherView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     // Header Section
-                    HeaderView()
+                    HeaderView(currentTemp: hours.first?.temp ?? 0)
                         .padding(.top, 40)
                         .padding(.bottom, 40)
                     
                     // Hourly Section
-                    HourlyForecastView()
+                    HourlyForecastView(hours: hours)
                         .padding(.horizontal)
                         .padding(.bottom, 12)
                     
@@ -55,6 +57,8 @@ struct WeatherView: View {
 // MARK: - Components
 
 struct HeaderView: View {
+    let currentTemp: Int
+
     var body: some View {
         VStack(spacing: 6) {
             Text("Cupertino")
@@ -62,7 +66,7 @@ struct HeaderView: View {
                 .foregroundStyle(.white)
                 .shadow(radius: 2)
             
-            Text("75°")
+            Text("\(currentTemp)°")
                 .font(.system(size: 96, weight: .thin))
                 .foregroundStyle(.white)
                 .shadow(radius: 2)
@@ -75,7 +79,7 @@ struct HeaderView: View {
 }
 
 struct HourlyForecastView: View {
-    let hours: [HourlyMock] = HourlyMock.generate()
+    let hours: [HourlyMock]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

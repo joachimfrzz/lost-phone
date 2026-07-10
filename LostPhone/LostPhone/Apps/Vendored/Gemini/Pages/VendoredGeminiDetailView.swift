@@ -49,7 +49,7 @@ struct VendoredGeminiDetailView: View {
                         }else {
                             Text(displayedText)
                                 .font(.subheadline)
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.primary)
                                 .multilineTextAlignment(.leading)
                         }
                         // content response from api service using gemini
@@ -59,7 +59,11 @@ struct VendoredGeminiDetailView: View {
                     .padding(.bottom, 140)
                 }
                 // floating button
-                VendoredGeminiFloatingButtonView(promptText: $promptText)
+                VendoredGeminiFloatingButtonView(promptText: $promptText) {
+                    let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !text.isEmpty else { return }
+                    fetchAIContent(with: text)
+                }
             }
             // title
             .navigationBarTitleDisplayMode(.inline)

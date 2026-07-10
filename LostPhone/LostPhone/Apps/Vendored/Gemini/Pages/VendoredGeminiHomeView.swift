@@ -26,12 +26,11 @@ struct VendoredGeminiHomeView: View {
                 )
                 .frame(maxHeight: .infinity)
                 // floating button
-                VendoredGeminiFloatingButtonView(promptText: $promptText)
-                    .onSubmit {
-                        if !promptText.isEmpty {
-                            navigationDetail = true
-                        }
+                VendoredGeminiFloatingButtonView(promptText: $promptText) {
+                    if !promptText.isEmpty {
+                        navigationDetail = true
                     }
+                }
             }
             .navigationDestination(isPresented: $navigationDetail) {
                 VendoredGeminiDetailView(text: promptText)
@@ -45,7 +44,7 @@ struct VendoredGeminiHomeView: View {
                         
                     }label: {
                         Image(systemName: "bubble")
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                     }
                 }
                 // trailing

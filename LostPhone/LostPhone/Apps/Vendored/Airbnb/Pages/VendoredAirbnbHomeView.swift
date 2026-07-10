@@ -11,52 +11,51 @@ import Kingfisher // load image network cache
 struct VendoredAirbnbHomeView: View {
     var body: some View {
         NavigationStack {
-            NavigationStack {
-                ZStack (alignment: .bottom){
-                    ScrollView {
-                        VStack (spacing:24){
-                            // search
-                            VendoredAirbnbSearchView()
-                            // tabs
-                            VendoredAirbnbTabsContentView()
-                            // list item
-                            VendoredAirbnbListBookingView()
-                        }
-                        .padding(.vertical)
+            ZStack (alignment: .bottom){
+                ScrollView {
+                    VStack (spacing:24){
+                        // search
+                        VendoredAirbnbSearchView()
+                        // tabs
+                        VendoredAirbnbTabsContentView()
+                        // list item
+                        VendoredAirbnbListBookingView()
                     }
-                    // floating button
-                    Button {
-                        
-                    }label: {
-                        HStack {
-                            Text("Map")
-                                .font(.headline)
-                            Image(systemName: "map.fill")
-                        }
-                        .foregroundStyle(.white)
-                        .frame(width: 120, height: 55)
-                        .background(.black.opacity(0.9))
-                        .clipShape(Capsule())
-                    }
-                    
+                    .padding(.vertical)
                 }
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem (placement: .principal){
-                        HStack (spacing:12){
-                            Image(systemName: "play.tv")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 18, height: 18)
-                            Text("Replay welcome tour")
-                                .font(.headline)
-                                .underline(true)
-                        }
+                // floating button
+                Button {
+                    
+                }label: {
+                    HStack {
+                        Text("Map")
+                            .font(.headline)
+                        Image(systemName: "map.fill")
                     }
+                    .foregroundStyle(.white)
+                    .frame(width: 120, height: 55)
+                    .background(.black.opacity(0.9))
+                    .clipShape(Capsule())
                 }
                 
             }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem (placement: .principal){
+                    HStack (spacing:12){
+                        Image(systemName: "play.tv")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 18, height: 18)
+                        Text("Replay welcome tour")
+                            .font(.headline)
+                            .underline(true)
+                    }
+                }
+            }
+            
         }
+        .preferredColorScheme(.light)
     }
 }
 

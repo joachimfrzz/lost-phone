@@ -10,91 +10,25 @@ import SwiftUI
 import Kingfisher
 
 struct VendoredUberHomeView: View {
-    var tabs:[VendoredUberTabResponse] = vendoredUberTabData
-    @State private var selectedIndex = 1
-    // for smooth animation
-    @Namespace private var animation
-    // width 50%
-    var width = UIScreen.main.bounds.width / 2
-    
     var body: some View {
         NavigationStack {
             ScrollView {
                 // content
-                VStack {
-                    if selectedIndex == 0 {
-                        // rides
-                        VStack (spacing:10){
-                            // search
-                            VendoredUberSearchRidesView()
-                            // history
-                            VendoredUberRidesHistoryView()
-                            // suggestion
-                            VendoredUberSuggestionView()
-                            // ads
-                            VendoredUberAdsView()
-                        }
-                    } else {
-                        // uber eats
-                        VStack (spacing:20){
-                            // delivery
-                            VendoredUberDeliveryView()
-                            // search
-                            VendoredUberSearchUberEatsView()
-                            // category
-                            VendoredUberCategoryView()
-                            // featured
-                            VendoredUberFeaturedRestaurantView()
-                            Divider()
-                            // place you might like
-                            VendoredUberPlaceYouMightLikeView()
-                        }
-                    }
+                VStack(spacing: 10) {
+                    VendoredUberSearchRidesView()
+                    VendoredUberRidesHistoryView()
+                    VendoredUberSuggestionView()
+                    VendoredUberAdsView()
                 }
                 .padding(.vertical, 16)
             }
-            // title and tabs
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // tabs
-                ToolbarItem (placement: .principal){
-                    HStack (spacing:0){
-                        ForEach(tabs.indices, id: \.self) { index in
-                            Button {
-                                withAnimation {
-                                    selectedIndex = index
-                                }
-                            }label: {
-                                VStack (spacing:6){
-                                    // icon and text
-                                    HStack (spacing:12){
-                                        Image(tabs[index].imageUrl)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 38, height: 38)
-                                        
-                                        Text(tabs[index].title)
-                                            .font(.title3)
-                                            .fontWeight(.semibold)
-                                            .foregroundStyle(.black)
-                                    }
-                                    // border line full width and border underline animation
-                                    ZStack {
-                                        Rectangle()
-                                            .fill(.gray.opacity(0.4))
-                                            .frame(width: width, height: 3)
-                                        if selectedIndex == index {
-                                            Rectangle()
-                                                .fill(.black)
-                                                .frame(width: width, height: 3)
-                                                .matchedGeometryEffect(id: "underline", in: animation)
-                                        }
-                                    }
-                                }
-                            }
-                            .frame(width: width)
-                        }
-                    }
+                ToolbarItem(placement: .principal) {
+                    Text("Uber")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
                 }
             }
         }

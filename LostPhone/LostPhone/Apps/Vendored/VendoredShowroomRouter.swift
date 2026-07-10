@@ -18,7 +18,7 @@ enum VendoredShowroomRouter {
         case "Messenger":
             LpspVendoredMessengerRootView()
         case "Threads":
-            LpspVendoredThreadsRootView()
+            VendoredThreadsUnavailableView()
         case "Grok":
             LpspVendoredGrokRootView()
         case "Gemini":
@@ -44,5 +44,20 @@ enum VendoredShowroomRouter {
         default:
             AwesomeShowroomRouter.view(for: appName)
         }
+    }
+}
+
+private struct VendoredThreadsUnavailableView: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.largeTitle)
+                .foregroundStyle(.secondary)
+            Text("Threads unavailable")
+                .font(.headline)
+                .foregroundStyle(.primary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(uiColor: .systemBackground))
     }
 }

@@ -133,6 +133,7 @@ struct VendoredFacebookProfileWhatIsOnYourMindView:View {
 
 struct VendoredFacebookStoryView:View {
     var stories:[VendoredFacebookStoryResponse] = vendoredFacebookStoryData
+    @State private var selectedStory: VendoredFacebookStoryResponse?
     var body: some View {
         VStack (spacing:12){
             // tab story, reels
@@ -141,7 +142,10 @@ struct VendoredFacebookStoryView:View {
             ScrollView (.horizontal, showsIndicators: false){
                 LazyHStack (spacing:10){
                     ForEach(stories) { story in
-                        VendoredFacebookStoryRowView(story: story)
+                        Button { selectedStory = story } label: {
+                            VendoredFacebookStoryRowView(story: story)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal)
@@ -150,6 +154,9 @@ struct VendoredFacebookStoryView:View {
         .frame(maxWidth: .infinity)
         .padding(.vertical)
         .background(.white)
+        .fullScreenCover(item: $selectedStory) { story in
+            VendoredFacebookStoryDetailView(story: story)
+        }
     }
 }
 
@@ -243,6 +250,8 @@ struct VendoredFacebookFeedView:View {
 struct VendoredFacebookNewsFeedView:View {
     var feed: VendoredFacebookFeedResponse
     var index: Int
+    @State private var liked = false
+    @State private var showComments = false
     var body: some View {
         VStack (spacing:8){
             // profile and name
@@ -379,11 +388,9 @@ struct VendoredFacebookNewsFeedView:View {
             // like, comment, share action button
             HStack {
                 // like button
-                Button {
-                    
-                }label: {
+                Button { liked.toggle() } label: {
                     HStack {
-                        Image(systemName: "hand.thumbsup")
+                        Image(systemName: liked ? "hand.thumbsup.fill" : "hand.thumbsup")
                             .resizable()
                             .scaledToFill()
                             .frame(width: 17, height: 17)
@@ -393,12 +400,10 @@ struct VendoredFacebookNewsFeedView:View {
                             .foregroundStyle(.black.opacity(0.6))
                     }
                 }
-                .foregroundStyle(.black.opacity(0.8))
+                .foregroundStyle(liked ? Color.vendoredFacebookVendoredFacebookPrimary : .black.opacity(0.8))
                 Spacer()
                 // comment button
-                Button {
-                    
-                }label: {
+                Button { showComments = true } label: {
                     HStack {
                         Image(systemName: "bubble.right")
                             .resizable()
@@ -455,12 +460,26 @@ struct VendoredFacebookNewsFeedView:View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 8)
         }
+        .sheet(isPresented: $showComments) {
+            NavigationStack {
+                List {
+                    Text("Great post!")
+                    Text("Thanks for sharing")
+                    Text("Interesting read")
+                }
+                .navigationTitle("Comments")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .presentationDetents([.medium])
+        }
     }
 }
 
 struct VendoredFacebookPhotoFeedView:View {
     var feed: VendoredFacebookFeedResponse
-    
+    @State private var liked = false
+    @State private var showComments = false
+
     var body: some View {
         VStack (spacing:8){
             // profile and name
@@ -640,11 +659,9 @@ struct VendoredFacebookPhotoFeedView:View {
             // like, comment, share action button
             HStack {
                 // like button
-                Button {
-                    
-                }label: {
+                Button { liked.toggle() } label: {
                     HStack {
-                        Image(systemName: "hand.thumbsup")
+                        Image(systemName: liked ? "hand.thumbsup.fill" : "hand.thumbsup")
                             .resizable()
                             .scaledToFill()
                             .frame(width: 17, height: 17)
@@ -654,12 +671,10 @@ struct VendoredFacebookPhotoFeedView:View {
                             .foregroundStyle(.black.opacity(0.6))
                     }
                 }
-                .foregroundStyle(.black.opacity(0.8))
+                .foregroundStyle(liked ? Color.vendoredFacebookVendoredFacebookPrimary : .black.opacity(0.8))
                 Spacer()
                 // comment button
-                Button {
-                    
-                }label: {
+                Button { showComments = true } label: {
                     HStack {
                         Image(systemName: "bubble.right")
                             .resizable()
@@ -715,6 +730,17 @@ struct VendoredFacebookPhotoFeedView:View {
                 .fill(Color.vendoredFacebookBackgroundColor)
                 .frame(maxWidth: .infinity)
                 .frame(height: 8)
+        }
+        .sheet(isPresented: $showComments) {
+            NavigationStack {
+                List {
+                    Text("Nice photo!")
+                    Text("Beautiful!")
+                }
+                .navigationTitle("Comments")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .presentationDetents([.medium])
         }
     }
 }

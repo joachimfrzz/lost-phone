@@ -10,13 +10,16 @@ packages:
   Kingfisher:
     url: https://github.com/onevcat/Kingfisher.git
     from: 8.0.0
+  MarkdownUI:
+    url: https://github.com/gonzalezreal/swift-markdown-ui
+    from: 2.4.0
 
 settings:
   base:
     SWIFT_VERSION: "5.9"
     TARGETED_DEVICE_FAMILY: "1"
     MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "12"
+    CURRENT_PROJECT_VERSION: "13"
 
 targets:
   LostPhone:
@@ -24,6 +27,7 @@ targets:
     platform: iOS
     dependencies:
       - package: Kingfisher
+      - package: MarkdownUI
     sources:
       - path: LostPhone
         excludes:

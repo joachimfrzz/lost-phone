@@ -29,6 +29,7 @@ struct VendoredMessengerChatDetailView: View {
                 // footer
                 VendoredMessengerFooterView()
             }
+            .preferredColorScheme(.light)
             .navigationBarBackButtonHidden(true)
             // title icons
             .toolbar {
@@ -95,7 +96,6 @@ struct VendoredMessengerChatDetailView: View {
                 }
             }
         }
-        .preferredColorScheme(.light)
     }
 }
 
@@ -362,6 +362,7 @@ struct VendoredMessengerVideoView:View {
 }
 
 struct VendoredMessengerFooterView:View {
+    @State private var messageText = ""
     var body: some View {
         HStack (spacing: 22){
             // location
@@ -406,7 +407,7 @@ struct VendoredMessengerFooterView:View {
             }
             // send message text field
             HStack {
-                TextField("Aa", text: .constant(""))
+                TextField("Aa", text: $messageText)
                 Spacer()
                 Button {
                     
@@ -435,7 +436,7 @@ struct VendoredMessengerFooterView:View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 60)
-        .background(.white)
+        .background(Color(uiColor: .systemBackground))
         .shadow(color: .gray.opacity(0.1),radius: 5)
     }
 }

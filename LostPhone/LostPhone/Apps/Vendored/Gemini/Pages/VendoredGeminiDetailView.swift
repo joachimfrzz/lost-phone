@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MarkdownUI
 
 struct VendoredGeminiDetailView: View {
     // state and param from home view
@@ -47,9 +48,15 @@ struct VendoredGeminiDetailView: View {
                         if isLoading {
                             VendoredGeminiLoadingView()
                         }else {
-                            Text(displayedText)
+                            Markdown(displayedText)
+                                .markdownTextStyle(\.code) {
+                                    FontFamilyVariant(.monospaced)
+                                    FontSize(.em(1))
+                                    ForegroundColor(.purple)
+                                    BackgroundColor(.purple.opacity(0.25))
+                                }
                                 .font(.subheadline)
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.primary)
                                 .multilineTextAlignment(.leading)
                         }
                         // content response from api service using gemini
@@ -60,7 +67,13 @@ struct VendoredGeminiDetailView: View {
                 }
                 // floating button
                 VendoredGeminiFloatingButtonView(promptText: $promptText)
+                    .onSubmit {
+                        let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !text.isEmpty else { return }
+                        fetchAIContent(with: text)
+                    }
             }
+            .background(Color(uiColor: .systemBackground))
             // title
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
@@ -112,8 +125,8 @@ struct VendoredGeminiDetailView: View {
                     self.extractedText = text
                     typingAnimation()
                     //
-                case .failure(let error):
-                    self.extractedText = "Error: \(error)"
+                case .failure:
+                    self.extractedText = "I couldn't reach the server. Try asking about **messages**, **photos**, or **Uber** rides."
                 }
             }
         }

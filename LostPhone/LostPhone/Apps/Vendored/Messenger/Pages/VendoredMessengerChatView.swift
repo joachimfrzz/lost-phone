@@ -22,6 +22,7 @@ struct VendoredMessengerChatView: View {
                 }
                 .padding(.vertical)
             }
+            .background(Color.white)
             // header
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -30,6 +31,7 @@ struct VendoredMessengerChatView: View {
                         
                     }label: {
                         Image(systemName: "text.justify")
+                            .foregroundStyle(.black)
                     }
                 }
                 // title
@@ -37,6 +39,7 @@ struct VendoredMessengerChatView: View {
                     Text("Chats")
                         .font(.title3)
                         .fontWeight(.semibold)
+                        .foregroundStyle(.black)
                 }
                 // trailing
                 ToolbarItem (placement: .topBarTrailing){
@@ -47,10 +50,12 @@ struct VendoredMessengerChatView: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 25, height: 25)
+                            .foregroundStyle(.black)
                     }
                 }
             }
         }
+        .preferredColorScheme(.light)
     }
 }
 

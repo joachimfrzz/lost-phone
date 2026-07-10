@@ -48,6 +48,7 @@ struct VendoredAirbnbHomeView: View {
                             .scaledToFill()
                             .frame(width: 18, height: 18)
                         Text("Replay welcome tour")
+                            .foregroundStyle(.primary)
                             .font(.headline)
                             .underline(true)
                     }

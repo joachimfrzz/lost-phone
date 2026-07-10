@@ -28,7 +28,7 @@ struct VendoredGeminiFloatingButtonView:View {
                         Image(systemName: "camera")
                     }
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .frame(width: 110, height: 48)
                 .background(Color.vendoredGeminiHightLightColor)
                 .clipShape(Capsule())
@@ -48,14 +48,14 @@ struct VendoredGeminiFloatingButtonView:View {
                         .fill(Color.vendoredGeminiHightLightColor)
                         .frame(width: 50, height: 50)
                     Image(systemName: "waveform")
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.primary)
                 }
             }
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity)
         .frame(height: 90)
-        .background(Color.white)
+        .background(Color(uiColor: .systemBackground))
         .shadow(color: .gray.opacity(0.15),radius: 10)
     }
 }

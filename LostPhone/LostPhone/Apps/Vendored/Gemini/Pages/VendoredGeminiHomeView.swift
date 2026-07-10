@@ -45,7 +45,7 @@ struct VendoredGeminiHomeView: View {
                         
                     }label: {
                         Image(systemName: "bubble")
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                     }
                 }
                 // trailing

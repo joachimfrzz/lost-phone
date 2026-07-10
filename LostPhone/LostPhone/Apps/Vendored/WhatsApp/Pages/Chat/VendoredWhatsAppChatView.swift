@@ -51,6 +51,7 @@ struct VendoredWhatsAppChatView: View {
                 }
                 
             }
+            .background(Color(hex: "#111B21"))
             .navigationTitle("Chats")
             .toolbar {
                 ToolbarItem (placement: .topBarLeading){

@@ -77,7 +77,7 @@ struct VendoredLinkedInRootApp: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 16, height: 16)
-                            .foregroundStyle(.black.opacity(0.8))
+                            .foregroundStyle(.primary)
 
                         TextField("Search",text: $searchField)
                     }
@@ -95,16 +95,14 @@ struct VendoredLinkedInRootApp: View {
                             .resizable()
                             .scaledToFill()
                             .frame(width: 22, height: 22)
-                            .foregroundStyle(.black.opacity(0.5))
+                            .foregroundStyle(.primary)
                            
                     }
                 }
             }
         }
-        
-      
+        .preferredColorScheme(.light)
     }
-    
 }
 
 #Preview {
@@ -131,12 +129,12 @@ struct VendoredLinkedInTabBarButton: View {
                 Text(label)
                     .font(.footnote)
             }
-            .foregroundColor(selectedTab == assignedTab ? .black : .gray)
+            .foregroundStyle(selectedTab == assignedTab ? .primary : .secondary)
             .padding(.vertical, 8)
             .overlay(
                 Rectangle()
                     .frame(height: 2)
-                    .foregroundColor(selectedTab == assignedTab ? .black : .clear),
+                    .foregroundStyle(selectedTab == assignedTab ? Color.primary : .clear),
                 alignment: .top
             )
         }

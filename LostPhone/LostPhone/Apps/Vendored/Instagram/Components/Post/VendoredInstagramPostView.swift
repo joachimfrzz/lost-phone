@@ -17,6 +17,21 @@ struct VendoredInstagramPostView: View {
     let totalComments: Int
     let postType: Int
     @State private var selectedTabIndex = 0
+    @State private var isLiked = false
+    @State private var likeCount: Int
+    @State private var showComments = false
+
+    init(profileImageUrl: String, username: String, postImages: [String], caption: String, totalLikes: Int, totalComments: Int, postType: Int) {
+        self.profileImageUrl = profileImageUrl
+        self.username = username
+        self.postImages = postImages
+        self.caption = caption
+        self.totalLikes = totalLikes
+        self.totalComments = totalComments
+        self.postType = postType
+        _likeCount = State(initialValue: totalLikes)
+    }
+
     var body: some View {
         VStack (spacing: 12){
             // header view section
@@ -58,31 +73,27 @@ struct VendoredInstagramPostView: View {
                 VendoredInstagramThumbnailImageView(videoURL: URL(string: postImages[0])!,width: .infinity, height: 360)
             }
             
-            
-            
-            
             // like, comment, send view post
             HStack {
                 HStack (spacing: 12){
                     Button {
-                        
+                        isLiked.toggle()
+                        likeCount += isLiked ? 1 : -1
                     }label: {
-                        Image("like_icon")
+                        Image(systemName: isLiked ? "heart.fill" : "heart")
                             .resizable()
                             .scaledToFill()
-                            .foregroundStyle(.black)
+                            .foregroundStyle(isLiked ? .red : .black)
                             .frame(width: 23, height: 23)
-                        
                     }
                     Button {
-                        
+                        showComments = true
                     }label: {
                         Image("comment_icon")
                             .resizable()
                             .scaledToFill()
                             .foregroundStyle(.black)
                             .frame(width: 23, height: 23)
-                        
                     }
                     Button {
                         
@@ -92,7 +103,6 @@ struct VendoredInstagramPostView: View {
                             .scaledToFill()
                             .foregroundStyle(.black)
                             .frame(width: 25, height: 25)
-                        
                     }
                 }
                 Spacer()
@@ -104,20 +114,17 @@ struct VendoredInstagramPostView: View {
                         .scaledToFill()
                         .foregroundStyle(.black)
                         .frame(width: 23, height: 23)
-                    
                 }
             }
             .padding(.horizontal)
             
-            // like and comment action view section
-            Text("\(totalLikes) likes")
+            Text("\(likeCount) likes")
                 .font(.footnote)
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .frame(height: 10)
                 .padding(.horizontal)
             
-            // caption
             HStack {
                 Text(username)
                     .fontWeight(.semibold) +
@@ -128,8 +135,6 @@ struct VendoredInstagramPostView: View {
             .frame(height: 10)
             .padding(.horizontal)
             
-            // total comment view
-            // date ago
             Text("\(totalComments) comments")
                 .font(.footnote)
                 .foregroundStyle(.gray)
@@ -137,14 +142,24 @@ struct VendoredInstagramPostView: View {
                 .frame(height: 10)
                 .padding(.horizontal)
             
-            // date ago
             Text("12 hours ago")
                 .font(.footnote)
                 .foregroundStyle(.gray)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .frame(height: 8)
                 .padding(.horizontal)
-            
+        }
+        .sheet(isPresented: $showComments) {
+            NavigationStack {
+                List {
+                    Text("Great shot! 🔥")
+                    Text("Love this")
+                    Text("Where was this?")
+                }
+                .navigationTitle("Comments")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .presentationDetents([.medium])
         }
     }
 }

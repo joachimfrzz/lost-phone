@@ -22,7 +22,10 @@ struct VendoredInstagramHomeView: View {
                         VendoredInstagramHomeProfileViewAndStory()
                         // profile add story
                         ForEach(storiesData) { story in
-                            VendoredInstagramStoryView(profileUrl: story.user.profileImage, storyText: story.user.fullname)
+                            NavigationLink(destination: VendoredInstagramStoryDetailView(user: story.user)) {
+                                VendoredInstagramStoryView(profileUrl: story.user.profileImage, storyText: story.user.fullname)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }

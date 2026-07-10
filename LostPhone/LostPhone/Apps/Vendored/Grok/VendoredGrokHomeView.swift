@@ -103,6 +103,7 @@ struct VendoredGrokHomeView: View {
                 Button {} label: {
                     Image(systemName: "paperclip")
                         .font(.system(size: 18))
+                        .foregroundStyle(VendoredGrokTheme.textPrimary)
                 }
                 footerChip("DeepSearch")
                 footerChip("Think")

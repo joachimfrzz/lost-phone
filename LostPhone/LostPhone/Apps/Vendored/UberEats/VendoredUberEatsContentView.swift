@@ -9,7 +9,7 @@ import SwiftUI
 
 struct VendoredUberEatsContentView: View {
     var body: some View {
-        VendoredUberEatsCartView()
+        VendoredUberEatsBrowseView()
     }
 }
 

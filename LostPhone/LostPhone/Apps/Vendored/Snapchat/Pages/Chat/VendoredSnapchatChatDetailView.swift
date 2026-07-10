@@ -43,8 +43,8 @@ struct VendoredSnapchatChatDetailView: View {
             HStack {
                 TextField("Send a chat…", text: $draft)
                     .textFieldStyle(.roundedBorder)
-                    .onSubmit(sendMessage)
-                Button("Send", action: sendMessage)
+                    .onSubmit { sendMessage() }
+                Button("Send") { sendMessage() }
             }
             .padding()
             .background(Color(uiColor: .systemBackground))

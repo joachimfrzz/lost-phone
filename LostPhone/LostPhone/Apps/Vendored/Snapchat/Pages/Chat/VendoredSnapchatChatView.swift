@@ -38,6 +38,7 @@ struct VendoredSnapchatChatView: View {
                 .padding(.vertical)
             }
             .navigationBarTitleDisplayMode(.inline)
+            .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem (placement: .principal) {
                     VendoredSnapchatCustomToolbar(title: "Chat")

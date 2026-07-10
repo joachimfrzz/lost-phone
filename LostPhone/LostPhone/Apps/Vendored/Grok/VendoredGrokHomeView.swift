@@ -97,7 +97,7 @@ struct VendoredGrokHomeView: View {
                 .font(.system(size: 14))
                 .foregroundStyle(VendoredGrokTheme.textPrimary)
                 .focused($focused)
-                .onSubmit(submitPrompt)
+                .onSubmit { submitPrompt() }
 
             HStack(spacing: 4) {
                 Button {

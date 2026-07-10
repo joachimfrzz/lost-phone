@@ -53,7 +53,7 @@ struct VendoredWhatsAppChatDetailView: View {
                 }
 
                 HStack(spacing: 20) {
-                    Button {} label: {
+                    Button { sendPhotoMessage() } label: {
                         Image(systemName: "plus")
                             .foregroundStyle(Color.vendoredWhatsAppVendoredWhatsAppPrimary)
                     }
@@ -120,6 +120,18 @@ struct VendoredWhatsAppChatDetailView: View {
             )
         )
         sendMessageText = ""
+    }
+
+    private func sendPhotoMessage() {
+        messages.append(
+            VendoredWhatsAppChatConversationResponse(
+                id: UUID(),
+                text: "[Photo]",
+                isMe: true,
+                isReaction: nil,
+                dateTime: "Now"
+            )
+        )
     }
 
     private func scrollToBottom(proxy: ScrollViewProxy, animated: Bool) {

@@ -37,7 +37,6 @@ struct VendoredYouTubeVideoDetailView: View {
                     VendoredYouTubeCustomVideoPlayer(videoFileName: video.videoUrl)
                         .frame(maxWidth: .infinity)
                         .frame(height: 220)
-                        .allowsHitTesting(false)
                     // back button
                     Button {
                         dismiss()

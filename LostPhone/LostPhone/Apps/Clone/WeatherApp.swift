@@ -2,7 +2,8 @@ import SwiftUI
 
 // MARK: - Main View
 struct WeatherView: View {
-    private let hours = HourlyMock.generate()
+    @Environment(\.lpspStoryDate) private var storyDate
+    private var hours: [HourlyMock] { HourlyMock.generate(referenceDate: storyDate) }
 
     var body: some View {
         ZStack {
@@ -71,7 +72,7 @@ struct HeaderView: View {
                 .foregroundStyle(.white)
                 .shadow(radius: 2)
             
-            Text("Plutôt dégagé")
+            Text(Fr.mostlyClear)
                 .font(.title3.weight(.medium))
                 .foregroundStyle(.white.opacity(0.6))
         }
@@ -83,7 +84,7 @@ struct HourlyForecastView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("Hourly Forecast", systemImage: "clock")
+            Label(Fr.hourlyForecast, systemImage: "clock")
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(.white.opacity(0.5))
                 .padding(.top, 12)
@@ -122,10 +123,19 @@ struct HourlyForecastView: View {
 
 struct DailyForecastView: View {
     let days: [DailyMock] = DailyMock.generate()
+
+    private var tempRange: ClosedRange<Int> {
+        let lows = days.map(\.low)
+        let highs = days.map(\.high)
+        guard let minT = lows.min(), let maxT = highs.max(), minT < maxT else {
+            return 0...35
+        }
+        return minT...maxT
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Label("10-Day Forecast", systemImage: "calendar")
+            Label(Fr.tenDayForecast, systemImage: "calendar")
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(.white.opacity(0.5))
                 .padding(15)
@@ -157,7 +167,7 @@ struct DailyForecastView: View {
                         .frame(width: 40)
                     
                     // Temperature Bar
-                    TemperatureBar(low: day.low, high: day.high, range: 55...90)
+                    TemperatureBar(low: day.low, high: day.high, range: tempRange)
                         .frame(width: 100, height: 4)
                     
                     // High Temp
@@ -273,10 +283,13 @@ struct HourlyMock: Identifiable {
     let icon: String
     let temp: Int
     
-    static func generate() -> [HourlyMock] {
+    static func generate(referenceDate: Date = Date()) -> [HourlyMock] {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: referenceDate)
+        let nextHourLabel = String(format: "%d h", (hour + 1) % 24)
         return [
             HourlyMock(time: "Maintenant", icon: "sun.max.fill", temp: 24),
-            HourlyMock(time: "12 h", icon: "sun.max.fill", temp: 25),
+            HourlyMock(time: nextHourLabel, icon: "sun.max.fill", temp: 25),
             HourlyMock(time: "13 h", icon: "cloud.sun.fill", temp: 26),
             HourlyMock(time: "14 h", icon: "cloud.sun.fill", temp: 27),
             HourlyMock(time: "15 h", icon: "sun.max.fill", temp: 28),
@@ -297,7 +310,7 @@ struct DailyMock: Identifiable {
     
     static func generate() -> [DailyMock] {
         return [
-            DailyMock(dayName: "Aujourd'hui", icon: "sun.max.fill", low: 18, high: 28),
+            DailyMock(dayName: Fr.today, icon: "sun.max.fill", low: 18, high: 28),
             DailyMock(dayName: "Mer.", icon: "cloud.sun.fill", low: 17, high: 26),
             DailyMock(dayName: "Jeu.", icon: "sun.max.fill", low: 16, high: 29),
             DailyMock(dayName: "Ven.", icon: "cloud.rain.fill", low: 15, high: 24),

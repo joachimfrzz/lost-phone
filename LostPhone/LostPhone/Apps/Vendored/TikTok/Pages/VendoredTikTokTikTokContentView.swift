@@ -63,24 +63,27 @@ struct VendoredTikTokContentInfoView:View {
                 // profile and icons
                 VStack (spacing: 24){
                     // profile with plus icon
-                    ZStack (alignment: .bottom){
-                        // music cover url
-                        KFImage(URL(string: feed.imageUrl))
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 48, height: 48)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(.white))
-                        // plus icon
-                        Image(systemName: "plus.circle.fill")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 24, height: 24)
-                            .foregroundStyle(Color.vendoredTikTokIsLikedColor)
-                            .background(.white)
-                            .clipShape(Circle())
-                            .offset(x: 0, y: 6)
+                    NavigationLink(destination: VendoredTikTokProfileView(feed: feed)) {
+                        ZStack (alignment: .bottom){
+                            // music cover url
+                            KFImage(URL(string: feed.imageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 48, height: 48)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(.white))
+                            // plus icon
+                            Image(systemName: "plus.circle.fill")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(Color.vendoredTikTokIsLikedColor)
+                                .background(.white)
+                                .clipShape(Circle())
+                                .offset(x: 0, y: 6)
+                        }
                     }
+                    .buttonStyle(.plain)
                     .padding(.bottom, 20)
                     
                     

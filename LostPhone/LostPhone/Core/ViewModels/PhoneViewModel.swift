@@ -8,6 +8,7 @@ final class PhoneViewModel: ObservableObject {
     @Published var pinError = false
     @Published var overlay: SystemOverlay = .none
     @Published var activeApp: String?
+    @Published var showroomInstalledApps: [String] = []
     @Published private(set) var currentStoryId: String?
 
     private var pinCode = ""
@@ -47,6 +48,34 @@ final class PhoneViewModel: ObservableObject {
         LpspAdapters.deviceOwner(from: package)
     }
 
+    var storyReferenceDate: Date {
+        LpspAdapters.storyReferenceDate(from: package)
+    }
+
+    func installShowroomApp(_ name: String) {
+        guard isCloneShowroom else { return }
+        let resolved = Self.showroomAppName(from: name)
+        let alreadyPresent = CloneShowroomLayout.allApps.contains(resolved)
+            || showroomInstalledApps.contains(resolved)
+        guard !alreadyPresent else { return }
+        showroomInstalledApps.append(resolved)
+    }
+
+    private static func showroomAppName(from storeName: String) -> String {
+        let mapping: [String: String] = [
+            "Spotify": "Spotify",
+            "Duolingo": "Duolingo",
+            "Flighty": "Flighty",
+            "Procreate": "Procreate",
+            "Linear": "Linear",
+            "Clash Royale": "Clash Royale",
+            "Genshin Impact": "Genshin Impact",
+            "Subway Surfers": "Subway Surfers",
+            "Minecraft": "Minecraft",
+        ]
+        return mapping[storeName] ?? LpspAppAliases.canonical(storeName)
+    }
+
     func startStory(_ storyId: String) async {
         GameProgressStore.recordStoryStarted(storyId)
         await loadStory(storyId: storyId)
@@ -57,6 +86,7 @@ final class PhoneViewModel: ObservableObject {
         package = nil
         notifications = []
         activeApp = nil
+        showroomInstalledApps = []
         firedEventIds = []
         scheduledEvents = []
         currentStoryId = nil

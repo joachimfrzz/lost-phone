@@ -9,17 +9,19 @@ import SwiftUI
 import Kingfisher // load image network cache
 
 struct VendoredAirbnbHomeView: View {
+    @State private var searchQuery = ""
+
     var body: some View {
         NavigationStack {
             ZStack (alignment: .bottom){
                 ScrollView {
                     VStack (spacing:24){
                         // search
-                        VendoredAirbnbSearchView()
+                        VendoredAirbnbSearchView(searchQuery: $searchQuery)
                         // tabs
                         VendoredAirbnbTabsContentView()
                         // list item
-                        VendoredAirbnbListBookingView()
+                        VendoredAirbnbListBookingView(searchQuery: searchQuery)
                     }
                     .padding(.vertical)
                 }
@@ -65,12 +67,15 @@ struct VendoredAirbnbHomeView: View {
 }
 
 struct VendoredAirbnbSearchView:View {
+    @Binding var searchQuery: String
+
     var body: some View {
         HStack (spacing:20){
             // search
             HStack {
                 Image(systemName: "magnifyingglass")
-                TextField("Start your search", text: .constant(""))
+                TextField("Start your search", text: $searchQuery)
+                    .autocorrectionDisabled()
             }
             .padding(.horizontal)
             .frame(maxWidth: .infinity)
@@ -147,12 +152,21 @@ struct VendoredAirbnbTabsContentView:View {
 }
 
 struct VendoredAirbnbListBookingView:View {
-    // load list of booking data
+    var searchQuery: String = ""
     var bookingsDatas:[VendoredAirbnbBookingResponse] = bookingsData
+
+    private var filteredBookings: [VendoredAirbnbBookingResponse] {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return bookingsDatas }
+        return bookingsDatas.filter {
+            $0.name.localizedCaseInsensitiveContains(query)
+                || $0.mileAway.localizedCaseInsensitiveContains(query)
+        }
+    }
     
     var body: some View {
         LazyVStack (spacing:24){
-            ForEach(bookingsDatas) { booking in
+            ForEach(filteredBookings) { booking in
                 NavigationLink (destination: VendoredAirbnbDetailView(booking: booking)){
                     VendoredAirbnbBookingRowView(booking: booking)
                 }

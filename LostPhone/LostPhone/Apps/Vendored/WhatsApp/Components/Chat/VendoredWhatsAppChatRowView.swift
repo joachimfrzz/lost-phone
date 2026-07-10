@@ -19,12 +19,12 @@ struct VendoredWhatsAppChatRowView: View {
                     .font(.headline)
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.primary)
                 HStack (spacing: 6){
                     VendoredWhatsAppIconTypeView(type: chatResponse.type)
                     Text(chatResponse.text ?? "")
                         .font(.subheadline)
-                        .foregroundStyle(.black.opacity(0.6))
+                        .foregroundStyle(.secondary)
                         .fontWeight(.regular)
                         .lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -44,7 +44,7 @@ struct VendoredWhatsAppChatRowView: View {
                     Text(chatResponse.timeAgo)
                         .font(.subheadline)
                         .fontWeight(.regular)
-                        .foregroundStyle(.black.opacity(0.6))
+                        .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 if let badgeNumber = chatResponse.badgeNumber, badgeNumber > 0 {

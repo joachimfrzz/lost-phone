@@ -10,6 +10,7 @@ import SwiftUI
 struct VendoredMessengerContentView: View {
     var body: some View {
         VendoredMessengerChatView()
+            .preferredColorScheme(.light)
     }
 }
 

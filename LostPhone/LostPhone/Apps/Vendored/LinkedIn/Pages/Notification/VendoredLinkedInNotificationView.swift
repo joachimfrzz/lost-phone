@@ -13,7 +13,6 @@ struct VendoredLinkedInNotificationView: View {
 
     
     var body: some View {
-        NavigationStack {
             ScrollView {
                 LazyVStack (spacing: 20){
                     ForEach(notificationDatas) { notification in
@@ -24,11 +23,7 @@ struct VendoredLinkedInNotificationView: View {
               
             }
            
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
             .background(Color.vendoredLinkedInNotificationBackgroundColor)
-            
-        }
     }
 }
 

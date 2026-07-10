@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 // enum load custom font // TikTokIcons
 enum VendoredTikTokTikTokIcon: String {
@@ -33,17 +32,11 @@ struct VendoredTikTokTikTokIconView: View {
     }
 
     var body: some View {
-        if UIFont(name: "TikTokIcons", size: size) != nil, icon != .saved {
-            Text(icon.rawValue)
-                .font(.custom("TikTokIcons", size: size))
-                .foregroundStyle(color)
-        } else {
-            Image(systemName: systemFallback)
-                .resizable()
-                .scaledToFit()
-                .frame(width: size, height: size)
-                .foregroundStyle(color)
-        }
+        Image(systemName: systemFallback)
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
+            .foregroundStyle(color)
     }
 }
 

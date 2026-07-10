@@ -452,6 +452,13 @@ private enum LpspCoinbaseShowroomData {
         ("ETH", "3.25% APY"),
         ("SOL", "5.80% APY"),
     ]
+
+    static let recentTransactions: [(String, String, String, Bool)] = [
+        ("Bought BTC", "+0.002 BTC", "Today", true),
+        ("Sent ETH", "−0.05 ETH", "Yesterday", false),
+        ("Received USDC", "+$120.00", "Mon", true),
+        ("Sold SOL", "−1.2 SOL", "Sun", false),
+    ]
 }
 
 @MainActor
@@ -750,6 +757,36 @@ private struct LpspCoinbaseSpectrHomeTabScreen: View {
                 ForEach(store.assets) { asset in
                     LpspCoinbaseShowroomAssetRow(asset: asset) {
                         store.selectAsset(asset)
+                    }
+                }
+
+                Text("Recent activity")
+                    .font(LpspCoinbaseFonts.cbSectionHeader.weight(.bold))
+                    .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 4)
+
+                ForEach(LpspCoinbaseShowroomData.recentTransactions, id: \.0) { tx in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(tx.0)
+                                .font(LpspCoinbaseFonts.cbAssetTitle)
+                                .foregroundStyle(LpspCoinbaseTokens.cbTextPrimary)
+                            Text(tx.2)
+                                .font(LpspCoinbaseFonts.cbBodySmall)
+                                .foregroundStyle(LpspCoinbaseTokens.cbTextSecondary)
+                        }
+                        Spacer()
+                        Text(tx.1)
+                            .font(LpspCoinbaseFonts.cbAssetPrice)
+                            .foregroundStyle(tx.3 ? LpspCoinbaseTokens.cbSuccess : LpspCoinbaseTokens.cbTextPrimary)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .overlay(alignment: .bottom) {
+                        Rectangle().fill(LpspCoinbaseTokens.cbDivider).frame(height: 0.5)
                     }
                 }
             }

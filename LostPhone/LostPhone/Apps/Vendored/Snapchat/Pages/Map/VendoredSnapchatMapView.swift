@@ -16,10 +16,16 @@ struct VendoredSnapchatMapView: View {
             span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         )
     )
-    private let mapFriends: [VendoredSnapMapFriend] = [
-        VendoredSnapMapFriend(image: "default_user", coordinate: CLLocationCoordinate2D(latitude: 37.776, longitude: -122.418)),
-        VendoredSnapMapFriend(image: "default_user", coordinate: CLLocationCoordinate2D(latitude: 37.773, longitude: -122.421))
-    ]
+    private let mapFriends: [VendoredSnapMapFriend] = {
+        let coordinates = [
+            CLLocationCoordinate2D(latitude: 37.776, longitude: -122.418),
+            CLLocationCoordinate2D(latitude: 37.773, longitude: -122.421),
+            CLLocationCoordinate2D(latitude: 37.778, longitude: -122.415)
+        ]
+        return vendoredSnapchatUserData.prefix(coordinates.count).enumerated().map { index, user in
+            VendoredSnapMapFriend(image: user.profileImage, coordinate: coordinates[index])
+        }
+    }()
     
     var body: some View {
         NavigationStack {
@@ -28,11 +34,7 @@ struct VendoredSnapchatMapView: View {
                 Map(position: $position) {
                     ForEach(mapFriends) { friend in
                         Annotation("", coordinate: friend.coordinate, anchor: .bottom) {
-                            Image(friend.image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 36, height: 36)
-                                .clipShape(Circle())
+                            VendoredSnapchatProfileImageView(profileImage: friend.image, size: 36)
                                 .overlay(Circle().stroke(.white, lineWidth: 2))
                         }
                     }
@@ -140,10 +142,7 @@ struct VendoredSnapchatProfileMapAndOptionIconsView: View {
 struct VendoredSnapchatEmojiView: View {
     var body: some View {
         ZStack {
-            Image(vendoredSnapchatUserDataCurrent.profileImage)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 60, height: 60)
+            VendoredSnapchatProfileImageView(profileImage: vendoredSnapchatUserDataCurrent.profileImage, size: 60)
             Text("Me")
                 .font(.subheadline)
                 .bold()
@@ -182,7 +181,7 @@ struct VendoredSnapchatMyBitmojiPlaceFriendView: View {
                     
             }
             Spacer()
-            VendoredSnapchatCircleProfileTextView(image: "default_user", title: "Friends")
+            VendoredSnapchatCircleProfileTextView(image: vendoredSnapchatUserData.first?.profileImage ?? vendoredSnapchatUserDataCurrent.profileImage, title: "Friends")
                 
             
         }

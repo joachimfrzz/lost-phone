@@ -19,14 +19,21 @@ struct VendoredLinkedInRootApp: View {
             VStack {
                         
                 // Content Views
-                TabView(selection: $selectedTab) {
-                    VendoredLinkedInHomeView().tag(0)
-                    VendoredLinkedInMyNetworkView().tag(1)
-                    VendoredLinkedInUploadPostView().tag(2)
-                    VendoredLinkedInNotificationView().tag(3)
-                    VendoredLinkedInJobView().tag(4)
+                Group {
+                    switch selectedTab {
+                    case 0:
+                        VendoredLinkedInHomeView()
+                    case 1:
+                        VendoredLinkedInMyNetworkView()
+                    case 3:
+                        VendoredLinkedInNotificationView()
+                    case 4:
+                        VendoredLinkedInJobView()
+                    default:
+                        VendoredLinkedInHomeView()
+                    }
                 }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                
                
                 

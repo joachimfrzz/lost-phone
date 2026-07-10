@@ -48,13 +48,13 @@ struct VendoredThreadsLogoAndProfileActionButtonsView:View {
                 .frame(width: 42)
             // profile and caption
             HStack (spacing: 12){
-                KFImage(URL(string: currentUser.imageUrl))
+                KFImage(URL(string: vendoredThreadsCurrentUser.imageUrl))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 45, height: 45)
                     .clipShape(Circle())
                 VStack (spacing: 0){
-                    Text(currentUser.username)
+                    Text(vendoredThreadsCurrentUser.username)
                         .font(.headline)
                         .fontWeight(.semibold)
                     Text("What's new?")

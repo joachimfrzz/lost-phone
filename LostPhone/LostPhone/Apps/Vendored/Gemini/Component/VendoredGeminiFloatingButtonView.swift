@@ -9,14 +9,29 @@ import SwiftUI
 
 struct VendoredGeminiFloatingButtonView:View {
     @Binding var promptText:String
+    var onSend: () -> Void = {}
+
     var body: some View {
         HStack {
             // textfield
             HStack {
                 TextField("Ask Gemini", text: $promptText)
                     .padding(.leading)
+                    .onSubmit(onSend)
                 // icons
-                HStack (spacing:24){
+                HStack (spacing:16){
+                    Button {
+                        onSend()
+                    } label: {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(
+                                promptText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                    ? .secondary
+                                    : Color.vendoredGeminiPrimaryColor1
+                            )
+                    }
+                    .disabled(promptText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     Button {
                         
                     }label: {
@@ -29,7 +44,7 @@ struct VendoredGeminiFloatingButtonView:View {
                     }
                 }
                 .foregroundStyle(.primary)
-                .frame(width: 110, height: 48)
+                .frame(width: 130, height: 48)
                 .background(Color.vendoredGeminiHightLightColor)
                 .clipShape(Capsule())
             }

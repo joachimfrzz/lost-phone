@@ -24,7 +24,13 @@ struct HomeShellView: View {
 
     private var pages: [[String]] {
         if phone.isCloneShowroom {
-            return CloneShowroomLayout.gridPages
+            var apps = CloneShowroomLayout.allGridApps
+            let installed = phone.showroomInstalledApps.filter { !apps.contains($0) }
+            apps.append(contentsOf: installed)
+            guard !apps.isEmpty else { return [[]] }
+            return stride(from: 0, to: apps.count, by: 16).map { start in
+                Array(apps.dropFirst(start).prefix(16))
+            }
         }
         return stride(from: 0, to: max(gridApps.count, 1), by: 16).map { start in
             Array(gridApps.dropFirst(start).prefix(16))

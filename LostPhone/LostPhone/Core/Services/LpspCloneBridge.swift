@@ -20,17 +20,27 @@ enum LpspCloneBridge {
     }
 
     static func mailManager(from items: [LpspEmail]) -> MailManager {
-        MailManager(emails: items.map { item in
-            Email(
-                stableId: item.id,
-                sender: item.sender,
-                subject: item.subject,
-                body: item.body,
-                date: item.date ?? .distantPast,
-                isRead: item.isRead,
-                isFlagged: false
-            )
-        })
+        mailManager(from: items, sent: [], drafts: [])
+    }
+
+    static func mailManager(from inbox: [LpspEmail], sent: [LpspEmail], drafts: [LpspEmail]) -> MailManager {
+        MailManager(
+            emails: inbox.map(toEmail),
+            sent: sent.map(toEmail),
+            drafts: drafts.map(toEmail)
+        )
+    }
+
+    private static func toEmail(_ item: LpspEmail) -> Email {
+        Email(
+            stableId: item.id,
+            sender: item.sender,
+            subject: item.subject,
+            body: item.body,
+            date: item.date ?? .distantPast,
+            isRead: item.isRead,
+            isFlagged: false
+        )
     }
 
     static func photoLibrary(from items: [LpspPhoto], albums: [String]) -> PhotoLibrary {

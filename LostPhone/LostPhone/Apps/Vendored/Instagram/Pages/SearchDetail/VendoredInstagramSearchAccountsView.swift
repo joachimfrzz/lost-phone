@@ -10,8 +10,19 @@ import SwiftUI
 struct VendoredInstagramSearchAccountsView: View {
     let searchAccountsData:[VendoredInstagramSearchRecentResponse] = searchRecentData
     var body: some View {
-        ForEach(searchAccountsData) {searchData in
-            HStack (spacing: 14){
+        ForEach(searchAccountsData) { searchData in
+            NavigationLink {
+                VendoredInstagramPostView(
+                    profileImageUrl: searchData.user.profileImage,
+                    username: searchData.user.username,
+                    postImages: postsData.first?.imageOrVideoUrl ?? [],
+                    caption: postsData.first?.caption ?? "",
+                    totalLikes: postsData.first?.totalLikes ?? 0,
+                    totalComments: postsData.first?.totalComments ?? 0,
+                    postType: 1
+                )
+            } label: {
+                HStack (spacing: 14){
                 VendoredInstagramProfileImageView(profileImage: searchData.user.profileImage, size: 45)
                 VStack (alignment: .leading,spacing: 0){
                     HStack (spacing: 5){
@@ -35,6 +46,8 @@ struct VendoredInstagramSearchAccountsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical,6)
+            }
+            .buttonStyle(.plain)
         }
     }
 }

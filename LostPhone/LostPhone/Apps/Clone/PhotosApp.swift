@@ -76,12 +76,13 @@ struct LibraryView: View {
     @State private var gridColumns = Array(repeating: GridItem(.flexible(), spacing: 1), count: 3)
     @State private var selectedSegment = 2
     @Environment(\.lpspReadOnly) private var readOnly
+    @Environment(\.lpspStoryDate) private var storyDate
 
     private var displayedPhotos: [GalleryPhoto] {
         let calendar = Calendar.current
         switch selectedSegment {
         case 0:
-            let year = calendar.component(.year, from: Date())
+            let year = calendar.component(.year, from: storyDate)
             return library.galleryPhotos.filter { photo in
                 guard let date = photo.capturedAt else { return false }
                 return calendar.component(.year, from: date) == year
@@ -89,7 +90,7 @@ struct LibraryView: View {
         case 1:
             return library.galleryPhotos.filter { photo in
                 guard let date = photo.capturedAt else { return false }
-                return calendar.isDate(date, equalTo: Date(), toGranularity: .month)
+                return calendar.isDate(date, equalTo: storyDate, toGranularity: .month)
             }
         default:
             return library.galleryPhotos
@@ -313,29 +314,6 @@ struct PhotosForYouView: View {
                                 }
                                 .padding(.horizontal, 16)
                             }
-                        }
-
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Sélection")
-                                .font(.system(size: 22, weight: .bold))
-                                .padding(.horizontal, 16)
-
-                            LazyVGrid(
-                                columns: [GridItem(.flexible()), GridItem(.flexible())],
-                                spacing: 4
-                            ) {
-                                ForEach(Array(library.galleryPhotos.prefix(6))) { photo in
-                                    NavigationLink {
-                                        GalleryPhotoDetailView(photo: photo, storyId: storyId)
-                                    } label: {
-                                        GalleryPhotoTile(photo: photo, storyId: storyId)
-                                            .aspectRatio(1, contentMode: .fit)
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                            .padding(.horizontal, 16)
                         }
                     }
                     .padding(.vertical, 16)

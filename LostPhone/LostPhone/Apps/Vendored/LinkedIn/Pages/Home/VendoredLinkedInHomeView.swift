@@ -14,7 +14,6 @@ struct VendoredLinkedInHomeView: View {
    
     
     var body: some View {
-        NavigationStack {
             ScrollView {
                     LazyVStack {
                         ForEach(postAllDatas) { post in
@@ -26,9 +25,6 @@ struct VendoredLinkedInHomeView: View {
             }
             
             .background(Color.vendoredLinkedInBackgroundColor)
-            .navigationBarTitleDisplayMode(.inline)
-           
-        }
     }
 }
 

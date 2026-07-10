@@ -19,6 +19,7 @@ struct LpspAppContainerView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .environment(\.lpspReadOnly, !phone.isCloneShowroom)
             .environment(\.lpspStoryId, phone.currentStoryId)
+            .environment(\.lpspStoryDate, phone.storyReferenceDate)
             .environment(\.deviceOwner, phone.deviceOwner)
 
             if phone.isCloneShowroom {
@@ -64,6 +65,14 @@ struct LpspAppRouter: View {
 
     private var contacts: [PhoneContact] {
         LpspCloneBridge.phoneContacts(from: LpspAdapters.contacts(from: phone.contactsPayload()))
+    }
+
+    private func mailManager(from payload: AnyCodable?) -> MailManager {
+        LpspCloneBridge.mailManager(
+            from: LpspAdapters.mail(from: payload),
+            sent: LpspAdapters.mailSent(from: payload),
+            drafts: LpspAdapters.mailDrafts(from: payload)
+        )
     }
 
     var body: some View {
@@ -168,7 +177,7 @@ struct LpspAppRouter: View {
         case "Safari":
             SafariView()
         case "Mail":
-            LpspVendoredGmailRootView()
+            MailView(manager: mailManager(from: phone.appData(for: "Mail")))
         case "Notes":
             NotesView()
         case "Calendrier":
@@ -184,7 +193,7 @@ struct LpspAppRouter: View {
         case "Appareil photo", "Camera", "Caméra":
             CameraView()
         case "App Store":
-            LpspVendoredAppStoreRootView()
+            AppStoreView()
         case "Musique", "Music":
             LpspVendoredAppleMusicRootView()
         case "Contacts":
@@ -221,7 +230,7 @@ struct LpspAppRouter: View {
                 history: LpspAdapters.safariHistory(from: payload)
             ))
         case "Mail":
-            LpspVendoredGmailRootView()
+            MailView(manager: mailManager(from: payload))
         case "Notes":
             NotesView(manager: LpspCloneBridge.notesManager(from: LpspAdapters.notes(from: payload)))
         case "Calendrier":
@@ -237,7 +246,7 @@ struct LpspAppRouter: View {
         case "Appareil photo", "Camera", "Caméra":
             CameraView()
         case "App Store":
-            LpspVendoredAppStoreRootView()
+            AppStoreView()
         case "Musique", "Music":
             LpspVendoredAppleMusicRootView()
         case "Contacts":
@@ -265,7 +274,7 @@ struct LpspAppRouter: View {
         case .weather: WeatherView()
         case .calculator: CalculatorView()
         case .settings: SettingsView()
-        case .appStore: LpspVendoredAppStoreRootView()
+        case .appStore: AppStoreView()
         case .clock: ClockView()
         case .calendar:
             CalendarView(events: LpspCloneBridge.calendarEvents(from: LpspAdapters.calendar(from: payload)))

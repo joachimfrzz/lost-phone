@@ -23,21 +23,28 @@ struct VendoredInstagramPostGridVideoView: View {
                 if let urlString = post.imageOrVideoUrl.first {
                     
                     if(post.postType == 2){
-                        ZStack (alignment: .topTrailing){
-                            VendoredInstagramThumbnailImageView(videoURL: URL(string: urlString)!,width: size, height: size)
-                            Image("reels_white_icon")
-                                .padding(.all, 10)
-                                
+                        NavigationLink(destination: VendoredInstagramPostView(
+                            profileImageUrl: vendoredInstagramUserDataCurrent.profileImage,
+                            username: vendoredInstagramUserDataCurrent.username,
+                            postImages: post.imageOrVideoUrl,
+                            caption: post.caption ?? "",
+                            totalLikes: post.totalLikes,
+                            totalComments: post.totalComments,
+                            postType: post.postType
+                        ).hideTabBar()) {
+                            ZStack (alignment: .topTrailing){
+                                VendoredInstagramThumbnailImageView(videoURL: URL(string: urlString)!,width: size, height: size)
+                                Image("reels_white_icon")
+                                    .padding(.all, 10)
+                                    
+                            }
                         }
+                        .buttonStyle(.plain)
                         
                     }else {
                        EmptyView()
                     }
                 }
-                
-                
-               
-                
             }
         }
     }

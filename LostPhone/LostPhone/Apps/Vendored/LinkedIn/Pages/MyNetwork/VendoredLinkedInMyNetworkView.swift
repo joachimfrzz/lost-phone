@@ -14,7 +14,6 @@ struct VendoredLinkedInMyNetworkView: View {
  
     
     var body: some View {
-        NavigationStack {
             ScrollView {
                 VStack {
                    
@@ -42,10 +41,7 @@ struct VendoredLinkedInMyNetworkView: View {
                 .padding(.vertical, 10)
                 
             }
-            .navigationBarTitleDisplayMode(.inline)
             .background(Color.vendoredLinkedInBackgroundColor)
-            
-        }
     }
 }
 

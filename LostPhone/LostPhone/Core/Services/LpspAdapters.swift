@@ -157,17 +157,43 @@ enum LpspAdapters {
     }
 
     static func mail(from payload: AnyCodable?) -> [LpspEmail] {
-        guard let inbox = payload?["boite_reception"]?.arrayValue else { return [] }
-        return inbox.enumerated().map { index, raw in
+        parseMailItems(payload?["boite_reception"]?.arrayValue, prefix: "mail")
+    }
+
+    static func mailSent(from payload: AnyCodable?) -> [LpspEmail] {
+        parseMailItems(payload?["envoyes"]?.arrayValue, prefix: "sent")
+    }
+
+    static func mailDrafts(from payload: AnyCodable?) -> [LpspEmail] {
+        parseMailItems(payload?["brouillons"]?.arrayValue, prefix: "draft")
+    }
+
+    static func storyReferenceDate(from package: LpspPackage?) -> Date {
+        guard let package else { return Date() }
+        let events = calendar(from: appPayload(from: package, appName: "Calendrier"))
+        if let session = events.first(where: {
+            $0.title.localizedCaseInsensitiveContains("dernière session")
+        }) {
+            return session.start
+        }
+        if let latest = events.max(by: { $0.start < $1.start }) {
+            return latest.start
+        }
+        return Date()
+    }
+
+    private static func parseMailItems(_ items: [AnyCodable]?, prefix: String) -> [LpspEmail] {
+        guard let items else { return [] }
+        return items.enumerated().map { index, raw in
             let object = raw.objectValue ?? [:]
             let preview = object["extrait"]?.stringValue ?? ""
             let dateRaw = object["date"]?.stringValue
             return LpspEmail(
-                id: "mail-\(index)",
+                id: object["id"]?.stringValue ?? "\(prefix)-\(index)",
                 sender: object["de"]?.stringValue ?? "Inconnu",
                 subject: object["objet"]?.stringValue ?? "(Sans objet)",
                 preview: preview,
-                body: preview,
+                body: object["corps"]?.stringValue ?? preview,
                 date: parseISO(dateRaw),
                 dateRaw: dateRaw,
                 isRead: object["lu"]?.boolValue ?? true

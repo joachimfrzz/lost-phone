@@ -35,6 +35,7 @@ struct CalendarEvent: Identifiable {
 // MARK: - Main View
 struct CalendarView: View {
     let events: [CalendarEvent]
+    @Environment(\.lpspStoryDate) private var storyDate
     @State private var selectedDate = Date()
     @State private var displayedMonth = Date()
     @State private var selectedEvent: CalendarEvent?
@@ -46,14 +47,16 @@ struct CalendarView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // 1. Month/Year Header
                 CalendarHeaderView(date: displayedMonth, onPrevious: previousMonth, onNext: nextMonth)
                 
-                // 2. Days of Week
                 WeekDaysHeader()
                 
-                // 3. Month Grid
-                MonthGridView(selectedDate: $selectedDate, displayedMonth: displayedMonth)
+                MonthGridView(
+                    selectedDate: $selectedDate,
+                    displayedMonth: displayedMonth,
+                    events: events,
+                    storyDate: storyDate
+                )
                     .padding(.bottom, 10)
                     .gesture(
                         DragGesture(minimumDistance: 30).onEnded { value in
@@ -64,7 +67,6 @@ struct CalendarView: View {
                 
                 Divider()
                 
-                // 4. Timeline Schedule View
                 ScrollViewReader { proxy in
                     ScrollView {
                         ZStack(alignment: .top) {
@@ -74,8 +76,8 @@ struct CalendarView: View {
                                 events: events,
                                 onSelect: { selectedEvent = $0 }
                             )
-                            if Calendar.current.isDateInToday(selectedDate) {
-                                CurrentTimeLineView()
+                            if Calendar.current.isDate(selectedDate, inSameDayAs: storyDate) {
+                                CurrentTimeLineView(referenceDate: storyDate)
                             }
                         }
                         .frame(height: 1440)
@@ -88,9 +90,9 @@ struct CalendarView: View {
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
                     HStack {
-                        Button("Today") { goToToday() }
+                        Button(Fr.today) { goToToday() }
                             .foregroundStyle(.red)
-                        Button("Calendars") { goToToday() }
+                        Button(Fr.calendars) { goToToday() }
                             .foregroundStyle(.red)
                     }
                     .font(.system(size: 16))
@@ -99,6 +101,10 @@ struct CalendarView: View {
             .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $selectedEvent) { event in
                 EventDetailSheet(event: event)
+            }
+            .onAppear {
+                selectedDate = storyDate
+                displayedMonth = storyDate
             }
         }
     }
@@ -116,9 +122,8 @@ struct CalendarView: View {
     }
     
     private func goToToday() {
-        let today = Date()
-        selectedDate = today
-        displayedMonth = today
+        selectedDate = storyDate
+        displayedMonth = storyDate
     }
 }
 
@@ -165,7 +170,7 @@ struct CalendarHeaderView: View {
 }
 
 struct WeekDaysHeader: View {
-    let days = ["S", "M", "T", "W", "T", "F", "S"]
+    let days = ["L", "M", "M", "J", "V", "S", "D"]
     
     var body: some View {
         HStack {
@@ -183,6 +188,8 @@ struct WeekDaysHeader: View {
 struct MonthGridView: View {
     @Binding var selectedDate: Date
     let displayedMonth: Date
+    let events: [CalendarEvent]
+    let storyDate: Date
     private let calendar = Calendar.current
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     
@@ -192,7 +199,12 @@ struct MonthGridView: View {
         LazyVGrid(columns: columns, spacing: 12) {
             ForEach(days, id: \.self) { date in
                 if let date = date {
-                    DayCell(date: date, selectedDate: $selectedDate)
+                    DayCell(
+                        date: date,
+                        selectedDate: $selectedDate,
+                        events: events,
+                        storyDate: storyDate
+                    )
                 } else {
                     Text("")
                         .frame(height: 35)
@@ -207,7 +219,7 @@ struct MonthGridView: View {
               let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) else { return [] }
         
         let weekday = calendar.component(.weekday, from: firstDay)
-        let offset = weekday - 1
+        let offset = (weekday + 5) % 7
         
         var days: [Date?] = Array(repeating: nil, count: offset)
         for day in 1...range.count {
@@ -222,10 +234,16 @@ struct MonthGridView: View {
 struct DayCell: View {
     let date: Date
     @Binding var selectedDate: Date
+    let events: [CalendarEvent]
+    let storyDate: Date
     private let calendar = Calendar.current
     
+    private var hasEvents: Bool {
+        events.contains { calendar.isDate($0.start, inSameDayAs: date) }
+    }
+    
     var body: some View {
-        let isToday = calendar.isDateInToday(date)
+        let isToday = calendar.isDate(date, inSameDayAs: storyDate)
         let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
         
         Button {
@@ -248,8 +266,7 @@ struct DayCell: View {
                         .foregroundStyle(isToday ? .white : (isSelected ? Color(uiColor: .systemBackground) : .primary))
                 }
                 
-                // Mock Event Dot
-                if [2, 5, 14, 19, 23].contains(calendar.component(.day, from: date)) {
+                if hasEvents {
                     Circle()
                         .fill(isToday ? .red : (isSelected ? .primary : .gray))
                         .frame(width: 4, height: 4)
@@ -269,21 +286,19 @@ struct TimelineGridView: View {
         VStack(spacing: 0) {
             ForEach(0..<24) { hour in
                 HStack(alignment: .top) {
-                    // Time Label
                     Text(formatHour(hour))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(.gray)
                         .frame(width: 50, alignment: .trailing)
-                        .offset(y: -6) // Align text with the line
+                        .offset(y: -6)
                     
-                    // Horizontal Line
                     VStack {
                         Divider()
                         Spacer()
                     }
                 }
-                .frame(height: 60) // 1 hour = 60 points
-                .id(hour) // For scroll anchor
+                .frame(height: 60)
+                .id(hour)
             }
         }
         .padding(.trailing)
@@ -329,34 +344,13 @@ struct EventsLayoutView: View {
     }
     
     func calculateHeight(start: Date, end: Date) -> CGFloat {
-        let duration = end.timeIntervalSince(start) // in seconds
-        return CGFloat(duration / 60) // 1 minute = 1 point height
+        let duration = end.timeIntervalSince(start)
+        return CGFloat(duration / 60)
     }
     
     func displayedEvents(for date: Date) -> [CalendarEvent] {
         let calendar = Calendar.current
-        let storyEvents = events.filter { calendar.isDate($0.start, inSameDayAs: date) }
-        if !storyEvents.isEmpty {
-            return storyEvents
-        }
-        return getMockEvents(for: date)
-    }
-
-    func getMockEvents(for date: Date) -> [CalendarEvent] {
-        // Mock data generation relative to selected date
-        let calendar = Calendar.current
-        
-        // Create start times for today
-        func createDate(hour: Int, minute: Int) -> Date {
-            calendar.date(bySettingHour: hour, minute: minute, second: 0, of: date)!
-        }
-        
-        return [
-            CalendarEvent(title: "Team Standup", location: "Zoom", notes: "Daily sync with design team.", start: createDate(hour: 9, minute: 30), end: createDate(hour: 10, minute: 0), color: .orange),
-            CalendarEvent(title: "Design Review", location: "Conference Room A", notes: "Review mockups for Q3 launch.", start: createDate(hour: 11, minute: 0), end: createDate(hour: 12, minute: 30), color: .blue),
-            CalendarEvent(title: "Lunch", location: "Cafeteria", notes: nil, start: createDate(hour: 13, minute: 0), end: createDate(hour: 14, minute: 0), color: .gray),
-            CalendarEvent(title: "Project Sync", location: nil, notes: "Align on deliverables before deadline.", start: createDate(hour: 15, minute: 15), end: createDate(hour: 16, minute: 15), color: .purple)
-        ]
+        return events.filter { calendar.isDate($0.start, inSameDayAs: date) }
     }
 }
 
@@ -365,12 +359,10 @@ struct EventCard: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            // Color Indicator Line
             Rectangle()
                 .fill(event.color)
                 .frame(width: 4)
             
-            // Content
             VStack(alignment: .leading, spacing: 2) {
                 Text(event.title)
                     .font(.system(size: 12, weight: .semibold))
@@ -398,24 +390,22 @@ struct EventCard: View {
 }
 
 struct CurrentTimeLineView: View {
+    let referenceDate: Date
     @State private var currentTimeOffset: CGFloat = 0
     let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     
     var body: some View {
         HStack(spacing: 0) {
-            // Time Text
-            Text(Date().formatted(date: .omitted, time: .shortened))
+            Text(referenceDate.formatted(date: .omitted, time: .shortened))
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(.red)
                 .frame(width: 50, alignment: .trailing)
-                .offset(x: -5, y: -1) // Fine tune
+                .offset(x: -5, y: -1)
             
-            // Dot
             Circle()
                 .fill(.red)
                 .frame(width: 7, height: 7)
             
-            // Line
             Rectangle()
                 .fill(.red)
                 .frame(height: 1)
@@ -427,10 +417,8 @@ struct CurrentTimeLineView: View {
     
     func updateTime() {
         let calendar = Calendar.current
-        let date = Date()
-        let hour = calendar.component(.hour, from: date)
-        let minute = calendar.component(.minute, from: date)
-        // 1 hour = 60 points, 1 minute = 1 point
+        let hour = calendar.component(.hour, from: referenceDate)
+        let minute = calendar.component(.minute, from: referenceDate)
         currentTimeOffset = CGFloat(hour * 60 + minute)
     }
 }
@@ -443,14 +431,14 @@ struct EventDetailSheet: View {
         NavigationStack {
             List {
                 Section {
-                    LabeledContent("Début", value: event.start.formatted(date: .abbreviated, time: .shortened))
-                    LabeledContent("Fin", value: event.end.formatted(date: .abbreviated, time: .shortened))
+                    LabeledContent(Fr.starts, value: event.start.formatted(date: .abbreviated, time: .shortened))
+                    LabeledContent(Fr.ends, value: event.end.formatted(date: .abbreviated, time: .shortened))
                     if let location = event.location {
-                        LabeledContent("Lieu", value: location)
+                        LabeledContent(Fr.location, value: location)
                     }
                 }
                 if let notes = event.notes, !notes.isEmpty {
-                    Section("Notes") {
+                    Section(Fr.notes) {
                         Text(notes)
                     }
                 }

@@ -17,7 +17,6 @@ struct VendoredYouTubeShortsDetailView: View {
                 // load video player here
                 VendoredYouTubeCustomVideoPlayer(videoFileName: video.videoUrl)
                     .ignoresSafeArea()
-                    .allowsHitTesting(false)
                 // content info
                 VStack {
                     // header

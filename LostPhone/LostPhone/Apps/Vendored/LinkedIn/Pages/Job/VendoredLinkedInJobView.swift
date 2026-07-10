@@ -11,7 +11,6 @@ struct VendoredLinkedInJobView: View {
     
     
     var body: some View {
-        NavigationStack {
             ScrollView {
                 
                 VStack (spacing: 10){
@@ -32,10 +31,7 @@ struct VendoredLinkedInJobView: View {
                 }
                 
             }
-            .navigationBarTitleDisplayMode(.inline)
             .background(Color.vendoredLinkedInBackgroundColor)
-            
-        }
     }
 }
 

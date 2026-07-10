@@ -2,7 +2,14 @@ import SwiftUI
 import Kingfisher
 
 struct VendoredUberEatsBrowseView: View {
-    var restaurants: [VendoredUberEatsCartResponse] = cartData
+    @State private var searchQuery = ""
+    var restaurants: [VendoredUberEatsRestaurantResponse] = vendoredUberEatsBrowseRestaurants
+
+    private var filteredRestaurants: [VendoredUberEatsRestaurantResponse] {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return restaurants }
+        return restaurants.filter { $0.name.localizedCaseInsensitiveContains(query) }
+    }
 
     var body: some View {
         NavigationStack {
@@ -15,9 +22,8 @@ struct VendoredUberEatsBrowseView: View {
 
                     HStack {
                         Image(systemName: "magnifyingglass")
-                        Text("Rechercher un restaurant")
-                            .foregroundStyle(.secondary)
-                        Spacer()
+                        TextField("Rechercher un restaurant", text: $searchQuery)
+                            .autocorrectionDisabled()
                     }
                     .padding()
                     .background(Color(uiColor: .secondarySystemBackground))
@@ -27,22 +33,22 @@ struct VendoredUberEatsBrowseView: View {
                         .font(.title3)
                         .fontWeight(.semibold)
 
-                    ForEach(restaurants) { cart in
-                        NavigationLink(destination: VendoredUberEatsCartDetailView(cart: cart)) {
+                    ForEach(filteredRestaurants) { restaurant in
+                        NavigationLink(destination: VendoredUberEatsRestaurantMenuView(restaurant: restaurant)) {
                             HStack(spacing: 14) {
-                                KFImage(URL(string: cart.restaurant.coverUrl))
+                                KFImage(URL(string: restaurant.coverUrl))
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 88, height: 88)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(cart.restaurant.name)
+                                    Text(restaurant.name)
                                         .font(.headline)
                                         .foregroundStyle(.primary)
-                                    Text("\(cart.restaurant.rating) ★ · \(cart.restaurant.duration)")
+                                    Text("\(restaurant.rating) ★ · \(restaurant.duration)")
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
-                                    Text("Frais \(cart.restaurant.deliveryFee)")
+                                    Text("Frais \(restaurant.deliveryFee)")
                                         .font(.footnote)
                                         .foregroundStyle(.secondary)
                                 }

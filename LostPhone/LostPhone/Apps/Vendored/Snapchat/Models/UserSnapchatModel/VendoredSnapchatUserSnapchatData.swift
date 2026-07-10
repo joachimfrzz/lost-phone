@@ -89,3 +89,4 @@ let userSnapchatData: [VendoredSnapchatUserSnapchatResponse] = [
        ),
 
 ]
+let vendoredSnapchatUserData = userSnapchatData

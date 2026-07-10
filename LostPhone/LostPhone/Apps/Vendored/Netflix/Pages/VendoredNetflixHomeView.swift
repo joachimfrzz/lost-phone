@@ -9,6 +9,14 @@ import SwiftUI
 
 struct VendoredNetflixHomeView: View {
     @State private var showProfile = false
+    @State private var selectedProfile = "Alex"
+
+    private let profiles = [
+        ("Alex", "A", Color.red),
+        ("Kids", "K", Color.blue),
+        ("Guest", "G", Color.green),
+        ("Add", "+", Color.gray)
+    ]
 
     var body: some View {
         NavigationStack {
@@ -29,7 +37,7 @@ struct VendoredNetflixHomeView: View {
             // set name and icons trailing
             .toolbar {
                 ToolbarItem (placement: .topBarLeading){
-                    Text("For Alex")
+                    Text("For \(selectedProfile)")
                         .font(.title)
                         .fontWeight(.semibold)
                     
@@ -58,12 +66,60 @@ struct VendoredNetflixHomeView: View {
         }
         .sheet(isPresented: $showProfile) {
             NavigationStack {
-                List {
-                    Text("Alex — profil principal")
-                    Text("Historique de visionnage")
-                    Text("Ma liste")
+                VStack(spacing: 24) {
+                    Text("Who's watching?")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.top, 24)
+
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                        ForEach(profiles, id: \.0) { profile in
+                            Button {
+                                if profile.0 != "Add" {
+                                    selectedProfile = profile.0
+                                    showProfile = false
+                                }
+                            } label: {
+                                VStack(spacing: 10) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .fill(profile.2.opacity(0.85))
+                                            .frame(width: 90, height: 90)
+                                        Text(profile.1)
+                                            .font(.largeTitle)
+                                            .fontWeight(.bold)
+                                            .foregroundStyle(.white)
+                                    }
+                                    .overlay {
+                                        if selectedProfile == profile.0 {
+                                            RoundedRectangle(cornerRadius: 4)
+                                                .stroke(.white, lineWidth: 2)
+                                                .frame(width: 90, height: 90)
+                                        }
+                                    }
+                                    Text(profile.0)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.white.opacity(0.85))
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 32)
+
+                    Spacer()
                 }
-                .navigationTitle("Profil")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.black)
+                .navigationTitle("Profiles")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") { showProfile = false }
+                            .foregroundStyle(.white)
+                    }
+                }
             }
             .preferredColorScheme(.dark)
         }

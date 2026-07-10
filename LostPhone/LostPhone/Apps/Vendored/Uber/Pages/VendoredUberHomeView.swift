@@ -10,12 +10,14 @@ import SwiftUI
 import Kingfisher
 
 struct VendoredUberHomeView: View {
+    @State private var searchQuery = ""
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 // content
                 VStack(spacing: 10) {
-                    VendoredUberSearchRidesView()
+                    VendoredUberSearchRidesView(searchQuery: $searchQuery)
                     VendoredUberRidesHistoryView()
                     VendoredUberSuggestionView()
                     VendoredUberAdsView()
@@ -40,6 +42,8 @@ struct VendoredUberHomeView: View {
 }
 
 struct VendoredUberSearchRidesView:View {
+    @Binding var searchQuery: String
+
     var body: some View {
         HStack (spacing:12){
             // icon
@@ -48,8 +52,9 @@ struct VendoredUberSearchRidesView:View {
                 .scaledToFill()
                 .frame(width: 22, height: 22)
             // textfield
-            TextField("Where to?", text: .constant(""))
+            TextField("Where to?", text: $searchQuery)
                 .font(.headline)
+                .autocorrectionDisabled()
             Spacer()
             // button
             HStack (spacing:10){

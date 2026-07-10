@@ -8,7 +8,7 @@
 import Foundation
 
 // current login user
-let currentUser = VendoredThreadsUserResponse(username: "zoe_mitchell", imageUrl: "https://instagram.fpnh4-1.fna.fbcdn.net/v/t51.2885-19/358418505_3430495257167394_4876323484238338901_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fpnh4-1.fna.fbcdn.net&_nc_cat=106&_nc_ohc=QrBhrbBsHMoQ7kNvgEby547&_nc_gid=fbd5892a4fa2481dad3a695ec1661dfc&edm=AHedtMEBAAAA&ccb=7-5&oh=00_AYBwvFWGfMpeYeQ_wlSVIsv16qjzOnq6N11EqkNnWHYAfw&oe=66FAEBFB&_nc_sid=a3cc6e")
+let vendoredThreadsCurrentUser = VendoredThreadsUserResponse(username: "zoe_mitchell", imageUrl: "https://instagram.fpnh4-1.fna.fbcdn.net/v/t51.2885-19/358418505_3430495257167394_4876323484238338901_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fpnh4-1.fna.fbcdn.net&_nc_cat=106&_nc_ohc=QrBhrbBsHMoQ7kNvgEby547&_nc_gid=fbd5892a4fa2481dad3a695ec1661dfc&edm=AHedtMEBAAAA&ccb=7-5&oh=00_AYBwvFWGfMpeYeQ_wlSVIsv16qjzOnq6N11EqkNnWHYAfw&oe=66FAEBFB&_nc_sid=a3cc6e")
 
 // users
 let vendoredThreadsUserData: [VendoredThreadsUserResponse] = [

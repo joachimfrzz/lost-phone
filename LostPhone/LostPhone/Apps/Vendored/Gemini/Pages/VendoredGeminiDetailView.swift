@@ -63,12 +63,11 @@ struct VendoredGeminiDetailView: View {
                     .padding(.bottom, 140)
                 }
                 // floating button
-                VendoredGeminiFloatingButtonView(promptText: $promptText)
-                    .onSubmit {
-                        let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
-                        guard !text.isEmpty else { return }
-                        fetchAIContent(with: text)
-                    }
+                VendoredGeminiFloatingButtonView(promptText: $promptText) {
+                    let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !text.isEmpty else { return }
+                    fetchAIContent(with: text)
+                }
             }
             .background(Color(uiColor: .systemBackground))
             // title
@@ -86,7 +85,7 @@ struct VendoredGeminiDetailView: View {
                         dismiss()
                     }label: {
                         Image(systemName: "chevron.left")
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                     }
                 }
                 // trailing
@@ -123,6 +122,7 @@ struct VendoredGeminiDetailView: View {
                     typingAnimation()
                 case .failure:
                     extractedText = "I couldn't reach the server. Try asking about **messages**, **photos**, or **Uber** rides."
+                    typingAnimation()
                 }
             }
         }

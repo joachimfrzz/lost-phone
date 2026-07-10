@@ -100,7 +100,9 @@ struct VendoredGrokHomeView: View {
                 .onSubmit(submitPrompt)
 
             HStack(spacing: 4) {
-                Button {} label: {
+                Button {
+                    prompt += prompt.isEmpty ? "[Pièce jointe]" : " [Pièce jointe]"
+                } label: {
                     Image(systemName: "paperclip")
                         .font(.system(size: 18))
                         .foregroundStyle(VendoredGrokTheme.textPrimary)
@@ -108,12 +110,20 @@ struct VendoredGrokHomeView: View {
                 footerChip("DeepSearch")
                 footerChip("Think")
                 Spacer()
+                Button {
+                    submitPrompt()
+                } label: {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.system(size: 28))
+                        .foregroundStyle(
+                            prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                ? VendoredGrokTheme.textPrimary.opacity(0.3)
+                                : VendoredGrokTheme.textPrimary
+                        )
+                }
+                .disabled(prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 Button {} label: {
                     Image(systemName: "mic")
-                        .font(.system(size: 18))
-                }
-                Button {} label: {
-                    Image(systemName: "waveform")
                         .font(.system(size: 18))
                 }
             }

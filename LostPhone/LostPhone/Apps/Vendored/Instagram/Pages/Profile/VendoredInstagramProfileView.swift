@@ -53,42 +53,42 @@ struct VendoredInstagramProfileView: View {
                 
             }
             .toolbar {
-//                ToolbarItem (placement: .topBarLeading) {
-//                    HStack {
-//                        Text(vendoredInstagramUserDataCurrent.username)
-//                            .font(.title)
-//                            .fontWeight(.semibold)
-//                        Image(systemName: "chevron.down")
-//                            .resizable()
-//                            .scaledToFill()
-//                            .frame(width: 8,height: 8)
-//                            .padding(.top,4)
-//                            .fontWeight(.semibold)
-//                    }
-//                }
-//                ToolbarItem (placement: .topBarTrailing) {
-//                    HStack (spacing: 14){
-//                        Button {
-//                            
-//                        } label: {
-//                           Image(systemName: "plus.app")
-//                                .resizable()
-//                                .scaledToFill()
-//                                .frame(width: 22,height: 22)
-//                                .foregroundStyle(.black)
-//                        }
-//                        Button {
-//                            presentSheet = true
-//                        } label: {
-//                           Image("list_icon")
-//                                .resizable()
-//                                .scaledToFill()
-//                                .frame(width: 28,height: 28)
-//                                .foregroundStyle(.black)
-//                        }
-//                    }
-//                    
-//                }
+                ToolbarItem (placement: .topBarLeading) {
+                    HStack {
+                        Text(vendoredInstagramUserDataCurrent.username)
+                            .font(.title)
+                            .fontWeight(.semibold)
+                        Image(systemName: "chevron.down")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 8,height: 8)
+                            .padding(.top,4)
+                            .fontWeight(.semibold)
+                    }
+                }
+                ToolbarItem (placement: .topBarTrailing) {
+                    HStack (spacing: 14){
+                        Button {
+                            
+                        } label: {
+                           Image(systemName: "plus.app")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 22,height: 22)
+                                .foregroundStyle(.primary)
+                        }
+                        Button {
+                            presentSheet = true
+                        } label: {
+                           Image("list_icon")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 28,height: 28)
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                    
+                }
             }
             .sheet(isPresented: $presentSheet){
                 VendoredInstagramProfileSettingView()

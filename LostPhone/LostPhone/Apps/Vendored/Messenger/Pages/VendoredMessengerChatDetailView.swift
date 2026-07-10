@@ -11,6 +11,8 @@ struct VendoredMessengerChatDetailView: View {
     // back button
     @Environment(\.dismiss) var dismiss
     var chat: VendoredMessengerChatResponse
+    @State private var messages: [VendoredMessengerChatDetailResponse] = chatDetailData
+    @State private var messageText = ""
     var body: some View {
         NavigationStack {
             ZStack (alignment: .bottom){
@@ -22,12 +24,12 @@ struct VendoredMessengerChatDetailView: View {
                         // info
                         VendoredMessengerInfoView(chat: chat)
                         // chat conversation
-                        VendoredMessengerChatConversationView(chat: chat)
+                        VendoredMessengerChatConversationView(messages: messages, chat: chat)
                     }
                     .padding(.bottom, 60)
                 }
                 // footer
-                VendoredMessengerFooterView()
+                VendoredMessengerFooterView(messageText: $messageText, onSend: sendMessage)
             }
             .preferredColorScheme(.light)
             .navigationBarBackButtonHidden(true)
@@ -96,6 +98,21 @@ struct VendoredMessengerChatDetailView: View {
                 }
             }
         }
+    }
+
+    private func sendMessage() {
+        let text = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        messages.append(
+            VendoredMessengerChatDetailResponse(
+                isMe: true,
+                chatType: 1,
+                text: text,
+                duration: nil,
+                mediaUrl: nil
+            )
+        )
+        messageText = ""
     }
 }
 
@@ -187,12 +204,11 @@ struct VendoredMessengerInfoView:View {
 }
 
 struct VendoredMessengerChatConversationView:View {
+    var messages: [VendoredMessengerChatDetailResponse]
     var chat: VendoredMessengerChatResponse
-    // load chat conversation from data
-    var chatDetail:[VendoredMessengerChatDetailResponse] = chatDetailData
     var body: some View {
         LazyVStack (spacing: 10){
-            ForEach(chatDetail) { detail in
+            ForEach(messages) { detail in
                //
                 switch detail.chatType {
                 case 1:
@@ -362,7 +378,8 @@ struct VendoredMessengerVideoView:View {
 }
 
 struct VendoredMessengerFooterView:View {
-    @State private var messageText = ""
+    @Binding var messageText: String
+    var onSend: () -> Void
     var body: some View {
         HStack (spacing: 22){
             // location
@@ -408,6 +425,7 @@ struct VendoredMessengerFooterView:View {
             // send message text field
             HStack {
                 TextField("Aa", text: $messageText)
+                    .onSubmit(onSend)
                 Spacer()
                 Button {
                     

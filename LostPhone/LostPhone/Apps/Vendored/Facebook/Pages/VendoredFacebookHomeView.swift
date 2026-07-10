@@ -22,84 +22,80 @@ struct VendoredFacebookHomeView: View {
    }
     
     var body: some View {
-        
-        NavigationStack {
-            ScrollView {
-                VStack (spacing:8){
-                    // profile what is on your mind
-                    VendoredFacebookProfileWhatIsOnYourMindView()
+        ScrollView {
+            VStack (spacing:8){
+                // profile what is on your mind
+                VendoredFacebookProfileWhatIsOnYourMindView()
 //                    // story view
-                    VendoredFacebookStoryView()
-                    // feed view
-                    VendoredFacebookFeedView()
-                }
+                VendoredFacebookStoryView()
+                // feed view
+                VendoredFacebookFeedView()
             }
-            .background(Color.vendoredFacebookBackgroundColor)
-            // logo and icons
-            .toolbar {
-                // logo
-                ToolbarItem (placement: .topBarLeading){
-                    Text("facebook")
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundStyle(Color.vendoredFacebookVendoredFacebookPrimary)
-                }
-                // icons
-                ToolbarItem (placement: .topBarTrailing){
-                    HStack (spacing: 0){
-                        // plus
-                        Button {
-                            
-                        }label: {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.vendoredFacebookGrayBackgroundColor)
-                                    .frame(width: 35, height: 35)
-                                Image(systemName: "plus")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 17, height: 17)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.black)
-                            }
+        }
+        .background(Color.vendoredFacebookBackgroundColor)
+        // logo and icons
+        .toolbar {
+            // logo
+            ToolbarItem (placement: .topBarLeading){
+                Text("facebook")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.vendoredFacebookVendoredFacebookPrimary)
+            }
+            // icons
+            ToolbarItem (placement: .topBarTrailing){
+                HStack (spacing: 0){
+                    // plus
+                    Button {
+                        
+                    }label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color.vendoredFacebookGrayBackgroundColor)
+                                .frame(width: 35, height: 35)
+                            Image(systemName: "plus")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 17, height: 17)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.black)
                         }
-                        // search
-                        Button {
-                            
-                        }label: {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.vendoredFacebookGrayBackgroundColor)
-                                    .frame(width: 35, height: 35)
-                                Image(systemName: "magnifyingglass")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 19, height: 19)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.black)
-                            }
+                    }
+                    // search
+                    Button {
+                        
+                    }label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color.vendoredFacebookGrayBackgroundColor)
+                                .frame(width: 35, height: 35)
+                            Image(systemName: "magnifyingglass")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 19, height: 19)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.black)
                         }
-                        // messenger
-                        Button {
-                            
-                        }label: {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.vendoredFacebookGrayBackgroundColor)
-                                    .frame(width: 35, height: 35)
-                                Image("messenger")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 19, height: 19)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(.black)
-                            }
+                    }
+                    // messenger
+                    Button {
+                        
+                    }label: {
+                        ZStack {
+                            Circle()
+                                .fill(Color.vendoredFacebookGrayBackgroundColor)
+                                .frame(width: 35, height: 35)
+                            Image("messenger")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 19, height: 19)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.black)
                         }
                     }
                 }
             }
         }
-        .preferredColorScheme(.light)
     }
 }
 

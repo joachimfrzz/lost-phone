@@ -81,6 +81,11 @@ struct VendoredTikTokTikTokView: View {
 struct VendoredTikTokTabViewAndSearchView:View {
     var body: some View {
         HStack {
+            NavigationLink(destination: VendoredTikTokProfileView(feed: feedForYouData[0])) {
+                Image(systemName: "person.crop.circle")
+                    .font(.title3)
+                    .foregroundStyle(.white)
+            }
             Spacer()
             HStack (alignment: .top, spacing: 20){
                 Text("Following")

@@ -127,7 +127,7 @@ struct SafariView: View {
                         
                         // URL Input / Display
                         if isEditingAddress {
-                            TextField("Search or enter website", text: $inputText)
+                            TextField(Fr.searchOrWebsite, text: $inputText)
                                 .keyboardType(.URL)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled(true)
@@ -349,7 +349,7 @@ struct SafariView: View {
         if model.showLpspPage, let tab = model.activeLpspTab {
             return tab.title
         }
-        if !model.shouldShowBrowser { return "Search or enter website name" }
+        if !model.shouldShowBrowser { return Fr.searchOrWebsite }
         
         // Clean up URL for pretty display
         return model.urlString

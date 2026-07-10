@@ -29,7 +29,7 @@ struct SettingsView: View {
                                 Text(owner.name)
                                     .font(.title2)
                                     .fontWeight(.regular)
-                                Text("Apple ID, iCloud+, Médias et achats")
+                                Text(Fr.appleIDSubtitle)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -37,7 +37,7 @@ struct SettingsView: View {
                         .padding(.vertical, 4)
                     }
                     
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Family", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.family, rows: [
                         .init("Set Up Family Sharing"),
                         .init("Add Member"),
                         .init("Family Checklist"),
@@ -52,7 +52,7 @@ struct SettingsView: View {
                                         .overlay(Circle().stroke(Color(uiColor: .systemBackground), lineWidth: 2))
                                 }
                             }
-                            Text("Famille")
+                            Text(Fr.family)
                         }
                     }
                 }
@@ -61,7 +61,7 @@ struct SettingsView: View {
                 Section {
                     // Airplane Mode Logic
                     Toggle(isOn: $airplaneMode) {
-                        SettingsIcon(icon: "airplane", color: .orange, title: "Airplane Mode")
+                        SettingsIcon(icon: "airplane", color: .orange, title: Fr.airplaneMode)
                     }
                     .disabled(readOnly)
                     .onChange(of: airplaneMode) { isActive in
@@ -83,9 +83,9 @@ struct SettingsView: View {
                     // Wi-Fi
                     NavigationLink(destination: WifiView(isEnabled: $wifiEnabled, airplaneMode: airplaneMode)) {
                         HStack {
-                            SettingsIcon(icon: "wifi", color: .blue, title: "Wi-Fi")
+                            SettingsIcon(icon: "wifi", color: .blue, title: Fr.wifi)
                             Spacer()
-                            Text(getStatusText(enabled: wifiEnabled, active: "Home Network"))
+                            Text(getStatusText(enabled: wifiEnabled, active: Fr.homeNetwork))
                                 .foregroundStyle(.secondary)
                         }
                     }
@@ -93,149 +93,149 @@ struct SettingsView: View {
                     // Bluetooth
                     NavigationLink(destination: BluetoothView(isEnabled: $bluetoothEnabled, airplaneMode: airplaneMode)) {
                         HStack {
-                            SettingsIcon(icon: "dot.radiowaves.left.and.right", color: .blue, title: "Bluetooth")
+                            SettingsIcon(icon: "dot.radiowaves.left.and.right", color: .blue, title: Fr.bluetooth)
                             Spacer()
-                            Text(getStatusText(enabled: bluetoothEnabled, active: "On"))
+                            Text(getStatusText(enabled: bluetoothEnabled, active: Fr.on))
                                 .foregroundStyle(.secondary)
                         }
                     }
                     
                     // Cellular
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Cellular", rows: [
-                        .init("Cellular Data", detail: "On"),
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.cellular, rows: [
+                        .init("Cellular Data", detail: Fr.on),
                         .init("Data Mode", detail: "Standard"),
                         .init("Voice & Data", detail: "5G Auto"),
                     ])) {
                         HStack {
-                            SettingsIcon(icon: "antenna.radiowaves.left.and.right", color: .green, title: "Cellular")
+                            SettingsIcon(icon: "antenna.radiowaves.left.and.right", color: .green, title: Fr.cellular)
                             Spacer()
-                            if airplaneMode { Text("Désactivé").foregroundStyle(.secondary) }
+                            if airplaneMode { Text(Fr.off).foregroundStyle(.secondary) }
                         }
                     }
                     
                     // Hotspot
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Personal Hotspot", rows: [
-                        .init("Allow Others to Join", detail: "Off"),
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.personalHotspot, rows: [
+                        .init("Allow Others to Join", detail: Fr.off),
                         .init("Wi-Fi Password", detail: "••••••••"),
                     ])) {
                         HStack {
-                            SettingsIcon(icon: "personalhotspot", color: .green, title: "Personal Hotspot")
+                            SettingsIcon(icon: "personalhotspot", color: .green, title: Fr.personalHotspot)
                             Spacer()
-                            Text(airplaneMode ? "Off" : "Off").foregroundStyle(.secondary)
+                            Text(airplaneMode ? Fr.off : Fr.off).foregroundStyle(.secondary)
                         }
                     }
                 }
                 
                 // MARK: - Notifications Section
                 Section {
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Notifications", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.notifications, rows: [
                         .init("Show Previews", detail: "Always"),
                         .init("Siri Suggestions", detail: "On"),
                         .init("Scheduled Summary", detail: "Off"),
                     ])) {
-                        SettingsIcon(icon: "bell.badge.fill", color: .red, title: "Notifications")
+                        SettingsIcon(icon: "bell.badge.fill", color: .red, title: Fr.notifications)
                     }
                     NavigationLink(destination: SoundsView()) {
-                        SettingsIcon(icon: "speaker.wave.2.fill", color: .pink, title: "Sounds & Haptics")
+                        SettingsIcon(icon: "speaker.wave.2.fill", color: .pink, title: Fr.soundsAndHaptics)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Focus", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.focus, rows: [
                         .init("Do Not Disturb"),
                         .init("Sleep"),
                         .init("Work"),
                         .init("Personal"),
                     ])) {
-                        SettingsIcon(icon: "moon.fill", color: .indigo, title: "Focus")
+                        SettingsIcon(icon: "moon.fill", color: .indigo, title: Fr.focus)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Screen Time", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.screenTime, rows: [
                         .init("App Limits"),
                         .init("Communication Limits"),
                         .init("Always Allowed"),
                     ])) {
-                        SettingsIcon(icon: "hourglass", color: .indigo, title: "Screen Time")
+                        SettingsIcon(icon: "hourglass", color: .indigo, title: Fr.screenTime)
                     }
                 }
                 
                 // MARK: - General Section
                 Section {
                     NavigationLink(destination: GeneralView()) {
-                        SettingsIcon(icon: "gear", color: .gray, title: "General")
+                        SettingsIcon(icon: "gear", color: .gray, title: Fr.general)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Control Center", rows: [
-                        .init("Access Within Apps", detail: "On"),
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.controlCenter, rows: [
+                        .init("Access Within Apps", detail: Fr.on),
                         .init("Show Home Controls"),
                         .init("Customize Controls"),
                     ])) {
-                        SettingsIcon(icon: "switch.2", color: .gray, title: "Control Center")
+                        SettingsIcon(icon: "switch.2", color: .gray, title: Fr.controlCenter)
                     }
                     NavigationLink(destination: DisplayView()) {
-                        SettingsIcon(icon: "textformat.size", color: .blue, title: "Display & Brightness")
+                        SettingsIcon(icon: "textformat.size", color: .blue, title: Fr.displayAndBrightness)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Home Screen & App Library", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.homeScreen, rows: [
                         .init("Newly Downloaded Apps", detail: "App Library Only"),
-                        .init("Show in App Library", detail: "On"),
-                        .init("Notification Badges", detail: "On"),
+                        .init("Show in App Library", detail: Fr.on),
+                        .init("Notification Badges", detail: Fr.on),
                     ])) {
-                        SettingsIcon(icon: "apps.iphone", color: .indigo, title: "Home Screen & App Library")
+                        SettingsIcon(icon: "apps.iphone", color: .indigo, title: Fr.homeScreen)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Accessibility", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.accessibility, rows: [
                         .init("Vision"),
                         .init("Mobility"),
                         .init("Hearing"),
                         .init("Speech"),
                     ])) {
-                        SettingsIcon(icon: "accessibility", color: .blue, title: "Accessibility")
+                        SettingsIcon(icon: "accessibility", color: .blue, title: Fr.accessibility)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Wallpaper", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.wallpaper, rows: [
                         .init("Choose a New Wallpaper"),
                         .init("Add New Wallpaper"),
                     ])) {
-                        SettingsIcon(icon: "photo.on.rectangle", color: .cyan, title: "Wallpaper")
+                        SettingsIcon(icon: "photo.on.rectangle", color: .cyan, title: Fr.wallpaper)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "StandBy", rows: [
-                        .init("Show When Charging", detail: "On"),
-                        .init("Night Mode", detail: "On"),
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.standby, rows: [
+                        .init("Show When Charging", detail: Fr.on),
+                        .init("Night Mode", detail: Fr.on),
                     ])) {
-                        SettingsIcon(icon: "clock.fill", color: .black, title: "StandBy")
+                        SettingsIcon(icon: "clock.fill", color: .black, title: Fr.standby)
                     }
                     NavigationLink(destination: BatteryView()) {
-                        SettingsIcon(icon: "battery.100", color: .green, title: "Battery")
+                        SettingsIcon(icon: "battery.100", color: .green, title: Fr.battery)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Privacy & Security", rows: [
-                        .init("Location Services", detail: "On"),
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.privacy, rows: [
+                        .init("Location Services", detail: Fr.on),
                         .init("Tracking", detail: "Ask App Not to Track"),
                         .init("Analytics & Improvements"),
                     ])) {
-                        SettingsIcon(icon: "hand.raised.fill", color: .blue, title: "Privacy & Security")
+                        SettingsIcon(icon: "hand.raised.fill", color: .blue, title: Fr.privacy)
                     }
                 }
                 
                 // MARK: - Stores
                 Section {
-                    NavigationLink(destination: SettingsPlaceholderView(title: "App Store", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.appStore, rows: [
                         .init("App Downloads", detail: "Always Ask"),
                         .init("Cellular Data", detail: "Off"),
                         .init("Video Autoplay", detail: "Wi-Fi Only"),
                     ])) {
-                        SettingsIcon(icon: "apple.logo", color: .blue, title: "App Store")
+                        SettingsIcon(icon: "apple.logo", color: .blue, title: Fr.appStore)
                     }
-                    NavigationLink(destination: SettingsPlaceholderView(title: "Wallet & Apple Pay", rows: [
+                    NavigationLink(destination: SettingsPlaceholderView(title: Fr.wallet, rows: [
                         .init("Default Card"),
-                        .init("Transaction Notifications", detail: "On"),
-                        .init("Double-Click Side Button", detail: "On"),
+                        .init("Transaction Notifications", detail: Fr.on),
+                        .init("Double-Click Side Button", detail: Fr.on),
                     ])) {
-                        SettingsIcon(icon: "creditcard.fill", color: .black, title: "Wallet & Apple Pay")
+                        SettingsIcon(icon: "creditcard.fill", color: .black, title: Fr.wallet)
                     }
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Réglages")
+            .navigationTitle(Fr.settings)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         }
     }
     
     func getStatusText(enabled: Bool, active: String) -> String {
-        if airplaneMode { return "Off" }
-        if !enabled { return "Off" }
+        if airplaneMode { return Fr.off }
+        if !enabled { return Fr.off }
         return active
     }
 }

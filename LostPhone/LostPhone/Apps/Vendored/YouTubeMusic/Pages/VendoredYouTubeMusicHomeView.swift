@@ -10,6 +10,8 @@ import SwiftUI
 import Kingfisher
 
 struct VendoredYouTubeMusicHomeView: View {
+    @State private var showProfile = false
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -65,7 +67,7 @@ struct VendoredYouTubeMusicHomeView: View {
                         
                         // profile
                         Button {
-                            // action
+                            showProfile = true
                         }label: {
                             // layout
                             KFImage(URL(string: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHByb2ZpbGV8ZW58MHx8MHx8fDA%3D"))
@@ -81,6 +83,28 @@ struct VendoredYouTubeMusicHomeView: View {
         }
         // to dark theme
         .preferredColorScheme(.dark)
+        .sheet(isPresented: $showProfile) {
+            NavigationStack {
+                List {
+                    Section("History") {
+                        Label("Recently played", systemImage: "clock")
+                        Label("Your liked music", systemImage: "heart")
+                    }
+                    Section("Playlists") {
+                        Label("Liked songs", systemImage: "music.note.list")
+                        Label("Downloads", systemImage: "arrow.down.circle")
+                        Label("New playlist", systemImage: "plus.circle")
+                    }
+                }
+                .navigationTitle("Library")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") { showProfile = false }
+                    }
+                }
+            }
+            .preferredColorScheme(.dark)
+        }
     }
 }
 

@@ -17,6 +17,7 @@ struct VendoredTinderAccountView: View {
 
                     Text("\(profile.name), \(profile.age)")
                         .font(.system(size: 25, weight: .semibold))
+                        .foregroundStyle(.black)
 
                     HStack(spacing: 30) {
                         accountAction("gearshape", title: "SETTINGS")
@@ -43,12 +44,12 @@ struct VendoredTinderAccountView: View {
         VStack(spacing: 10) {
             Image(systemName: symbol)
                 .font(.system(size: 35))
-                .foregroundStyle(.gray.opacity(0.5))
+                .foregroundStyle(.gray.opacity(0.75))
                 .frame(width: 60, height: 60)
                 .background(Circle().fill(.white).shadow(color: .gray.opacity(0.1), radius: 10))
             Text(title)
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.gray.opacity(0.8))
+                .foregroundStyle(.black.opacity(0.65))
         }
     }
 
@@ -69,7 +70,7 @@ struct VendoredTinderAccountView: View {
             }
             Text("ADD MEDIA")
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.gray.opacity(0.8))
+                .foregroundStyle(.black.opacity(0.65))
         }
         .padding(.top, 20)
     }

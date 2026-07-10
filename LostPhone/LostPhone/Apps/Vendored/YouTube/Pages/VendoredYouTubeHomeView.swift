@@ -12,6 +12,20 @@ import Kingfisher
 struct VendoredYouTubeHomeView: View {
     @State private var showSearch = false
     @State private var showProfile = false
+    @State private var searchQuery = ""
+
+    private var allVideos: [VendoredYouTubeVideoResponse] {
+        videoSection1Data + videoSection2Data + videoSection3Data + videoSection4Data + videoSection5Data
+    }
+
+    private var filteredVideos: [VendoredYouTubeVideoResponse] {
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return allVideos }
+        return allVideos.filter {
+            $0.title.localizedCaseInsensitiveContains(query)
+                || $0.channelName.localizedCaseInsensitiveContains(query)
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -43,7 +57,7 @@ struct VendoredYouTubeHomeView: View {
                                 .foregroundStyle(.primary)
                         }
                         HStack (spacing:5){
-                            Image("logo")
+                            Image("youtube_logo")
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 30)
@@ -96,21 +110,66 @@ struct VendoredYouTubeHomeView: View {
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showSearch) {
             NavigationStack {
-                TextField("Search YouTube", text: .constant(""))
-                    .textFieldStyle(.roundedBorder)
-                    .padding()
-                    .navigationTitle("Search")
+                VStack(spacing: 0) {
+                    TextField("Search YouTube", text: $searchQuery)
+                        .textFieldStyle(.roundedBorder)
+                        .padding()
+                        .autocorrectionDisabled()
+
+                    if filteredVideos.isEmpty {
+                        ContentUnavailableView("No results", systemImage: "magnifyingglass", description: Text("Try another search term"))
+                            .frame(maxHeight: .infinity)
+                    } else {
+                        List(filteredVideos) { video in
+                            NavigationLink(destination: VendoredYouTubeVideoDetailView(video: video)) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(video.title)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.primary)
+                                    Text(video.channelName)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                        .listStyle(.plain)
+                    }
+                }
+                .navigationTitle("Search")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") { showSearch = false }
+                    }
+                }
             }
+            .preferredColorScheme(.dark)
         }
         .sheet(isPresented: $showProfile) {
             NavigationStack {
                 List {
-                    Text("Watch history")
-                    Text("Your videos")
-                    Text("Playlists")
+                    Section("History") {
+                        Label("Watch history", systemImage: "clock")
+                        Label("Recently watched", systemImage: "play.rectangle.on.rectangle")
+                    }
+                    Section("Playlists") {
+                        Label("Liked videos", systemImage: "hand.thumbsup")
+                        Label("Watch later", systemImage: "clock.badge.checkmark")
+                        Label("Favorites", systemImage: "star")
+                    }
+                    Section("Your videos") {
+                        Label("Your channel", systemImage: "person.crop.rectangle")
+                        Label("Uploads", systemImage: "arrow.up.circle")
+                        Label("Analytics", systemImage: "chart.bar")
+                    }
                 }
-                .navigationTitle("Profile")
+                .navigationTitle("Account")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Done") { showProfile = false }
+                    }
+                }
             }
+            .preferredColorScheme(.dark)
         }
     }
 }

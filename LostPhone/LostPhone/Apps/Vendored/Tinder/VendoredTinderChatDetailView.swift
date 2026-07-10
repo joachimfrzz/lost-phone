@@ -3,13 +3,7 @@ import SwiftUI
 /// Port de `chat_detail_page.dart` — conversation 1:1.
 struct VendoredTinderChatDetailView: View {
     let profile: VendoredTinderProfile
-    @State private var messages: [VendoredTinderChatMessage]
     @State private var draft = ""
-
-    init(profile: VendoredTinderProfile) {
-        self.profile = profile
-        _messages = State(initialValue: VendoredTinderData.thread(for: profile))
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,7 +30,7 @@ struct VendoredTinderChatDetailView: View {
 
             ScrollView {
                 VStack(spacing: 12) {
-                    ForEach(messages) { message in
+                    ForEach(VendoredTinderData.thread(for: profile)) { message in
                         HStack {
                             if message.isMine { Spacer(minLength: 60) }
                             Text(message.text)
@@ -61,26 +55,13 @@ struct VendoredTinderChatDetailView: View {
                 TextField("Type a message", text: $draft)
                     .padding(12)
                     .background(Color.gray.opacity(0.12), in: RoundedRectangle(cornerRadius: 24))
-                Button {
-                    sendMessage()
-                } label: {
-                    Image(systemName: "paperplane.fill")
-                        .foregroundStyle(VendoredTinderTheme.primary)
-                }
+                Image(systemName: "paperplane.fill")
+                    .foregroundStyle(VendoredTinderTheme.primary)
             }
             .padding(12)
             .background(Color.white)
         }
         .background(Color.white)
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private func sendMessage() {
-        let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else { return }
-        messages.append(
-            VendoredTinderChatMessage(text: text, isMine: true)
-        )
-        draft = ""
     }
 }

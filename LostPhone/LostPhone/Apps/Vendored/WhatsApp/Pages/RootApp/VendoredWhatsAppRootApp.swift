@@ -8,32 +8,46 @@
 import SwiftUI
 
 struct VendoredWhatsAppRootApp: View {
-    @State private var selectedTab = 3
+    @State private var selectedIndex = 0
     
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView {
             VendoredWhatsAppUpdateView()
-                .preferredColorScheme(.light)
-                .tag(0)
-                .tabItem { Label("Updates", systemImage: "pencil.circle") }
+                .tabItem {
+                    VStack {
+                        Image(systemName: "pencil.circle")
+                        Text("Updates")
+                    }
+                }
             VendoredWhatsAppCallView()
-                .preferredColorScheme(.light)
-                .tag(1)
-                .tabItem { Label("Calls", systemImage: "phone") }
+                .tabItem {
+                    VStack {
+                        Image(systemName: "phone")
+                        Text("Calls")
+                    }
+                }
             VendoredWhatsAppCommunitiesView()
-                .preferredColorScheme(.light)
-                .tag(2)
-                .tabItem { Label("Communities", systemImage: "person.3") }
+                .tabItem {
+                    VStack {
+                        Image(systemName: "person.3")
+                        Text("Communities")
+                    }
+                }
             VendoredWhatsAppChatView()
-                .preferredColorScheme(.dark)
-                .tag(3)
-                .tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right") }
+                .tabItem {
+                    VStack {
+                        Image(systemName: "bubble.left.and.bubble.right")
+                        Text("Chats")
+                    }
+                }
             VendoredWhatsAppSettingView()
-                .preferredColorScheme(.light)
-                .tag(4)
-                .tabItem { Label("Settings", systemImage: "gear.circle") }
+                .tabItem {
+                    VStack {
+                        Image(systemName: "gear.circle")
+                        Text("Settings")
+                    }
+                }
         }
-        .tint(Color.vendoredWhatsAppVendoredWhatsAppPrimary)
     }
 }
 

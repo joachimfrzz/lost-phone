@@ -115,8 +115,8 @@ struct VendoredWhatsAppChatDetailView: View {
                 id: UUID(),
                 text: text,
                 isMe: true,
-                dateTime: "Now",
-                isReaction: nil
+                isReaction: nil,
+                dateTime: "Now"
             )
         )
         sendMessageText = ""

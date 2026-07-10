@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MarkdownUI
 
 struct VendoredGeminiDetailView: View {
     // state and param from home view
@@ -27,6 +26,10 @@ struct VendoredGeminiDetailView: View {
     
     // back button trigger
     @Environment(\.dismiss) var dismiss
+
+    private var renderedResponse: AttributedString {
+        (try? AttributedString(markdown: displayedText)) ?? AttributedString(displayedText)
+    }
     
     var body: some View {
         NavigationStack {
@@ -48,13 +51,7 @@ struct VendoredGeminiDetailView: View {
                         if isLoading {
                             VendoredGeminiLoadingView()
                         }else {
-                            Markdown(displayedText)
-                                .markdownTextStyle(\.code) {
-                                    FontFamilyVariant(.monospaced)
-                                    FontSize(.em(1))
-                                    ForegroundColor(.purple)
-                                    BackgroundColor(.purple.opacity(0.25))
-                                }
+                            Text(renderedResponse)
                                 .font(.subheadline)
                                 .foregroundStyle(.primary)
                                 .multilineTextAlignment(.leading)

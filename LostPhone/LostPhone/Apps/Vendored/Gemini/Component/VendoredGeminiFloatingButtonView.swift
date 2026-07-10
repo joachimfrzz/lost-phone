@@ -22,7 +22,11 @@ struct VendoredGeminiFloatingButtonView:View {
             HStack {
                 TextField("Ask Gemini", text: $promptText)
                     .padding(.leading)
-                    .onSubmit { onSubmit?() }
+                    .onSubmit {
+                        Task { @MainActor in
+                            onSubmit?()
+                        }
+                    }
                 // icons
                 HStack (spacing:24){
                     Button {

@@ -137,7 +137,7 @@ struct VendoredGeminiDetailView: View {
         displayedText = ""
 
         Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
-            Task { @MainActor in
+            MainActor.assumeIsolated {
                 if typingIndex < extractedText.count {
                     displayedText.append(extractedText[extractedText.index(extractedText.startIndex, offsetBy: typingIndex)])
                     typingIndex += 1

@@ -3,20 +3,45 @@ import Combine
 
 // MARK: - Models
 struct CalendarEvent: Identifiable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let location: String?
     let notes: String?
     let start: Date
     let end: Date
     let color: Color
+
+    init(stableId: String, title: String, location: String?, note: String? = nil, start: Date, end: Date, color: Color) {
+        self.id = LpspStableId.uuid(stableId)
+        self.title = title
+        self.location = location
+        self.notes = note
+        self.start = start
+        self.end = end
+        self.color = color
+    }
+
+    init(title: String, location: String?, notes: String? = nil, start: Date, end: Date, color: Color) {
+        self.id = UUID()
+        self.title = title
+        self.location = location
+        self.notes = notes
+        self.start = start
+        self.end = end
+        self.color = color
+    }
 }
 
 // MARK: - Main View
 struct CalendarView: View {
+    let events: [CalendarEvent]
     @State private var selectedDate = Date()
     @State private var displayedMonth = Date()
     @State private var selectedEvent: CalendarEvent?
+
+    init(events: [CalendarEvent] = []) {
+        self.events = events
+    }
     
     var body: some View {
         NavigationStack {
@@ -44,7 +69,11 @@ struct CalendarView: View {
                     ScrollView {
                         ZStack(alignment: .top) {
                             TimelineGridView()
-                            EventsLayoutView(selectedDate: selectedDate, onSelect: { selectedEvent = $0 })
+                            EventsLayoutView(
+                                selectedDate: selectedDate,
+                                events: events,
+                                onSelect: { selectedEvent = $0 }
+                            )
                             if Calendar.current.isDateInToday(selectedDate) {
                                 CurrentTimeLineView()
                             }
@@ -270,13 +299,14 @@ struct TimelineGridView: View {
 
 struct EventsLayoutView: View {
     let selectedDate: Date
+    let events: [CalendarEvent]
     var onSelect: (CalendarEvent) -> Void = { _ in }
-    
+
     var body: some View {
-        let events = getMockEvents(for: selectedDate)
-        
+        let dayEvents = displayedEvents(for: selectedDate)
+
         ZStack(alignment: .topLeading) {
-            ForEach(events) { event in
+            ForEach(dayEvents) { event in
                 Button {
                     onSelect(event)
                 } label: {
@@ -303,6 +333,15 @@ struct EventsLayoutView: View {
         return CGFloat(duration / 60) // 1 minute = 1 point height
     }
     
+    func displayedEvents(for date: Date) -> [CalendarEvent] {
+        let calendar = Calendar.current
+        let storyEvents = events.filter { calendar.isDate($0.start, inSameDayAs: date) }
+        if !storyEvents.isEmpty {
+            return storyEvents
+        }
+        return getMockEvents(for: date)
+    }
+
     func getMockEvents(for date: Date) -> [CalendarEvent] {
         // Mock data generation relative to selected date
         let calendar = Calendar.current

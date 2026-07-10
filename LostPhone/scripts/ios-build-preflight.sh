@@ -55,6 +55,9 @@ for path in sorted(root.rglob("*.swift")):
         prefix = text[max(0, start - 400):start]
         if "@ViewBuilder" in prefix:
             continue
+        func_idx = text.rfind("func ", 0, start)
+        if func_idx != -1 and "@escaping" in text[func_idx:start]:
+            continue
         # Completion handlers / Void APIs are not ViewBuilder bodies.
         if "-> Void" in prefix or "@escaping" in prefix:
             continue

@@ -9,14 +9,12 @@ import SwiftUI
 
 struct VendoredGeminiFloatingButtonView:View {
     @Binding var promptText:String
-    var onSubmit: () -> Void = {}
     var body: some View {
         HStack {
             // textfield
             HStack {
                 TextField("Ask Gemini", text: $promptText)
                     .padding(.leading)
-                    .onSubmit(onSubmit)
                 // icons
                 HStack (spacing:24){
                     Button {

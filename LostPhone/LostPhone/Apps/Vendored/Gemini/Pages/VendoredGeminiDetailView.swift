@@ -59,13 +59,12 @@ struct VendoredGeminiDetailView: View {
                     .padding(.bottom, 140)
                 }
                 // floating button
-                VendoredGeminiFloatingButtonView(promptText: $promptText) {
-                    let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !text.isEmpty else { return }
-                    Task { @MainActor in
+                VendoredGeminiFloatingButtonView(promptText: $promptText)
+                    .onSubmit {
+                        let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !text.isEmpty else { return }
                         fetchAIContent(with: text)
                     }
-                }
             }
             // title
             .navigationBarTitleDisplayMode(.inline)

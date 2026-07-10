@@ -10,9 +10,11 @@ import MapKit
 import Kingfisher
 
 struct VendoredSnapchatMapView: View {
-    @State private var region = MKCoordinateRegion(
+    @State private var position = MapCameraPosition.region(
+        MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
             span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        )
     )
     private let mapFriends: [VendoredSnapMapFriend] = [
         VendoredSnapMapFriend(image: "default_user", coordinate: CLLocationCoordinate2D(latitude: 37.776, longitude: -122.418)),
@@ -23,14 +25,16 @@ struct VendoredSnapchatMapView: View {
         NavigationStack {
             ZStack {
                 // add map view
-                Map(coordinateRegion: $region, annotationItems: mapFriends) { friend in
-                    MapAnnotation(coordinate: friend.coordinate) {
-                        Image(friend.image)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 36, height: 36)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(.white, lineWidth: 2))
+                Map(position: $position) {
+                    ForEach(mapFriends) { friend in
+                        Annotation("", coordinate: friend.coordinate, anchor: .bottom) {
+                            Image(friend.image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 36, height: 36)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(.white, lineWidth: 2))
+                        }
                     }
                 }
                 .edgesIgnoringSafeArea(.all)

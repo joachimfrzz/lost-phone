@@ -62,7 +62,9 @@ struct VendoredGeminiDetailView: View {
                 VendoredGeminiFloatingButtonView(promptText: $promptText) {
                     let text = promptText.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !text.isEmpty else { return }
-                    fetchAIContent(with: text)
+                    Task { @MainActor in
+                        fetchAIContent(with: text)
+                    }
                 }
             }
             // title

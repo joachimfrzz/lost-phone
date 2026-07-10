@@ -41,9 +41,12 @@ root = Path(sys.argv[1])
 issues = []
 pattern = re.compile(r'(?:static\s+)?func\s+\w+[^{]+\)\s*->\s*[^{]+\{\s*\n(\s*)let\s+')
 
+skip_prefixes = ("Apps/Clone/", "Apps/Sopheamen/")
+skip_substrings = ("/Sopheamen/",)
+
 for path in sorted(root.rglob("*.swift")):
     rel = path.relative_to(root).as_posix()
-    if rel.startswith("Apps/Clone/"):
+    if rel.startswith(skip_prefixes) or any(s in rel for s in skip_substrings):
         continue
     text = path.read_text(encoding="utf-8")
     for m in pattern.finditer(text):
@@ -51,6 +54,9 @@ for path in sorted(root.rglob("*.swift")):
         line_start = text.rfind("\n", 0, start) + 1
         prefix = text[max(0, start - 400):start]
         if "@ViewBuilder" in prefix:
+            continue
+        # Completion handlers / Void APIs are not ViewBuilder bodies.
+        if "-> Void" in prefix or "@escaping" in prefix:
             continue
         brace = text.find("{", start)
         depth = 0

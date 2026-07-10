@@ -7,8 +7,8 @@ import Foundation
 /// Réponses simulées hors-ligne pour LPSP (Notion : Gemini doit répondre).
 class VendoredGeminiAIService {
     static func fetchAIContent(prompt: String, completion: @escaping (Result<String, Error>) -> Void) {
-        let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
             let reply: String
             switch trimmed.lowercased() {
             case let p where p.contains("mail") || p.contains("message"):

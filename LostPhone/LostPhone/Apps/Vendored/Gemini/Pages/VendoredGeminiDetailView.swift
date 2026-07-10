@@ -133,12 +133,11 @@ struct VendoredGeminiDetailView: View {
         typingIndex = 0
         displayedText = ""
 
-        Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
-            if typingIndex < extractedText.count {
+        Task { @MainActor in
+            while typingIndex < extractedText.count {
                 displayedText.append(extractedText[extractedText.index(extractedText.startIndex, offsetBy: typingIndex)])
                 typingIndex += 1
-            } else {
-                timer.invalidate()
+                try? await Task.sleep(nanoseconds: 30_000_000)
             }
         }
     }

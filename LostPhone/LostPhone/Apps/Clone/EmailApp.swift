@@ -60,28 +60,18 @@ class MailManager: ObservableObject {
     }
     
     func delete(_ email: Email, from title: String) {
-        let list = folderKey(for: title)
-        remove(email, from: list)
+        switch title {
+        case Fr.drafts, "Brouillons":
+            drafts.removeAll { $0.id == email.id }
+        case Fr.sent, "Envoyés":
+            sent.removeAll { $0.id == email.id }
+        default:
+            emails.removeAll { $0.id == email.id }
+        }
     }
 
     func delete(_ email: Email) {
-        remove(email, from: \.emails)
-    }
-    
-    private func folderKey(for title: String) -> WritableKeyPath<MailManager, [Email]> {
-        switch title {
-        case Fr.drafts, "Brouillons": return \.drafts
-        case Fr.sent, "Envoyés": return \.sent
-        default: return \.emails
-        }
-    }
-
-    private func remove(_ email: Email, from keyPath: WritableKeyPath<MailManager, [Email]>) {
-        var list = self[keyPath: keyPath]
-        if let index = list.firstIndex(where: { $0.id == email.id }) {
-            list.remove(at: index)
-            self[keyPath: keyPath] = list
-        }
+        emails.removeAll { $0.id == email.id }
     }
     
     func toggleFlag(_ email: Email) {
@@ -103,13 +93,16 @@ class MailManager: ObservableObject {
     }
 
     private func mutateEmail(_ email: Email, _ transform: (inout Email) -> Void) {
-        for keyPath in [\.emails, \.sent, \.drafts] as [WritableKeyPath<MailManager, [Email]>] {
-            var list = self[keyPath: keyPath]
-            if let index = list.firstIndex(where: { $0.id == email.id }) {
-                transform(&list[index])
-                self[keyPath: keyPath] = list
-                return
-            }
+        if let index = emails.firstIndex(where: { $0.id == email.id }) {
+            transform(&emails[index])
+            return
+        }
+        if let index = sent.firstIndex(where: { $0.id == email.id }) {
+            transform(&sent[index])
+            return
+        }
+        if let index = drafts.firstIndex(where: { $0.id == email.id }) {
+            transform(&drafts[index])
         }
     }
     

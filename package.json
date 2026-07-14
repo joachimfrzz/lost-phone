@@ -1,50 +1,10 @@
 {
-  "name": "lost-phone-game",
+  "name": "lost-phone-studio",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "description": "LostPhone Studio — tooling minimal (LPSP sync). Legacy React/Capacitor → archive/legacy-react/",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview",
-    "cap:sync": "npm run build && npx cap sync",
-    "cap:sync:ios": "npm run build && npx cap sync ios",
-    "cap:open:ios": "npx cap open ios",
-    "cap:run:ios": "npm run cap:sync:ios && npx cap run ios",
-    "captures:sort": "node scripts/captures-classify.mjs",
-    "captures:apply": "node scripts/captures-apply.mjs",
-    "captures:fix": "node scripts/captures-normalize.mjs",
-    "captures:import": "node scripts/captures-import.mjs",
-    "captures:import:min": "node scripts/captures-import.mjs --min",
-    "captures:status": "node scripts/captures-status.mjs",
-    "reference:measure": "node scripts/reference-measure.mjs",
-    "wallpaper:bootstrap": "node scripts/bootstrap-wallpaper.mjs",
-    "figma:export": "node scripts/figma-export-screen.mjs",
-    "figma:apply": "node scripts/figma-apply-tokens.mjs",
-    "figma:reprocess": "node scripts/figma-reprocess.mjs",
-    "figma:sync": "node scripts/figma-sync.mjs",
-    "lpsp:sync": "node scripts/sync-lpsp-swift.mjs",
-    "dev:phone": "node scripts/dev-phone-url.mjs"
-  },
-  "dependencies": {
-    "@capacitor/app": "^6.0.3",
-    "@capacitor/cli": "^6.2.1",
-    "@capacitor/core": "^6.2.1",
-    "@capacitor/haptics": "^6.0.3",
-    "@capacitor/ios": "^6.2.1",
-    "@capacitor/keyboard": "^6.0.4",
-    "@capacitor/splash-screen": "^6.0.4",
-    "@capacitor/status-bar": "^6.0.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "pngjs": "^7.0.0",
-    "typescript": "~5.6.2",
-    "vite": "^5.4.11"
+    "lpsp:sync": "node scripts/sync-lpsp-swift.mjs"
   }
 }

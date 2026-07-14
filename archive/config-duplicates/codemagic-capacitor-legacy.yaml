@@ -1,0 +1,39 @@
+# Workflow Capacitor archivé (juillet 2026)
+# Ne plus utiliser — ios/ est dans archive/legacy-capacitor/
+# Conservé pour référence uniquement.
+
+workflows:
+  lost-phone-ios:
+    name: Lost Phone iOS (LEGACY — Capacitor)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    environment:
+      ios_signing:
+        provisioning_profiles:
+          - codemagic_profile
+        certificates:
+          - codemagic_certificate
+      vars:
+        XCODE_WORKSPACE: "archive/legacy-capacitor/ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+        BUNDLE_ID: "com.lostphone.game"
+      node: 20
+      xcode: latest
+      cocoapods: default
+
+    triggering:
+      events: []
+      branch_patterns: []
+
+    scripts:
+      - name: Install npm dependencies
+        script: npm ci
+      - name: Build web + sync Capacitor
+        script: npm run cap:sync:ios
+      - name: Install CocoaPods
+        script: cd archive/legacy-capacitor/ios/App && pod install
+      - name: Set up code signing
+        script: xcode-project use-profiles
+      - name: Build IPA
+        script: xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"

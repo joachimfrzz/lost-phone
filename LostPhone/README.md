@@ -67,7 +67,13 @@ Audit du clone : [docs/CLONE-AUDIT.md](./docs/CLONE-AUDIT.md).
 
 Shell apps système : [zerocode117/iOS-26-clone](https://github.com/zerocode117/iOS-26-clone) (MIT).
 
-## Ancien stack (deprecated)
+## LostPhone Studio
 
-- `game/src/` React — référence Creator, **plus maintenu pour l'iPhone**
-- Figma pipeline — abandonné
+Ce dépôt est géré par **[LostPhone Studio](../studio/README.md)**.  
+Point d'entrée : [`../README.md`](../README.md) · Agents IA : [`../AGENTS.md`](../AGENTS.md)
+
+## Ancien stack (archivé)
+
+- React Creator → [`../archive/legacy-react/`](../archive/legacy-react/)
+- Capacitor iOS → [`../archive/legacy-capacitor/`](../archive/legacy-capacitor/)
+- Figma pipeline → abandonné (voir [`../PIVOT-SWIFTUI.md`](../PIVOT-SWIFTUI.md))

@@ -1,6 +1,6 @@
 # Codemagic — build iOS sans Mac local
-# Doc : https://docs.codemagic.io/yaml-quick-start/building-an-ionic-app/
-# Guide : CURSOR-IPHONE.md
+# LostPhone Studio — workflow actif : lost-phone-swiftui uniquement
+# Legacy Capacitor : archive/config-duplicates/codemagic-capacitor-legacy.yaml
 
 workflows:
   lost-phone-swiftui:
@@ -110,61 +110,3 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
-
-  lost-phone-ios:
-    name: Lost Phone iOS
-    max_build_duration: 60
-    instance_type: mac_mini_m2
-
-    environment:
-      ios_signing:
-        provisioning_profiles:
-          - codemagic_profile
-        certificates:
-          - codemagic_certificate
-      vars:
-        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
-        XCODE_SCHEME: "App"
-        BUNDLE_ID: "com.lostphone.game"
-      node: 20
-      xcode: latest
-      cocoapods: default
-
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: main
-          include: true
-
-    scripts:
-      - name: Install npm dependencies
-        script: npm ci
-
-      - name: Build web + sync Capacitor
-        script: npm run cap:sync:ios
-
-      - name: Install CocoaPods
-        script: |
-          cd ios/App && pod install
-
-      - name: Set up code signing
-        script: xcode-project use-profiles
-
-      - name: Build IPA
-        script: |
-          xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME"
-
-    artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-
-    publishing:
-      email:
-        recipients:
-          - user@example.com
-        notify:
-          success: true
-          failure: true

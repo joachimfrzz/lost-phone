@@ -10,10 +10,10 @@ dist
 tsconfig.tsbuildinfo
 figma-export-*.log
 
-# Capacitor iOS (Xcode user data)
-ios/App/App/public
-ios/App/Pods
-ios/DerivedData
+# Capacitor iOS (Xcode user data) — legacy in archive/legacy-capacitor/
+archive/legacy-capacitor/ios/App/App/public
+archive/legacy-capacitor/ios/App/Pods
+archive/legacy-capacitor/ios/DerivedData
 *.xcuserstate
 xcuserdata
 

@@ -34,7 +34,7 @@ targets:
           - "**/SOURCE.md"
           - "**/playground/**"
           - "**/_backup/**"
-          # Sopheamen brut + Integrated : doublons de types ; runtime = Vendored/
+          # Sopheamen brut archivé dans archive/sopheamen-raw/ ; runtime = Vendored/
           - "**/Sopheamen/**"
     resources:
       # Folder reference preserves stories/<id>/lpsp.json (avoids flattening duplicate lpsp.json).

@@ -13,7 +13,9 @@ Toute la documentation du projet, classée par domaine.
 | [`../VISION.md`](../VISION.md) | Philosophie et domaines |
 | [`../DECISIONS.md`](../DECISIONS.md) | Journal des décisions |
 | [`../STRUCTURE.md`](../STRUCTURE.md) | Arborescence actuelle et cible |
-| [`../../AGENTS.md`](../../AGENTS.md) | Instructions agents IA |
+| [`../VISION-APPS.md`](../VISION-APPS.md) | Stratégie apps officielles vs custom |
+| [`WORKFLOW.md`](WORKFLOW.md) | Notion, iPhone, Cursor |
+| [`templates/APP-BRIEF.md`](templates/APP-BRIEF.md) | Template brief par app tierce |
 
 ---
 
@@ -67,6 +69,7 @@ Toute la documentation du projet, classée par domaine.
 | Document | Description |
 |----------|-------------|
 | [`ops/PREVIEW-CI.md`](ops/PREVIEW-CI.md) | GitHub Actions + Codemagic (synthèse) |
+| [`ops/MOBAI.md`](ops/MOBAI.md) | QA device via MobAI + MCP Cursor |
 | [`../../CURSOR-IPHONE.md`](../../CURSOR-IPHONE.md) | Cursor iOS + Cloud Agent |
 | [`../../SWIFTUI-SANS-MAC.md`](../../SWIFTUI-SANS-MAC.md) | SwiftUI sans Mac local |
 | [`../../docs/PREVIEW-SANS-MAC.md`](../../docs/PREVIEW-SANS-MAC.md) | Preview vidéo via GitHub Releases |

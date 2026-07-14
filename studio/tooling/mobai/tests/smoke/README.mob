@@ -1,0 +1,13 @@
+# Lost Phone — smoke test (à adapter)
+# Prérequis : app installée, PIN showroom connu (ex. 1503 pour J-3)
+#
+# Étapes typiques :
+# 1. Lancer LostPhone
+# 2. Saisir PIN si verrou
+# 3. Vérifier écran d'accueil visible
+#
+# Décommenter et ajuster les libellés après premier run MobAI :
+#
+# tap "LostPhone"
+# wait_for "Showroom"
+# screenshot "home"

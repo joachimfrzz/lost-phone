@@ -20,7 +20,7 @@ Avant chaque décision :
 | Domaine | Rôle | Emplacement actuel |
 |---------|------|-------------------|
 | **Vision** | Produit, périmètre, pivot, roadmap | `studio/VISION.md`, `APP-SCOPE.md` |
-| **Applications** | Clones Apple, vendored, awesome, routing | `LostPhone/LostPhone/Apps/` |
+| **Applications** | Clones officiels + apps custom (Awesome Design) | [`VISION-APPS.md`](VISION-APPS.md) |
 | **Histoires** | LPSP JSON, scénarios, showroom | `public/stories/` |
 | **Design** | Spectr, pixel QA, assets | `LostPhone/scripts/spectr_*`, `public/` |
 | **Développement** | SwiftUI, XcodeGen, adapters | `LostPhone/` |
@@ -47,6 +47,8 @@ Structure cible détaillée : [`STRUCTURE.md`](STRUCTURE.md).
 ## Documents clés
 
 - [`VISION.md`](VISION.md) — philosophie et priorités
+- [`VISION-APPS.md`](VISION-APPS.md) — stratégie apps (officielles vs custom)
+- [`docs/WORKFLOW.md`](docs/WORKFLOW.md) — Notion, iPhone, Cursor
 - [`DECISIONS.md`](DECISIONS.md) — journal des décisions d'architecture
 - [`docs/INDEX.md`](docs/INDEX.md) — index de toute la documentation
 - [`../AGENTS.md`](../AGENTS.md) — instructions pour agents Cursor

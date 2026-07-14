@@ -31,4 +31,6 @@ awesome-ios-design-md/
 LostPhone/scripts/spectr_pixel_refs/*.png
 LostPhone/scripts/lpsp_pixel_captures/
 LostPhone/scripts/spectr_pixel_report/diffs/
-.spectr-pixel-venv/
+# Cursor (config locale — copier depuis mcp.json.example)
+.cursor/mcp.json
+

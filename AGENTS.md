@@ -15,7 +15,19 @@ Avant chaque décision : **« Est-ce que cette solution améliore aussi le Studi
 | LPSP source | `public/stories/` |
 | LPSP sync | `npm run lpsp:sync` → `scripts/sync-lpsp-swift.mjs` |
 | CI scripts | `LostPhone/scripts/ios-*.sh`, `validate-lpsp-json.py` |
-| Apps runtime | `Apps/Clone/`, `Apps/Vendored/`, `Apps/Awesome/` |
+## Apps — nouvelle stratégie (juillet 2026)
+
+| Famille | Source | Dossier |
+|---------|--------|---------|
+| **Officielles** (gelées) | zerocode117 | `Apps/Clone/` |
+| **Tierces** (custom) | Awesome Design + briefs Notion | `Apps/Custom/` (cible) |
+
+**Ne plus** étendre `Apps/Vendored/` (Sopheamen archivé). Voir [`studio/VISION-APPS.md`](studio/VISION-APPS.md).
+
+## QA device — MobAI
+
+Quand MobAI desktop est lancé : config MCP via `.cursor/mcp.json.example` → `.cursor/mcp.json`.  
+Doc : [`studio/docs/ops/MOBAI.md`](studio/docs/ops/MOBAI.md)
 | Routing | `Apps/LpspAppRouter.swift`, `VendoredShowroomRouter.swift` |
 | CI | `.github/workflows/ios-preview.yml`, `codemagic.yaml` |
 

@@ -80,6 +80,26 @@ Décisions prises lors de la migration vers **LostPhone Studio** et préparation
 
 ---
 
+---
+
+## D-011 — Nouvelle stratégie apps (juillet 2026)
+
+**Décision :** Apps Apple = clones officiels gelés. Apps tierces = **créées par nous** via Awesome Design + briefs Notion.  
+**Abandon progressif :** `Vendored/` (Sopheamen) comme base runtime.  
+**Raison :** UI/narrative cohérente pour le jeu ; clones tiers = dette technique.  
+**Impact :** Nouveaux devs dans `Apps/Custom/` ; template `studio/docs/templates/APP-BRIEF.md`.
+
+---
+
+## D-012 — MobAI intégré au Studio (QA device)
+
+**Décision :** Adopter [MobAI](https://mobai.run) via MCP Cursor pour tests sur iPhone/simulateur.  
+**Raison :** L'agent peut tester pendant qu'il code ; réduit manip manuelle du créateur.  
+**Impact :** `.cursor/mcp.json.example`, `studio/tooling/mobai/`, `studio/docs/ops/MOBAI.md`.  
+**Limite :** Local uniquement — CI GitHub reste compile-only.
+
+---
+
 ## Non fait (intentionnellement)
 
 | Item | Raison |

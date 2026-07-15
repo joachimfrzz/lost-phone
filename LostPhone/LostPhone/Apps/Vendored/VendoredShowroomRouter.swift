@@ -6,7 +6,7 @@ enum VendoredShowroomRouter {
     static func view(for appName: String) -> some View {
         switch LpspAppAliases.canonical(appName) {
         case "WhatsApp":
-            LpspVendoredWhatsAppRootView()
+            LpspCustomWhatsAppRootView()
         case "Instagram":
             LpspVendoredInstagramRootView()
         case "Snapchat":

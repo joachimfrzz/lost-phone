@@ -123,7 +123,7 @@ struct LpspAppRouter: View {
     private func thirdPartyView(named appName: String, payload: AnyCodable?) -> some View {
         switch LpspAppAliases.canonical(appName) {
         case "WhatsApp":
-            LpspVendoredWhatsAppRootView()
+            LpspCustomWhatsAppRootView()
         case "Signal":
             LpspAwesomeSignalView(conversations: LpspAdapters.signal(from: payload))
         case "Messenger":

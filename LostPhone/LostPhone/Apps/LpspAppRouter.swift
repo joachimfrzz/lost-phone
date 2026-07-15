@@ -127,7 +127,7 @@ struct LpspAppRouter: View {
         case "Signal":
             LpspAwesomeSignalView(conversations: LpspAdapters.signal(from: payload))
         case "Messenger":
-            LpspVendoredMessengerRootView()
+            LpspCustomMessengerRootView()
         case "Telegram":
             LpspAwesomeTelegramView(conversations: LpspAdapters.telegram(from: payload))
         case "Contacts":

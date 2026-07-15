@@ -16,7 +16,7 @@ enum VendoredShowroomRouter {
         case "Facebook":
             LpspVendoredFacebookRootView()
         case "Messenger":
-            LpspVendoredMessengerRootView()
+            LpspCustomMessengerRootView()
         case "Threads":
             LpspVendoredThreadsRootView()
         case "Grok":

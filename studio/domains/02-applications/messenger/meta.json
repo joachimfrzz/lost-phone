@@ -1,0 +1,20 @@
+{
+  "slug": "messenger",
+  "id": "Messenger",
+  "name": "Messenger",
+  "category": "communication",
+  "priority": "P0",
+  "status": "implementee",
+  "runtime": "awesome",
+  "target": "custom",
+  "screens": {},
+  "workflowState": {
+    "step": "chatgpt",
+    "promptCopied": true,
+    "briefDraft": "",
+    "launchedAt": "2026-07-15T22:04:40.814Z",
+    "jobId": null,
+    "chatGptMode": "multi"
+  },
+  "iterationCount": 0
+}

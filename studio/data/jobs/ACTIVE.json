@@ -1,0 +1,14 @@
+{
+  "slug": "messenger",
+  "appId": "Messenger",
+  "appName": "Messenger",
+  "launchedAt": "2026-07-15T22:04:40.815Z",
+  "status": "done",
+  "cursor": {
+    "status": "done",
+    "message": "Messenger Custom V1 — E01–E12 scaffold",
+    "updatedAt": "2026-07-15T22:15:00.000Z"
+  },
+  "captureCount": 12,
+  "completedAt": "2026-07-15T22:15:00.000Z"
+}

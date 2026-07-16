@@ -80,11 +80,14 @@ struct MessengerThreadSettingsView: View {
 }
 
 struct MessengerPrivacySettingsView: View {
+    @State private var readReceiptsEnabled = true
+    @State private var ephemeralEnabled = false
+
     var body: some View {
         List {
             Section {
-                Toggle("Confirmations de lecture", isOn: .constant(true))
-                Toggle("Messages éphémères", isOn: .constant(false))
+                Toggle("Confirmations de lecture", isOn: $readReceiptsEnabled)
+                Toggle("Messages éphémères", isOn: $ephemeralEnabled)
             } footer: {
                 Text("Affichage décoratif — pas de modification réelle.")
             }

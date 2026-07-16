@@ -51,20 +51,15 @@ struct MessengerConversationView: View {
                 .foregroundStyle(MessengerTheme.headerIcon)
             }
         }
-        .background {
-            NavigationLink(isActive: $showInfo) {
-                if thread.isGroup {
-                    MessengerGroupInfoView(thread: thread)
-                } else {
-                    MessengerThreadInfoView(thread: thread)
-                }
-            } label: {
-                EmptyView()
+        .navigationDestination(isPresented: $showInfo) {
+            if thread.isGroup {
+                MessengerGroupInfoView(thread: thread)
+            } else {
+                MessengerThreadInfoView(thread: thread)
             }
-            .hidden()
         }
         .fullScreenCover(isPresented: $showCall) {
-            MessengerCallOverlayView(contactName: thread.title, isPresented: $showCall)
+            MessengerCallOverlayView(contactName: thread.title)
         }
         .confirmationDialog("Message", isPresented: Binding(
             get: { contextMessage != nil },
@@ -72,7 +67,7 @@ struct MessengerConversationView: View {
         )) {
             Button("Réagir ❤️") { contextMessage = nil }
             Button("Répondre") { contextMessage = nil }
-            Button("Transférer", role: .none) { contextMessage = nil }
+            Button("Transférer") { contextMessage = nil }
             Button("Annuler", role: .cancel) { contextMessage = nil }
         }
     }

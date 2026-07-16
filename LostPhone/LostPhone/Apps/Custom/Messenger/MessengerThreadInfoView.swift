@@ -11,8 +11,8 @@ struct MessengerThreadInfoView: View {
                     MessengerAvatar(
                         title: thread.title,
                         initials: thread.contact?.initials,
-                        showOnline: thread.contact?.isOnline == true,
-                        size: 88
+                        size: 88,
+                        showOnline: thread.contact?.isOnline == true
                     )
                     Text(thread.title)
                         .font(.title2.weight(.semibold))

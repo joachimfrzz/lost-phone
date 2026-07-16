@@ -23,7 +23,9 @@ struct MessengerCallOverlayView: View {
                 Text(statusLabel)
                     .foregroundStyle(.white.opacity(0.75))
                 Spacer()
-                Button(action: onEnd) {
+                Button {
+                    onEnd()
+                } label: {
                     Image(systemName: "phone.down.fill")
                         .font(.title2)
                         .foregroundStyle(.white)

@@ -109,7 +109,8 @@ chmod +x "$LOSTPHONE/scripts/ios-build-preflight.sh"
 echo "→ Generate Xcode project"
 cd "$LOSTPHONE"
 if ! command -v xcodegen >/dev/null 2>&1; then
-  brew install xcodegen
+  chmod +x "$LOSTPHONE/scripts/install-xcodegen.sh"
+  "$LOSTPHONE/scripts/install-xcodegen.sh"
 fi
 xcodegen generate
 

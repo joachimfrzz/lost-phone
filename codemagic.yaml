@@ -38,7 +38,9 @@ workflows:
 
     scripts:
       - name: Install XcodeGen
-        script: brew install xcodegen
+        script: |
+          chmod +x LostPhone/scripts/install-xcodegen.sh
+          LostPhone/scripts/install-xcodegen.sh
 
       - name: Skip macro validation (vendored SwiftUI @Entry)
         script: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES

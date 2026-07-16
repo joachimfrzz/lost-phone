@@ -35,10 +35,6 @@ struct MessengerCallOverlayView: View {
                 .padding(.bottom, 48)
             }
         }
-        .task {
-            try? await Task.sleep(for: .seconds(3))
-            dismiss()
-        }
     }
 }
 

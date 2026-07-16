@@ -93,9 +93,16 @@ jobs:
             {
               echo "## xcodebuild errors"
               echo '```'
-              grep -E ' error:' preview-artifacts/xcodebuild.log | tail -40 || true
+              grep -E '( error:|fatal error:)' preview-artifacts/xcodebuild.log | tail -40 || true
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
+            grep -E '( error:|fatal error:)' preview-artifacts/xcodebuild.log | tail -20 | while IFS= read -r line; do
+              if [[ "$line" =~ ^([^:]+):([0-9]+):([0-9]+):\ error:\ (.+)$ ]]; then
+                echo "::error file=${BASH_REMATCH[1]},line=${BASH_REMATCH[2]},col=${BASH_REMATCH[3]}::${BASH_REMATCH[4]}"
+              else
+                echo "::error::${line}"
+              fi
+            done
           fi
 
       - name: Spectr pixel pipeline (A+B+C)

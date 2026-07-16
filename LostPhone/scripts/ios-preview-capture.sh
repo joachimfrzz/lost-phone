@@ -136,7 +136,14 @@ BUILD_STATUS=${PIPESTATUS[0]}
 set -e
 if [[ "$BUILD_STATUS" -ne 0 ]]; then
   echo "ERROR: xcodebuild failed (exit $BUILD_STATUS). Compiler errors:" >&2
-  grep -E ' error:' "$BUILD_LOG" | tail -30 >&2 || true
+  grep -E '( error:|fatal error:)' "$BUILD_LOG" | tail -40 >&2 || true
+  grep -E '( error:|fatal error:)' "$BUILD_LOG" | tail -20 | while IFS= read -r line; do
+    if [[ "$line" =~ ^([^:]+):([0-9]+):([0-9]+):\ error:\ (.+)$ ]]; then
+      echo "::error file=${BASH_REMATCH[1]},line=${BASH_REMATCH[2]},col=${BASH_REMATCH[3]}::${BASH_REMATCH[4]}"
+    else
+      echo "::error::${line}"
+    fi
+  done
   exit "$BUILD_STATUS"
 fi
 

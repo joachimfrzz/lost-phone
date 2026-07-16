@@ -47,28 +47,27 @@ struct MessengerConversationView: View {
                 .foregroundStyle(MessengerTheme.headerIcon)
             }
         }
-        .background { infoNavigationLink }
+        .background {
+            NavigationLink(isActive: $showInfo) {
+                if thread.isGroup {
+                    MessengerGroupInfoView(thread: thread)
+                } else {
+                    MessengerThreadInfoView(thread: thread)
+                }
+            } label: {
+                EmptyView()
+            }
+            .hidden()
+        }
         .fullScreenCover(isPresented: $showCall) {
             MessengerCallOverlayView(contactName: thread.title)
         }
-    }
-
-    @ViewBuilder
-    private var infoNavigationLink: some View {
-        NavigationLink(isActive: $showInfo) {
-            threadInfoDestination
-        } label: {
-            EmptyView()
-        }
-        .hidden()
-    }
-
-    @ViewBuilder
-    private var threadInfoDestination: some View {
-        if thread.isGroup {
-            MessengerGroupInfoView(thread: thread)
-        } else {
-            MessengerThreadInfoView(thread: thread)
+        .onChange(of: showCall) { _, isShowing in
+            guard isShowing else { return }
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(3))
+                showCall = false
+            }
         }
     }
 

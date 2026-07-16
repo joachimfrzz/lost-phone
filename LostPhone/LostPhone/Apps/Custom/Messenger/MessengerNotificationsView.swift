@@ -1,31 +1,43 @@
 import SwiftUI
 
+struct MessengerNotificationRow: Identifiable {
+    let notification: MessengerNotification
+    let thread: MessengerThread
+
+    var id: String { notification.id }
+
+    static func linked(from items: [MessengerNotification]) -> [MessengerNotificationRow] {
+        items.compactMap { item in
+            guard let thread = MessengerSampleData.thread(for: item.threadId) else { return nil }
+            return MessengerNotificationRow(notification: item, thread: thread)
+        }
+    }
+}
+
 struct MessengerNotificationsView: View {
     @Environment(\.dismiss) private var dismiss
-    private let items = MessengerSampleData.notifications
+    private let rows = MessengerNotificationRow.linked(from: MessengerSampleData.notifications)
 
     var body: some View {
-        List(items) { item in
-            if let thread = MessengerSampleData.thread(for: item.threadId) {
-                NavigationLink {
-                    MessengerConversationView(thread: thread)
-                } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(item.title)
-                                .font(.body.weight(.semibold))
-                            Spacer()
-                            Text(item.timeLabel)
-                                .font(.caption)
-                                .foregroundStyle(MessengerTheme.secondaryText)
-                        }
-                        Text(item.body)
-                            .font(.subheadline)
+        List(rows) { row in
+            NavigationLink {
+                MessengerConversationView(thread: row.thread)
+            } label: {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(row.notification.title)
+                            .font(.body.weight(.semibold))
+                        Spacer()
+                        Text(row.notification.timeLabel)
+                            .font(.caption)
                             .foregroundStyle(MessengerTheme.secondaryText)
-                            .lineLimit(2)
                     }
-                    .padding(.vertical, 4)
+                    Text(row.notification.body)
+                        .font(.subheadline)
+                        .foregroundStyle(MessengerTheme.secondaryText)
+                        .lineLimit(2)
                 }
+                .padding(.vertical, 4)
             }
         }
         .navigationTitle("Notifications")

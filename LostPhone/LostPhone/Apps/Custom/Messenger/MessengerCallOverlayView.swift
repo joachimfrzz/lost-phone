@@ -2,8 +2,7 @@ import SwiftUI
 
 struct MessengerCallOverlayView: View {
     let contactName: String
-    let onEnd: () -> Void
-    @State private var phase = 0
+    @Binding var isPresented: Bool
 
     var body: some View {
         ZStack {
@@ -20,11 +19,11 @@ struct MessengerCallOverlayView: View {
                 Text(contactName)
                     .font(.title.weight(.semibold))
                     .foregroundStyle(.white)
-                Text(statusLabel)
+                Text("Appel…")
                     .foregroundStyle(.white.opacity(0.75))
                 Spacer()
                 Button {
-                    onEnd()
+                    isPresented = false
                 } label: {
                     Image(systemName: "phone.down.fill")
                         .font(.title2)
@@ -37,22 +36,14 @@ struct MessengerCallOverlayView: View {
             }
         }
         .onAppear {
-            Task {
+            Task { @MainActor in
                 try? await Task.sleep(for: .seconds(3))
-                await MainActor.run { onEnd() }
+                isPresented = false
             }
-        }
-    }
-
-    private var statusLabel: String {
-        switch phase {
-        case 0: "Appel…"
-        case 1: "Sonnerie…"
-        default: "Appel terminé"
         }
     }
 }
 
 #Preview {
-    MessengerCallOverlayView(contactName: "Léa Martin", onEnd: {})
+    MessengerCallOverlayView(contactName: "Léa Martin", isPresented: .constant(true))
 }

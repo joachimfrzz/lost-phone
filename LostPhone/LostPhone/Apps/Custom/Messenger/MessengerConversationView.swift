@@ -64,9 +64,7 @@ struct MessengerConversationView: View {
             .hidden()
         }
         .fullScreenCover(isPresented: $showCall) {
-            MessengerCallOverlayView(contactName: thread.title) {
-                showCall = false
-            }
+            MessengerCallOverlayView(contactName: thread.title, isPresented: $showCall)
         }
         .confirmationDialog("Message", isPresented: Binding(
             get: { contextMessage != nil },

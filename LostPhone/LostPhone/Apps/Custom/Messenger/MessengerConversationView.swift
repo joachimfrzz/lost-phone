@@ -51,15 +51,20 @@ struct MessengerConversationView: View {
                 .foregroundStyle(MessengerTheme.headerIcon)
             }
         }
-        .navigationDestination(isPresented: $showInfo) {
-            if thread.isGroup {
-                MessengerGroupInfoView(thread: thread)
-            } else {
-                MessengerThreadInfoView(thread: thread)
+        .background {
+            NavigationLink(isActive: $showInfo) {
+                if thread.isGroup {
+                    MessengerGroupInfoView(thread: thread)
+                } else {
+                    MessengerThreadInfoView(thread: thread)
+                }
+            } label: {
+                EmptyView()
             }
+            .hidden()
         }
         .fullScreenCover(isPresented: $showCall) {
-            MessengerCallOverlayView(contactName: thread.title)
+            MessengerCallOverlayView(contactName: thread.title, isPresented: $showCall)
         }
         .confirmationDialog("Message", isPresented: Binding(
             get: { contextMessage != nil },

@@ -77,6 +77,15 @@ jobs:
           chmod +x LostPhone/scripts/ios-preview-capture.sh
           LostPhone/scripts/ios-preview-capture.sh "$GITHUB_WORKSPACE/preview-artifacts"
 
+      - name: Upload xcodebuild log on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: xcodebuild-log-${{ github.run_number }}
+          path: preview-artifacts/xcodebuild.log
+          retention-days: 14
+          if-no-files-found: ignore
+
       - name: Spectr pixel pipeline (A+B+C)
         continue-on-error: true
         run: |

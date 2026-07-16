@@ -118,6 +118,8 @@ prepare_xcode_and_simulators
 DERIVED_DATA="$LOSTPHONE/.derivedData-preview"
 
 echo "→ Build for iOS Simulator (Debug, universal — Appetize-compatible)"
+BUILD_LOG="$ARTIFACTS/xcodebuild.log"
+set +e
 xcodebuild \
   -project LostPhone.xcodeproj \
   -scheme LostPhone \
@@ -129,7 +131,14 @@ xcodebuild \
   ENABLE_DEBUG_DYLIB=NO \
   ONLY_ACTIVE_ARCH=NO \
   ARCHS="arm64 x86_64" \
-  build
+  build 2>&1 | tee "$BUILD_LOG"
+BUILD_STATUS=${PIPESTATUS[0]}
+set -e
+if [[ "$BUILD_STATUS" -ne 0 ]]; then
+  echo "ERROR: xcodebuild failed (exit $BUILD_STATUS). Compiler errors:" >&2
+  grep -E ' error:' "$BUILD_LOG" | tail -30 >&2 || true
+  exit "$BUILD_STATUS"
+fi
 
 APP="$(find "$DERIVED_DATA" -name 'LostPhone.app' -type d | head -1)"
 if [[ -z "$APP" ]]; then

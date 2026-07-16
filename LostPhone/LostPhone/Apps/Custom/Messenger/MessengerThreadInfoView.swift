@@ -88,8 +88,9 @@ struct MessengerPrivacySettingsView: View {
             Section {
                 Toggle("Confirmations de lecture", isOn: $readReceiptsEnabled)
                 Toggle("Messages éphémères", isOn: $ephemeralEnabled)
-            } footer: {
                 Text("Affichage décoratif — pas de modification réelle.")
+                    .font(.caption)
+                    .foregroundStyle(MessengerTheme.secondaryText)
             }
         }
         .navigationTitle("Confidentialité")

@@ -5,7 +5,6 @@ struct MessengerConversationView: View {
     @State private var messages: [MessengerMessage]
     @State private var showInfo = false
     @State private var showCall = false
-    @State private var contextMessage: MessengerMessage?
     @State private var draft = ""
 
     init(thread: MessengerThread) {
@@ -25,9 +24,6 @@ struct MessengerConversationView: View {
                 LazyVStack(spacing: 8) {
                     ForEach(messages) { message in
                         MessengerMessageBubble(message: message)
-                            .onLongPressGesture {
-                                contextMessage = message
-                            }
                     }
                 }
                 .padding()
@@ -51,29 +47,28 @@ struct MessengerConversationView: View {
                 .foregroundStyle(MessengerTheme.headerIcon)
             }
         }
-        .background {
-            NavigationLink(isActive: $showInfo) {
-                if thread.isGroup {
-                    MessengerGroupInfoView(thread: thread)
-                } else {
-                    MessengerThreadInfoView(thread: thread)
-                }
-            } label: {
-                EmptyView()
-            }
-            .hidden()
-        }
+        .background { infoNavigationLink }
         .fullScreenCover(isPresented: $showCall) {
-            MessengerCallOverlayView(contactName: thread.title, isPresented: $showCall)
+            MessengerCallOverlayView(contactName: thread.title)
         }
-        .confirmationDialog("Message", isPresented: Binding(
-            get: { contextMessage != nil },
-            set: { if !$0 { contextMessage = nil } }
-        )) {
-            Button("Réagir ❤️") { contextMessage = nil }
-            Button("Répondre") { contextMessage = nil }
-            Button("Transférer") { contextMessage = nil }
-            Button("Annuler", role: .cancel) { contextMessage = nil }
+    }
+
+    @ViewBuilder
+    private var infoNavigationLink: some View {
+        NavigationLink(isActive: $showInfo) {
+            threadInfoDestination
+        } label: {
+            EmptyView()
+        }
+        .hidden()
+    }
+
+    @ViewBuilder
+    private var threadInfoDestination: some View {
+        if thread.isGroup {
+            MessengerGroupInfoView(thread: thread)
+        } else {
+            MessengerThreadInfoView(thread: thread)
         }
     }
 
@@ -131,6 +126,11 @@ private struct MessengerMessageBubble: View {
                         .foregroundStyle(MessengerTheme.secondaryText)
                 }
                 if !message.isSent { Spacer(minLength: 56) }
+            }
+            .contextMenu {
+                Button("Réagir ❤️") { }
+                Button("Répondre") { }
+                Button("Transférer") { }
             }
         }
     }

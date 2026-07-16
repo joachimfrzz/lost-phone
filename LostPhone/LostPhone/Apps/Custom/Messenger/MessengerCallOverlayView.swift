@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MessengerCallOverlayView: View {
     let contactName: String
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
@@ -23,7 +23,7 @@ struct MessengerCallOverlayView: View {
                     .foregroundStyle(.white.opacity(0.75))
                 Spacer()
                 Button {
-                    isPresented = false
+                    dismiss()
                 } label: {
                     Image(systemName: "phone.down.fill")
                         .font(.title2)
@@ -35,15 +35,13 @@ struct MessengerCallOverlayView: View {
                 .padding(.bottom, 48)
             }
         }
-        .onAppear {
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(3))
-                isPresented = false
-            }
+        .task {
+            try? await Task.sleep(for: .seconds(3))
+            dismiss()
         }
     }
 }
 
 #Preview {
-    MessengerCallOverlayView(contactName: "Léa Martin", isPresented: .constant(true))
+    MessengerCallOverlayView(contactName: "Léa Martin")
 }
